@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/app/java"/>
+	<classpathentry kind="src" path="src/testapp/java"/>
+	<classpathentry kind="src" path="src/webcontainer/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/home/tliebeck/Programs/tomcat/common/lib/servlet.jar"/>
+	<classpathentry kind="lib" path="/home/tliebeck/work/echo2dist/Echo2_App.jar"/>
+	<classpathentry kind="lib" path="/home/tliebeck/work/echo2dist/Echo2_WebContainer.jar"/>
+	<classpathentry kind="lib" path="/home/tliebeck/work/echo2dist/Echo2_WebRender.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
