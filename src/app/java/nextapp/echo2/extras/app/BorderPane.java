@@ -3,12 +3,14 @@ package nextapp.echo2.extras.app;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.FillImageBorder;
 import nextapp.echo2.app.Insets;
+import nextapp.echo2.app.Pane;
 
 /**
  * A container which renders a <code>FillImageBorder</code> around its
  * content.
  */
-public class BorderPane extends Component {
+public class BorderPane extends Component 
+implements Pane {
     
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_INSETS = "insets";

@@ -49,11 +49,11 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
     /**
      * Service to provide supporting JavaScript library.
      */
-    public static final Service DATE_FIELD_SERVICE = JavaScriptService.forResource("Echo2Extras.CalendarField",
+    public static final Service CALENDAR_FIELD_SERVICE = JavaScriptService.forResource("Echo2Extras.CalendarField",
             "/nextapp/echo2/extras/webcontainer/resource/js/CalendarField.js");
 
     static {
-        WebRenderServlet.getServiceRegistry().add(DATE_FIELD_SERVICE);
+        WebRenderServlet.getServiceRegistry().add(CALENDAR_FIELD_SERVICE);
     }
 
     /**
@@ -69,7 +69,7 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
      *      nextapp.echo2.app.Component)
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
-        rc.getServerMessage().addLibrary(DATE_FIELD_SERVICE.getId());
+        rc.getServerMessage().addLibrary(CALENDAR_FIELD_SERVICE.getId());
         renderInitDirective(rc, targetId, (CalendarField) component);
     }
 
@@ -79,7 +79,7 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
      *      nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
-        rc.getServerMessage().addLibrary(DATE_FIELD_SERVICE.getId());
+        rc.getServerMessage().addLibrary(CALENDAR_FIELD_SERVICE.getId());
         renderDisposeDirective(rc, (CalendarField) component);
     }
 
@@ -96,7 +96,7 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
                 "ExtrasCalendarField.MessageProcessor", "dispose");
         initElement.setAttribute("eid", elementId);
     }
-    
+
     /**
      * Renders an initialization directive.
      * 
