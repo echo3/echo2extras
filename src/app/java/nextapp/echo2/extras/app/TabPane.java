@@ -1,6 +1,7 @@
 package nextapp.echo2.extras.app;
 
 import nextapp.echo2.app.Component;
+import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Pane;
 
 /**
@@ -13,7 +14,9 @@ implements Pane {
     public static final int TAB_POSITION_BOTTOM = 1;
     
     public static final String ACTIVE_TAB_CHANGED_PROEPRTY = "activeTab";
+    public static final String PROPERTY_TAB_HEIGHT = "tabHeight";
     public static final String PROPERTY_TAB_POSITION = "tabPosition";
+    public static final String PROPERTY_TAB_WIDTH = "tabWidth";
     
     private int activeTab = 0;
     
@@ -24,6 +27,15 @@ implements Pane {
      */
     public int getActiveTab() {
         return activeTab;
+    }
+    
+    /**
+     * Returns the height of an individual tab.
+     * 
+     * @return the tab height
+     */
+    public Extent getTabHeight() {
+        return (Extent) getProperty(PROPERTY_TAB_HEIGHT);
     }
     
     /**
@@ -42,6 +54,15 @@ implements Pane {
     }
     
     /**
+     * Returns the width of an individual tab.
+     * 
+     * @return the tab width
+     */
+    public Extent getTabWidth() {
+        return (Extent) getProperty(PROPERTY_TAB_WIDTH);
+    }
+    
+    /**
      * Sets the active tab.
      * 
      * @param newValue the index of the new active tab
@@ -52,6 +73,15 @@ implements Pane {
         firePropertyChange(ACTIVE_TAB_CHANGED_PROEPRTY, new Integer(oldValue), new Integer(newValue));
     }
 
+    /**
+     * Sets the height of an individual tab.
+     * 
+     * @param newValue the new tab height
+     */
+    public void setTabHeight(Extent newValue) {
+        setProperty(PROPERTY_TAB_HEIGHT, newValue);
+    }
+    
     /**
      * Sets the position where the tabs are located relative to the pane 
      * content.
@@ -64,5 +94,14 @@ implements Pane {
      */
     public void setTabPosition(int newValue) {
         setProperty(PROPERTY_TAB_POSITION, new Integer(newValue));
+    }
+
+    /**
+     * Sets the width of an individual tab.
+     * 
+     * @param newValue the new tab width
+     */
+    public void setTabWidth(Extent newValue) {
+        setProperty(PROPERTY_TAB_WIDTH, newValue);
     }
 }

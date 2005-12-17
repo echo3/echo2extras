@@ -31,6 +31,7 @@ package nextapp.echo2.extras.testapp.testscreen;
 
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
@@ -70,7 +71,9 @@ public class TabPaneTest extends SplitPane {
 
         controlsColumn.addButton("Add TabPane", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                add(tabPane);
+                if (getComponentCount() < 2) {
+                    add(tabPane);
+                }
             }
         });
 
@@ -79,5 +82,20 @@ public class TabPaneTest extends SplitPane {
                 remove(tabPane);
             }
         });
+
+        controlsColumn.addButton("Add Label", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.add(new Label("Tab Pane Child"));
+            }
+        });
+
+        controlsColumn.addButton("Remove Child", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (tabPane.getComponentCount() > 0) {
+                    tabPane.remove(tabPane.getComponentCount() - 1);
+                }
+            }
+        });
+
     }
 }
