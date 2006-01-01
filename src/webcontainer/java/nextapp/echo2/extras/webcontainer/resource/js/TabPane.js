@@ -45,4 +45,17 @@ ExtrasTabPane.MessageProcessor.processDispose = function(disposeMessageElement) 
  */
 ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     var elementId = initMessageElement.getAttribute("eid");
+    var containerElementId = initMessageElement.getAttribute("container-eid");
+    var containerElement = document.getElementById(containerElementId);
+    if (!containerElement) {
+        throw "Container element not found: " + containerElementId;
+    }
+    
+    var tabPaneDivElement = document.createElement"div");
+    tabPaneDivElement.id = elementId;
+    tabPaneDivElement.style.position = "absolute";
+    tabPaneDivElement.style.width = "100%";
+    tabPaneDivElement.style.height = "100%";
+    tabPaneDivElement.style.backgroundColor = "#abcdef";
+    containerElement.appendChild(tabPaneDivElement);
 }

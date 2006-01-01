@@ -12,7 +12,6 @@ import nextapp.echo2.extras.app.TabPane;
 import nextapp.echo2.extras.app.layout.TabPaneLayoutData;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.ContainerInstance;
-import nextapp.echo2.webcontainer.DomUpdateSupport;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webrender.ClientProperties;
@@ -28,7 +27,7 @@ import nextapp.echo2.webrender.service.JavaScriptService;
  * <code>TabPane</code> components.
  */
 public class TabPanePeer 
-implements ComponentSynchronizePeer, DomUpdateSupport {
+implements ComponentSynchronizePeer {
 
     private static void renderCssPositionExpression(CssStyle cssStyle, String parentElementId, int position, boolean vertical) {
         if (vertical) {
@@ -62,9 +61,10 @@ implements ComponentSynchronizePeer, DomUpdateSupport {
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String, nextapp.echo2.app.Component)
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
-        DocumentFragment htmlFragment = rc.getServerMessage().getDocument().createDocumentFragment();
-        renderHtml(rc, update, htmlFragment, component);
-        DomUpdate.renderElementAdd(rc.getServerMessage(), targetId, htmlFragment);
+        ServerMessage serverMessage = rc.getServerMessage();
+        serverMessage.addLibrary(TAB_PANE_SERVICE.getId());
+        TabPane tabPane = (TabPane) component;
+        renderInitDirective(rc, tabPane, targetId);
     }
 
     /**
@@ -91,98 +91,19 @@ implements ComponentSynchronizePeer, DomUpdateSupport {
     }
     
     /**
-     * @see nextapp.echo2.webcontainer.DomUpdateSupport#renderHtml(nextapp.echo2.webcontainer.RenderContext, 
-     *      nextapp.echo2.app.update.ServerComponentUpdate, org.w3c.dom.Node, nextapp.echo2.app.Component)
-     */
-    public void renderHtml(RenderContext rc, ServerComponentUpdate update, Node parentNode, Component component) {
-        ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(TAB_PANE_SERVICE.getId());
-        TabPane tabPane = (TabPane) component;
-        renderInitDirective(rc, tabPane);
-        Document document = serverMessage.getDocument();
-        
-        Element divElement = document.createElement("div");
-        String elementId = ContainerInstance.getElementId(tabPane);
-        divElement.setAttribute("id", elementId);
-        
-        CssStyle divStyle = new CssStyle();
-        divStyle.setAttribute("left", "0px;");
-        divStyle.setAttribute("top", "0px;");
-        divStyle.setAttribute("width", "100%;");
-        divStyle.setAttribute("height", "100%;");
-        divStyle.setAttribute("position", "absolute");
-        divElement.setAttribute("style", divStyle.renderInline());
-        
-        Component[] childComponents = tabPane.getComponents();
-        Element tableElement = document.createElement("table");
-        divElement.appendChild(tableElement);
-        
-        Element tbodyElement = document.createElement("tbody");
-        tableElement.appendChild(tbodyElement);
-        
-        Element trElement = document.createElement("tr");
-        tbodyElement.appendChild(trElement);
-        
-        for (int i = 0; i < childComponents.length; ++i) {
-            Element tdElement = document.createElement("td");
-            trElement.appendChild(tdElement);
-            
-            Element tabLabelDivElement = document.createElement("div");
-            CssStyle tabLabelDivStyle = new CssStyle();
-            tabLabelDivStyle.setAttribute("background-color", "#afafff");
-            tabLabelDivStyle.setAttribute("padding", "2px 8px");
-            tdElement.setAttribute("style", tabLabelDivStyle.renderInline());
-            tdElement.appendChild(tabLabelDivElement);
-            
-            TabPaneLayoutData tabPaneLayoutData = (TabPaneLayoutData) childComponents[i].getLayoutData();
-            String tabTitle = null;
-            if (tabPaneLayoutData != null) {
-                tabTitle = tabPaneLayoutData.getTitle();
-            }
-            tdElement.appendChild(document.createTextNode(tabTitle == null ? Integer.toString(i + 1) : tabTitle));
-        }
-        
-        parentNode.appendChild(divElement);
-    }
-    
-    private void renderInitTabDirective(RenderContext rc, TabPane tabPane, int index) {
-        boolean renderPositioningBothSides = !rc.getContainerInstance().getClientProperties()
-                .getBoolean(ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY);
-        boolean renderSizeExpression = !renderPositioningBothSides && rc.getContainerInstance().getClientProperties()
-                .getBoolean(ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED);
-
-        int tabHeight = ExtentRender.toPixels((Extent) tabPane.getProperty(TabPane.PROPERTY_TAB_HEIGHT), 32);
-        
-        ServerMessage serverMessage = rc.getServerMessage();
-        Document document = serverMessage.getDocument();
-        String elementId = ContainerInstance.getElementId(tabPane);
-        
-        Component childComponent = tabPane.getComponent(index);
-        
-        Element tabContentDivElement = document.createElement("div");
-        tabContentDivElement.setAttribute("id", elementId + "_tabcontent_" + childComponent.getId());
-        
-        CssStyle tabContentDivStyle = new CssStyle();
-        tabContentDivStyle.setAttribute("left", "0px;");
-        tabContentDivStyle.setAttribute("top", tabHeight + "px;");
-        tabContentDivStyle.setAttribute("width", "100%;");
-        tabContentDivStyle.setAttribute("bottom", "0px");
-        tabContentDivElement.setAttribute("position", "absolute");
-        tabContentDivElement.setAttribute("display", "none");
-    }
-
-    /**
      * Renders an initialization directive.
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param tabPane the <code>TabPane</code> being rendered
      */
-    private void renderInitDirective(RenderContext rc, TabPane tabPane) {
+    private void renderInitDirective(RenderContext rc, TabPane tabPane, String targetId) {
         String elementId = ContainerInstance.getElementId(tabPane);
         ServerMessage serverMessage = rc.getServerMessage();
-        Element initElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_POSTUPDATE, 
-                "ExtrasTabPane.MessageProcessor", "init");
+        Element partElement = serverMessage.addPart(ServerMessage.GROUP_ID_UPDATE, "ExtrasTabPane.MessageProcessor");
+        Element initElement = serverMessage.getDocument().createElement("init");
+        initElement.setAttribute("container-eid", targetId);
         initElement.setAttribute("eid", elementId);
+        partElement.appendChild(initElement);
     }
     
     /**
@@ -194,4 +115,35 @@ implements ComponentSynchronizePeer, DomUpdateSupport {
         renderAdd(rc, update, targetId, update.getParent());
         return true;
     }
+    
+//    private void renderDisposeTabDirective(RenderContext rc, TabPane tabPane, int index) {
+//    }
+//    
+//    private void renderInitTabDirective(RenderContext rc, TabPane tabPane, int index) {
+//        boolean renderPositioningBothSides = !rc.getContainerInstance().getClientProperties()
+//                .getBoolean(ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY);
+//        boolean renderSizeExpression = !renderPositioningBothSides && rc.getContainerInstance().getClientProperties()
+//                .getBoolean(ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED);
+//
+//        int tabHeight = ExtentRender.toPixels((Extent) tabPane.getProperty(TabPane.PROPERTY_TAB_HEIGHT), 32);
+//        
+//        ServerMessage serverMessage = rc.getServerMessage();
+//        Document document = serverMessage.getDocument();
+//        String elementId = ContainerInstance.getElementId(tabPane);
+//        
+//        Component childComponent = tabPane.getComponent(index);
+//        
+//        Element tabContentDivElement = document.createElement("div");
+//        tabContentDivElement.setAttribute("id", elementId + "_tabcontent_" + childComponent.getId());
+//        
+//        CssStyle tabContentDivStyle = new CssStyle();
+//        tabContentDivStyle.setAttribute("left", "0px;");
+//        tabContentDivStyle.setAttribute("top", tabHeight + "px;");
+//        tabContentDivStyle.setAttribute("width", "100%;");
+//        tabContentDivStyle.setAttribute("bottom", "0px");
+//        tabContentDivElement.setAttribute("position", "absolute");
+//        tabContentDivElement.setAttribute("display", "none");
+//    }
+
+    
 }

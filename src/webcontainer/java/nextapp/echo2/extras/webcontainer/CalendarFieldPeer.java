@@ -107,7 +107,7 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
     private void renderInitDirective(RenderContext rc, String containerId, CalendarField calendarField) {
         String elementId = ContainerInstance.getElementId(calendarField);
         ServerMessage serverMessage = rc.getServerMessage();
-        Element initElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_POSTUPDATE, 
+        Element initElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
                 "ExtrasCalendarField.MessageProcessor", "init");
         initElement.setAttribute("eid", elementId);
         initElement.setAttribute("container-eid", containerId);

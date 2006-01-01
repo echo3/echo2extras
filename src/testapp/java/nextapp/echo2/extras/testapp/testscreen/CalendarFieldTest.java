@@ -39,7 +39,7 @@ import nextapp.echo2.extras.testapp.ButtonColumn;
 import nextapp.echo2.extras.testapp.StyleUtil;
 
 /**
- * Interactive test module for <code>ContentPane</code>s.
+ * Interactive test module for <code>CalendarField</code>s.
  */
 public class CalendarFieldTest extends SplitPane {
 
