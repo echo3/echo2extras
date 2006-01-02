@@ -1,5 +1,6 @@
 package nextapp.echo2.extras.webcontainer;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import nextapp.echo2.app.Component;
@@ -10,6 +11,7 @@ import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.RenderContext;
+import nextapp.echo2.webcontainer.SynchronizePeerFactory;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
@@ -46,7 +48,7 @@ implements ComponentSynchronizePeer {
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
-        return ContainerInstance.getElementId(child.getParent()) + "_content_" + child.getId();
+        return ContainerInstance.getElementId(child.getParent()) + "_content_" + child.getRenderId();
     }
 
     /**
@@ -62,13 +64,24 @@ implements ComponentSynchronizePeer {
         for (int i = 0; i < children.length; ++i) {
             renderAddTabDirective(rc, update, tabPane, children[i]);
         }
+        for (int i = 0; i < children.length; ++i) {
+            renderChild(rc, update, tabPane, children[i]);
+        }
     }
 
     private void renderAddChildren(RenderContext rc, ServerComponentUpdate update) {
         TabPane tabPane = (TabPane) update.getParent();
         Component[] addedChildren = update.getAddedChildren();
+        
+        // Create tab containers for children (performed in distinct loop from adding 
+        // children in order to minimize ServerMessage length).
         for (int i = 0; i < addedChildren.length; ++i) {
             renderAddTabDirective(rc, update, tabPane, addedChildren[i]);
+        }
+        
+        // Add children.
+        for (int i = 0; i < addedChildren.length; ++i) {
+            renderChild(rc, update, tabPane, addedChildren[i]);
         }
     }
     
@@ -86,6 +99,18 @@ implements ComponentSynchronizePeer {
         }
     }
     
+    /**
+     * Renders an individual child component of the <code>TabPane</code>.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param update the <code>ServerComponentUpdate</code> being performed
+     * @param child The child <code>Component</code> to be rendered
+     */
+    private void renderChild(RenderContext rc, ServerComponentUpdate update, TabPane tabPane, Component child) {
+        ComponentSynchronizePeer syncPeer = SynchronizePeerFactory.getPeerForComponent(child.getClass());
+        syncPeer.renderAdd(rc, update, getContainerId(child), child);
+    }
+
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderDispose(
      *      nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)

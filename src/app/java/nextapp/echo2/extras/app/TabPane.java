@@ -3,12 +3,13 @@ package nextapp.echo2.extras.app;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Pane;
+import nextapp.echo2.app.PaneContainer;
 
 /**
  * A container pane which displays child components in separate tabs.
  */
 public class TabPane extends Component 
-implements Pane {
+implements Pane, PaneContainer {
     
     public static final int TAB_POSITION_TOP = 0;
     public static final int TAB_POSITION_BOTTOM = 1;

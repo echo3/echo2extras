@@ -35,6 +35,7 @@ import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.extras.app.CalendarField;
 import nextapp.echo2.extras.app.TabPane;
 import nextapp.echo2.extras.app.layout.TabPaneLayoutData;
 import nextapp.echo2.extras.testapp.ButtonColumn;
@@ -87,19 +88,31 @@ public class TabPaneTest extends SplitPane {
             }
         });
 
-        controlsColumn.addButton("Add Label", new ActionListener() {
+        controlsColumn.addButton("Add Label (No LayoutData)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.add(new Label("Tab Pane Child"));
+                tabPane.add(new Label("Generic Label"));
             }
         });
 
-        controlsColumn.addButton("Add Label w/ LayoutData", new ActionListener() {
+        controlsColumn.addButton("Add Label", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Label label = new Label("Tab Pane Child");
+                Label label = new Label("Tab Pane Child " + tabNumber);
+                label.setBackground(StyleUtil.randomBrightColor());
                 TabPaneLayoutData layoutData = new TabPaneLayoutData();
-                layoutData.setTitle("Tab Number " + tabNumber++);
+                layoutData.setTitle("Label #" + tabNumber);
                 label.setLayoutData(layoutData);
                 tabPane.add(label);
+                ++tabNumber;
+            }
+        });
+
+        controlsColumn.addButton("Add CalendarField", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                CalendarField calendarField = new CalendarField();
+                TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                layoutData.setTitle("Calendar #" + tabNumber++);
+                calendarField.setLayoutData(layoutData);
+                tabPane.add(calendarField);
             }
         });
 
