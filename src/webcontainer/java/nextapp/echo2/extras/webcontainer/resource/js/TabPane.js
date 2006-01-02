@@ -40,6 +40,8 @@ ExtrasTabPane.MessageProcessor.process = function(messagePartElement) {
  */
 ExtrasTabPane.MessageProcessor.processAddTab = function(addTabMessageElement) {
     var elementId = addTabMessageElement.getAttribute("eid");
+    var renderData = EchoDomPropertyStore.getPropertyValue(elementId, "renderData");
+    
     var tabId = addTabMessageElement.getAttribute("tab-id");
     var title = addTabMessageElement.getAttribute("title");
     
@@ -52,16 +54,21 @@ ExtrasTabPane.MessageProcessor.processAddTab = function(addTabMessageElement) {
     var headerTdElement = document.createElement("td");
     headerTdElement.style.borderWidth = "0px";
     headerTdElement.style.padding = "0px";
+    headerTdElement.style.verticalAlign = "top";
     headerTdElement.id = elementId + "_header_td_" + tabId;
     
     headerDivElement = document.createElement("div");
     headerDivElement.id = elementId + "_header_div_" + tabId;
-    headerDivElement.style.marginTop = "2px";
-    headerDivElement.style.verticalAlign = "top";
-    headerDivElement.style.height = "28px";
-    headerDivElement.style.borderTop = "2px outset #00007f";
-    headerDivElement.style.borderLeft = "2px outset #00007f";
-    headerDivElement.style.borderRight = "2px outset #00007f";
+    headerDivElement.style.overflow = "hidden";
+    
+    headerDivElement.style.marginTop = renderData.selectedHeaderHeightIncrease + "px";
+    headerDivElement.style.height = renderData.calculateDefaultHeaderHeight() + "px";
+    headerDivElement.style.backgroundColor = renderData.defaultHeaderBackground;
+    headerDivElement.style.color = renderData.defaultHeaderForeground;
+    var defaultBorder = renderData.getDefaultBorder();
+    headerDivElement.style.borderTop = defaultBorder;
+    headerDivElement.style.borderLeft = defaultBorder;
+    headerDivElement.style.borderRight = defaultBorder;
     headerDivElement.style.borderBottom = "0px none";
     headerTdElement.appendChild(headerDivElement);
     
@@ -92,32 +99,33 @@ ExtrasTabPane.MessageProcessor.processDispose = function(disposeMessageElement) 
  */
 ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     var elementId = initMessageElement.getAttribute("eid");
+    var renderData = new ExtrasTabPane.RenderData(elementId);
+    
     var containerElementId = initMessageElement.getAttribute("container-eid");
     var containerElement = document.getElementById(containerElementId);
     if (!containerElement) {
         throw "Container element not found: " + containerElementId;
     }
-    var tabHeight = initMessageElement.getAttribute("tab-height");
-    if (!tabHeight) {
-        tabHeight = "32px";
+
+    if (initMessageElement.getAttribute("header-height")) {
+        renderData.headerHeight = initMessageElement.getAttribute("header-height");
     }
     
     var tabPaneDivElement = document.createElement("div");
     tabPaneDivElement.id = elementId;
     tabPaneDivElement.style.position = "absolute";
-    tabPaneDivElement.style.backgroundColor = "#abcdef";
     tabPaneDivElement.style.width = "100%";
     tabPaneDivElement.style.height = "100%";
     
     var headerContainerDivElement = document.createElement("div");
     headerContainerDivElement.id = elementId + "_header";
+    headerContainerDivElement.style.overflow = "hidden";
     headerContainerDivElement.style.zIndex = 1;
-    headerContainerDivElement.style.backgroundColor = "#ff0000";
     headerContainerDivElement.style.position = "absolute";
     headerContainerDivElement.style.top = "0px";
     headerContainerDivElement.style.left = "0px";
     headerContainerDivElement.style.width = "100%";
-    headerContainerDivElement.style.height = "32px";
+    headerContainerDivElement.style.height = (renderData.headerHeight + renderData.borderSize) + "px";
     tabPaneDivElement.appendChild(headerContainerDivElement);
     
     var headerTableElement  = document.createElement("table");
@@ -136,16 +144,20 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     var bodyDivElement = document.createElement("div");
     bodyDivElement.id = elementId + "_body";
     bodyDivElement.style.position = "absolute";
-    bodyDivElement.style.backgroundColor = "#00ff00";
-    bodyDivElement.style.top = "32px";
+    bodyDivElement.style.backgroundColor = renderData.defaultBackground;
+    bodyDivElement.style.color = renderData.defaultForeground;
+    bodyDivElement.style.top = renderData.headerHeight + "px";
     bodyDivElement.style.left = "0px";
     bodyDivElement.style.right = "0px";
     bodyDivElement.style.bottom = "0px";
-    bodyDivElement.style.border = "2px outset #00007f";
+    bodyDivElement.style.border = renderData.getSelectedBorder();
     tabPaneDivElement.appendChild(bodyDivElement);
     
     containerElement.appendChild(tabPaneDivElement);
-    EchoDomPropertyStore.setPropertyValue(elementId, "tabHeight", tabHeight);
+    
+    
+    
+    EchoDomPropertyStore.setPropertyValue(elementId, "renderData", renderData);
     
     EchoEventProcessor.addHandler(headerContainerDivElement.id, "click", "ExtrasTabPane.processClick");
 };
@@ -170,20 +182,88 @@ ExtrasTabPane.MessageProcessor.processRemoveTab = function(removeTabMessageEleme
  * Data object housed in DomPropertyStore describing rendering information 
  * about the TabPane.
  */
-ExtrasTabPane.RenderData = function() {
+ExtrasTabPane.RenderData = function(elementId) {
+    this.selectedTabId = null;
+
+    this.elementId = elementId;
     this.defaultBackground = "#ffffff";
     this.defaultForeground = "#000000";
-    this.selectedHeaderBackground = null;
-    this.selectedHeaderForeground = null;
+    this.selectedHeaderBackground = "#ffffff";
+    this.selectedHeaderForeground = "";
     this.defaultHeaderBackground = "#afafcf";
-    this.defaultHeaderForeground = null;
-    this.defaultBorderSize = 1;
+    this.defaultHeaderForeground = "";
+    this.borderSize = 2;
+    this.defaultBorderStyle = "groove";
+    this.defaultBorderColor = "#abcdef";
+    this.selectedBorderStyle = "groove";
+    this.selectedBorderColor = "#abcdef";
+    this.headerPaddingTop = 0;
+    this.headerPaddingLeft = 0;
+    this.headerPaddingRight = 0;
+    this.headerPaddingBottom = 0;
+    
     this.headerHeight = 32;
+    this.selectedHeaderHeightIncrease = 2;
+};
+
+ExtrasTabPane.RenderData.prototype.calculateDefaultHeaderHeight = function() {
+    return this.headerHeight - this.headerPaddingTop - this.headerPaddingBottom - this.selectedHeaderHeightIncrease
+            - this.borderSize;
+};
+
+ExtrasTabPane.RenderData.prototype.calculateSelectedHeaderHeight = function() {
+    // Note: Border size is added and then removed for no effect.
+    return this.headerHeight - this.headerPaddingTop - this.headerPaddingBottom;
+};
+
+ExtrasTabPane.RenderData.prototype.getDefaultBorder = function() {
+    return this.borderSize + "px " + this.defaultBorderStyle + " " + this.defaultBorderColor;
+};
+
+ExtrasTabPane.RenderData.prototype.getSelectedBorder = function() {
+    return this.borderSize + "px " + this.selectedBorderStyle + " " + this.selectedBorderColor;
 };
 
 ExtrasTabPane.processClick = function(echoEvent) {
-    var headerDivElement = document.getElementById(echoEvent.target.id);
-    headerDivElement.style.marginTop = "0px";
-    headerDivElement.style.height = "32px";
+    var elementId = echoEvent.target.id;
+    var tabPaneId = EchoDomUtil.getComponentId(elementId);
+    var headerDivTextIndex = elementId.indexOf("_header_div_");
+    if (headerDivTextIndex == -1) {
+        return;
+    }
+    var tabId = elementId.substring(headerDivTextIndex + 12);
+    ExtrasTabPane.selectTab(tabPaneId, tabId);
 };
 
+ExtrasTabPane.selectTab = function(tabPaneId, newTabId) {
+    var renderData = EchoDomPropertyStore.getPropertyValue(tabPaneId, "renderData"); 
+    
+    if (renderData.selectedTabId) {
+        // Update state of previous selected header.
+	    var oldHeaderDivElement = document.getElementById(tabPaneId + "_header_div_" + renderData.selectedTabId);
+	    if (oldHeaderDivElement != null) {
+		    oldHeaderDivElement.style.marginTop = renderData.selectedHeaderHeightIncrease + "px";
+		    oldHeaderDivElement.style.height = renderData.calculateDefaultHeaderHeight() + "px";
+		    oldHeaderDivElement.style.backgroundColor = renderData.defaultHeaderBackground;
+		    oldHeaderDivElement.style.color = renderData.defaultHeaderForeground;
+		    var defaultBorder = renderData.getDefaultBorder();
+		    oldHeaderDivElement.style.borderTop = defaultBorder;
+		    oldHeaderDivElement.style.borderLeft = defaultBorder;
+		    oldHeaderDivElement.style.borderRight = defaultBorder;
+	    }
+    }
+    
+    // Update state of newly selected header.
+    var newHeaderDivElement = document.getElementById(tabPaneId + "_header_div_" + newTabId);
+    newHeaderDivElement.style.marginTop = "0px";
+    newHeaderDivElement.style.height = renderData.calculateSelectedHeaderHeight() + "px";
+    newHeaderDivElement.style.backgroundColor = renderData.selectedHeaderBackground;
+    newHeaderDivElement.style.color = renderData.selectedHeaderForeground;
+    var selectedBorder = renderData.getSelectedBorder();
+    newHeaderDivElement.style.borderTop = selectedBorder;
+    newHeaderDivElement.style.borderLeft = selectedBorder;
+    newHeaderDivElement.style.borderRight = selectedBorder;
+    
+    // Update state information.
+    renderData.selectedTabId = newTabId;
+};

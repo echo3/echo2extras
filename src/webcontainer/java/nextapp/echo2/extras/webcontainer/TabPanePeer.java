@@ -122,7 +122,6 @@ implements ComponentSynchronizePeer {
         Element initElement = serverMessage.getDocument().createElement("init");
         initElement.setAttribute("container-eid", targetId);
         initElement.setAttribute("eid", elementId);
-        initElement.setAttribute("tab-height", "32px");
         partElement.appendChild(initElement);
     }
     
