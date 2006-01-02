@@ -55,8 +55,14 @@ ExtrasTabPane.MessageProcessor.processAddTab = function(addTabMessageElement) {
     headerTdElement.id = elementId + "_header_td_" + tabId;
     
     headerDivElement = document.createElement("div");
-    headerDivElement.style.height = 32;
-    headerDivElement.style.border = "2px outset #00007f";
+    headerDivElement.id = elementId + "_header_div_" + tabId;
+    headerDivElement.style.marginTop = "2px";
+    headerDivElement.style.verticalAlign = "top";
+    headerDivElement.style.height = "28px";
+    headerDivElement.style.borderTop = "2px outset #00007f";
+    headerDivElement.style.borderLeft = "2px outset #00007f";
+    headerDivElement.style.borderRight = "2px outset #00007f";
+    headerDivElement.style.borderBottom = "0px none";
     headerTdElement.appendChild(headerDivElement);
     
     headerDivElement.appendChild(document.createTextNode(title === null ? "*" : title));
@@ -75,6 +81,7 @@ ExtrasTabPane.MessageProcessor.processAddTab = function(addTabMessageElement) {
  */
 ExtrasTabPane.MessageProcessor.processDispose = function(disposeMessageElement) {
     var elementId = disposeMessageElement.getAttribute("eid");
+    EchoEventProcessor.removeHandler(elementId, "click");
 };
 
 /**
@@ -104,6 +111,7 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     
     var headerContainerDivElement = document.createElement("div");
     headerContainerDivElement.id = elementId + "_header";
+    headerContainerDivElement.style.zIndex = 1;
     headerContainerDivElement.style.backgroundColor = "#ff0000";
     headerContainerDivElement.style.position = "absolute";
     headerContainerDivElement.style.top = "0px";
@@ -138,11 +146,13 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     
     containerElement.appendChild(tabPaneDivElement);
     EchoDomPropertyStore.setPropertyValue(elementId, "tabHeight", tabHeight);
+    
+    EchoEventProcessor.addHandler(headerContainerDivElement.id, "click", "ExtrasTabPane.processClick");
 };
 
 /**
  * Processes a <code>remove-tab</code> message to remove a tab from the TabPane.
- *
+ * 
  * @param removeTabMessageElement the <code>remove-tab</code> element to process
  */
 ExtrasTabPane.MessageProcessor.processRemoveTab = function(removeTabMessageElement) {
@@ -154,5 +164,26 @@ ExtrasTabPane.MessageProcessor.processRemoveTab = function(removeTabMessageEleme
         throw "Tab header not found for id: " + headerTdElementId;
     }
     headerTdElement.parentNode.removeChild(headerTdElement);
+};
+
+/**
+ * Data object housed in DomPropertyStore describing rendering information 
+ * about the TabPane.
+ */
+ExtrasTabPane.RenderData = function() {
+    this.defaultBackground = "#ffffff";
+    this.defaultForeground = "#000000";
+    this.selectedHeaderBackground = null;
+    this.selectedHeaderForeground = null;
+    this.defaultHeaderBackground = "#afafcf";
+    this.defaultHeaderForeground = null;
+    this.defaultBorderSize = 1;
+    this.headerHeight = 32;
+};
+
+ExtrasTabPane.processClick = function(echoEvent) {
+    var headerDivElement = document.getElementById(echoEvent.target.id);
+    headerDivElement.style.marginTop = "0px";
+    headerDivElement.style.height = "32px";
 };
 
