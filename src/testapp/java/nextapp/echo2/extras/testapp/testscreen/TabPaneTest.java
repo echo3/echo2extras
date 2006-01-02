@@ -116,6 +116,16 @@ public class TabPaneTest extends SplitPane {
             }
         });
 
+        controlsColumn.addButton("Add TabPaneTest", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                TabPaneTest tabPaneTest = new TabPaneTest();
+                TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                layoutData.setTitle("TPT #" + tabNumber++);
+                tabPaneTest.setLayoutData(layoutData);
+                tabPane.add(tabPaneTest);
+            }
+        });
+
         controlsColumn.addButton("Remove Child", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (tabPane.getComponentCount() > 0) {
