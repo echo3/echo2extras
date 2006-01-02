@@ -5,6 +5,7 @@ import org.w3c.dom.Element;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.extras.app.TabPane;
+import nextapp.echo2.extras.app.layout.TabPaneLayoutData;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.PartialUpdateManager;
@@ -72,11 +73,17 @@ implements ComponentSynchronizePeer {
     }
     
     private void renderAddTabDirective(RenderContext rc, ServerComponentUpdate update, TabPane tabPane, Component child) {
+        TabPaneLayoutData layoutData = (TabPaneLayoutData) child.getLayoutData();
         String elementId = ContainerInstance.getElementId(tabPane);
         Element addPartElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
                 "ExtrasTabPane.MessageProcessor", "add-tab");
         addPartElement.setAttribute("eid", elementId);
         addPartElement.setAttribute("tab-id", child.getRenderId());
+        if (layoutData != null) {
+            if (layoutData.getTitle() != null) {
+                addPartElement.setAttribute("title", layoutData.getTitle()); 
+            }
+        }
     }
     
     /**
@@ -115,6 +122,7 @@ implements ComponentSynchronizePeer {
         Element initElement = serverMessage.getDocument().createElement("init");
         initElement.setAttribute("container-eid", targetId);
         initElement.setAttribute("eid", elementId);
+        initElement.setAttribute("tab-height", "32px");
         partElement.appendChild(initElement);
     }
     
