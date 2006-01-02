@@ -97,8 +97,9 @@ ExtrasTabPane.MessageProcessor.processAddTab = function(addTabMessageElement) {
  * @param disposeMessageElement the <code>dispose</code> element to process
  */
 ExtrasTabPane.MessageProcessor.processDispose = function(disposeMessageElement) {
-    var elementId = disposeMessageElement.getAttribute("eid");
-    EchoEventProcessor.removeHandler(elementId, "click");
+    var tabPaneId = disposeMessageElement.getAttribute("eid");
+    var headerDivElementId = tabPaneId + "_header";
+    EchoEventProcessor.removeHandler(headerDivElementId, "click");
 };
 
 /**
