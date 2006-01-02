@@ -179,6 +179,11 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
 ExtrasTabPane.MessageProcessor.processRemoveTab = function(removeTabMessageElement) {
     var elementId = removeTabMessageElement.getAttribute("eid");
     var tabId = removeTabMessageElement.getAttribute("tab-id");
+    var renderData = EchoDomPropertyStore.getPropertyValue(elementId, "renderData");
+    
+    if (renderData.selectedTabId === tabId) {
+        ExtrasTabPane.selectTab(elementId, null);
+    }
 
     var headerTdElementId = elementId + "_header_td_" + tabId;
     var headerTdElement = document.getElementById(headerTdElementId);
