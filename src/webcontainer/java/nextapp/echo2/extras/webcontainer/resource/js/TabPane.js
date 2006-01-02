@@ -16,15 +16,32 @@ ExtrasTabPane.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType === 1) {
             switch (messagePartElement.childNodes[i].tagName) {
-            case "init":
-                ExtrasTabPane.MessageProcessor.processInit(messagePartElement.childNodes[i]);
+            case "add-tab":
+                ExtrasTabPane.MessageProcessor.processAddTab(messagePartElement.childNodes[i]);
                 break;
             case "dispose":
                 ExtrasTabPane.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
                 break;
+            case "init":
+                ExtrasTabPane.MessageProcessor.processInit(messagePartElement.childNodes[i]);
+                break;
+            case "remove-tab":
+                ExtrasTabPane.MessageProcessor.processRemoveTab(messagePartElement.childNodes[i]);
+                break;
             }
         }
     }
+};
+
+/**
+ * Processes an <code>add-tab</code> message to add a new tab to the TabPane.
+ *
+ * @param addTabMessageElement the <code>add-tab</code> element to process
+ */
+ExtrasTabPane.MessageProcessor.processAddTab = function(addTabMessageElement) {
+    var elementId = addTabMessageElement.getAttribute("eid");
+    var tabId = addTabMessageElement.getAttribute("tab-id");
+    alert("add: elementId=" + elementId + ",tabId=" + tabId);
 };
 
 /**
@@ -51,11 +68,23 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
         throw "Container element not found: " + containerElementId;
     }
     
-    var tabPaneDivElement = document.createElement"div");
+    var tabPaneDivElement = document.createElement("div");
     tabPaneDivElement.id = elementId;
     tabPaneDivElement.style.position = "absolute";
     tabPaneDivElement.style.width = "100%";
     tabPaneDivElement.style.height = "100%";
     tabPaneDivElement.style.backgroundColor = "#abcdef";
     containerElement.appendChild(tabPaneDivElement);
-}
+};
+
+/**
+ * Processes a <code>remove-tab</code> message to remove a tab from the TabPane.
+ *
+ * @param removeTabMessageElement the <code>remove-tab</code> element to process
+ */
+ExtrasTabPane.MessageProcessor.processRemoveTab = function(removeTabMessageElement) {
+    var elementId = removeTabMessageElement.getAttribute("eid");
+    var tabId = removeTabMessageElement.getAttribute("tab-id");
+    alert("remove: elementId=" + elementId + ",tabId=" + tabId);
+};
+
