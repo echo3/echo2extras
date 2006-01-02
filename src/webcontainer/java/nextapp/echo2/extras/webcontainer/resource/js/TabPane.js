@@ -148,6 +148,11 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
 ExtrasTabPane.MessageProcessor.processRemoveTab = function(removeTabMessageElement) {
     var elementId = removeTabMessageElement.getAttribute("eid");
     var tabId = removeTabMessageElement.getAttribute("tab-id");
-    alert("remove: elementId=" + elementId + ",tabId=" + tabId);
+    var headerTdElementId = elementId + "_header_td_" + tabId;
+    var headerTdElement = document.getElementById(headerTdElementId);
+    if (!headerTdElement) {
+        throw "Tab header not found for id: " + headerTdElementId;
+    }
+    headerTdElement.parentNode.removeChild(headerTdElement);
 };
 
