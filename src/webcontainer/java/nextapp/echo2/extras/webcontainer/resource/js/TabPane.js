@@ -28,6 +28,9 @@ ExtrasTabPane.MessageProcessor.process = function(messagePartElement) {
             case "remove-tab":
                 ExtrasTabPane.MessageProcessor.processRemoveTab(messagePartElement.childNodes[i]);
                 break;
+            case "set-active-tab":
+                ExtrasTabPane.MessageProcessor.processSetActiveTab(messagePartElement.childNodes[i]);
+                break;
             }
         }
     }
@@ -92,6 +95,10 @@ ExtrasTabPane.MessageProcessor.processAddTab = function(addTabMessageElement) {
 		headerTrElement.insertBefore(headerTdElement, headerTrElement.childNodes[tabIndex]);
     } else {
 		headerTrElement.appendChild(headerTdElement);
+    }
+    
+    if (renderData.selectedTabId == null) {
+        ExtrasTabPane.selectTab(elementId, tabId);
     }
 };
 
@@ -207,6 +214,17 @@ ExtrasTabPane.MessageProcessor.processRemoveTab = function(removeTabMessageEleme
 };
 
 /**
+ * Processes a <code>set-active-tab</code> message to set the active tab.
+ * 
+ * @param setActiveTabMessageElement the <code>set-active-tab</code> element to process
+ */
+ExtrasTabPane.MessageProcessor.processSetActiveTab = function(setActiveTabMessageElement) {
+    var tabPaneId = setActiveTabMessageElement.getAttribute("eid");
+    var tabId = setActiveTabMessageElement.getAttribute("tab-id");
+    ExtrasTabPane.selectTab(tabPaneId, tabId);
+};
+
+/**
  * Data object housed in DomPropertyStore describing rendering information 
  * about the TabPane.
  */
@@ -260,6 +278,8 @@ ExtrasTabPane.processClick = function(echoEvent) {
         return;
     }
     var tabId = elementId.substring(headerDivTextIndex + 12);
+    
+    EchoClientMessage.setPropertyValue(tabPaneId, "activeTab", tabId);
     ExtrasTabPane.selectTab(tabPaneId, tabId);
 };
 

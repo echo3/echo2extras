@@ -9,6 +9,8 @@ import nextapp.echo2.extras.app.layout.TabPaneLayoutData;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.PartialUpdateManager;
+import nextapp.echo2.webcontainer.PartialUpdateParticipant;
+import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
 import nextapp.echo2.webrender.ServerMessage;
@@ -22,8 +24,10 @@ import nextapp.echo2.webrender.service.JavaScriptService;
  * <code>TabPane</code> components.
  */
 public class TabPanePeer 
-implements ComponentSynchronizePeer {
+implements ComponentSynchronizePeer, PropertyUpdateProcessor {
 
+    private static final String PROPERTY_ACTIVE_TAB = "activeTab";
+    
     /**
      * Service to provide supporting JavaScript library.
      */
@@ -34,6 +38,31 @@ implements ComponentSynchronizePeer {
         WebRenderServlet.getServiceRegistry().add(TAB_PANE_SERVICE);
     }
     
+    /**
+     * <code>PartialUpdateParticipant</code> to update active tab.
+     */
+    private PartialUpdateParticipant activeTabUpdateParticipant = new PartialUpdateParticipant() {
+    
+        /**
+         * @see nextapp.echo2.webcontainer.PartialUpdateParticipant#renderProperty(nextapp.echo2.webcontainer.RenderContext,
+         *       nextapp.echo2.app.update.ServerComponentUpdate)
+         */
+        public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
+            renderSetActiveTabDirective(rc, update, (TabPane) update.getParent());
+        }
+    
+        /**
+         * @see nextapp.echo2.webcontainer.PartialUpdateParticipant#canRenderProperty(nextapp.echo2.webcontainer.RenderContext, 
+         *      nextapp.echo2.app.update.ServerComponentUpdate)
+         */
+        public boolean canRenderProperty(RenderContext rc, ServerComponentUpdate update) {
+            return true;
+        }
+    };
+    
+    /**
+     * The <code>PartialUpdateManager</code> for this synchronization peer.
+     */
     private PartialUpdateManager partialUpdateManager;
     
     /**
@@ -41,6 +70,7 @@ implements ComponentSynchronizePeer {
      */
     public TabPanePeer() {
         partialUpdateManager = new PartialUpdateManager();
+        partialUpdateManager.add(TabPane.ACTIVE_TAB_CHANGED_PROPERTY, activeTabUpdateParticipant);
     }
 
     /**
@@ -48,6 +78,21 @@ implements ComponentSynchronizePeer {
      */
     public String getContainerId(Component child) {
         return ContainerInstance.getElementId(child.getParent()) + "_content_" + child.getRenderId();
+    }
+
+
+    /**
+     * @see nextapp.echo2.webcontainer.PropertyUpdateProcessor#processPropertyUpdate(nextapp.echo2.webcontainer.ContainerInstance, 
+     *      nextapp.echo2.app.Component, org.w3c.dom.Element)
+     */
+    public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
+        String propertyName = propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME);
+        if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
+            Integer value = new Integer(propertyElement.getAttribute("value"));
+            ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, 
+                    TabPane.ACTIVE_TAB_CHANGED_PROPERTY, value);
+        }
+        
     }
 
     /**
@@ -164,6 +209,18 @@ implements ComponentSynchronizePeer {
                 "ExtrasTabPane.MessageProcessor", "remove-tab");
         removePartElement.setAttribute("eid", elementId);
         removePartElement.setAttribute("tab-id", child.getRenderId());
+    }
+    
+    private void renderSetActiveTabDirective(RenderContext rc, ServerComponentUpdate update, TabPane tabPane) {
+        Component activeTab = tabPane.getActiveTab();
+        if (activeTab == null) {
+            return;
+        }
+        String elementId = ContainerInstance.getElementId(tabPane);
+        Element removePartElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_REMOVE, 
+                "ExtrasTabPane.MessageProcessor", "set-active-tab");
+        removePartElement.setAttribute("eid", elementId);
+        removePartElement.setAttribute("tab-id", activeTab.getRenderId());
     }
     
     /**

@@ -198,10 +198,32 @@ public class TabPaneTest extends SplitPane {
             }
         });
 
-        controlsColumn.addButton("Remove Child", new ActionListener() {
+        controlsColumn.addButton("Remove Last Tab", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (tabPane.getComponentCount() > 0) {
                     tabPane.remove(tabPane.getComponentCount() - 1);
+                }
+            }
+        });
+
+        controlsColumn.addButton("Select TabIndex 0", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setActiveTabIndex(0);
+            }
+        });
+
+        controlsColumn.addButton("Select TabIndex 2", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (tabPane.getComponentCount() > 0) {
+                    tabPane.setActiveTabIndex(2);
+                }
+            }
+        });
+
+        controlsColumn.addButton("Select Tab Null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (tabPane.getComponentCount() > 0) {
+                    tabPane.setActiveTab(null);
                 }
             }
         });
