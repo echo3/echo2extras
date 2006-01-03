@@ -22,6 +22,96 @@ ExtrasTabPane = function(elementId) {
     this.selectedHeaderHeightIncrease = 2;
 };
 
+ExtrasTabPane.prototype.calculateDefaultHeaderHeight = function() {
+    return this.headerHeight - this.headerPaddingTop - this.headerPaddingBottom - this.selectedHeaderHeightIncrease
+            - this.borderSize;
+};
+
+ExtrasTabPane.prototype.calculateSelectedHeaderHeight = function() {
+    // Note: Border size is added and then removed for no effect.
+    return this.headerHeight - this.headerPaddingTop - this.headerPaddingBottom;
+};
+
+ExtrasTabPane.prototype.getDefaultBorder = function() {
+    return this.borderSize + "px " + this.defaultBorderStyle + " " + this.defaultBorderColor;
+};
+
+ExtrasTabPane.prototype.getSelectedBorder = function() {
+    return this.borderSize + "px " + this.selectedBorderStyle + " " + this.selectedBorderColor;
+};
+
+ExtrasTabPane.prototype.selectTab = function(newTabId) {
+    if (this.selectedTabId) {
+        // Update state of previous selected header.
+	    var oldHeaderDivElement = document.getElementById(this.elementId + "_header_div_" + this.selectedTabId);
+	    if (oldHeaderDivElement != null) {
+		    oldHeaderDivElement.style.marginTop = this.selectedHeaderHeightIncrease + "px";
+		    oldHeaderDivElement.style.height = this.calculateDefaultHeaderHeight() + "px";
+		    oldHeaderDivElement.style.backgroundColor = this.defaultHeaderBackground;
+		    oldHeaderDivElement.style.color = this.defaultHeaderForeground;
+		    var defaultBorder = this.getDefaultBorder();
+		    oldHeaderDivElement.style.borderTop = defaultBorder;
+		    oldHeaderDivElement.style.borderLeft = defaultBorder;
+		    oldHeaderDivElement.style.borderRight = defaultBorder;
+		    oldHeaderDivElement.style.cursor = "pointer";
+	    }
+
+	    // Hide deselected content.
+	    var oldContentDivElement = document.getElementById(this.elementId + "_content_" + this.selectedTabId);
+	    if (oldContentDivElement != null) {
+		    oldContentDivElement.style.display = "none";
+	    }
+    }
+    
+    if (!newTabId) {
+        // Select last existing tab.
+        var headerTrElement = document.getElementById(this.elementId + "_header_tr");
+        if (headerTrElement.childNodes.length > 0) {
+            var tdId = headerTrElement.childNodes[headerTrElement.childNodes.length - 1].id;
+            newTabId = tdId.substring(tdId.lastIndexOf("_") + 1);
+        }
+    }
+    
+    if (newTabId) {
+	    // Update state of newly selected header.
+	    var newHeaderDivElement = document.getElementById(this.elementId + "_header_div_" + newTabId);
+	    newHeaderDivElement.style.marginTop = "0px";
+	    newHeaderDivElement.style.height = this.calculateSelectedHeaderHeight() + "px";
+	    newHeaderDivElement.style.backgroundColor = this.selectedHeaderBackground;
+	    newHeaderDivElement.style.color = this.selectedHeaderForeground;
+	    var selectedBorder = this.getSelectedBorder();
+	    newHeaderDivElement.style.borderTop = selectedBorder;
+	    newHeaderDivElement.style.borderLeft = selectedBorder;
+	    newHeaderDivElement.style.borderRight = selectedBorder;
+	    newHeaderDivElement.style.cursor = "default";
+	    
+	    // Display selected content.
+	    var oldContentDivElement = document.getElementById(this.elementId + "_content_" + newTabId);
+	    oldContentDivElement.style.display = "block";
+    }
+    
+    // Update state information.
+    this.selectedTabId = newTabId;
+};
+
+ExtrasTabPane.getTabPane = function(tabPaneId) {
+    return EchoDomPropertyStore.getPropertyValue(tabPaneId, "tabPane");
+};
+
+ExtrasTabPane.processClick = function(echoEvent) {
+    var elementId = echoEvent.target.id;
+    var tabPaneId = EchoDomUtil.getComponentId(elementId);
+    var tabPane = ExtrasTabPane.getTabPane(tabPaneId);
+    var headerDivTextIndex = elementId.indexOf("_header_div_");
+    if (headerDivTextIndex == -1) {
+        return;
+    }
+    var tabId = elementId.substring(headerDivTextIndex + 12);
+    
+    EchoClientMessage.setPropertyValue(tabPaneId, "activeTab", tabId);
+    tabPane.selectTab(tabId);
+};
+
 /**
  * Static object/namespace for TabPane MessageProcessor 
  * implementation.
@@ -245,94 +335,4 @@ ExtrasTabPane.MessageProcessor.processSetActiveTab = function(setActiveTabMessag
     var tabId = setActiveTabMessageElement.getAttribute("tab-id");
     var tabPane = ExtrasTabPane.getTabPane(tabPaneId);
     tabPane.selectTab(tabId);
-};
-
-ExtrasTabPane.prototype.calculateDefaultHeaderHeight = function() {
-    return this.headerHeight - this.headerPaddingTop - this.headerPaddingBottom - this.selectedHeaderHeightIncrease
-            - this.borderSize;
-};
-
-ExtrasTabPane.prototype.calculateSelectedHeaderHeight = function() {
-    // Note: Border size is added and then removed for no effect.
-    return this.headerHeight - this.headerPaddingTop - this.headerPaddingBottom;
-};
-
-ExtrasTabPane.prototype.getDefaultBorder = function() {
-    return this.borderSize + "px " + this.defaultBorderStyle + " " + this.defaultBorderColor;
-};
-
-ExtrasTabPane.prototype.getSelectedBorder = function() {
-    return this.borderSize + "px " + this.selectedBorderStyle + " " + this.selectedBorderColor;
-};
-
-ExtrasTabPane.getTabPane = function(tabPaneId) {
-    return EchoDomPropertyStore.getPropertyValue(tabPaneId, "tabPane");
-};
-
-ExtrasTabPane.processClick = function(echoEvent) {
-    var elementId = echoEvent.target.id;
-    var tabPaneId = EchoDomUtil.getComponentId(elementId);
-    var tabPane = ExtrasTabPane.getTabPane(tabPaneId);
-    var headerDivTextIndex = elementId.indexOf("_header_div_");
-    if (headerDivTextIndex == -1) {
-        return;
-    }
-    var tabId = elementId.substring(headerDivTextIndex + 12);
-    
-    EchoClientMessage.setPropertyValue(tabPaneId, "activeTab", tabId);
-    tabPane.selectTab(tabId);
-};
-
-ExtrasTabPane.prototype.selectTab = function(newTabId) {
-    if (this.selectedTabId) {
-        // Update state of previous selected header.
-	    var oldHeaderDivElement = document.getElementById(this.elementId + "_header_div_" + this.selectedTabId);
-	    if (oldHeaderDivElement != null) {
-		    oldHeaderDivElement.style.marginTop = this.selectedHeaderHeightIncrease + "px";
-		    oldHeaderDivElement.style.height = this.calculateDefaultHeaderHeight() + "px";
-		    oldHeaderDivElement.style.backgroundColor = this.defaultHeaderBackground;
-		    oldHeaderDivElement.style.color = this.defaultHeaderForeground;
-		    var defaultBorder = this.getDefaultBorder();
-		    oldHeaderDivElement.style.borderTop = defaultBorder;
-		    oldHeaderDivElement.style.borderLeft = defaultBorder;
-		    oldHeaderDivElement.style.borderRight = defaultBorder;
-		    oldHeaderDivElement.style.cursor = "pointer";
-	    }
-
-	    // Hide deselected content.
-	    var oldContentDivElement = document.getElementById(this.elementId + "_content_" + this.selectedTabId);
-	    if (oldContentDivElement != null) {
-		    oldContentDivElement.style.display = "none";
-	    }
-    }
-    
-    if (!newTabId) {
-        // Select last existing tab.
-        var headerTrElement = document.getElementById(this.elementId + "_header_tr");
-        if (headerTrElement.childNodes.length > 0) {
-            var tdId = headerTrElement.childNodes[headerTrElement.childNodes.length - 1].id;
-            newTabId = tdId.substring(tdId.lastIndexOf("_") + 1);
-        }
-    }
-    
-    if (newTabId) {
-	    // Update state of newly selected header.
-	    var newHeaderDivElement = document.getElementById(this.elementId + "_header_div_" + newTabId);
-	    newHeaderDivElement.style.marginTop = "0px";
-	    newHeaderDivElement.style.height = this.calculateSelectedHeaderHeight() + "px";
-	    newHeaderDivElement.style.backgroundColor = this.selectedHeaderBackground;
-	    newHeaderDivElement.style.color = this.selectedHeaderForeground;
-	    var selectedBorder = this.getSelectedBorder();
-	    newHeaderDivElement.style.borderTop = selectedBorder;
-	    newHeaderDivElement.style.borderLeft = selectedBorder;
-	    newHeaderDivElement.style.borderRight = selectedBorder;
-	    newHeaderDivElement.style.cursor = "default";
-	    
-	    // Display selected content.
-	    var oldContentDivElement = document.getElementById(this.elementId + "_content_" + newTabId);
-	    oldContentDivElement.style.display = "block";
-    }
-    
-    // Update state information.
-    this.selectedTabId = newTabId;
 };
