@@ -194,10 +194,6 @@ ExtrasTabPane.MessageProcessor.processRemoveTab = function(removeTabMessageEleme
     var tabId = removeTabMessageElement.getAttribute("tab-id");
     var renderData = EchoDomPropertyStore.getPropertyValue(elementId, "renderData");
     
-    if (renderData.selectedTabId === tabId) {
-        ExtrasTabPane.selectTab(elementId, null);
-    }
-
     var headerTdElementId = elementId + "_header_td_" + tabId;
     var headerTdElement = document.getElementById(headerTdElementId);
     if (!headerTdElement) {
@@ -211,6 +207,10 @@ ExtrasTabPane.MessageProcessor.processRemoveTab = function(removeTabMessageEleme
         throw "Content not found for id: " + contentDivElementId;
     }
     contentDivElement.parentNode.removeChild(contentDivElement);
+
+    if (renderData.selectedTabId === tabId) {
+        ExtrasTabPane.selectTab(elementId, null);
+    }
 };
 
 /**
@@ -303,7 +303,18 @@ ExtrasTabPane.selectTab = function(tabPaneId, newTabId) {
 
 	    // Hide deselected content.
 	    var oldContentDivElement = document.getElementById(tabPaneId + "_content_" + renderData.selectedTabId);
-	    oldContentDivElement.style.display = "none";
+	    if (oldContentDivElement != null) {
+		    oldContentDivElement.style.display = "none";
+	    }
+    }
+    
+    if (!newTabId) {
+        // Select last existing tab.
+        var headerTrElement = document.getElementById(tabPaneId + "_header_tr");
+        if (headerTrElement.childNodes.length > 0) {
+            var tdId = headerTrElement.childNodes[headerTrElement.childNodes.length - 1].id;
+            newTabId = tdId.substring(tdId.lastIndexOf("_") + 1);
+        }
     }
     
     if (newTabId) {
