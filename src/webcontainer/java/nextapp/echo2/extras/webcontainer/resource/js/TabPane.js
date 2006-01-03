@@ -17,6 +17,7 @@ ExtrasTabPane = function(elementId) {
     this.headerPaddingLeft = 8;
     this.headerPaddingRight = 8;
     this.headerPaddingBottom = 3;
+    this.renderBox = false;
     
     this.headerHeight = 32;
     this.selectedHeaderHeightIncrease = 2;
@@ -286,7 +287,11 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     contentContainerDivElement.style.left = "0px";
     contentContainerDivElement.style.right = "0px";
     contentContainerDivElement.style.bottom = "0px";
-    contentContainerDivElement.style.border = tabPane.getSelectedBorder();
+    if (tabPane.renderBox) {
+	    contentContainerDivElement.style.border = tabPane.getSelectedBorder();
+    } else {
+	    contentContainerDivElement.style.borderTop = tabPane.getSelectedBorder();
+    }
     tabPaneDivElement.appendChild(contentContainerDivElement);
     
     containerElement.appendChild(tabPaneDivElement);
