@@ -1,6 +1,5 @@
 package nextapp.echo2.extras.webcontainer;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import nextapp.echo2.app.Component;
@@ -92,6 +91,7 @@ implements ComponentSynchronizePeer {
                 "ExtrasTabPane.MessageProcessor", "add-tab");
         addPartElement.setAttribute("eid", elementId);
         addPartElement.setAttribute("tab-id", child.getRenderId());
+        addPartElement.setAttribute("tab-index", Integer.toString(tabPane.indexOf(child)));
         if (layoutData != null) {
             if (layoutData.getTitle() != null) {
                 addPartElement.setAttribute("title", layoutData.getTitle()); 

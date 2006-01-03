@@ -43,6 +43,7 @@ ExtrasTabPane.MessageProcessor.processAddTab = function(addTabMessageElement) {
     var renderData = EchoDomPropertyStore.getPropertyValue(elementId, "renderData");
     
     var tabId = addTabMessageElement.getAttribute("tab-id");
+    var tabIndex = addTabMessageElement.getAttribute("tab-index");
     var title = addTabMessageElement.getAttribute("title");
     
     tabPaneDivElement = document.getElementById(elementId);
@@ -87,7 +88,11 @@ ExtrasTabPane.MessageProcessor.processAddTab = function(addTabMessageElement) {
     contentDivElement.style.height = "100%";
     contentContainerDivElement.appendChild(contentDivElement);
     
-    headerTrElement.appendChild(headerTdElement);
+    if (tabIndex < headerTrElement.childNodes.length) {
+		headerTrElement.insertBefore(headerTdElement, headerTrElement.childNodes[tabIndex]);
+    } else {
+		headerTrElement.appendChild(headerTdElement);
+    }
 };
 
 /**

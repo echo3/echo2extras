@@ -106,6 +106,34 @@ public class TabPaneTest extends SplitPane {
             }
         });
 
+        controlsColumn.addButton("Add Label (index 0)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Label label = new Label("Tab Pane Child " + tabNumber);
+                label.setBackground(StyleUtil.randomBrightColor());
+                TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                layoutData.setTitle("Inserted Label #" + tabNumber);
+                label.setLayoutData(layoutData);
+                tabPane.add(label, 0);
+                ++tabNumber;
+            }
+        });
+        
+        controlsColumn.addButton("Add Label (index 2)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (tabPane.getComponentCount() < 2) {
+                    // Do nothing
+                    return;
+                }
+                Label label = new Label("Tab Pane Child " + tabNumber);
+                label.setBackground(StyleUtil.randomBrightColor());
+                TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                layoutData.setTitle("Inserted Label #" + tabNumber);
+                label.setLayoutData(layoutData);
+                tabPane.add(label, 2);
+                ++tabNumber;
+            }
+        });
+        
         controlsColumn.addButton("Add CalendarField", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 CalendarField calendarField = new CalendarField();
