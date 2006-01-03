@@ -30,9 +30,11 @@
 package nextapp.echo2.extras.testapp.testscreen;
 
 import nextapp.echo2.app.Color;
+import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
+import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.CalendarField;
@@ -151,6 +153,48 @@ public class TabPaneTest extends SplitPane {
                 layoutData.setTitle("TPT #" + tabNumber++);
                 tabPaneTest.setLayoutData(layoutData);
                 tabPane.add(tabPaneTest);
+            }
+        });
+
+        controlsColumn.addButton("Add TabPaneTest", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                TabPaneTest tabPaneTest = new TabPaneTest();
+                TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                layoutData.setTitle("TPT #" + tabNumber++);
+                tabPaneTest.setLayoutData(layoutData);
+                tabPane.add(tabPaneTest);
+            }
+        });
+
+        controlsColumn.addButton("Add ContentPane", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                final ContentPane contentPane = new ContentPane();
+                ButtonColumn buttonColumn = new ButtonColumn();
+                buttonColumn.addButton("Add WindowPane", new ActionListener(){
+                
+                    public void actionPerformed(ActionEvent e) {
+                        WindowPane windowPane = new WindowPane();
+                        windowPane.setStyleName("Default");
+                        windowPane.setTitle("Test Window");
+                        windowPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
+                        contentPane.add(windowPane);
+                    }
+                });
+                buttonColumn.addButton("Add TabPaneTest WindowPane", new ActionListener(){
+                
+                    public void actionPerformed(ActionEvent e) {
+                        WindowPane windowPane = new WindowPane();
+                        windowPane.setStyleName("Default");
+                        windowPane.setTitle("Test Window");
+                        windowPane.add(new TabPaneTest());
+                        contentPane.add(windowPane);
+                    }
+                });
+                contentPane.add(buttonColumn);
+                TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                layoutData.setTitle("ContentPane #" + tabNumber++);
+                contentPane.setLayoutData(layoutData);
+                tabPane.add(contentPane);
             }
         });
 
