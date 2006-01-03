@@ -18,6 +18,7 @@ implements Pane, PaneContainer {
     
     public static final String PROPERTY_TAB_POSITION = "tabPosition";
     public static final String PROPERTY_TAB_WIDTH = "tabWidth";
+    
     public static final int TAB_POSITION_BOTTOM = 1;
     public static final int TAB_POSITION_TOP = 0;
     

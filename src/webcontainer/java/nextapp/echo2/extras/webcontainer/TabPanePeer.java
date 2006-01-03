@@ -26,6 +26,7 @@ import nextapp.echo2.webrender.service.JavaScriptService;
 public class TabPanePeer 
 implements ComponentSynchronizePeer, PropertyUpdateProcessor {
 
+    private static final Integer TAB_POSITION_TOP = new Integer(TabPane.TAB_POSITION_TOP);
     private static final String PROPERTY_ACTIVE_TAB = "activeTab";
     
     /**
@@ -192,6 +193,8 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         Element initElement = serverMessage.getDocument().createElement("init");
         initElement.setAttribute("container-eid", targetId);
         initElement.setAttribute("eid", elementId);
+        int tabPosition = ((Integer) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_POSITION, TAB_POSITION_TOP)).intValue();
+        initElement.setAttribute("tab-position", tabPosition == TabPane.TAB_POSITION_BOTTOM ? "bottom" : "top");
         partElement.appendChild(initElement);
     }
     
