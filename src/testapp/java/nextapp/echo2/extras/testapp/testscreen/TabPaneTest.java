@@ -30,6 +30,7 @@
 package nextapp.echo2.extras.testapp.testscreen;
 
 import nextapp.echo2.app.Color;
+import nextapp.echo2.app.Column;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Label;
@@ -55,13 +56,21 @@ public class TabPaneTest extends SplitPane {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
         setStyleName("DefaultResizable");
         
-        ButtonColumn controlsColumn = new ButtonColumn();
-        controlsColumn.setStyleName("TestControlsColumn");
-        add(controlsColumn);
+        Column controlGroupsColumn = new Column();
+        controlGroupsColumn.setStyleName("TestControlsColumn");
+        controlGroupsColumn.setCellSpacing(new Extent(10));
+        add(controlGroupsColumn);
         
         final TabPane tabPane = new TabPane();
         add(tabPane);
         
+        ButtonColumn controlsColumn;
+        
+        // General Properties
+        controlsColumn = new ButtonColumn();
+        controlsColumn.add(new Label("Properties"));
+        controlGroupsColumn.add(controlsColumn);
+
         controlsColumn.addButton("Set Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
@@ -76,6 +85,33 @@ public class TabPaneTest extends SplitPane {
             }
         });
 
+        controlsColumn.addButton("Select TabIndex 0", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setActiveTabIndex(0);
+            }
+        });
+
+        controlsColumn.addButton("Select TabIndex 2", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (tabPane.getComponentCount() > 0) {
+                    tabPane.setActiveTabIndex(2);
+                }
+            }
+        });
+
+        controlsColumn.addButton("Select Tab Null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (tabPane.getComponentCount() > 0) {
+                    tabPane.setActiveTab(null);
+                }
+            }
+        });
+
+        // Add/Remove TabPane
+        controlsColumn = new ButtonColumn();
+        controlsColumn.add(new Label("Add/Remove TabPabe"));
+        controlGroupsColumn.add(controlsColumn);
+
         controlsColumn.addButton("Add TabPane", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (getComponentCount() < 2) {
@@ -89,6 +125,11 @@ public class TabPaneTest extends SplitPane {
                 remove(tabPane);
             }
         });
+
+        // Add/Remove Tabs
+        controlsColumn = new ButtonColumn();
+        controlsColumn.add(new Label("Add/Remove Tabs"));
+        controlGroupsColumn.add(controlsColumn);
 
         controlsColumn.addButton("Add Label (No LayoutData)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -205,28 +246,5 @@ public class TabPaneTest extends SplitPane {
                 }
             }
         });
-
-        controlsColumn.addButton("Select TabIndex 0", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setActiveTabIndex(0);
-            }
-        });
-
-        controlsColumn.addButton("Select TabIndex 2", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (tabPane.getComponentCount() > 0) {
-                    tabPane.setActiveTabIndex(2);
-                }
-            }
-        });
-
-        controlsColumn.addButton("Select Tab Null", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (tabPane.getComponentCount() > 0) {
-                    tabPane.setActiveTab(null);
-                }
-            }
-        });
-
     }
 }
