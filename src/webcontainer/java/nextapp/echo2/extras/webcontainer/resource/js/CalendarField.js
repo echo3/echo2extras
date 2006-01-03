@@ -171,10 +171,10 @@ ExtrasCalendarField.getDaysInMonth = function(year, month) {
 ExtrasCalendarField.prototype.create = function() {
     var i, j;
     var divElement = document.createElement("div");
-    divElement.setAttribute("id", this.elementId);
+    divElement.id = this.elementId;
     
     this.monthSelect = document.createElement("select");
-    this.monthSelect.setAttribute("id", this.elementId + "_month");
+    this.monthSelect.id = this.elementId + "_month";
     this.monthSelect.style.cssText = this.monthSelectStyle;
     for (i = 0; i < 12; ++i) {
         var optionElement = document.createElement("option");
@@ -184,7 +184,7 @@ ExtrasCalendarField.prototype.create = function() {
     divElement.appendChild(this.monthSelect);
     
     this.yearField = document.createElement("input");
-    this.yearField.setAttribute("id", this.elementId + "_year");
+    this.yearField.id = this.elementId + "_year";
     this.yearField.setAttribute("type", "text");
     this.yearField.setAttribute("maxlength", "4");
     this.yearField.setAttribute("size", "5");
@@ -193,7 +193,7 @@ ExtrasCalendarField.prototype.create = function() {
     divElement.appendChild(this.yearField);
 
     this.tableElement = document.createElement("table");
-    this.tableElement.setAttribute("id", this.elementId + "_table");
+    this.tableElement.id = this.elementId + "_table";
     this.tableElement.style.cssText = this.dayTableStyle;
     
     var tbodyElement = document.createElement("tbody");
@@ -201,6 +201,7 @@ ExtrasCalendarField.prototype.create = function() {
     var trElement = document.createElement("tr");
     for (j = 0; j < 7; ++j) {
         var tdElement = document.createElement("td");
+        tdElement.id = this.elementId + "_dayofweek_" + i;
         tdElement.style.cssText = this.baseDayStyle;
         var dayOfWeekName = this.dayOfWeekNames[(this.firstDayOfWeek + j) % 7];
         if (this.dayOfWeekNameAbbreviationLength > 0) {
@@ -216,7 +217,7 @@ ExtrasCalendarField.prototype.create = function() {
         for (j = 0; j < 7; ++j) {
             tdElement = document.createElement("td");
             tdElement.style.cssText = this.baseDayStyle;
-            tdElement.setAttribute("id", this.elementId + "_" + i + "_" + j);
+            tdElement.id = this.elementId + "_" + i + "_" + j;
             trElement.appendChild(tdElement);
         }
         tbodyElement.appendChild(trElement);
@@ -248,6 +249,10 @@ ExtrasCalendarField.prototype.dispose = function() {
 
 ExtrasCalendarField.prototype.processDaySelect = function(e) {
     var elementId = EchoDomUtil.getEventTarget(e).id;
+    if (elementId.indexOf("_dayofweek_") !== -1) {
+        // Day of week clicked.
+        return;
+    }
     var calendar = ExtrasCalendarField.getCalendar(elementId);
 
     // Extract portion of id which describes cell number, e.g., if the clicked element
