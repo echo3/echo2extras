@@ -175,7 +175,7 @@ ExtrasCalendarField.prototype.create = function() {
     
     this.monthSelect = document.createElement("select");
     this.monthSelect.id = this.elementId + "_month";
-    this.monthSelect.style.cssText = this.monthSelectStyle;
+    EchoDomUtil.setCssText(this.monthSelect, this.monthSelectStyle);
     for (i = 0; i < 12; ++i) {
         var optionElement = document.createElement("option");
         optionElement.appendChild(document.createTextNode(this.monthNames[i]));
@@ -188,13 +188,13 @@ ExtrasCalendarField.prototype.create = function() {
     this.yearField.setAttribute("type", "text");
     this.yearField.setAttribute("maxlength", "4");
     this.yearField.setAttribute("size", "5");
-    this.yearField.style.cssText = this.yearFieldStyle;
+    EchoDomUtil.setCssText(this.yearField, this.yearFieldStyle);
     
     divElement.appendChild(this.yearField);
 
     this.tableElement = document.createElement("table");
     this.tableElement.id = this.elementId + "_table";
-    this.tableElement.style.cssText = this.dayTableStyle;
+    EchoDomUtil.setCssText(this.tableElement, this.dayTableStyle);
     
     var tbodyElement = document.createElement("tbody");
     
@@ -202,7 +202,7 @@ ExtrasCalendarField.prototype.create = function() {
     for (j = 0; j < 7; ++j) {
         var tdElement = document.createElement("td");
         tdElement.id = this.elementId + "_dayofweek_" + i;
-        tdElement.style.cssText = this.baseDayStyle;
+        EchoDomUtil.setCssText(tdElement, this.baseDayStyle);
         var dayOfWeekName = this.dayOfWeekNames[(this.firstDayOfWeek + j) % 7];
         if (this.dayOfWeekNameAbbreviationLength > 0) {
             dayOfWeekName = dayOfWeekName.substring(0, this.dayOfWeekNameAbbreviationLength);
@@ -216,7 +216,7 @@ ExtrasCalendarField.prototype.create = function() {
         trElement = document.createElement("tr");
         for (j = 0; j < 7; ++j) {
             tdElement = document.createElement("td");
-            tdElement.style.cssText = this.baseDayStyle;
+            EchoDomUtil.setCssText(tdElement, this.baseDayStyle);
             tdElement.id = this.elementId + "_" + i + "_" + j;
             trElement.appendChild(tdElement);
         }
@@ -313,7 +313,7 @@ ExtrasCalendarField.prototype.renderUpdate = function() {
                 }
             }
             var textNode = document.createTextNode(renderedText);
-            tdElement.style.cssText = styleText;
+            EchoDomUtil.setCssText(tdElement, styleText);
             tdElement.appendChild(textNode);
             ++day;
         }
