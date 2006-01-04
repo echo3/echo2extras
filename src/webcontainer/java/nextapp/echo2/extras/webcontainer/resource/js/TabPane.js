@@ -370,7 +370,7 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     contentContainerDivElement.style.color = tabPane.defaultForeground;
     switch (tabPane.tabPosition) {
     case ExtrasTabPane.TAB_POSITION_BOTTOM:
-        ExtrasTabPane.setCssPositionTop(contentContainerDivElement.style, tabPaneDivElement.id, 0, 33);
+        ExtrasTabPane.setCssPositionTop(contentContainerDivElement.style, tabPaneDivElement.id, 0, 33); //BUGBUG (33)
         contentContainerDivElement.style.bottom = tabPane.headerHeight + "px";
         break;
     default:
