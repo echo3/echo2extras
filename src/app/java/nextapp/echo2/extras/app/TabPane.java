@@ -12,7 +12,7 @@ public class TabPane extends Component
 implements Pane, PaneContainer {
     
     public static final String ACTIVE_TAB_CHANGED_PROPERTY = "activeTab";
-    public static final String INPUT_ACTIVE_TAB_INDEX = "activeTabIndex";
+    public static final String INPUT_ACTIVE_TAB = "activeTab";
     
     public static final String PROPERTY_TAB_HEIGHT = "tabHeight";
     
@@ -94,8 +94,8 @@ implements Pane, PaneContainer {
      */
     public void processInput(String inputName, Object inputValue) {
         super.processInput(inputName, inputValue);
-        if (inputName.equals(INPUT_ACTIVE_TAB_INDEX)) {
-//            setActiveTabIndex(inputValue == null ? 0 : ((Integer) inputValue).intValue());
+        if (inputName.equals(INPUT_ACTIVE_TAB)) {
+            setActiveTab((Component) inputValue);
         }
     }
     

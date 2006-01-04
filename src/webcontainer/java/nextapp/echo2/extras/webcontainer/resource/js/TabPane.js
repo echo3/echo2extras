@@ -280,7 +280,7 @@ ExtrasTabPane.MessageProcessor.processAddTab = function(addTabMessageElement) {
         headerTrElement.appendChild(headerTdElement);
     }
     
-    if (tabPane.selectedTabId == null) {
+    if (tabPane.selectedTabId == null || tabPane.selectedTabId == tabId) {
         tabPane.selectTab(tabId);
     }
 };
@@ -313,6 +313,11 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     var containerElement = document.getElementById(containerElementId);
     if (!containerElement) {
         throw "Container element not found: " + containerElementId;
+    }
+    
+    var activeTabId = initMessageElement.getAttribute("active-tab");
+    if (activeTabId) {
+        tabPane.selectedTabId = activeTabId;
     }
 
     if (initMessageElement.getAttribute("header-height")) {

@@ -89,11 +89,17 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
     public void processPropertyUpdate(ContainerInstance ci, Component component, Element propertyElement) {
         String propertyName = propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME);
         if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
-            Integer value = new Integer(propertyElement.getAttribute("value"));
-            ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, 
-                    TabPane.ACTIVE_TAB_CHANGED_PROPERTY, value);
+            String propertyValue = propertyElement.getAttribute("value");
+            int length = component.getVisibleComponentCount();
+            for (int i = 0; i < length; ++i) {
+                Component child = component.getVisibleComponent(i);
+                if (propertyValue.equals(child.getRenderId())) {
+                    ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, 
+                            TabPane.INPUT_ACTIVE_TAB, child);
+                    break;
+                }
+            }
         }
-        
     }
 
     /**
@@ -195,6 +201,10 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         initElement.setAttribute("eid", elementId);
         int tabPosition = ((Integer) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_POSITION, TAB_POSITION_TOP)).intValue();
         initElement.setAttribute("tab-position", tabPosition == TabPane.TAB_POSITION_BOTTOM ? "bottom" : "top");
+        Component activeTabComponent = tabPane.getActiveTab();
+        if (activeTabComponent != null) {
+            initElement.setAttribute("active-tab", activeTabComponent.getRenderId());
+        }
         partElement.appendChild(initElement);
     }
     
@@ -220,7 +230,7 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
             return;
         }
         String elementId = ContainerInstance.getElementId(tabPane);
-        Element removePartElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_REMOVE, 
+        Element removePartElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
                 "ExtrasTabPane.MessageProcessor", "set-active-tab");
         removePartElement.setAttribute("eid", elementId);
         removePartElement.setAttribute("tab-id", activeTab.getRenderId());
