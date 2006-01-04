@@ -103,8 +103,8 @@ ExtrasTabPane.prototype.selectTab = function(newTabId) {
             newHeaderDivElement.style.borderBottom = selectedBorder;
             break;
         default: 
-            newHeaderDivElement.style.marginBottom = "0px";
-            newHeaderDivElement.style.borderBottom = selectedBorder;
+            newHeaderDivElement.style.marginTop = "0px";
+            newHeaderDivElement.style.borderTop = selectedBorder;
             break;
         }
         
