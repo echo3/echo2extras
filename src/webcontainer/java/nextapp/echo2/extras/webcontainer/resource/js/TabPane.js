@@ -18,7 +18,7 @@ ExtrasTabPane = function(elementId) {
     this.headerPaddingRight = 8;
     this.headerPaddingBottom = 3;
     this.renderBox = false;
-    this.tabPosition = ExtrasTabPane.TAB_POSITION_BOTTOM;
+    this.tabPosition = ExtrasTabPane.TAB_POSITION_TOP;
     
     this.headerHeight = 32;
     this.selectedHeaderHeightIncrease = 2;
@@ -60,7 +60,7 @@ ExtrasTabPane.prototype.selectTab = function(newTabId) {
             
             switch (this.tabPosition) {
             case ExtrasTabPane.TAB_POSITION_BOTTOM:
-                oldHeaderDivElement.style.marginBottom = this.selectedHeaderHeightIncrease + "px";
+                oldHeaderDivElement.style.marginTop = this.borderSize + "px";
                 oldHeaderDivElement.style.borderBottom = defaultBorder;
                 break;
             default: 
@@ -99,7 +99,7 @@ ExtrasTabPane.prototype.selectTab = function(newTabId) {
 
         switch (this.tabPosition) {
         case ExtrasTabPane.TAB_POSITION_BOTTOM:
-            newHeaderDivElement.style.marginBottom = "0px";
+            newHeaderDivElement.style.marginTop = "0px";
             newHeaderDivElement.style.borderBottom = selectedBorder;
             break;
         default: 
@@ -202,7 +202,7 @@ ExtrasTabPane.MessageProcessor.processAddTab = function(addTabMessageElement) {
     headerDivElement.style.overflow = "hidden";
     switch (tabPane.tabPosition) {
     case ExtrasTabPane.TAB_POSITION_BOTTOM:
-        headerDivElement.style.marginBottom = tabPane.selectedHeaderHeightIncrease + "px";
+        headerDivElement.style.marginTop = tabPane.borderSize + "px";
         headerDivElement.style.borderTop = "0px none";
         headerDivElement.style.borderLeft = defaultBorder;
         headerDivElement.style.borderRight = defaultBorder;
@@ -268,6 +268,8 @@ ExtrasTabPane.MessageProcessor.processDispose = function(disposeMessageElement) 
 ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     var elementId = initMessageElement.getAttribute("eid");
     var tabPane = new ExtrasTabPane(elementId);
+    tabPane.tabPosition = initMessageElement.getAttribute("tab-position") == "bottom" ? 
+            ExtrasTabPane.TAB_POSITION_BOTTOM : ExtrasTabPane.TAB_POSITION_TOP;
     
     var containerElementId = initMessageElement.getAttribute("container-eid");
     var containerElement = document.getElementById(containerElementId);

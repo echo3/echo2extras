@@ -98,12 +98,24 @@ public class TabPaneTest extends SplitPane {
                 }
             }
         });
-
+        
         controlsColumn.addButton("Select Tab Null", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (tabPane.getComponentCount() > 0) {
                     tabPane.setActiveTab(null);
                 }
+            }
+        });
+
+        controlsColumn.addButton("Set Tab Position = Top", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setTabPosition(TabPane.TAB_POSITION_TOP);
+            }
+        });
+
+        controlsColumn.addButton("Set Tab Position = Bottom", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setTabPosition(TabPane.TAB_POSITION_BOTTOM);
             }
         });
 
