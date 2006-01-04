@@ -109,8 +109,16 @@ ExtrasTabPane.prototype.selectTab = function(newTabId) {
         }
         
         // Display selected content.
-        var oldContentDivElement = document.getElementById(this.elementId + "_content_" + newTabId);
-        oldContentDivElement.style.display = "block";
+        var newContentDivElement = document.getElementById(this.elementId + "_content_" + newTabId);
+        newContentDivElement.style.display = "block";
+        
+        if (EchoClientProperties.get("quirkCssPositioningOneSideOnly")) {
+            // Internet Explorer Hack: Forces repaint, if not performed tab content will not be displayed if content
+            // is a Pane (i.e., an absolute CSS positioned element).
+            var tabPaneDivElement = document.getElementById(this.elementId);
+            tabPaneDivElement.style.width = "99%";
+            window.setTimeout("document.getElementById(\"" + this.elementId + "\").style.width = \"100%\";", 1);
+        }
     }
     
     // Update state information.
@@ -133,6 +141,36 @@ ExtrasTabPane.processClick = function(echoEvent) {
     
     EchoClientMessage.setPropertyValue(tabPaneId, "activeTab", tabId);
     tabPane.selectTab(tabId);
+};
+
+ExtrasTabPane.setCssPositionBottom = function(style, containerElementId, bottomPx, subtractedPixels) {
+    if (EchoClientProperties.get("quirkCssPositioningOneSideOnly")) {
+        var heightExpression = "(document.getElementById(\"" + containerElementId + "\").clientHeight-" 
+                + subtractedPixels + ")+\"px\"";
+        style.setExpression("height", heightExpression);
+    } else {
+        style.bottom = bottomPx + "px";
+    }
+};
+
+ExtrasTabPane.setCssPositionTop = function(style, containerElementId, topPx, subtractedPixels) {
+    if (EchoClientProperties.get("quirkCssPositioningOneSideOnly")) {
+        var heightExpression = "(document.getElementById(\"" + containerElementId + "\").clientHeight-" 
+                + subtractedPixels + ")+\"px\"";
+        style.setExpression("height", heightExpression);
+    } else {
+        style.top = topPx + "px";
+    }
+};
+
+ExtrasTabPane.setCssPositionRight = function(style, containerElementId, rightPx, subtractedPixels) {
+    if (EchoClientProperties.get("quirkCssPositioningOneSideOnly")) {
+        var widthExpression = "(document.getElementById(\"" + containerElementId + "\").clientWidth-" 
+                + subtractedPixels + ")+\"px\"";
+        style.setExpression("width", widthExpression);
+    } else {
+        style.right = rightPx + "px";
+    }
 };
 
 /**
@@ -286,6 +324,7 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     tabPaneDivElement.style.position = "absolute";
     tabPaneDivElement.style.width = "100%";
     tabPaneDivElement.style.height = "100%";
+    containerElement.appendChild(tabPaneDivElement);
     
     var headerContainerDivElement = document.createElement("div");
     headerContainerDivElement.id = elementId + "_header";
@@ -319,20 +358,22 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     
     var contentContainerDivElement = document.createElement("div");
     contentContainerDivElement.id = elementId + "_content";
+    tabPaneDivElement.appendChild(contentContainerDivElement);
+
     contentContainerDivElement.style.position = "absolute";
     contentContainerDivElement.style.backgroundColor = tabPane.defaultBackground;
     contentContainerDivElement.style.color = tabPane.defaultForeground;
     switch (tabPane.tabPosition) {
     case ExtrasTabPane.TAB_POSITION_BOTTOM:
-        contentContainerDivElement.style.top = "0px";
+        ExtrasTabPane.setCssPositionTop(contentContainerDivElement.style, tabPaneDivElement.id, 0, 33);
         contentContainerDivElement.style.bottom = tabPane.headerHeight + "px";
         break;
     default:
         contentContainerDivElement.style.top = tabPane.headerHeight + "px";
-        contentContainerDivElement.style.bottom = "0px";
+        ExtrasTabPane.setCssPositionBottom(contentContainerDivElement.style, tabPaneDivElement.id, 0, 33);
     }
     contentContainerDivElement.style.left = "0px";
-    contentContainerDivElement.style.right = "0px";
+    ExtrasTabPane.setCssPositionRight(contentContainerDivElement.style, tabPaneDivElement.id, 0, 0);
     if (tabPane.renderBox) {
         contentContainerDivElement.style.border = tabPane.getSelectedBorder();
     } else {
@@ -344,9 +385,6 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
             contentContainerDivElement.style.borderTop = tabPane.getSelectedBorder();
         }
     }
-    tabPaneDivElement.appendChild(contentContainerDivElement);
-    
-    containerElement.appendChild(tabPaneDivElement);
     
     EchoDomPropertyStore.setPropertyValue(elementId, "tabPane", tabPane);
     
