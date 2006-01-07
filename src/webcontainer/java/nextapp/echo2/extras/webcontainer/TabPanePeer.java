@@ -2,7 +2,9 @@ package nextapp.echo2.extras.webcontainer;
 
 import org.w3c.dom.Element;
 
+import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Component;
+import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.extras.app.TabPane;
 import nextapp.echo2.extras.app.layout.TabPaneLayoutData;
@@ -13,6 +15,8 @@ import nextapp.echo2.webcontainer.PartialUpdateParticipant;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
+import nextapp.echo2.webcontainer.propertyrender.BorderRender;
+import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
@@ -26,7 +30,6 @@ import nextapp.echo2.webrender.service.JavaScriptService;
 public class TabPanePeer 
 implements ComponentSynchronizePeer, PropertyUpdateProcessor {
 
-    private static final Integer TAB_POSITION_TOP = new Integer(TabPane.TAB_POSITION_TOP);
     private static final String PROPERTY_ACTIVE_TAB = "activeTab";
     
     /**
@@ -199,8 +202,41 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         Element initElement = serverMessage.getDocument().createElement("init");
         initElement.setAttribute("container-eid", targetId);
         initElement.setAttribute("eid", elementId);
-        int tabPosition = ((Integer) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_POSITION, TAB_POSITION_TOP)).intValue();
-        initElement.setAttribute("tab-position", tabPosition == TabPane.TAB_POSITION_BOTTOM ? "bottom" : "top");
+        
+        Integer tabPosition = (Integer) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_POSITION);
+        if (tabPosition != null) {
+            initElement.setAttribute("tab-position", tabPosition.intValue() == TabPane.TAB_POSITION_BOTTOM ? "bottom" : "top");
+        }
+        
+        Integer borderType = (Integer) tabPane.getRenderProperty(TabPane.PROPERTY_BORDER_TYPE);
+        if (borderType != null) {
+            switch (borderType.intValue()) {
+            case TabPane.BORDER_TYPE_ADJACENT_TO_TABS:
+                initElement.setAttribute("border-type", "adjacent");
+                break;
+            case TabPane.BORDER_TYPE_NONE:
+                initElement.setAttribute("border-type", "none");
+                break;
+            case TabPane.BORDER_TYPE_PARALLEL_TO_TABS:
+                initElement.setAttribute("border-type", "parallel");
+                break;
+            case TabPane.BORDER_TYPE_SURROUND:
+                initElement.setAttribute("border-type", "surround");
+                break;
+            }
+        }
+        
+        Border border = (Border) tabPane.getRenderProperty(TabPane.PROPERTY_BORDER);
+        if (border != null) {
+            if (border.getColor() != null) {
+                initElement.setAttribute("border-color", ColorRender.renderCssAttributeValue(border.getColor()));
+            }
+            if (border.getSize() != null && border.getSize().getUnits() == Extent.PX) {
+                initElement.setAttribute("border-size", Integer.toString(border.getSize().getValue()));
+            }
+            initElement.setAttribute("border-style", BorderRender.getStyleValue(border.getStyle())); 
+        }
+        
         Component activeTabComponent = tabPane.getActiveTab();
         if (activeTabComponent != null) {
             initElement.setAttribute("active-tab", activeTabComponent.getRenderId());
