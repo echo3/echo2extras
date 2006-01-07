@@ -229,12 +229,19 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         Border border = (Border) tabPane.getRenderProperty(TabPane.PROPERTY_BORDER);
         if (border != null) {
             if (border.getColor() != null) {
-                initElement.setAttribute("border-color", ColorRender.renderCssAttributeValue(border.getColor()));
+                initElement.setAttribute("default-border-color", ColorRender.renderCssAttributeValue(border.getColor()));
             }
             if (border.getSize() != null && border.getSize().getUnits() == Extent.PX) {
                 initElement.setAttribute("border-size", Integer.toString(border.getSize().getValue()));
             }
-            initElement.setAttribute("border-style", BorderRender.getStyleValue(border.getStyle())); 
+            initElement.setAttribute("default-border-style", BorderRender.getStyleValue(border.getStyle())); 
+        }
+        Border selectedBorder = (Border) tabPane.getRenderProperty(TabPane.PROPERTY_SELECTED_BORDER);
+        if (selectedBorder != null) {
+            if (selectedBorder.getColor() != null) {
+                initElement.setAttribute("selected-border-color", ColorRender.renderCssAttributeValue(selectedBorder.getColor()));
+            }
+            initElement.setAttribute("selected-border-style", BorderRender.getStyleValue(selectedBorder.getStyle())); 
         }
         
         Component activeTabComponent = tabPane.getActiveTab();

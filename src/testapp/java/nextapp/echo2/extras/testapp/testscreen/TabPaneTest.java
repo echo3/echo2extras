@@ -29,6 +29,7 @@
 
 package nextapp.echo2.extras.testapp.testscreen;
 
+import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Column;
 import nextapp.echo2.app.ContentPane;
@@ -73,17 +74,87 @@ public class TabPaneTest extends SplitPane {
 
         controlsColumn.addButton("Set Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Color color = StyleUtil.randomColor();
-                tabPane.setForeground(color);
+                tabPane.setForeground(StyleUtil.randomColor());
+            }
+        });
+        controlsColumn.addButton("Clear Foreground", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setForeground(null);
+            }
+        });
+        controlsColumn.addButton("Set Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setBackground(StyleUtil.randomColor());
+            }
+        });
+        controlsColumn.addButton("Clear Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setBackground(null);
+            }
+        });
+        controlsColumn.addButton("Set Border (All Attributes)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setBorder(StyleUtil.randomBorder());
+            }
+        });
+        controlsColumn.addButton("Set Border Color", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Border border = tabPane.getBorder();
+                if (border == null) {
+                    border = new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID);
+                }
+                tabPane.setBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
+            }
+        });
+        controlsColumn.addButton("Set Border Size", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setBorder(StyleUtil.nextBorderSize(tabPane.getBorder()));
+            }
+        });
+        controlsColumn.addButton("Set Border Style", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setBorder(StyleUtil.nextBorderStyle(tabPane.getBorder()));
+            }
+        });
+        controlsColumn.addButton("Remove Border", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setBorder(null);
+            }
+        });
+        controlsColumn.addButton("Set Selected Border (All Attributes)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setSelectedBorder(StyleUtil.randomBorder());
+            }
+        });
+        controlsColumn.addButton("Set Selected Border Color", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Border border = tabPane.getSelectedBorder();
+                if (border == null) {
+                    border = new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID);
+                }
+                tabPane.setSelectedBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
+            }
+        });
+        controlsColumn.addButton("Set Selected Border Size (NO EFFECT)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setSelectedBorder(StyleUtil.nextBorderSize(tabPane.getSelectedBorder()));
+            }
+        });
+        controlsColumn.addButton("Set Selected Border Style", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setSelectedBorder(StyleUtil.nextBorderStyle(tabPane.getSelectedBorder()));
+            }
+        });
+        controlsColumn.addButton("Remove Selected Border", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setSelectedBorder(null);
             }
         });
         
-        controlsColumn.addButton("Set Background", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Color color = StyleUtil.randomColor();
-                tabPane.setBackground(color);
-            }
-        });
+        // Selection Properties
+        controlsColumn = new ButtonColumn();
+        controlsColumn.add(new Label("Selection"));
+        controlGroupsColumn.add(controlsColumn);
 
         controlsColumn.addButton("Select TabIndex 0", new ActionListener() {
             public void actionPerformed(ActionEvent e) {

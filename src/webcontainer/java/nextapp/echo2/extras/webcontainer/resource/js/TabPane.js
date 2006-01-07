@@ -324,6 +324,22 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
         tabPane.headerHeight = initMessageElement.getAttribute("header-height");
     }
     
+    if (initMessageElement.getAttribute("default-border-style")) {
+        tabPane.defaultBorderStyle = initMessageElement.getAttribute("default-border-style");
+    }
+    if (initMessageElement.getAttribute("default-border-color")) {
+        tabPane.defaultBorderColor = initMessageElement.getAttribute("default-border-color");
+    }
+    if (initMessageElement.getAttribute("selected-border-style")) {
+        tabPane.selectedBorderStyle = initMessageElement.getAttribute("selected-border-style");
+    }
+    if (initMessageElement.getAttribute("selected-border-color")) {
+        tabPane.selectedBorderColor = initMessageElement.getAttribute("selected-border-color");
+    }
+    if (initMessageElement.getAttribute("border-size")) {
+        tabPane.borderSize = initMessageElement.getAttribute("border-size");
+    }
+    
     var tabPaneDivElement = document.createElement("div");
     tabPaneDivElement.id = elementId;
     tabPaneDivElement.style.position = "absolute";

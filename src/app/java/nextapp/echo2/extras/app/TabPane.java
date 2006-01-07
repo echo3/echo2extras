@@ -17,6 +17,7 @@ implements Pane, PaneContainer {
 
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_BORDER_TYPE = "borderType";
+    public static final String PROPERTY_SELECTED_BORDER = "selectedBorder";
     public static final String PROPERTY_TAB_HEIGHT = "tabHeight";
     public static final String PROPERTY_TAB_POSITION = "tabPosition";
     public static final String PROPERTY_TAB_WIDTH = "tabWidth";
@@ -130,6 +131,16 @@ implements Pane, PaneContainer {
             return value.intValue();
         }
     }
+
+    /**
+     * Returns the <code>Border</code> used to draw the selected tab and 
+     * surround the content of the <code>TabPane</code>.
+     * 
+     * @return the border
+     */
+    public Border getSelectedBorder() {
+        return (Border) getProperty(PROPERTY_SELECTED_BORDER);
+    }
     
     /**
      * Returns the height of an individual tab.
@@ -220,6 +231,16 @@ implements Pane, PaneContainer {
      */
     public void setBorderType(int newValue) {
         setProperty(PROPERTY_BORDER_TYPE, new Integer(newValue));
+    }
+
+    /**
+     * Sets the <code>Border</code> used to draw the selected tab and 
+     * surround the content of the <code>TabPane</code>.
+     * 
+     * @param newValue the new border
+     */
+    public void setSelectedBorder(Border newValue) {
+        setProperty(PROPERTY_SELECTED_BORDER, newValue);
     }
     
     /**
