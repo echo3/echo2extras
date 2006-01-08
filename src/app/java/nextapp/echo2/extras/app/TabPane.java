@@ -15,9 +15,9 @@ implements Pane, PaneContainer {
     public static final String ACTIVE_TAB_CHANGED_PROPERTY = "activeTab";
     public static final String INPUT_ACTIVE_TAB = "activeTab";
 
-    public static final String PROPERTY_BORDER = "border";
+    public static final String PROPERTY_INACTIVE_BORDER = "inactiveBorder";
     public static final String PROPERTY_BORDER_TYPE = "borderType";
-    public static final String PROPERTY_SELECTED_BORDER = "selectedBorder";
+    public static final String PROPERTY_ACTIVE_BORDER = "activeBorder";
     public static final String PROPERTY_TAB_HEIGHT = "tabHeight";
     public static final String PROPERTY_TAB_POSITION = "tabPosition";
     public static final String PROPERTY_TAB_WIDTH = "tabWidth";
@@ -71,6 +71,16 @@ implements Pane, PaneContainer {
     private String activeTabRenderId;
     
     /**
+     * Returns the <code>Border</code> used to draw the active tab and 
+     * surround the content of the <code>TabPane</code>.
+     * 
+     * @return the border
+     */
+    public Border getActiveBorder() {
+        return (Border) getProperty(PROPERTY_ACTIVE_BORDER);
+    }
+    
+    /**
      * Returns the index of the active tab.
      * 
      * @return the active tab index
@@ -103,15 +113,6 @@ implements Pane, PaneContainer {
     }
     
     /**
-     * Returns the <code>Border</code> used to draw the <code>TabPane</code>.
-     * 
-     * @return the border
-     */
-    public Border getBorder() {
-        return (Border) getProperty(PROPERTY_BORDER);
-    }
-    
-    /**
      * Returns the mode in which the border will be drawn around the 
      * <code>TabPane</code>.
      * 
@@ -133,17 +134,17 @@ implements Pane, PaneContainer {
     }
 
     /**
-     * Returns the <code>Border</code> used to draw the selected tab and 
-     * surround the content of the <code>TabPane</code>.
+     * Returns the <code>Border</code> used to draw inactive tabs.
      * 
      * @return the border
      */
-    public Border getSelectedBorder() {
-        return (Border) getProperty(PROPERTY_SELECTED_BORDER);
+    public Border getInactiveBorder() {
+        return (Border) getProperty(PROPERTY_INACTIVE_BORDER);
     }
     
     /**
      * Returns the height of an individual tab.
+     * <code>Extent</code> values for this property must be in pixel units.
      * 
      * @return the tab height
      */
@@ -186,6 +187,16 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Sets the <code>Border</code> used to draw the active tab and 
+     * surround the content of the <code>TabPane</code>.
+     * 
+     * @param newValue the new border
+     */
+    public void setActiveBorder(Border newValue) {
+        setProperty(PROPERTY_ACTIVE_BORDER, newValue);
+    }
+    
+    /**
      * Sets the active tab.
      * 
      * @param newValue the child <code>Component</code> whose tab should 
@@ -209,15 +220,6 @@ implements Pane, PaneContainer {
     }
 
     /**
-     * Sets the <code>Border</code> used to draw the <code>TabPane</code>.
-     * 
-     * @param newValue the new border
-     */
-    public void setBorder(Border newValue) {
-        setProperty(PROPERTY_BORDER, newValue);
-    }
-    
-    /**
      * Sets the mode in which the border will be drawn around the 
      * <code>TabPane</code>.
      * 
@@ -234,17 +236,18 @@ implements Pane, PaneContainer {
     }
 
     /**
-     * Sets the <code>Border</code> used to draw the selected tab and 
-     * surround the content of the <code>TabPane</code>.
+     * Sets the <code>Border</code> used to draw inactive tabs in the 
+     * <code>TabPane</code>.
      * 
      * @param newValue the new border
      */
-    public void setSelectedBorder(Border newValue) {
-        setProperty(PROPERTY_SELECTED_BORDER, newValue);
+    public void setInactiveBorder(Border newValue) {
+        setProperty(PROPERTY_INACTIVE_BORDER, newValue);
     }
     
     /**
      * Sets the height of an individual tab.
+     * <code>Extent</code> values for this property must be in pixel units.
      * 
      * @param newValue the new tab height
      */

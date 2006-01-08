@@ -8,11 +8,13 @@ ExtrasTabPane = function(elementId) {
     this.selectedHeaderForeground = "";
     this.defaultHeaderBackground = "#afafcf";
     this.defaultHeaderForeground = "";
-    this.borderSize = 1;
-    this.defaultBorderStyle = "solid";
-    this.defaultBorderColor = "#7f7f7f";
-    this.selectedBorderStyle = "solid";
-    this.selectedBorderColor = "#00004f";
+    this.borderType = ExtrasTabPane.BORDER_TYPE_ADJACENT_TO_TABS;
+    this.inactiveBorderSize = 1;
+    this.inactiveBorderStyle = "solid";
+    this.inactiveBorderColor = "#7f7f7f";
+    this.activeBorderSize = 1;
+    this.activeBorderStyle = "solid";
+    this.activeBorderColor = "#00004f";
     this.headerPaddingTop = 3;
     this.headerPaddingLeft = 8;
     this.headerPaddingRight = 8;
@@ -24,12 +26,43 @@ ExtrasTabPane = function(elementId) {
     this.selectedHeaderHeightIncrease = 2;
 };
 
+/**
+ * Constant for the <code>borderType</code> property indicating that no 
+ * border should be drawn around the content.
+ */
+ExtrasTabPane.BORDER_TYPE_NONE = 0;
+
+/**
+ * Constant for the <code>borderType</code> property indicating that a
+ * border should be drawn immediately adjacent to the tabs only.
+ * If the tabs are positioned at the top of the <code>TabPane</code> the
+ * border will only be drawn directly beneath the tabs with this setting.  
+ * If the tabs are positioned at the bottom of the <code>TabPane</code> the
+ * border will only be drawn directly above the tabs with this setting.
+ * This is the default rendering style.
+ */
+ExtrasTabPane.BORDER_TYPE_ADJACENT_TO_TABS = 1;
+
+/**
+ * Constant for the <code>borderType</code> property indicating that
+ * borders should be drawn above and below the content, but not at its 
+ * sides.
+ */
+ExtrasTabPane.BORDER_TYPE_PARALLEL_TO_TABS = 2;
+
+/**
+ * Constant for the <code>borderType</code> property indicating that
+ * borders should be drawn on all sides of the content.
+ */
+ExtrasTabPane.BORDER_TYPE_SURROUND = 3;
+
 ExtrasTabPane.TAB_POSITION_TOP = 0;
 ExtrasTabPane.TAB_POSITION_BOTTOM = 1;
 
 ExtrasTabPane.prototype.calculateDefaultHeaderHeight = function() {
+    var largerBorderSize = this.inactiveBorder > this.activeBorderSize ? this.inactiveBorderSize : this.activeBorderSize;
     return this.headerHeight - this.headerPaddingTop - this.headerPaddingBottom - this.selectedHeaderHeightIncrease
-            - this.borderSize;
+            - this.inactiveBorderSize;
 };
 
 ExtrasTabPane.prototype.calculateSelectedHeaderHeight = function() {
@@ -37,12 +70,12 @@ ExtrasTabPane.prototype.calculateSelectedHeaderHeight = function() {
     return this.headerHeight - this.headerPaddingTop - this.headerPaddingBottom;
 };
 
-ExtrasTabPane.prototype.getDefaultBorder = function() {
-    return this.borderSize + "px " + this.defaultBorderStyle + " " + this.defaultBorderColor;
+ExtrasTabPane.prototype.getInactiveBorder = function() {
+    return this.inactiveBorderSize + "px " + this.inactiveBorderStyle + " " + this.inactiveBorderColor;
 };
 
-ExtrasTabPane.prototype.getSelectedBorder = function() {
-    return this.borderSize + "px " + this.selectedBorderStyle + " " + this.selectedBorderColor;
+ExtrasTabPane.prototype.getActiveBorder = function() {
+    return this.activeBorderSize + "px " + this.activeBorderStyle + " " + this.activeBorderColor;
 };
 
 ExtrasTabPane.prototype.selectTab = function(newTabId) {
@@ -50,7 +83,7 @@ ExtrasTabPane.prototype.selectTab = function(newTabId) {
         // Update state of previous selected header.
         var oldHeaderDivElement = document.getElementById(this.elementId + "_header_div_" + this.selectedTabId);
         if (oldHeaderDivElement != null) {
-            var defaultBorder = this.getDefaultBorder();
+            var defaultBorder = this.getInactiveBorder();
             oldHeaderDivElement.style.backgroundColor = this.defaultHeaderBackground;
             oldHeaderDivElement.style.color = this.defaultHeaderForeground;
             oldHeaderDivElement.style.borderLeft = defaultBorder;
@@ -60,7 +93,7 @@ ExtrasTabPane.prototype.selectTab = function(newTabId) {
             
             switch (this.tabPosition) {
             case ExtrasTabPane.TAB_POSITION_BOTTOM:
-                oldHeaderDivElement.style.marginTop = this.borderSize + "px";
+                oldHeaderDivElement.style.marginTop = this.activeBorderSize + "px";
                 oldHeaderDivElement.style.borderBottom = defaultBorder;
                 break;
             default: 
@@ -91,7 +124,7 @@ ExtrasTabPane.prototype.selectTab = function(newTabId) {
         var newHeaderDivElement = document.getElementById(this.elementId + "_header_div_" + newTabId);
         newHeaderDivElement.style.backgroundColor = this.selectedHeaderBackground;
         newHeaderDivElement.style.color = this.selectedHeaderForeground;
-        var selectedBorder = this.getSelectedBorder();
+        var selectedBorder = this.getActiveBorder();
         newHeaderDivElement.style.cursor = "default";
         newHeaderDivElement.style.borderLeft = selectedBorder;
         newHeaderDivElement.style.borderRight = selectedBorder;
@@ -234,13 +267,13 @@ ExtrasTabPane.MessageProcessor.processAddTab = function(addTabMessageElement) {
     headerTdElement.style.verticalAlign = "top";
     headerTdElement.id = elementId + "_header_td_" + tabId;
     
-    var defaultBorder = tabPane.getDefaultBorder();
+    var defaultBorder = tabPane.getInactiveBorder();
     headerDivElement = document.createElement("div");
     headerDivElement.id = elementId + "_header_div_" + tabId;
     headerDivElement.style.overflow = "hidden";
     switch (tabPane.tabPosition) {
     case ExtrasTabPane.TAB_POSITION_BOTTOM:
-        headerDivElement.style.marginTop = tabPane.borderSize + "px";
+        headerDivElement.style.marginTop = tabPane.activeBorderSize + "px";
         headerDivElement.style.borderTop = "0px none";
         headerDivElement.style.borderLeft = defaultBorder;
         headerDivElement.style.borderRight = defaultBorder;
@@ -324,20 +357,36 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
         tabPane.headerHeight = initMessageElement.getAttribute("header-height");
     }
     
-    if (initMessageElement.getAttribute("default-border-style")) {
-        tabPane.defaultBorderStyle = initMessageElement.getAttribute("default-border-style");
+    switch (initMessageElement.getAttribute("border-type")) {
+    case "none":
+        tabPane.borderType = ExtrasTabPane.BORDER_TYPE_NONE;
+        break;
+    case "surround":
+        tabPane.borderType = ExtrasTabPane.BORDER_TYPE_SURROUND;
+        break;
+    case "parallel":
+        tabPane.borderType = ExtrasTabPane.BORDER_TYPE_PARALLEL_TO_TABS;
+        break;
+    default:
+        tabPane.borderType = ExtrasTabPane.BORDER_TYPE_ADJACENT_TO_TABS;
     }
-    if (initMessageElement.getAttribute("default-border-color")) {
-        tabPane.defaultBorderColor = initMessageElement.getAttribute("default-border-color");
+    if (initMessageElement.getAttribute("inactive-border-style")) {
+        tabPane.inactiveBorderStyle = initMessageElement.getAttribute("inactive-border-style");
     }
-    if (initMessageElement.getAttribute("selected-border-style")) {
-        tabPane.selectedBorderStyle = initMessageElement.getAttribute("selected-border-style");
+    if (initMessageElement.getAttribute("inactive-border-color")) {
+        tabPane.inactiveBorderColor = initMessageElement.getAttribute("inactive-border-color");
     }
-    if (initMessageElement.getAttribute("selected-border-color")) {
-        tabPane.selectedBorderColor = initMessageElement.getAttribute("selected-border-color");
+    if (initMessageElement.getAttribute("inactive-border-size")) {
+        tabPane.inactiveBorderSize = parseInt(initMessageElement.getAttribute("inactive-border-size"));
     }
-    if (initMessageElement.getAttribute("border-size")) {
-        tabPane.borderSize = initMessageElement.getAttribute("border-size");
+    if (initMessageElement.getAttribute("active-border-style")) {
+        tabPane.activeBorderStyle = initMessageElement.getAttribute("active-border-style");
+    }
+    if (initMessageElement.getAttribute("active-border-color")) {
+        tabPane.activeBorderColor = initMessageElement.getAttribute("active-border-color");
+    }
+    if (initMessageElement.getAttribute("active-border-size")) {
+        tabPane.activeBorderSize = parseInt(initMessageElement.getAttribute("active-border-size"));
     }
     
     var tabPaneDivElement = document.createElement("div");
@@ -361,7 +410,7 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     }
     headerContainerDivElement.style.left = "0px";
     headerContainerDivElement.style.width = "100%";
-    headerContainerDivElement.style.height = (tabPane.headerHeight + tabPane.borderSize) + "px";
+    headerContainerDivElement.style.height = (tabPane.headerHeight + tabPane.activeBorderSize) + "px";
     tabPaneDivElement.appendChild(headerContainerDivElement);
     
     var headerTableElement  = document.createElement("table");
@@ -395,16 +444,28 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     }
     contentContainerDivElement.style.left = "0px";
     ExtrasTabPane.setCssPositionRight(contentContainerDivElement.style, tabPaneDivElement.id, 0, 0);
-    if (tabPane.renderBox) {
-        contentContainerDivElement.style.border = tabPane.getSelectedBorder();
-    } else {
-        switch (tabPane.tabPosition) {
-        case ExtrasTabPane.TAB_POSITION_BOTTOM:
-            contentContainerDivElement.style.borderBottom = tabPane.getSelectedBorder();
+
+    var selectedBorder = tabPane.getActiveBorder();
+    switch (tabPane.borderType) {
+        case ExtrasTabPane.BORDER_TYPE_NONE:
+	        contentContainerDivElement.style.border = "0px none";
+            break;
+        case ExtrasTabPane.BORDER_TYPE_SURROUND:
+            contentContainerDivElement.style.border = selectedBorder;
+            break;
+        case ExtrasTabPane.BORDER_TYPE_PARALLEL_TO_TABS:
+            contentContainerDivElement.style.borderTop = selectedBorder;
+            contentContainerDivElement.style.borderBottom = selectedBorder;
             break;
         default:
-            contentContainerDivElement.style.borderTop = tabPane.getSelectedBorder();
-        }
+	        switch (tabPane.tabPosition) {
+	        case ExtrasTabPane.TAB_POSITION_BOTTOM:
+	            contentContainerDivElement.style.borderBottom = tabPane.getActiveBorder();
+	            break;
+	        default:
+	            contentContainerDivElement.style.borderTop = tabPane.getActiveBorder();
+	        }
+            break;
     }
     
     EchoDomPropertyStore.setPropertyValue(elementId, "tabPane", tabPane);

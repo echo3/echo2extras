@@ -92,62 +92,82 @@ public class TabPaneTest extends SplitPane {
                 tabPane.setBackground(null);
             }
         });
-        controlsColumn.addButton("Set Border (All Attributes)", new ActionListener() {
+        controlsColumn.addButton("Set Inactive Border (All Attributes)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setBorder(StyleUtil.randomBorder());
+                tabPane.setInactiveBorder(StyleUtil.randomBorder());
             }
         });
-        controlsColumn.addButton("Set Border Color", new ActionListener() {
+        controlsColumn.addButton("Set Inactive Border Color", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Border border = tabPane.getBorder();
+                Border border = tabPane.getInactiveBorder();
                 if (border == null) {
                     border = new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID);
                 }
-                tabPane.setBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
+                tabPane.setInactiveBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
             }
         });
-        controlsColumn.addButton("Set Border Size", new ActionListener() {
+        controlsColumn.addButton("Set Inactive Border Size", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setBorder(StyleUtil.nextBorderSize(tabPane.getBorder()));
+                tabPane.setInactiveBorder(StyleUtil.nextBorderSize(tabPane.getInactiveBorder()));
             }
         });
-        controlsColumn.addButton("Set Border Style", new ActionListener() {
+        controlsColumn.addButton("Set Inactive Border Style", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setBorder(StyleUtil.nextBorderStyle(tabPane.getBorder()));
+                tabPane.setInactiveBorder(StyleUtil.nextBorderStyle(tabPane.getInactiveBorder()));
             }
         });
-        controlsColumn.addButton("Remove Border", new ActionListener() {
+        controlsColumn.addButton("Remove Inactive Border", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setBorder(null);
+                tabPane.setInactiveBorder(null);
             }
         });
-        controlsColumn.addButton("Set Selected Border (All Attributes)", new ActionListener() {
+        controlsColumn.addButton("Set Active Border (All Attributes)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setSelectedBorder(StyleUtil.randomBorder());
+                tabPane.setActiveBorder(StyleUtil.randomBorder());
             }
         });
-        controlsColumn.addButton("Set Selected Border Color", new ActionListener() {
+        controlsColumn.addButton("Set Active Border Color", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Border border = tabPane.getSelectedBorder();
+                Border border = tabPane.getActiveBorder();
                 if (border == null) {
                     border = new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID);
                 }
-                tabPane.setSelectedBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
+                tabPane.setActiveBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
             }
         });
-        controlsColumn.addButton("Set Selected Border Size (NO EFFECT)", new ActionListener() {
+        controlsColumn.addButton("Set Active Border Size", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setSelectedBorder(StyleUtil.nextBorderSize(tabPane.getSelectedBorder()));
+                tabPane.setActiveBorder(StyleUtil.nextBorderSize(tabPane.getActiveBorder()));
             }
         });
-        controlsColumn.addButton("Set Selected Border Style", new ActionListener() {
+        controlsColumn.addButton("Set Active Border Style", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setSelectedBorder(StyleUtil.nextBorderStyle(tabPane.getSelectedBorder()));
+                tabPane.setActiveBorder(StyleUtil.nextBorderStyle(tabPane.getActiveBorder()));
             }
         });
-        controlsColumn.addButton("Remove Selected Border", new ActionListener() {
+        controlsColumn.addButton("Remove Active Border", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setSelectedBorder(null);
+                tabPane.setActiveBorder(null);
+            }
+        });
+        controlsColumn.addButton("Set Border Type = None", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setBorderType(TabPane.BORDER_TYPE_NONE);
+            }
+        });
+        controlsColumn.addButton("Set Border Type = Adjacent", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setBorderType(TabPane.BORDER_TYPE_ADJACENT_TO_TABS);
+            }
+        });
+        controlsColumn.addButton("Set Border Type = Parallel", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setBorderType(TabPane.BORDER_TYPE_PARALLEL_TO_TABS);
+            }
+        });
+        controlsColumn.addButton("Set Border Type = Surround", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setBorderType(TabPane.BORDER_TYPE_SURROUND);
             }
         });
         

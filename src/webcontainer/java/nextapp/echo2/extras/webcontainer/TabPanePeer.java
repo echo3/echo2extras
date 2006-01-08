@@ -226,22 +226,25 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
             }
         }
         
-        Border border = (Border) tabPane.getRenderProperty(TabPane.PROPERTY_BORDER);
-        if (border != null) {
-            if (border.getColor() != null) {
-                initElement.setAttribute("default-border-color", ColorRender.renderCssAttributeValue(border.getColor()));
+        Border inactiveBorder = (Border) tabPane.getRenderProperty(TabPane.PROPERTY_INACTIVE_BORDER);
+        if (inactiveBorder != null) {
+            if (inactiveBorder.getColor() != null) {
+                initElement.setAttribute("inactive-border-color", ColorRender.renderCssAttributeValue(inactiveBorder.getColor()));
             }
-            if (border.getSize() != null && border.getSize().getUnits() == Extent.PX) {
-                initElement.setAttribute("border-size", Integer.toString(border.getSize().getValue()));
+            if (inactiveBorder.getSize() != null && inactiveBorder.getSize().getUnits() == Extent.PX) {
+                initElement.setAttribute("inactive-border-size", Integer.toString(inactiveBorder.getSize().getValue()));
             }
-            initElement.setAttribute("default-border-style", BorderRender.getStyleValue(border.getStyle())); 
+            initElement.setAttribute("inactive-border-style", BorderRender.getStyleValue(inactiveBorder.getStyle())); 
         }
-        Border selectedBorder = (Border) tabPane.getRenderProperty(TabPane.PROPERTY_SELECTED_BORDER);
-        if (selectedBorder != null) {
-            if (selectedBorder.getColor() != null) {
-                initElement.setAttribute("selected-border-color", ColorRender.renderCssAttributeValue(selectedBorder.getColor()));
+        Border activeBorder = (Border) tabPane.getRenderProperty(TabPane.PROPERTY_ACTIVE_BORDER);
+        if (activeBorder != null) {
+            if (activeBorder.getColor() != null) {
+                initElement.setAttribute("active-border-color", ColorRender.renderCssAttributeValue(activeBorder.getColor()));
             }
-            initElement.setAttribute("selected-border-style", BorderRender.getStyleValue(selectedBorder.getStyle())); 
+            if (activeBorder.getSize() != null && activeBorder.getSize().getUnits() == Extent.PX) {
+                initElement.setAttribute("active-border-size", Integer.toString(activeBorder.getSize().getValue()));
+            }
+            initElement.setAttribute("active-border-style", BorderRender.getStyleValue(activeBorder.getStyle())); 
         }
         
         Component activeTabComponent = tabPane.getActiveTab();
