@@ -5,6 +5,8 @@ import java.util.GregorianCalendar;
 
 import org.w3c.dom.Element;
 
+import nextapp.echo2.app.Border;
+import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.update.ServerComponentUpdate;
@@ -12,14 +14,18 @@ import nextapp.echo2.app.util.DomUtil;
 import nextapp.echo2.extras.app.CalendarField;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.ContainerInstance;
+import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.RenderState;
+import nextapp.echo2.webcontainer.propertyrender.BorderRender;
+import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
+import nextapp.echo2.webrender.servermessage.DomUpdate;
 import nextapp.echo2.webrender.service.JavaScriptService;
 
 /**
@@ -54,6 +60,18 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
 
     static {
         WebRenderServlet.getServiceRegistry().add(CALENDAR_FIELD_SERVICE);
+    }
+    
+    /**
+     * The <code>PartialUpdateManager</code> for this synchronization peer.
+     */
+    private PartialUpdateManager partialUpdateManager;
+    
+    /**
+     * Default constructor.
+     */
+    public CalendarFieldPeer() {
+        partialUpdateManager = new PartialUpdateManager();
     }
 
     /**
@@ -120,6 +138,14 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         initElement.setAttribute("month", Integer.toString(calendar.get(Calendar.MONTH)));
         initElement.setAttribute("date", Integer.toString(calendar.get(Calendar.DATE)));
         
+        Color background = (Color) calendarField.getRenderProperty(CalendarField.PROPERTY_BACKGROUND);
+        if (background != null) {
+            initElement.setAttribute("background", ColorRender.renderCssAttributeValue(background));
+        }
+        Color foreground = (Color) calendarField.getRenderProperty(CalendarField.PROPERTY_FOREGROUND);
+        if (foreground != null) {
+            initElement.setAttribute("foreground", ColorRender.renderCssAttributeValue(foreground));
+        }
         Font font =  (Font) calendarField.getRenderProperty(CalendarField.PROPERTY_FONT);
         if (font != null) {
             if (font.getTypeface() != null) {
@@ -131,6 +157,10 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
             initElement.setAttribute("font-style", FontRender.renderFontStyleCssAttributeValue(font));
             initElement.setAttribute("font-weight", FontRender.renderFontWeightCssAttributeValue(font));
             initElement.setAttribute("text-decoration", FontRender.renderTextDecorationCssAttributeValue(font));
+        }
+        Border border = (Border) calendarField.getRenderProperty(CalendarField.PROPERTY_BORDER);
+        if (border != null) {
+            initElement.setAttribute("border", BorderRender.renderCssAttributeValue(border));
         }
     }
 
@@ -170,7 +200,15 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
-        renderAdd(rc, update, targetId, update.getParent());
-        return false;
+        // Determine if fully replacing the component is required.
+        if (partialUpdateManager.canProcess(rc, update)) {
+            partialUpdateManager.process(rc, update);
+        } else {
+            // Perform full update.
+            DomUpdate.renderElementRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
+            renderAdd(rc, update, targetId, update.getParent());
+        }
+        
+        return true;
     }
 }

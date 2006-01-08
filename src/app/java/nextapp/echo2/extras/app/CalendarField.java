@@ -2,6 +2,7 @@ package nextapp.echo2.extras.app;
 
 import java.util.Date;
 
+import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Component;
 
 /**
@@ -10,6 +11,7 @@ import nextapp.echo2.app.Component;
 public class CalendarField extends Component {
 
     public static final String DATE_CHANGED_PROPERTY = "date";
+    public static final String PROPERTY_BORDER = "border";
     
     private Date date;
     
@@ -31,12 +33,30 @@ public class CalendarField extends Component {
     }
     
     /**
+     * Returns the border surrounding the displayed calendar month.
+     * 
+     * @return the border
+     */
+    public Border getBorder() {
+        return (Border) getProperty(PROPERTY_BORDER);
+    }
+    
+    /**
      * Returns the selected date.
      * 
      * @return the selected date
      */
     public Date getDate() {
         return date;
+    }
+    
+    /**
+     * Sets the border surrounding the displayed calendar month.
+     * 
+     * @param newValue the new border
+     */
+    public void setBorder(Border newValue) {
+        setProperty(PROPERTY_BORDER, newValue);
     }
     
     /**

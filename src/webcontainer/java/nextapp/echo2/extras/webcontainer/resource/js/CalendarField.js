@@ -12,6 +12,10 @@ ExtrasCalendarField = function(elementId) {
     this.selectedDay = -1;
     this.year = null;
     
+    this.foreground = ExtrasCalendarField.DEFAULT_FOREGROUND;
+    this.background = ExtrasCalendarField.DEFAULT_BACKGROUND;
+    this.border = ExtrasCalendarField.DEFAULT_BORDER;
+    
     this.dayOfWeekNameAbbreviationLength = 1;
     this.dayOfWeekNames = ExtrasCalendarField.DEFAULT_DAY_OF_WEEK_NAMES;
     this.monthNames = ExtrasCalendarField.DEFAULT_MONTH_NAMES;
@@ -75,21 +79,37 @@ ExtrasCalendarField.MessageProcessor.processInit = function(initMessageElement) 
     var elementId = initMessageElement.getAttribute("eid");
     var containerElementId = initMessageElement.getAttribute("container-eid");
     
-    var foregroundColor = initMessageElement.getAttribute("foreground");
-    var backgroundColor = initMessageElement.getAttribute("background");
-
     // Render div element.
     var containerElement = document.getElementById(containerElementId);
-    var calendar = ExtrasCalendarField.create(containerElement, elementId);
+    
+    var calendar = new ExtrasCalendarField(elementId);
+
+    if (initMessageElement.getAttribute("border")) {
+	    calendar.border = initMessageElement.getAttribute("border");
+    }
+    if (initMessageElement.getAttribute("foreground")) {
+	    calendar.foreground = initMessageElement.getAttribute("foreground");
+    }
+    if (initMessageElement.getAttribute("background")) {
+	    calendar.background = initMessageElement.getAttribute("background");
+    }
+    
+    var calendarElement = calendar.create();
+    containerElement.appendChild(calendarElement);
+    EchoDomPropertyStore.setPropertyValue(calendar.elementId, "calendar", calendar);
+    calendar.renderUpdate();
     
     var year = parseInt(initMessageElement.getAttribute("year"));
     var month = parseInt(initMessageElement.getAttribute("month"));
     var date = parseInt(initMessageElement.getAttribute("date"));
-    
     calendar.setDate(year, month, date);
     
     var divElement = document.createElement("div");
 };
+
+ExtrasCalendarField.DEFAULT_FOREGROUND = "#000000";
+ExtrasCalendarField.DEFAULT_BACKGROUND = "#ffffff";
+ExtrasCalendarField.DEFAULT_BORDER = "#5f5faf 2px groove";
 
 ExtrasCalendarField.DEFAULT_DAY_OF_WEEK_NAMES = 
         new Array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
@@ -115,22 +135,6 @@ ExtrasCalendarField.DEFAULT_YEAR_FIELD_STYLE
         = "text-align:center; background-color: #ffffcf; border-width: 1px; border-style: inset;";
 ExtrasCalendarField.DEFAULT_MONTH_SELECT_STYLE 
         = "text-align:left; background-color: #ffffcf; border-width: 1px; border-style: inset;";
-ExtrasCalendarField.DEFAULT_DAY_TABLE_STYLE 
-        = "border-color: #5f5faf; border-width: 2px; margin: 1px; border-style: groove; border-collapse: collapse;";
-
-ExtrasCalendarField.create = function(parentElement, elementId) {
-    var calendar = ExtrasCalendarField.getCalendar(elementId);
-    if (calendar !== null) {
-        calendar.dispose();
-    }
-
-    calendar = new ExtrasCalendarField(elementId);
-    var calendarElement = calendar.create();
-    parentElement.appendChild(calendarElement);
-    EchoDomPropertyStore.setPropertyValue(calendar.elementId, "calendar", calendar);
-    calendar.renderUpdate();
-    return calendar;
-};
 
 ExtrasCalendarField.getCalendar = function(elementId) {
     var componentId = EchoDomUtil.getComponentId(elementId);
@@ -194,7 +198,9 @@ ExtrasCalendarField.prototype.create = function() {
 
     this.tableElement = document.createElement("table");
     this.tableElement.id = this.elementId + "_table";
-    EchoDomUtil.setCssText(this.tableElement, this.dayTableStyle);
+    
+    var dayTableStyle = "border: " + this.border + "; margin: 1px; border-collapse: collapse;"
+    EchoDomUtil.setCssText(this.tableElement, dayTableStyle);
     
     var tbodyElement = document.createElement("tbody");
     

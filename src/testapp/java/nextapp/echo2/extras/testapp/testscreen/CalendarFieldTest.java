@@ -29,6 +29,7 @@
 
 package nextapp.echo2.extras.testapp.testscreen;
 
+import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.SplitPane;
@@ -71,6 +72,36 @@ public class CalendarFieldTest extends SplitPane {
         controlsColumn.addButton("Remove Calendar", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 remove(calendarField);
+            }
+        });
+
+        controlsColumn.addButton("Set Border (All Attributes)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                calendarField.setBorder(StyleUtil.randomBorder());
+            }
+        });
+        controlsColumn.addButton("Set Border Color", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Border border = calendarField.getBorder();
+                if (border == null) {
+                    border = new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID);
+                }
+                calendarField.setBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
+            }
+        });
+        controlsColumn.addButton("Set Border Size", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                calendarField.setBorder(StyleUtil.nextBorderSize(calendarField.getBorder()));
+            }
+        });
+        controlsColumn.addButton("Set Border Style", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                calendarField.setBorder(StyleUtil.nextBorderStyle(calendarField.getBorder()));
+            }
+        });
+        controlsColumn.addButton("Remove Border", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                calendarField.setBorder(null);
             }
         });
     }
