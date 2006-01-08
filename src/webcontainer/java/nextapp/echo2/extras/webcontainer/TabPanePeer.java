@@ -3,6 +3,7 @@ package nextapp.echo2.extras.webcontainer;
 import org.w3c.dom.Element;
 
 import nextapp.echo2.app.Border;
+import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.update.ServerComponentUpdate;
@@ -202,6 +203,15 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         Element initElement = serverMessage.getDocument().createElement("init");
         initElement.setAttribute("container-eid", targetId);
         initElement.setAttribute("eid", elementId);
+        
+        Color background = (Color) tabPane.getRenderProperty(TabPane.PROPERTY_BACKGROUND);
+        if (background != null) {
+            initElement.setAttribute("default-background", ColorRender.renderCssAttributeValue(background));
+        }
+        Color foreground = (Color) tabPane.getRenderProperty(TabPane.PROPERTY_FOREGROUND);
+        if (foreground != null) {
+            initElement.setAttribute("default-foreground", ColorRender.renderCssAttributeValue(foreground));
+        }
         
         Integer tabPosition = (Integer) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_POSITION);
         if (tabPosition != null) {

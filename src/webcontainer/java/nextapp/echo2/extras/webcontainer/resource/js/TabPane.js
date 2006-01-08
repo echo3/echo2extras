@@ -359,6 +359,15 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     if (initMessageElement.getAttribute("header-height")) {
         tabPane.headerHeight = initMessageElement.getAttribute("header-height");
     }
+    if (initMessageElement.getAttribute("default-background")) {
+        tabPane.defaultBackground = initMessageElement.getAttribute("default-background");
+    }
+    if (initMessageElement.getAttribute("default-foreground")) {
+        tabPane.defaultForeground = initMessageElement.getAttribute("default-foreground");
+    }
+    if (initMessageElement.getAttribute("default-font")) {
+        tabPane.defaultFont = initMessageElement.getAttribute("default-font");
+    }
     
     switch (initMessageElement.getAttribute("border-type")) {
     case "none":
