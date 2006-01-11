@@ -223,6 +223,13 @@ ExtrasTabPane.prototype.selectTab = function(newTabId) {
         newHeaderDivElement.style.borderLeft = activeBorder;
         newHeaderDivElement.style.borderRight = activeBorder;
         newHeaderDivElement.style.height = this.calculateActiveHeaderHeight() + "px";
+  
+        // Begin Mozilla workaround: Removing and re-adding header div element is done to make Mozilla 1.7 rendering
+        // engine happy.  Without this workaround tab sizes shrink when clicked.
+        var parentNode = newHeaderDivElement.parentNode;
+        parentNode.removeChild(newHeaderDivElement);
+        parentNode.appendChild(newHeaderDivElement);
+        // End Mozilla workaround.
 
         switch (this.tabPosition) {
         case ExtrasTabPane.TAB_POSITION_BOTTOM:
@@ -239,6 +246,8 @@ ExtrasTabPane.prototype.selectTab = function(newTabId) {
         var newContentDivElement = document.getElementById(this.elementId + "_content_" + newTabId);
         newContentDivElement.style.display = "block";
         
+        // Begin Internet Explorer workaround: Adjusting size of TabPane to eliminate scroll bars and ensure tab content
+        // is displayed.
         if (EchoClientProperties.get("quirkCssPositioningOneSideOnly")) {
             // Internet Explorer Hack: Forces repaint, if not performed tab content will not be displayed if content
             // is a Pane (i.e., an absolute CSS positioned element).
@@ -246,6 +255,7 @@ ExtrasTabPane.prototype.selectTab = function(newTabId) {
             tabPaneDivElement.style.width = "99%";
             window.setTimeout("document.getElementById(\"" + this.elementId + "\").style.width = \"100%\";", 1);
         }
+        // End Internet Explorer workaround.
     }
     
     // Update state information.
