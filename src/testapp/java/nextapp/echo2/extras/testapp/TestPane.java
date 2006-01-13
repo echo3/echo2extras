@@ -107,6 +107,7 @@ public class TestPane extends ContentPane {
 
         addTest("Border Pane", "BorderPaneTest");
         addTest("Calendar Field", "CalendarFieldTest");
+        addTest("Pull Down Menu", "PullDownMenuTest");
         addTest("Tab Pane", "TabPaneTest");
         
         Column applicationControlsColumn = new Column();
