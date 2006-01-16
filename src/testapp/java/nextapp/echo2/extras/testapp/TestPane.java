@@ -105,6 +105,7 @@ public class TestPane extends ContentPane {
         testLaunchButtonsColumn = new Column();
         controlsColumn.add(testLaunchButtonsColumn);
 
+        addTest("Accordion Pane", "AccordionPaneTest");
         addTest("Border Pane", "BorderPaneTest");
         addTest("Calendar Field", "CalendarFieldTest");
         addTest("Pull Down Menu", "PullDownMenuTest");

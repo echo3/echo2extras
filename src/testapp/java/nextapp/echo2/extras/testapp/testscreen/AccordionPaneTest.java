@@ -40,19 +40,19 @@ import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.CalendarField;
-import nextapp.echo2.extras.app.TabPane;
-import nextapp.echo2.extras.app.layout.TabPaneLayoutData;
+import nextapp.echo2.extras.app.AccordionPane;
+import nextapp.echo2.extras.app.layout.AccordionPaneLayoutData;
 import nextapp.echo2.extras.testapp.ButtonColumn;
 import nextapp.echo2.extras.testapp.StyleUtil;
 
 /**
- * Interactive test module for <code>TabPane</code>s.
+ * Interactive test module for <code>AccordionPane</code>s.
  */
-public class TabPaneTest extends SplitPane {
+public class AccordionPaneTest extends SplitPane {
         
     private int tabNumber;
 
-    public TabPaneTest() {
+    public AccordionPaneTest() {
         
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
         setStyleName("DefaultResizable");
@@ -62,8 +62,8 @@ public class TabPaneTest extends SplitPane {
         controlGroupsColumn.setCellSpacing(new Extent(10));
         add(controlGroupsColumn);
         
-        final TabPane tabPane = new TabPane();
-        add(tabPane);
+        final AccordionPane accordionPane = new AccordionPane();
+        add(accordionPane);
         
         ButtonColumn controlsColumn;
         
@@ -74,100 +74,91 @@ public class TabPaneTest extends SplitPane {
 
         controlsColumn.addButton("Set Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setForeground(StyleUtil.randomColor());
+                accordionPane.setForeground(StyleUtil.randomColor());
             }
         });
         controlsColumn.addButton("Clear Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setForeground(null);
+                accordionPane.setForeground(null);
             }
         });
         controlsColumn.addButton("Set Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setBackground(StyleUtil.randomColor());
+                accordionPane.setBackground(StyleUtil.randomColor());
             }
         });
         controlsColumn.addButton("Clear Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setBackground(null);
+                accordionPane.setBackground(null);
             }
         });
-        controlsColumn.addButton("Set Inactive Border (All Attributes)", new ActionListener() {
+        controlsColumn.addButton("Set Tab Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setInactiveBorder(StyleUtil.randomBorder());
+                accordionPane.setTabForeground(StyleUtil.randomColor());
             }
         });
-        controlsColumn.addButton("Set Inactive Border Color", new ActionListener() {
+        controlsColumn.addButton("Clear Tab Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Border border = tabPane.getInactiveBorder();
+                accordionPane.setTabForeground(null);
+            }
+        });
+        controlsColumn.addButton("Set Tab Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                accordionPane.setTabBackground(StyleUtil.randomColor());
+            }
+        });
+        controlsColumn.addButton("Clear Tab Background", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                accordionPane.setTabBackground(null);
+            }
+        });
+        controlsColumn.addButton("Set Tab Border (All Attributes)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                accordionPane.setTabBorder(StyleUtil.randomBorder());
+            }
+        });
+        controlsColumn.addButton("Set Tab Border Color", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Border border = accordionPane.getTabBorder();
                 if (border == null) {
                     border = new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID);
                 }
-                tabPane.setInactiveBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
+                accordionPane.setTabBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
             }
         });
-        controlsColumn.addButton("Set Inactive Border Size", new ActionListener() {
+        controlsColumn.addButton("Set Tab Border Size", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setInactiveBorder(StyleUtil.nextBorderSize(tabPane.getInactiveBorder()));
+                accordionPane.setTabBorder(StyleUtil.nextBorderSize(accordionPane.getTabBorder()));
             }
         });
-        controlsColumn.addButton("Set Inactive Border Style", new ActionListener() {
+        controlsColumn.addButton("Set Tab Border Style", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setInactiveBorder(StyleUtil.nextBorderStyle(tabPane.getInactiveBorder()));
+                accordionPane.setTabBorder(StyleUtil.nextBorderStyle(accordionPane.getTabBorder()));
             }
         });
-        controlsColumn.addButton("Remove Inactive Border", new ActionListener() {
+        controlsColumn.addButton("Remove Tab Border", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setInactiveBorder(null);
+                accordionPane.setTabBorder(null);
             }
         });
-        controlsColumn.addButton("Set Active Border (All Attributes)", new ActionListener() {
+        controlsColumn.addButton("Set Tab Rollover Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setActiveBorder(StyleUtil.randomBorder());
+                accordionPane.setTabRolloverForeground(StyleUtil.randomColor());
             }
         });
-        controlsColumn.addButton("Set Active Border Color", new ActionListener() {
+        controlsColumn.addButton("Clear Tab Rollover Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Border border = tabPane.getActiveBorder();
-                if (border == null) {
-                    border = new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID);
-                }
-                tabPane.setActiveBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
+                accordionPane.setTabRolloverForeground(null);
             }
         });
-        controlsColumn.addButton("Set Active Border Size", new ActionListener() {
+        controlsColumn.addButton("Set Tab Rollover Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setActiveBorder(StyleUtil.nextBorderSize(tabPane.getActiveBorder()));
+                accordionPane.setTabRolloverBackground(StyleUtil.randomColor());
             }
         });
-        controlsColumn.addButton("Set Active Border Style", new ActionListener() {
+        controlsColumn.addButton("Clear Tab Rollover Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setActiveBorder(StyleUtil.nextBorderStyle(tabPane.getActiveBorder()));
-            }
-        });
-        controlsColumn.addButton("Remove Active Border", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setActiveBorder(null);
-            }
-        });
-        controlsColumn.addButton("Set Border Type = None", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setBorderType(TabPane.BORDER_TYPE_NONE);
-            }
-        });
-        controlsColumn.addButton("Set Border Type = Adjacent", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setBorderType(TabPane.BORDER_TYPE_ADJACENT_TO_TABS);
-            }
-        });
-        controlsColumn.addButton("Set Border Type = Parallel", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setBorderType(TabPane.BORDER_TYPE_PARALLEL_TO_TABS);
-            }
-        });
-        controlsColumn.addButton("Set Border Type = Surround", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setBorderType(TabPane.BORDER_TYPE_SURROUND);
+                accordionPane.setTabRolloverBackground(null);
             }
         });
         
@@ -178,54 +169,42 @@ public class TabPaneTest extends SplitPane {
 
         controlsColumn.addButton("Select TabIndex 0", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.setActiveTabIndex(0);
+                accordionPane.setActiveTabIndex(0);
             }
         });
 
         controlsColumn.addButton("Select TabIndex 2", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (tabPane.getComponentCount() > 0) {
-                    tabPane.setActiveTabIndex(2);
+                if (accordionPane.getComponentCount() > 0) {
+                    accordionPane.setActiveTabIndex(2);
                 }
             }
         });
         
         controlsColumn.addButton("Select Tab Null", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (tabPane.getComponentCount() > 0) {
-                    tabPane.setActiveTab(null);
+                if (accordionPane.getComponentCount() > 0) {
+                    accordionPane.setActiveTab(null);
                 }
             }
         });
 
-        controlsColumn.addButton("Set Tab Position = Top", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setTabPosition(TabPane.TAB_POSITION_TOP);
-            }
-        });
-
-        controlsColumn.addButton("Set Tab Position = Bottom", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setTabPosition(TabPane.TAB_POSITION_BOTTOM);
-            }
-        });
-
-        // Add/Remove TabPane
+        // Add/Remove AccordionPane
         controlsColumn = new ButtonColumn();
         controlsColumn.add(new Label("Add/Remove TabPabe"));
         controlGroupsColumn.add(controlsColumn);
 
-        controlsColumn.addButton("Add TabPane", new ActionListener() {
+        controlsColumn.addButton("Add AccordionPane", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (getComponentCount() < 2) {
-                    add(tabPane);
+                    add(accordionPane);
                 }
             }
         });
 
-        controlsColumn.addButton("Remove TabPane", new ActionListener() {
+        controlsColumn.addButton("Remove AccordionPane", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                remove(tabPane);
+                remove(accordionPane);
             }
         });
 
@@ -236,7 +215,7 @@ public class TabPaneTest extends SplitPane {
 
         controlsColumn.addButton("Add Label (No LayoutData)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tabPane.add(new Label("Generic Label"));
+                accordionPane.add(new Label("Generic Label"));
             }
         });
 
@@ -244,10 +223,10 @@ public class TabPaneTest extends SplitPane {
             public void actionPerformed(ActionEvent e) {
                 Label label = new Label("Tab Pane Child " + tabNumber);
                 label.setBackground(StyleUtil.randomBrightColor());
-                TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                AccordionPaneLayoutData layoutData = new AccordionPaneLayoutData();
                 layoutData.setTitle("Label #" + tabNumber);
                 label.setLayoutData(layoutData);
-                tabPane.add(label);
+                accordionPane.add(label);
                 ++tabNumber;
             }
         });
@@ -256,26 +235,26 @@ public class TabPaneTest extends SplitPane {
             public void actionPerformed(ActionEvent e) {
                 Label label = new Label("Tab Pane Child " + tabNumber);
                 label.setBackground(StyleUtil.randomBrightColor());
-                TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                AccordionPaneLayoutData layoutData = new AccordionPaneLayoutData();
                 layoutData.setTitle("Inserted Label #" + tabNumber);
                 label.setLayoutData(layoutData);
-                tabPane.add(label, 0);
+                accordionPane.add(label, 0);
                 ++tabNumber;
             }
         });
         
         controlsColumn.addButton("Add Label (index 2)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (tabPane.getComponentCount() < 2) {
+                if (accordionPane.getComponentCount() < 2) {
                     // Do nothing
                     return;
                 }
                 Label label = new Label("Tab Pane Child " + tabNumber);
                 label.setBackground(StyleUtil.randomBrightColor());
-                TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                AccordionPaneLayoutData layoutData = new AccordionPaneLayoutData();
                 layoutData.setTitle("Inserted Label #" + tabNumber);
                 label.setLayoutData(layoutData);
-                tabPane.add(label, 2);
+                accordionPane.add(label, 2);
                 ++tabNumber;
             }
         });
@@ -283,20 +262,20 @@ public class TabPaneTest extends SplitPane {
         controlsColumn.addButton("Add CalendarField", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 CalendarField calendarField = new CalendarField();
-                TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                AccordionPaneLayoutData layoutData = new AccordionPaneLayoutData();
                 layoutData.setTitle("Calendar #" + tabNumber++);
                 calendarField.setLayoutData(layoutData);
-                tabPane.add(calendarField);
+                accordionPane.add(calendarField);
             }
         });
 
-        controlsColumn.addButton("Add TabPaneTest", new ActionListener() {
+        controlsColumn.addButton("Add AccordionPaneTest", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                TabPaneTest tabPaneTest = new TabPaneTest();
-                TabPaneLayoutData layoutData = new TabPaneLayoutData();
-                layoutData.setTitle("TPT #" + tabNumber++);
-                tabPaneTest.setLayoutData(layoutData);
-                tabPane.add(tabPaneTest);
+                AccordionPaneTest accordionPaneTest = new AccordionPaneTest();
+                AccordionPaneLayoutData layoutData = new AccordionPaneLayoutData();
+                layoutData.setTitle("APT #" + tabNumber++);
+                accordionPaneTest.setLayoutData(layoutData);
+                accordionPane.add(accordionPaneTest);
             }
         });
 
@@ -314,28 +293,28 @@ public class TabPaneTest extends SplitPane {
                         contentPane.add(windowPane);
                     }
                 });
-                buttonColumn.addButton("Add TabPaneTest WindowPane", new ActionListener(){
+                buttonColumn.addButton("Add AccordionPaneTest WindowPane", new ActionListener(){
                 
                     public void actionPerformed(ActionEvent e) {
                         WindowPane windowPane = new WindowPane();
                         windowPane.setStyleName("Default");
                         windowPane.setTitle("Test Window");
-                        windowPane.add(new TabPaneTest());
+                        windowPane.add(new AccordionPaneTest());
                         contentPane.add(windowPane);
                     }
                 });
                 contentPane.add(buttonColumn);
-                TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                AccordionPaneLayoutData layoutData = new AccordionPaneLayoutData();
                 layoutData.setTitle("ContentPane #" + tabNumber++);
                 contentPane.setLayoutData(layoutData);
-                tabPane.add(contentPane);
+                accordionPane.add(contentPane);
             }
         });
 
         controlsColumn.addButton("Remove Last Tab", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (tabPane.getComponentCount() > 0) {
-                    tabPane.remove(tabPane.getComponentCount() - 1);
+                if (accordionPane.getComponentCount() > 0) {
+                    accordionPane.remove(accordionPane.getComponentCount() - 1);
                 }
             }
         });
