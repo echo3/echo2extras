@@ -126,15 +126,15 @@ ExtrasTabPane.prototype.create = function() {
     contentContainerDivElement.style.color = this.defaultForeground;
     switch (this.tabPosition) {
     case ExtrasTabPane.TAB_POSITION_BOTTOM:
-        ExtrasTabPane.setCssPositionTop(contentContainerDivElement.style, tabPaneDivElement.id, 0, 33); //BUGBUG (33)
+        ExtrasUtil.setCssPositionTop(contentContainerDivElement.style, tabPaneDivElement.id, 0, 33); //BUGBUG (33)
         contentContainerDivElement.style.bottom = this.headerHeight + "px";
         break;
     default:
         contentContainerDivElement.style.top = this.headerHeight + "px";
-        ExtrasTabPane.setCssPositionBottom(contentContainerDivElement.style, tabPaneDivElement.id, 0, 33);
+        ExtrasUtil.setCssPositionBottom(contentContainerDivElement.style, tabPaneDivElement.id, 0, 33);
     }
     contentContainerDivElement.style.left = "0px";
-    ExtrasTabPane.setCssPositionRight(contentContainerDivElement.style, tabPaneDivElement.id, 0, 0);
+    ExtrasUtil.setCssPositionRight(contentContainerDivElement.style, tabPaneDivElement.id, 0, 0);
 
     var activeBorder = this.getActiveBorder();
     switch (this.borderType) {
@@ -278,36 +278,6 @@ ExtrasTabPane.processClick = function(echoEvent) {
     
     EchoClientMessage.setPropertyValue(tabPaneId, "activeTab", tabId);
     tabPane.selectTab(tabId);
-};
-
-ExtrasTabPane.setCssPositionBottom = function(style, containerElementId, bottomPx, subtractedPixels) {
-    if (EchoClientProperties.get("quirkCssPositioningOneSideOnly")) {
-        var heightExpression = "(document.getElementById(\"" + containerElementId + "\").clientHeight-" 
-                + subtractedPixels + ")+\"px\"";
-        style.setExpression("height", heightExpression);
-    } else {
-        style.bottom = bottomPx + "px";
-    }
-};
-
-ExtrasTabPane.setCssPositionTop = function(style, containerElementId, topPx, subtractedPixels) {
-    if (EchoClientProperties.get("quirkCssPositioningOneSideOnly")) {
-        var heightExpression = "(document.getElementById(\"" + containerElementId + "\").clientHeight-" 
-                + subtractedPixels + ")+\"px\"";
-        style.setExpression("height", heightExpression);
-    } else {
-        style.top = topPx + "px";
-    }
-};
-
-ExtrasTabPane.setCssPositionRight = function(style, containerElementId, rightPx, subtractedPixels) {
-    if (EchoClientProperties.get("quirkCssPositioningOneSideOnly")) {
-        var widthExpression = "(document.getElementById(\"" + containerElementId + "\").clientWidth-" 
-                + subtractedPixels + ")+\"px\"";
-        style.setExpression("width", widthExpression);
-    } else {
-        style.right = rightPx + "px";
-    }
 };
 
 /**

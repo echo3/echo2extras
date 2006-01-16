@@ -16,3 +16,34 @@ ExtrasUtil.Bounds.prototype.toString = function() {
     return "(" + this.left + ", " + this.top + ") [" + this.width + "x" + this.height + "]";
 };
 
+ExtrasUtil.setCssPositionBottom = function(style, containerElementId, bottomPx, subtractedPixels) {
+    if (EchoClientProperties.get("quirkCssPositioningOneSideOnly")) {
+        var heightExpression = "(document.getElementById(\"" + containerElementId + "\").clientHeight-" 
+                + subtractedPixels + ")+\"px\"";
+        style.setExpression("height", heightExpression);
+    } else {
+        style.bottom = bottomPx + "px";
+    }
+};
+
+ExtrasUtil.setCssPositionTop = function(style, containerElementId, topPx, subtractedPixels) {
+    if (EchoClientProperties.get("quirkCssPositioningOneSideOnly")) {
+        var heightExpression = "(document.getElementById(\"" + containerElementId + "\").clientHeight-" 
+                + subtractedPixels + ")+\"px\"";
+        style.setExpression("height", heightExpression);
+    } else {
+        style.top = topPx + "px";
+    }
+};
+
+ExtrasUtil.setCssPositionRight = function(style, containerElementId, rightPx, subtractedPixels) {
+    if (EchoClientProperties.get("quirkCssPositioningOneSideOnly")) {
+        var widthExpression = "(document.getElementById(\"" + containerElementId + "\").clientWidth-" 
+                + subtractedPixels + ")+\"px\"";
+        style.setExpression("width", widthExpression);
+    } else {
+        style.right = rightPx + "px";
+    }
+};
+
+

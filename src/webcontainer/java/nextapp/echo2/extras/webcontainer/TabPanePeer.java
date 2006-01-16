@@ -112,6 +112,7 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(TAB_PANE_SERVICE.getId());
+        serverMessage.addLibrary(ExtrasUtil.SERVICE.getId());
         TabPane tabPane = (TabPane) component;
         renderInitDirective(rc, tabPane, targetId);
         Component[] children = tabPane.getVisibleComponents();
@@ -171,7 +172,9 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
      *      nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
-        rc.getServerMessage().addLibrary(TAB_PANE_SERVICE.getId());
+        ServerMessage serverMessage = rc.getServerMessage();
+        serverMessage.addLibrary(TAB_PANE_SERVICE.getId());
+        serverMessage.addLibrary(ExtrasUtil.SERVICE.getId());
         renderDisposeDirective(rc, (TabPane) component);
     }
 
