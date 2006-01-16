@@ -138,25 +138,25 @@ ExtrasTabPane.prototype.create = function() {
 
     var activeBorder = this.getActiveBorder();
     switch (this.borderType) {
-        case ExtrasTabPane.BORDER_TYPE_NONE:
-	        contentContainerDivElement.style.border = "0px none";
-            break;
-        case ExtrasTabPane.BORDER_TYPE_SURROUND:
-            contentContainerDivElement.style.border = activeBorder;
-            break;
-        case ExtrasTabPane.BORDER_TYPE_PARALLEL_TO_TABS:
-            contentContainerDivElement.style.borderTop = activeBorder;
-            contentContainerDivElement.style.borderBottom = activeBorder;
+    case ExtrasTabPane.BORDER_TYPE_NONE:
+        contentContainerDivElement.style.border = "0px none";
+        break;
+    case ExtrasTabPane.BORDER_TYPE_SURROUND:
+        contentContainerDivElement.style.border = activeBorder;
+        break;
+    case ExtrasTabPane.BORDER_TYPE_PARALLEL_TO_TABS:
+        contentContainerDivElement.style.borderTop = activeBorder;
+        contentContainerDivElement.style.borderBottom = activeBorder;
+        break;
+    default:
+        switch (this.tabPosition) {
+        case ExtrasTabPane.TAB_POSITION_BOTTOM:
+            contentContainerDivElement.style.borderBottom = this.getActiveBorder();
             break;
         default:
-	        switch (this.tabPosition) {
-	        case ExtrasTabPane.TAB_POSITION_BOTTOM:
-	            contentContainerDivElement.style.borderBottom = this.getActiveBorder();
-	            break;
-	        default:
-	            contentContainerDivElement.style.borderTop = this.getActiveBorder();
-	        }
-            break;
+            contentContainerDivElement.style.borderTop = this.getActiveBorder();
+        }
+        break;
     }
     
     EchoDomPropertyStore.setPropertyValue(this.elementId, "tabPane", this);

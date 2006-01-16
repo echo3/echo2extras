@@ -5,7 +5,6 @@ import org.w3c.dom.Element;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
-import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.extras.app.AccordionPane;
@@ -110,6 +109,7 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(ACCORDION_PANE_SERVICE.getId());
+        serverMessage.addLibrary(ExtrasUtil.SERVICE.getId());
         AccordionPane accordionPane = (AccordionPane) component;
         renderInitDirective(rc, accordionPane, targetId);
         Component[] children = accordionPane.getVisibleComponents();
@@ -229,7 +229,9 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
      *      nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate, nextapp.echo2.app.Component)
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
-        rc.getServerMessage().addLibrary(ACCORDION_PANE_SERVICE.getId());
+        ServerMessage serverMessage = rc.getServerMessage();
+        serverMessage.addLibrary(ACCORDION_PANE_SERVICE.getId());
+        serverMessage.addLibrary(ExtrasUtil.SERVICE.getId());
         renderDisposeDirective(rc, (AccordionPane) component);
     }
 

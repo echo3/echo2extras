@@ -46,7 +46,7 @@ ExtrasAccordionPane.prototype.addTab = function(tabId, tabName) {
     
     var tabContentDivElement = document.createElement("div");
     tabContentDivElement.id = this.elementId + "_content_" + tabId;
-    tabContentDivElement.style.display = "block";
+    tabContentDivElement.style.display = "none";
     tabContentDivElement.style.position = "absolute";
     tabContentDivElement.style.left = "0px";
     tabContentDivElement.style.width = "100%";
@@ -66,6 +66,7 @@ ExtrasAccordionPane.prototype.create = function() {
     var accordionPaneDivElement = document.createElement("div");
     accordionPaneDivElement.id = this.elementId;
     accordionPaneDivElement.style.position = "absolute";
+    accordionPaneDivElement.style.overflow = "hidden";
     accordionPaneDivElement.style.width = "100%";
     accordionPaneDivElement.style.height = "100%";
     if (this.background != null) {
@@ -132,7 +133,10 @@ ExtrasAccordionPane.prototype.repositionTabs = function() {
             selectionPassed = true;
             tabContentDivElement.style.display = "block";
             tabContentDivElement.style.top = (tabHeight * (i + 1)) + "px";
-            tabContentDivElement.style.bottom = (tabHeight * (this.tabIds.length - i - 1)) + "px";
+            var bottomPx = tabHeight * (this.tabIds.length - i - 1);
+            var subtractedHeight = tabHeight * this.tabIds.length;
+            ExtrasUtil.setCssPositionBottom(tabContentDivElement.style, this.elementId, bottomPx, subtractedHeight);
+            tabContentDivElement.style.bottom = bottomPx + "px";
         } else {
             tabContentDivElement.style.display = "none";
         }
