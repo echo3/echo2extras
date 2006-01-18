@@ -29,6 +29,10 @@
 
 package nextapp.echo2.extras.testapp.testscreen;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Extent;
@@ -37,6 +41,7 @@ import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.CalendarField;
 import nextapp.echo2.extras.testapp.ButtonColumn;
+import nextapp.echo2.extras.testapp.InteractiveApp;
 import nextapp.echo2.extras.testapp.StyleUtil;
 
 /**
@@ -102,6 +107,19 @@ public class CalendarFieldTest extends SplitPane {
         controlsColumn.addButton("Remove Border", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 calendarField.setBorder(null);
+            }
+        });
+        controlsColumn.addButton("Query Date", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Date date = calendarField.getDate();
+                InteractiveApp.getApp().consoleWrite(date == null ? "No Date" : date.toString());
+            }
+        });
+        controlsColumn.addButton("Set Date", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Calendar calendar = new GregorianCalendar();
+                calendar.add(Calendar.DAY_OF_MONTH, ((int) (Math.random() * 10000)) - 5000);
+                calendarField.setDate(calendar.getTime());
             }
         });
     }

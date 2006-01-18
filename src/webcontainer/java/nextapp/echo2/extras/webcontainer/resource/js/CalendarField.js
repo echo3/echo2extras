@@ -1,5 +1,6 @@
-ExtrasCalendarField = function(elementId) {
+ExtrasCalendarField = function(elementId, containerElementId, year, month, selectedDay) {
     this.elementId = elementId;
+    this.containerElementId = containerElementId;
 
     this.tableElement = null;
     this.monthSelect = null;
@@ -8,9 +9,9 @@ ExtrasCalendarField = function(elementId) {
     this.firstDayOfMonth = 4;
     this.daysInPreviousMonth = 29;
     this.daysInMonth = 31;
-    this.month = null;
-    this.selectedDay = -1;
-    this.year = null;
+    this.month = month;
+    this.selectedDay = selectedDay;
+    this.year = year;
     
     this.foreground = ExtrasCalendarField.DEFAULT_FOREGROUND;
     this.background = ExtrasCalendarField.DEFAULT_BACKGROUND;
@@ -30,83 +31,6 @@ ExtrasCalendarField = function(elementId) {
     this.dayTableStyle = ExtrasCalendarField.DEFAULT_DAY_TABLE_STYLE;
 };
 
-/**
- * Static object/namespace for CalendarField MessageProcessor 
- * implementation.
- */
-ExtrasCalendarField.MessageProcessor = function() { };
-
-/**
- * MessageProcessor process() implementation 
- * (invoked by ServerMessage processor).
- *
- * @param messagePartElement the <code>message-part</code> element to process.
- */
-ExtrasCalendarField.MessageProcessor.process = function(messagePartElement) {
-    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
-        if (messagePartElement.childNodes[i].nodeType === 1) {
-            switch (messagePartElement.childNodes[i].tagName) {
-            case "init":
-                ExtrasCalendarField.MessageProcessor.processInit(messagePartElement.childNodes[i]);
-                break;
-            case "dispose":
-                ExtrasCalendarField.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
-                break;
-            }
-        }
-    }
-};
-
-/**
- * Processes an <code>dispose</code> message to dispose the state of a 
- * CalendarField component that is being removed.
- *
- * @param disposeMessageElement the <code>dispose</code> element to process
- */
-ExtrasCalendarField.MessageProcessor.processDispose = function(disposeMessageElement) {
-    var elementId = disposeMessageElement.getAttribute("eid");
-    var calendar = ExtrasCalendarField.getCalendar(elementId);
-    calendar.dispose();
-};
-
-/**
- * Processes an <code>init</code> message to initialize the state of a 
- * CalendarField component that is being added.
- *
- * @param initMessageElement the <code>init</code> element to process
- */
-ExtrasCalendarField.MessageProcessor.processInit = function(initMessageElement) {
-    var elementId = initMessageElement.getAttribute("eid");
-    var containerElementId = initMessageElement.getAttribute("container-eid");
-    
-    // Render div element.
-    var containerElement = document.getElementById(containerElementId);
-    
-    var calendar = new ExtrasCalendarField(elementId);
-
-    if (initMessageElement.getAttribute("border")) {
-	    calendar.border = initMessageElement.getAttribute("border");
-    }
-    if (initMessageElement.getAttribute("foreground")) {
-	    calendar.foreground = initMessageElement.getAttribute("foreground");
-    }
-    if (initMessageElement.getAttribute("background")) {
-	    calendar.background = initMessageElement.getAttribute("background");
-    }
-    
-    var calendarElement = calendar.create();
-    containerElement.appendChild(calendarElement);
-    EchoDomPropertyStore.setPropertyValue(calendar.elementId, "calendar", calendar);
-    calendar.renderUpdate();
-    
-    var year = parseInt(initMessageElement.getAttribute("year"));
-    var month = parseInt(initMessageElement.getAttribute("month"));
-    var date = parseInt(initMessageElement.getAttribute("date"));
-    calendar.setDate(year, month, date);
-    
-    var divElement = document.createElement("div");
-};
-
 ExtrasCalendarField.DEFAULT_FOREGROUND = "#000000";
 ExtrasCalendarField.DEFAULT_BACKGROUND = "#ffffff";
 ExtrasCalendarField.DEFAULT_BORDER = "#5f5faf 2px groove";
@@ -114,7 +38,7 @@ ExtrasCalendarField.DEFAULT_BORDER = "#5f5faf 2px groove";
 ExtrasCalendarField.DEFAULT_DAY_OF_WEEK_NAMES = 
         new Array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
 ExtrasCalendarField.DEFAULT_MONTH_NAMES = new Array(
-         "January", "February", "March", "April", "May", "June", 
+        "January", "February", "March", "April", "May", "June", 
         "July", "August", "September", "October", "November", "December");
 ExtrasCalendarField.DEFAULT_FIRST_DAY_OF_WEEK = 0;
 
@@ -174,8 +98,8 @@ ExtrasCalendarField.getDaysInMonth = function(year, month) {
 
 ExtrasCalendarField.prototype.create = function() {
     var i, j;
-    var divElement = document.createElement("div");
-    divElement.id = this.elementId;
+    var calendarDivElement = document.createElement("div");
+    calendarDivElement.id = this.elementId;
     
     this.monthSelect = document.createElement("select");
     this.monthSelect.id = this.elementId + "_month";
@@ -185,16 +109,18 @@ ExtrasCalendarField.prototype.create = function() {
         optionElement.appendChild(document.createTextNode(this.monthNames[i]));
         this.monthSelect.appendChild(optionElement);
     }
-    divElement.appendChild(this.monthSelect);
+    this.monthSelect.selectedIndex = this.month;
+    calendarDivElement.appendChild(this.monthSelect);
     
     this.yearField = document.createElement("input");
     this.yearField.id = this.elementId + "_year";
     this.yearField.setAttribute("type", "text");
+    this.yearField.setAttribute("value", this.year);
     this.yearField.setAttribute("maxlength", "4");
     this.yearField.setAttribute("size", "5");
     EchoDomUtil.setCssText(this.yearField, this.yearFieldStyle);
     
-    divElement.appendChild(this.yearField);
+    calendarDivElement.appendChild(this.yearField);
 
     this.tableElement = document.createElement("table");
     this.tableElement.id = this.elementId + "_table";
@@ -230,12 +156,18 @@ ExtrasCalendarField.prototype.create = function() {
     }
     this.tableElement.appendChild(tbodyElement);
     
-    divElement.appendChild(this.tableElement);
+    calendarDivElement.appendChild(this.tableElement);
+    
+    var containerElement = document.getElementById(this.containerElementId);
+    containerElement.appendChild(calendarDivElement);
     
     EchoDomUtil.addEventListener(this.tableElement, "click", this.processDaySelect);
     EchoDomUtil.addEventListener(this.monthSelect, "change", this.processMonthSelect);
     EchoDomUtil.addEventListener(this.yearField, "change", this.processYearEntry);
-    return divElement;
+    
+    EchoDomPropertyStore.setPropertyValue(this.elementId, "calendar", this);
+
+    this.renderUpdate();
 };
 
 ExtrasCalendarField.prototype.dispose = function() {
@@ -397,3 +329,71 @@ ExtrasCalendarField.prototype.updateClientMessage = function() {
     calendarSelectionElement.setAttribute("year", this.year);
     EchoDebugManager.updateClientMessage();
 };
+
+/**
+ * Static object/namespace for CalendarField MessageProcessor 
+ * implementation.
+ */
+ExtrasCalendarField.MessageProcessor = function() { };
+
+/**
+ * MessageProcessor process() implementation 
+ * (invoked by ServerMessage processor).
+ *
+ * @param messagePartElement the <code>message-part</code> element to process.
+ */
+ExtrasCalendarField.MessageProcessor.process = function(messagePartElement) {
+    for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
+        if (messagePartElement.childNodes[i].nodeType === 1) {
+            switch (messagePartElement.childNodes[i].tagName) {
+            case "init":
+                ExtrasCalendarField.MessageProcessor.processInit(messagePartElement.childNodes[i]);
+                break;
+            case "dispose":
+                ExtrasCalendarField.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
+                break;
+            }
+        }
+    }
+};
+
+/**
+ * Processes an <code>dispose</code> message to dispose the state of a 
+ * CalendarField component that is being removed.
+ *
+ * @param disposeMessageElement the <code>dispose</code> element to process
+ */
+ExtrasCalendarField.MessageProcessor.processDispose = function(disposeMessageElement) {
+    var elementId = disposeMessageElement.getAttribute("eid");
+    var calendar = ExtrasCalendarField.getCalendar(elementId);
+    calendar.dispose();
+};
+
+/**
+ * Processes an <code>init</code> message to initialize the state of a 
+ * CalendarField component that is being added.
+ *
+ * @param initMessageElement the <code>init</code> element to process
+ */
+ExtrasCalendarField.MessageProcessor.processInit = function(initMessageElement) {
+    var elementId = initMessageElement.getAttribute("eid");
+    var containerElementId = initMessageElement.getAttribute("container-eid");
+    var year = parseInt(initMessageElement.getAttribute("year"));
+    var month = parseInt(initMessageElement.getAttribute("month"));
+    var date = parseInt(initMessageElement.getAttribute("date"));
+
+    var calendar = new ExtrasCalendarField(elementId, containerElementId, year, month, date);
+
+    if (initMessageElement.getAttribute("border")) {
+	    calendar.border = initMessageElement.getAttribute("border");
+    }
+    if (initMessageElement.getAttribute("foreground")) {
+	    calendar.foreground = initMessageElement.getAttribute("foreground");
+    }
+    if (initMessageElement.getAttribute("background")) {
+	    calendar.background = initMessageElement.getAttribute("background");
+    }
+
+    calendar.create();
+};
+
