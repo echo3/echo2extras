@@ -10,6 +10,7 @@ import nextapp.echo2.extras.app.ColorSelect;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.PartialUpdateManager;
+import nextapp.echo2.webcontainer.PartialUpdateParticipant;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webrender.ServerMessage;
@@ -65,10 +66,33 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
     private PartialUpdateManager partialUpdateManager;
     
     /**
+     * <code>PartialUpdateParticipant</code> to set color.
+     */
+    private PartialUpdateParticipant setColorUpdateParticipant = new PartialUpdateParticipant() {
+    
+        /**
+         * @see nextapp.echo2.webcontainer.PartialUpdateParticipant#renderProperty(nextapp.echo2.webcontainer.RenderContext,
+         *       nextapp.echo2.app.update.ServerComponentUpdate)
+         */
+        public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
+            renderSetColorDirective(rc, (ColorSelect) update.getParent());
+        }
+    
+        /**
+         * @see nextapp.echo2.webcontainer.PartialUpdateParticipant#canRenderProperty(nextapp.echo2.webcontainer.RenderContext, 
+         *      nextapp.echo2.app.update.ServerComponentUpdate)
+         */
+        public boolean canRenderProperty(RenderContext rc, ServerComponentUpdate update) {
+            return true;
+        }
+    };
+    
+    /**
      * Default constructor.
      */
     public ColorSelectPeer() {
         partialUpdateManager = new PartialUpdateManager();
+        partialUpdateManager.add(ColorSelect.COLOR_CHANGED_PROPERTY, setColorUpdateParticipant);
     }
 
     /**
