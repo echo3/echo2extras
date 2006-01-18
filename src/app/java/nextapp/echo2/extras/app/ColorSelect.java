@@ -42,6 +42,15 @@ public class ColorSelect extends Component {
     }
     
     /**
+     * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
+     */
+    public void processInput(String inputName, Object inputValue) {
+        if (COLOR_CHANGED_PROPERTY.equals(inputName)) {
+            setColor((Color) inputValue);
+        }
+    }
+
+    /**
      * Sets the selected color.
      * 
      * @param newValue the new color

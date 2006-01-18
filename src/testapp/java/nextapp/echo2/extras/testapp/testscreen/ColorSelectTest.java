@@ -79,9 +79,11 @@ public class ColorSelectTest extends SplitPane {
         controlsColumn.addButton("Add ColorSelect WindowPane", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 WindowPane windowPane = new WindowPane("Color Select Test", new Extent(250), new Extent(270));
+                windowPane.setPositionX(new Extent((int) (Math.random() * 500)));
+                windowPane.setPositionY(new Extent((int) (Math.random() * 300) + 140));
                 windowPane.setStyleName("Default");
                 windowPane.setInsets(new Insets(10, 5));
-                windowPane.add(new ColorSelect());
+                windowPane.add(new ColorSelect(StyleUtil.randomColor()));
                 InteractiveApp.getApp().getDefaultWindow().getContent().add(windowPane);
             }
         });

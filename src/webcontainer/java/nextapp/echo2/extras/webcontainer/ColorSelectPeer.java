@@ -88,6 +88,7 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         serverMessage.addLibrary(COLOR_SELECT_SERVICE.getId());
         serverMessage.addLibrary(ExtrasUtil.SERVICE.getId());
         renderInitDirective(rc, targetId, (ColorSelect) component);
+        renderSetColorDirective(rc, (ColorSelect) component);
     }
 
     /**
@@ -130,6 +131,20 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
                 "ExtrasColorSelect.MessageProcessor", "init");
         initElement.setAttribute("eid", elementId);
         initElement.setAttribute("container-eid", containerId);
+    }
+    
+    /**
+     * Renders an set-color directive.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param colorSelect the <code>ColorSelect</code> being rendered
+     */
+    private void renderSetColorDirective(RenderContext rc, ColorSelect colorSelect) {
+        String elementId = ContainerInstance.getElementId(colorSelect);
+        ServerMessage serverMessage = rc.getServerMessage();
+        Element initElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
+                "ExtrasColorSelect.MessageProcessor", "set-color");
+        initElement.setAttribute("eid", elementId);
         
         Color color = colorSelect.getColor();
         if (color != null) {
@@ -148,7 +163,6 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         int r = Integer.parseInt(selectionElement.getAttribute("r"));
         int g = Integer.parseInt(selectionElement.getAttribute("g"));
         int b = Integer.parseInt(selectionElement.getAttribute("b"));
-        
         ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, 
                 ColorSelect.COLOR_CHANGED_PROPERTY, new Color(r, g, b));
     }

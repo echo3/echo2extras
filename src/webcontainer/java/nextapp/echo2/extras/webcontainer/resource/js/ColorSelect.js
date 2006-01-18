@@ -259,6 +259,24 @@ ExtrasColorSelect.prototype.updateColor = function() {
    }
    hLineElement.style.top = hLineTop + "px";
    
+   this.updateClientMessage(renderColor);
+};
+
+/**
+ * Updates the component state in the outgoing <code>ClientMessage</code>.
+ *
+ * @param componentId the id of the Text Component
+ */
+ExtrasColorSelect.prototype.updateClientMessage = function(color) {
+    var colorPropertyElement = EchoClientMessage.createPropertyElement(this.elementId, "color");
+    var colorElement = colorPropertyElement.firstChild;
+    if (!colorElement) {
+        colorElement = EchoClientMessage.messageDocument.createElement("color");
+        colorPropertyElement.appendChild(colorElement);
+    }
+    colorElement.setAttribute("r", color.r);
+    colorElement.setAttribute("g", color.g);
+    colorElement.setAttribute("b", color.b);
 };
 
 ExtrasColorSelect.prototype.processHUpdate = function(echoEvent) {
@@ -431,11 +449,14 @@ ExtrasColorSelect.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType === 1) {
             switch (messagePartElement.childNodes[i].tagName) {
+            case "dispose":
+                ExtrasColorSelect.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
+                break;
             case "init":
                 ExtrasColorSelect.MessageProcessor.processInit(messagePartElement.childNodes[i]);
                 break;
-            case "dispose":
-                ExtrasColorSelect.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
+            case "set-color":
+                ExtrasColorSelect.MessageProcessor.processSetColor(messagePartElement.childNodes[i]);
                 break;
             }
         }
@@ -469,6 +490,24 @@ ExtrasColorSelect.MessageProcessor.processInit = function(initMessageElement) {
     colorSelect.hLineImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ColorSelect.HLine";
     colorSelect.sLineImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ColorSelect.SLine";
     colorSelect.vLineImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ColorSelect.VLine";
+    colorSelect.enableInternetExplorerPngWorkaround = 
+            EchoClientProperties.get("proprietaryIEPngAlphaFilterRequired") ? true : false;
     colorSelect.create();
 };
+
+/**
+ * Processes an <code>set-color</code> message to set the selected color of
+ * an existing ColorSelect component.
+ *
+ * @param setColorMessageElement the <code>set-color</code> element to process
+ */
+ExtrasColorSelect.MessageProcessor.processSetColor = function(setColorMessageElement) {
+    var elementId = setColorMessageElement.getAttribute("eid");
+    var colorSelect = ExtrasColorSelect.getComponent(elementId);
+    var r = parseInt(setColorMessageElement.getAttribute("r"));
+    var g = parseInt(setColorMessageElement.getAttribute("g"));
+    var b = parseInt(setColorMessageElement.getAttribute("b"));
+    colorSelect.setColor(new ExtrasColorSelect.RGB(r, g, b));
+};
+
 
