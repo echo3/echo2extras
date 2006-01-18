@@ -158,7 +158,7 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
     }
     
     /**
-     * Renders an set-color directive.
+     * Renders a set-color directive.
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param colorSelect the <code>ColorSelect</code> being rendered
@@ -166,15 +166,15 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
     private void renderSetColorDirective(RenderContext rc, ColorSelect colorSelect) {
         String elementId = ContainerInstance.getElementId(colorSelect);
         ServerMessage serverMessage = rc.getServerMessage();
-        Element initElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
+        Element setColorElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
                 "ExtrasColorSelect.MessageProcessor", "set-color");
-        initElement.setAttribute("eid", elementId);
+        setColorElement.setAttribute("eid", elementId);
         
         Color color = colorSelect.getColor();
         if (color != null) {
-            initElement.setAttribute("r", Integer.toString(color.getRed()));
-            initElement.setAttribute("g", Integer.toString(color.getGreen()));
-            initElement.setAttribute("b", Integer.toString(color.getBlue()));
+            setColorElement.setAttribute("r", Integer.toString(color.getRed()));
+            setColorElement.setAttribute("g", Integer.toString(color.getGreen()));
+            setColorElement.setAttribute("b", Integer.toString(color.getBlue()));
         }
     }
 

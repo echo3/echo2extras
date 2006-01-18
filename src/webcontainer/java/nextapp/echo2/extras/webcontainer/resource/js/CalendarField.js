@@ -60,7 +60,7 @@ ExtrasCalendarField.DEFAULT_YEAR_FIELD_STYLE
 ExtrasCalendarField.DEFAULT_MONTH_SELECT_STYLE 
         = "text-align:left; background-color: #ffffcf; border-width: 1px; border-style: inset;";
 
-ExtrasCalendarField.getCalendar = function(elementId) {
+ExtrasCalendarField.getComponent = function(elementId) {
     var componentId = EchoDomUtil.getComponentId(elementId);
     var calendar = EchoDomPropertyStore.getPropertyValue(componentId, "calendar");
     return calendar;
@@ -189,7 +189,7 @@ ExtrasCalendarField.prototype.processDaySelect = function(e) {
         // Day of week clicked.
         return;
     }
-    var calendar = ExtrasCalendarField.getCalendar(elementId);
+    var calendar = ExtrasCalendarField.getComponent(elementId);
 
     // Extract portion of id which describes cell number, e.g., if the clicked element
     var cellId = elementId.substring(calendar.elementId.length + 1);
@@ -200,13 +200,13 @@ ExtrasCalendarField.prototype.processDaySelect = function(e) {
 
 ExtrasCalendarField.prototype.processMonthSelect = function(e) {
     var elementId = EchoDomUtil.getEventTarget(e).id;
-    var calendar = ExtrasCalendarField.getCalendar(elementId);
+    var calendar = ExtrasCalendarField.getComponent(elementId);
     calendar.setDate(calendar.year, calendar.monthSelect.selectedIndex, calendar.selectedDay, true);
 };
 
 ExtrasCalendarField.prototype.processYearEntry = function(e) {
     var elementId = EchoDomUtil.getEventTarget(e).id;
-    var calendar = ExtrasCalendarField.getCalendar(elementId);
+    var calendar = ExtrasCalendarField.getComponent(elementId);
     if (isNaN(calendar.yearField.value)) {
         return;
     }
@@ -344,11 +344,14 @@ ExtrasCalendarField.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType === 1) {
             switch (messagePartElement.childNodes[i].tagName) {
+            case "dispose":
+                ExtrasCalendarField.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
+                break;
             case "init":
                 ExtrasCalendarField.MessageProcessor.processInit(messagePartElement.childNodes[i]);
                 break;
-            case "dispose":
-                ExtrasCalendarField.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
+            case "set-date":
+                ExtrasCalendarField.MessageProcessor.processSetDate(messagePartElement.childNodes[i]);
                 break;
             }
         }
@@ -363,7 +366,7 @@ ExtrasCalendarField.MessageProcessor.process = function(messagePartElement) {
  */
 ExtrasCalendarField.MessageProcessor.processDispose = function(disposeMessageElement) {
     var elementId = disposeMessageElement.getAttribute("eid");
-    var calendar = ExtrasCalendarField.getCalendar(elementId);
+    var calendar = ExtrasCalendarField.getComponent(elementId);
     calendar.dispose();
 };
 
@@ -393,5 +396,20 @@ ExtrasCalendarField.MessageProcessor.processInit = function(initMessageElement) 
     }
 
     calendar.create();
+};
+
+/**
+ * Processes a <code>set-date</code> message to dispose the state of a 
+ * CalendarField component that is being removed.
+ *
+ * @param setDateMessageElement the <code>set-date</code> element to process
+ */
+ExtrasCalendarField.MessageProcessor.processSetDate = function(setDateMessageElement) {
+    var elementId = setDateMessageElement.getAttribute("eid");
+    var year = parseInt(setDateMessageElement.getAttribute("year"));
+    var month = parseInt(setDateMessageElement.getAttribute("month"));
+    var date = parseInt(setDateMessageElement.getAttribute("date"));
+    var calendar = ExtrasCalendarField.getComponent(elementId);
+    calendar.setDate(year, month, date, false);
 };
 

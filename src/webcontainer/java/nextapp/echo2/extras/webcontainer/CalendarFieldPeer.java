@@ -15,6 +15,7 @@ import nextapp.echo2.extras.app.CalendarField;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.PartialUpdateManager;
+import nextapp.echo2.webcontainer.PartialUpdateParticipant;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.RenderState;
@@ -68,10 +69,33 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
     private PartialUpdateManager partialUpdateManager;
     
     /**
+     * <code>PartialUpdateParticipant</code> to set date.
+     */
+    private PartialUpdateParticipant setDateUpdateParticipant = new PartialUpdateParticipant() {
+    
+        /**
+         * @see nextapp.echo2.webcontainer.PartialUpdateParticipant#renderProperty(nextapp.echo2.webcontainer.RenderContext,
+         *       nextapp.echo2.app.update.ServerComponentUpdate)
+         */
+        public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
+            renderSetDateDirective(rc, (CalendarField) update.getParent());
+        }
+    
+        /**
+         * @see nextapp.echo2.webcontainer.PartialUpdateParticipant#canRenderProperty(nextapp.echo2.webcontainer.RenderContext, 
+         *      nextapp.echo2.app.update.ServerComponentUpdate)
+         */
+        public boolean canRenderProperty(RenderContext rc, ServerComponentUpdate update) {
+            return true;
+        }
+    };
+
+    /**
      * Default constructor.
      */
     public CalendarFieldPeer() {
         partialUpdateManager = new PartialUpdateManager();
+        partialUpdateManager.add(CalendarField.DATE_CHANGED_PROPERTY, setDateUpdateParticipant);
     }
 
     /**
@@ -195,6 +219,28 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         }
     }
 
+    /**
+     * Renders a set-date directive.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param calendarField the <code>CalendarField</code> being rendered
+     */
+    private void renderSetDateDirective(RenderContext rc, CalendarField calendarField) {
+        String elementId = ContainerInstance.getElementId(calendarField);
+        ServerMessage serverMessage = rc.getServerMessage();
+        Element setDateElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
+                "ExtrasCalendarField.MessageProcessor", "set-date");
+        setDateElement.setAttribute("eid", elementId);
+        
+        Calendar calendar = new GregorianCalendar();
+        if (calendarField.getDate() != null) {
+            calendar.setTime(calendarField.getDate());
+            setDateElement.setAttribute("year", Integer.toString(calendar.get(Calendar.YEAR)));
+            setDateElement.setAttribute("month", Integer.toString(calendar.get(Calendar.MONTH)));
+            setDateElement.setAttribute("date", Integer.toString(calendar.get(Calendar.DATE)));
+        }
+    }
+    
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderUpdate(nextapp.echo2.webcontainer.RenderContext,
      *      nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
