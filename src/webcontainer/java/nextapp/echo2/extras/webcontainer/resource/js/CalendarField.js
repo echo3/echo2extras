@@ -109,13 +109,11 @@ ExtrasCalendarField.prototype.create = function() {
         optionElement.appendChild(document.createTextNode(this.monthNames[i]));
         this.monthSelect.appendChild(optionElement);
     }
-    this.monthSelect.selectedIndex = this.month;
     calendarDivElement.appendChild(this.monthSelect);
     
     this.yearField = document.createElement("input");
     this.yearField.id = this.elementId + "_year";
     this.yearField.setAttribute("type", "text");
-    this.yearField.setAttribute("value", this.year);
     this.yearField.setAttribute("maxlength", "4");
     this.yearField.setAttribute("size", "5");
     EchoDomUtil.setCssText(this.yearField, this.yearFieldStyle);
@@ -167,7 +165,7 @@ ExtrasCalendarField.prototype.create = function() {
     
     EchoDomPropertyStore.setPropertyValue(this.elementId, "calendar", this);
 
-    this.renderUpdate();
+    this.setDate(this.year, this.month, this.selectedDay, false);
 };
 
 ExtrasCalendarField.prototype.dispose = function() {
