@@ -200,7 +200,7 @@ ExtrasColorSelect.prototype.setColor = function(rgb) {
     this.v = max;
     
     var delta = max - min;
-    if (max == 0) {
+    if (max == 0 || delta == 0) {
         this.s = 0;
         this.h = 0;
     } else {

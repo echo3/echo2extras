@@ -18,7 +18,7 @@ public class ColorSelect extends Component {
      * of <code>Color.WHITE</code>.
      */
     public ColorSelect() {
-        this(Color.WHITE);
+        this(Color.BLACK);
     }
     
     /**
