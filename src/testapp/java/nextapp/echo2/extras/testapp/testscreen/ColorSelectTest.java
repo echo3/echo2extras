@@ -65,7 +65,6 @@ public class ColorSelectTest extends SplitPane {
         
         controlsColumn.addButton("Query Color", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                colorSelect.setColor(StyleUtil.randomColor());
                 Color color = colorSelect.getColor();
                 InteractiveApp.getApp().consoleWrite("Color: " + color == null ? "null" : color.toString());
             }
@@ -79,9 +78,8 @@ public class ColorSelectTest extends SplitPane {
         
         controlsColumn.addButton("Add ColorSelect WindowPane", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                WindowPane windowPane = new WindowPane();
+                WindowPane windowPane = new WindowPane("Color Select Test", new Extent(250), new Extent(270));
                 windowPane.setStyleName("Default");
-                windowPane.setTitle("Color Select Test");
                 windowPane.setInsets(new Insets(10, 5));
                 windowPane.add(new ColorSelect());
                 InteractiveApp.getApp().getDefaultWindow().getContent().add(windowPane);

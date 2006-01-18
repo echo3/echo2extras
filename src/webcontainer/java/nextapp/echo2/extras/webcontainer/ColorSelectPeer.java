@@ -4,8 +4,6 @@ import org.w3c.dom.Element;
 
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
-import nextapp.echo2.app.ImageReference;
-import nextapp.echo2.app.ResourceImageReference;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.app.util.DomUtil;
 import nextapp.echo2.extras.app.ColorSelect;
@@ -36,14 +34,6 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
             "/nextapp/echo2/extras/webcontainer/resource/js/ColorSelect.js");
     
     private static final String IMAGE_RESOURCE_PATH = "/nextapp/echo2/extras/webcontainer/resource/image/"; 
-
-//    private static final ImageReference H_LINE_IMAGE = new ResourceImageReference(IMAGE_RESOURCE_PATH + "HLine.gif");
-//    
-//    private static final ImageReference V_LINE_IMAGE = new ResourceImageReference(IMAGE_RESOURCE_PATH + "VLine.gif");
-//    private static final ImageReference S_LINE_IMAGE = new ResourceImageReference(IMAGE_RESOURCE_PATH + "SLine.gif");
-//    private static final ImageReference H_GRADIENT_IMAGE = new ResourceImageReference(IMAGE_RESOURCE_PATH + "HGradient.png");
-//    private static final ImageReference SV_GRADIENT_IMAGE = new ResourceImageReference(IMAGE_RESOURCE_PATH + "SVGradient.png");
-//    private static final ImageReference TRANSPARENT_IMAGE = new ResourceImageReference(IMAGE_RESOURCE_PATH + "Transparent.gif");
 
     private static final Service H_LINE_IMAGE_SERVICE= StaticBinaryService.forResource(
             "Echo2Extras.ColorSelect.HLine", "image/gif", IMAGE_RESOURCE_PATH + "HLine.gif");
@@ -87,27 +77,6 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
     public String getContainerId(Component component) {
         throw new UnsupportedOperationException("Component does not support children.");
     }
-    
-//    /**
-//     * @see nextapp.echo2.webcontainer.image.ImageRenderSupport#getImage(nextapp.echo2.app.Component, java.lang.String)
-//     */
-//    public ImageReference getImage(Component component, String imageId) {
-//        if ("h-line".equals(imageId)) {
-//            return H_LINE_IMAGE;
-//        } else if ("s-line".equals(imageId)) {
-//            return S_LINE_IMAGE;
-//        } else if ("v-line".equals(imageId)) {
-//            return V_LINE_IMAGE;
-//        } else if ("h-gradient".equals(imageId)) {
-//            return H_GRADIENT_IMAGE;
-//        } else if ("sv-gradient".equals(imageId)) {
-//            return SV_GRADIENT_IMAGE;
-//        } else if ("transparent".equals(imageId)) {
-//            return TRANSPARENT_IMAGE;
-//        } else {
-//            throw new IllegalArgumentException("Invalid image id: " + imageId);
-//        }
-//    }
 
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderAdd(nextapp.echo2.webcontainer.RenderContext,
