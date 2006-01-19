@@ -36,7 +36,9 @@ import java.util.GregorianCalendar;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.SplitPane;
+import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.CalendarField;
@@ -120,6 +122,17 @@ public class CalendarFieldTest extends SplitPane {
                 Calendar calendar = new GregorianCalendar();
                 calendar.add(Calendar.DAY_OF_MONTH, ((int) (Math.random() * 10000)) - 5000);
                 calendarField.setDate(calendar.getTime());
+            }
+        });
+        controlsColumn.addButton("Add CalendarField WindowPane", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                WindowPane windowPane = new WindowPane("Calendar Field Test", new Extent(240), new Extent(225));
+                windowPane.setPositionX(new Extent((int) (Math.random() * 500)));
+                windowPane.setPositionY(new Extent((int) (Math.random() * 300) + 140));
+                windowPane.setStyleName("Default");
+                windowPane.setInsets(new Insets(10, 5));
+                windowPane.add(new CalendarField());
+                InteractiveApp.getApp().getDefaultWindow().getContent().add(windowPane);
             }
         });
     }

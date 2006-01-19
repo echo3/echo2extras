@@ -1,7 +1,15 @@
-ExtrasTabPane = function(elementId) {
+/**
+ * ExtrasTabPane Object/Namespace/Constructor.
+ *
+ * @param elementId the root id of the tab pane.
+ * @param containerElementId the id of the DOM element which will contain the 
+ *        tab pane.
+ * @param activeTabId the id of the active tab (if applicable)
+ */
+ExtrasTabPane = function(elementId, containerElementId, activeTabId) {
     this.elementId = elementId;
-    this.containerElementId = null;
-    this.activeTabId = null;
+    this.containerElementId = containerElementId;
+    this.activeTabId = activeTabId;
 
     this.borderType = ExtrasTabPane.BORDER_TYPE_ADJACENT_TO_TABS;
     
@@ -412,12 +420,9 @@ ExtrasTabPane.MessageProcessor.processDispose = function(disposeMessageElement) 
  */
 ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     var elementId = initMessageElement.getAttribute("eid");
-    var tabPane = new ExtrasTabPane(elementId);
-    tabPane.containerElementId = initMessageElement.getAttribute("container-eid");
+    var containerElementId = initMessageElement.getAttribute("container-eid");
     var activeTabId = initMessageElement.getAttribute("active-tab");
-    if (activeTabId) {
-        tabPane.activeTabId = activeTabId;
-    }
+    var tabPane = new ExtrasTabPane(elementId, containerElementId, activeTabId);
 
     tabPane.tabPosition = initMessageElement.getAttribute("tab-position") == "bottom" ? 
             ExtrasTabPane.TAB_POSITION_BOTTOM : ExtrasTabPane.TAB_POSITION_TOP;
