@@ -2,10 +2,6 @@ ExtrasCalendarField = function(elementId, containerElementId, year, month, selec
     this.elementId = elementId;
     this.containerElementId = containerElementId;
 
-    this.tableElement = null;
-    this.monthSelect = null;
-    this.yearField = null;
-    
     this.firstDayOfMonth = 4;
     this.daysInPreviousMonth = 29;
     this.daysInMonth = 31;
@@ -29,6 +25,9 @@ ExtrasCalendarField = function(elementId, containerElementId, year, month, selec
     this.yearFieldStyle = ExtrasCalendarField.DEFAULT_YEAR_FIELD_STYLE;
     this.monthSelectStyle = ExtrasCalendarField.DEFAULT_MONTH_SELECT_STYLE;
     this.dayTableStyle = ExtrasCalendarField.DEFAULT_DAY_TABLE_STYLE;
+    
+    this.yearIncrementImageSrc = null;
+    this.yearDecrementImageSrc = null;
 };
 
 ExtrasCalendarField.DEFAULT_FOREGROUND = "#000000";
@@ -60,71 +59,61 @@ ExtrasCalendarField.DEFAULT_YEAR_FIELD_STYLE
 ExtrasCalendarField.DEFAULT_MONTH_SELECT_STYLE 
         = "text-align:left; background-color: #ffffcf; border-width: 1px; border-style: inset;";
 
-ExtrasCalendarField.getComponent = function(elementId) {
-    var componentId = EchoDomUtil.getComponentId(elementId);
-    var calendar = EchoDomPropertyStore.getPropertyValue(componentId, "calendar");
-    return calendar;
-};
-
-ExtrasCalendarField.getDaysInMonth = function(year, month) {
-    switch (month) {
-    case 0:
-    case 2:
-    case 4:
-    case 6:
-    case 7:
-    case 9:
-    case 11:
-        return 31;
-    case 3:
-    case 5:
-    case 8:
-    case 10:
-        return 30;
-    case 1:
-        if (year % 400 === 0) {
-            return 29;
-        } else if (year % 100 === 0) {
-            return 28;
-        } else if (year % 4 === 0) {
-            return 29;
-        } else {
-            return 28;
-        }
-    default:
-        throw "Invalid Month: " + month;
+ExtrasCalendarField.prototype.calculateCalendarInformation = function() {
+    var firstDate = new Date(this.year, this.month, 1);
+    this.firstDayOfMonth = firstDate.getDay();
+    
+    this.daysInMonth = ExtrasCalendarField.getDaysInMonth(this.year, this.month);
+    if (this.month == 0) {
+        this.daysInPreviousMonth = ExtrasCalendarField.getDaysInMonth(this.year - 1, 11);
+    } else {
+        this.daysInPreviousMonth = ExtrasCalendarField.getDaysInMonth(this.year, this.month - 1);
     }
 };
 
+/**
+ * Renders the ExtrasCalendarField into the DOM.
+ */
 ExtrasCalendarField.prototype.create = function() {
     var i, j;
     var calendarDivElement = document.createElement("div");
     calendarDivElement.id = this.elementId;
     
-    this.monthSelect = document.createElement("select");
-    this.monthSelect.id = this.elementId + "_month";
-    EchoDomUtil.setCssText(this.monthSelect, this.monthSelectStyle);
+    var monthSelect = document.createElement("select");
+    monthSelect.id = this.elementId + "_month";
+    EchoDomUtil.setCssText(monthSelect, this.monthSelectStyle);
     for (i = 0; i < 12; ++i) {
         var optionElement = document.createElement("option");
         optionElement.appendChild(document.createTextNode(this.monthNames[i]));
-        this.monthSelect.appendChild(optionElement);
+        monthSelect.appendChild(optionElement);
     }
-    calendarDivElement.appendChild(this.monthSelect);
+    calendarDivElement.appendChild(monthSelect);
     
-    this.yearField = document.createElement("input");
-    this.yearField.id = this.elementId + "_year";
-    this.yearField.setAttribute("type", "text");
-    this.yearField.setAttribute("maxlength", "4");
-    this.yearField.setAttribute("size", "5");
-    EchoDomUtil.setCssText(this.yearField, this.yearFieldStyle);
+    var yearDecrementSpanElement = document.createElement("span");
+    yearDecrementSpanElement.id = this.elementId + "_yeardecrement";
+    yearDecrementSpanElement.style.cursor = "pointer";
+    yearDecrementSpanElement.appendChild(document.createTextNode("<"));
+    calendarDivElement.appendChild(yearDecrementSpanElement);
     
-    calendarDivElement.appendChild(this.yearField);
+    var yearField = document.createElement("input");
+    yearField.id = this.elementId + "_year";
+    yearField.setAttribute("type", "text");
+    yearField.setAttribute("maxlength", "4");
+    yearField.setAttribute("size", "5");
+    EchoDomUtil.setCssText(yearField, this.yearFieldStyle);
+    calendarDivElement.appendChild(yearField);
+    
+    var yearIncrementSpanElement = document.createElement("span");
+    yearIncrementSpanElement.id = this.elementId + "_yearincrement";
+    yearIncrementSpanElement.style.cursor = "pointer";
+    yearIncrementSpanElement.appendChild(document.createTextNode(">"));
+    calendarDivElement.appendChild(yearIncrementSpanElement);
 
-    this.tableElement = document.createElement("table");
-    this.tableElement.id = this.elementId + "_table";
+    var tableElement = document.createElement("table");
+    tableElement.id = this.elementId + "_table";
     
     var dayTableStyle = "border: " + this.border + "; margin: 1px; border-collapse: collapse;"
-    EchoDomUtil.setCssText(this.tableElement, dayTableStyle);
+    EchoDomUtil.setCssText(tableElement, dayTableStyle);
     
     var tbodyElement = document.createElement("tbody");
     
@@ -152,70 +141,83 @@ ExtrasCalendarField.prototype.create = function() {
         }
         tbodyElement.appendChild(trElement);
     }
-    this.tableElement.appendChild(tbodyElement);
+    tableElement.appendChild(tbodyElement);
     
-    calendarDivElement.appendChild(this.tableElement);
+    calendarDivElement.appendChild(tableElement);
     
     var containerElement = document.getElementById(this.containerElementId);
     containerElement.appendChild(calendarDivElement);
     
-    EchoDomUtil.addEventListener(this.tableElement, "click", this.processDaySelect);
-    EchoDomUtil.addEventListener(this.monthSelect, "change", this.processMonthSelect);
-    EchoDomUtil.addEventListener(this.yearField, "change", this.processYearEntry);
+    EchoEventProcessor.addHandler(this.elementId + "_table", "click", "ExtrasCalendarField.processDaySelect");
+    EchoEventProcessor.addHandler(this.elementId + "_month", "change", "ExtrasCalendarField.processMonthSelect");
+    EchoEventProcessor.addHandler(this.elementId + "_year", "change", "ExtrasCalendarField.processYearEntry");
+    EchoEventProcessor.addHandler(this.elementId + "_yearincrement", "click", "ExtrasCalendarField.processYearIncrement");
+    EchoEventProcessor.addHandler(this.elementId + "_yeardecrement", "click", "ExtrasCalendarField.processYearDecrement");
     
     EchoDomPropertyStore.setPropertyValue(this.elementId, "calendar", this);
 
     this.setDate(this.year, this.month, this.selectedDay, false);
 };
 
+/**
+ * Removes the ExtrasCalendarField from the DOM and disposes of any allocated
+ * resources.
+ */
 ExtrasCalendarField.prototype.dispose = function() {
     // Remove event listeners.
-    EchoDomUtil.removeEventListener(this.tableElement, "click", this.processDaySelect);
-    EchoDomUtil.removeEventListener(this.monthSelect, "change", this.processMonthSelect);
-    EchoDomUtil.removeEventListener(this.yearField, "change", this.processYearEntry);
+    EchoEventProcessor.removeHandler(this.elementId + "_table", "click");
+    EchoEventProcessor.removeHandler(this.elementId + "_month", "change");
+    EchoEventProcessor.removeHandler(this.elementId + "_year", "change");
+    EchoEventProcessor.removeHandler(this.elementId + "_yearincrement", "click");
+    EchoEventProcessor.removeHandler(this.elementId + "_yeardecrement", "click");
     
-    // Remove DOM references.
-    this.monthSelect = null;
-    this.yearField = null;
-
     // Remove calendar.
     var calendarElement = document.getElementById(this.elementId);
     calendarElement.parentNode.removeChild(calendarElement);
 };
 
-ExtrasCalendarField.prototype.processDaySelect = function(e) {
-    var elementId = EchoDomUtil.getEventTarget(e).id;
+ExtrasCalendarField.prototype.processDaySelect = function(elementId) {
     if (elementId.indexOf("_dayofweek_") !== -1) {
         // Day of week clicked.
         return;
     }
-    var calendar = ExtrasCalendarField.getComponent(elementId);
 
     // Extract portion of id which describes cell number, e.g., if the clicked element
-    var cellId = elementId.substring(calendar.elementId.length + 1);
+    var cellId = elementId.substring(this.elementId.length + 1);
     var row = cellId.charAt(0);
     var column = cellId.charAt(2);
-    calendar.selectDayByCoordinate(column, row);
+    this.selectDayByCoordinate(column, row);
 };
 
-ExtrasCalendarField.prototype.processMonthSelect = function(e) {
-    var elementId = EchoDomUtil.getEventTarget(e).id;
-    var calendar = ExtrasCalendarField.getComponent(elementId);
-    calendar.setDate(calendar.year, calendar.monthSelect.selectedIndex, calendar.selectedDay, true);
+ExtrasCalendarField.prototype.processMonthSelect = function() {
+    var monthSelect = document.getElementById(this.elementId + "_month");
+    this.setDate(this.year, monthSelect.selectedIndex, this.selectedDay, true);
 };
 
-ExtrasCalendarField.prototype.processYearEntry = function(e) {
-    var elementId = EchoDomUtil.getEventTarget(e).id;
-    var calendar = ExtrasCalendarField.getComponent(elementId);
-    if (isNaN(calendar.yearField.value)) {
+ExtrasCalendarField.prototype.processYearDecrement = function() {
+    if (this.year <= ExtrasCalendarField.MINIMUM_YEAR) {
         return;
     }
-    if (calendar.yearField.value < 0) {
+    
+    --this.year;
+    this.setDate(this.year, this.month, this.selectedDay, true);
+};
+
+ExtrasCalendarField.prototype.processYearEntry = function() {
+    var yearField = document.getElementById(this.elementId + "_year");
+    if (isNaN(yearField.value)) {
+        return;
     }
-    if (calendar.yearField.value < 1582) {
+    this.setDate(yearField.value, this.month, this.selectedDay, true);
+};
+
+ExtrasCalendarField.prototype.processYearIncrement = function() {
+    if (this.year >= ExtrasCalendarField.MAXIMUM_YEAR) {
+        return;
     }
     
-    calendar.setDate(calendar.yearField.value, calendar.month, calendar.selectedDay, true);
+    ++this.year;
+    this.setDate(this.year, this.month, this.selectedDay, true);
 };
 
 /**
@@ -286,24 +288,15 @@ ExtrasCalendarField.prototype.selectDayByCoordinate = function(column, row) {
     this.setDate(selectedYear, selectedMonth, selectedDay, true);
 };
 
-ExtrasCalendarField.prototype.calculateCalendarInformation = function() {
-    var firstDate = new Date(this.year, this.month, 1);
-    this.firstDayOfMonth = firstDate.getDay();
-    
-    this.daysInMonth = ExtrasCalendarField.getDaysInMonth(this.year, this.month);
-    if (this.month == 0) {
-        this.daysInPreviousMonth = ExtrasCalendarField.getDaysInMonth(this.year - 1, 11);
-    } else {
-        this.daysInPreviousMonth = ExtrasCalendarField.getDaysInMonth(this.year, this.month - 1);
-    }
-};
-
 ExtrasCalendarField.prototype.setDate = function(year, month, day, update) {
+    var yearField = document.getElementById(this.elementId + "_year");
+    var monthSelect = document.getElementById(this.elementId + "_month");
+
     this.year = year;
     this.month = month;
     this.selectedDay = day;
-    this.yearField.value = year;
-    this.monthSelect.selectedIndex = month;
+    yearField.value = year;
+    monthSelect.selectedIndex = month;
     this.calculateCalendarInformation();
     this.renderUpdate();
     
@@ -326,6 +319,88 @@ ExtrasCalendarField.prototype.updateClientMessage = function() {
     calendarSelectionElement.setAttribute("date", this.selectedDay);
     calendarSelectionElement.setAttribute("year", this.year);
     EchoDebugManager.updateClientMessage();
+};
+
+/**
+ * Returns the ExtrasCalendarField instance relevant to the
+ * specified root DOM element id.
+ *
+ * @param elementId the root DOM element id.
+ * @return the ExtrasCalendarField instance
+ */
+ExtrasCalendarField.getComponent = function(elementId) {
+    var componentId = EchoDomUtil.getComponentId(elementId);
+    var calendar = EchoDomPropertyStore.getPropertyValue(componentId, "calendar");
+    return calendar;
+};
+
+/**
+ * Determines the number of days in a specific month.
+ *
+ * @param year the year of the month
+ * @param month the month
+ * @return the number of days in the month
+ */
+ExtrasCalendarField.getDaysInMonth = function(year, month) {
+    switch (month) {
+    case 0:
+    case 2:
+    case 4:
+    case 6:
+    case 7:
+    case 9:
+    case 11:
+        return 31;
+    case 3:
+    case 5:
+    case 8:
+    case 10:
+        return 30;
+    case 1:
+        if (year % 400 === 0) {
+            return 29;
+        } else if (year % 100 === 0) {
+            return 28;
+        } else if (year % 4 === 0) {
+            return 29;
+        } else {
+            return 28;
+        }
+    default:
+        throw "Invalid Month: " + month;
+    }
+};
+
+ExtrasCalendarField.processDaySelect = function(echoEvent) {
+    var elementId = echoEvent.target.id;
+    var calendar = ExtrasCalendarField.getComponent(elementId);
+    calendar.processDaySelect(elementId);
+};
+
+ExtrasCalendarField.processMonthSelect = function(echoEvent) {
+    var elementId = echoEvent.registeredTarget.id;
+    var calendar = ExtrasCalendarField.getComponent(elementId);
+    calendar.processMonthSelect();
+};
+
+ExtrasCalendarField.processYearDecrement = function(echoEvent) {
+    var elementId = echoEvent.registeredTarget.id;
+    var calendar = ExtrasCalendarField.getComponent(elementId);
+    calendar.processYearDecrement();
+    EchoDomUtil.preventEventDefault(echoEvent);
+};
+
+ExtrasCalendarField.processYearEntry = function(echoEvent) {
+    var elementId = echoEvent.registeredTarget.id;
+    var calendar = ExtrasCalendarField.getComponent(elementId);
+    calendar.processYearEntry();
+};
+
+ExtrasCalendarField.processYearIncrement = function(echoEvent) {
+    var elementId = echoEvent.registeredTarget.id;
+    var calendar = ExtrasCalendarField.getComponent(elementId);
+    calendar.processYearIncrement();
+    EchoDomUtil.preventEventDefault(echoEvent);
 };
 
 /**
