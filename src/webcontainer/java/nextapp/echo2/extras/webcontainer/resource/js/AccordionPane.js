@@ -82,11 +82,10 @@ ExtrasAccordionPane.prototype.create = function() {
 };
 
 ExtrasAccordionPane.prototype.dispose = function() {
-//BUGBUG calling removeTab from dispose is bad as child components do not necessarily have 
-//chance to dispose....or do they...
-//....dispose is bottom up, correct?  If so, removing is okay.
     for (var i = 0; i < this.tabIds.length; ++i) {
-        this.removeTab(this.tabIds[i]);
+	    EchoEventProcessor.removeHandler(this.tabIds[i], "click");
+	    EchoEventProcessor.removeHandler(this.tabIds[i], "mouseover");
+	    EchoEventProcessor.removeHandler(this.tabIds[i], "mouseout");
     }
 };
 
@@ -144,6 +143,7 @@ ExtrasAccordionPane.prototype.repositionTabs = function() {
 };
 
 ExtrasAccordionPane.prototype.selectTab = function(tabId) {
+    EchoClientMessage.setPropertyValue(this.elementId, "activeTab", tabId);
     this.selectedTabId = tabId;
     this.repositionTabs();
 };
@@ -326,4 +326,16 @@ ExtrasAccordionPane.MessageProcessor.processRemoveTab = function(removeTabMessag
         throw "AccordionPane not found with id: " + elementId;
     }
     accordionPane.removeTab(tabId);
+};
+
+/**
+ * Processes a <code>set-active-tab</code> message to set the active tab.
+ * 
+ * @param setActiveTabMessageElement the <code>set-active-tab</code> element to process
+ */
+ExtrasAccordionPane.MessageProcessor.processSetActiveTab = function(setActiveTabMessageElement) {
+    var elementId = setActiveTabMessageElement.getAttribute("eid");
+    var tabId = setActiveTabMessageElement.getAttribute("tab-id");
+    var accordionPane = ExtrasAccordionPane.getComponent(elementId);
+    accordionPane.selectTab(tabId);
 };

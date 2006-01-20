@@ -139,7 +139,7 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
 
         renderRedrawDirective(rc, accordionPane);
     }
-    
+
     private void renderAddTabDirective(RenderContext rc, ServerComponentUpdate update, AccordionPane accordionPane, 
             Component child) {
         AccordionPaneLayoutData layoutData = (AccordionPaneLayoutData) child.getLayoutData();
