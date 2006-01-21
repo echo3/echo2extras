@@ -3,7 +3,7 @@ ExtrasMenu = function(elementId, containerElementId) {
     this.containerElementId = containerElementId;
     this.menuModel = null;
     
-    this.nextModelId = 0;
+    this.maskDeployed = false;
     
     this.menuBarHeight = 24;
     this.menuBarBorderSize = 1;
@@ -16,7 +16,10 @@ ExtrasMenu = function(elementId, containerElementId) {
     this.menuBarRolloverBackground = "#00007f";
     this.menuBarRolloverForeground = "#ffffff";
     
-    this.menuInsets = "2px 2px";
+    this.menuInsetsTop = 2;
+    this.menuInsetsBottom = 2;
+    this.menuInsetsLeft = 2;
+    this.menuInsetsRight = 2;
     this.menuItemInsets = "1px 12px";
     this.menuBorderSize = 1;
     this.menuBorderStyle = "outset";
@@ -26,15 +29,15 @@ ExtrasMenu = function(elementId, containerElementId) {
     this.menuSelectionBackground = "#3f3f3f";
     this.menuSelectionForeground = "#ffffff";
     
+    /**
+     * Array containing ids of open menus.
+     */
     this.openMenuPath = new Array();
 };
 
+ExtrasMenu.nextId = 0;
+
 ExtrasMenu.prototype.create = function() {
-    var containerElement = document.getElementById(this.containerElementId);
-    var menuPaneDivElement = document.createElement("div");
-    menuPaneDivElement.id = this.elementId;
-    containerElement.appendChild(menuPaneDivElement);
-    
     this.renderMenuBarAdd();
     
     EchoDomPropertyStore.setPropertyValue(this.elementId, "menu", this);
@@ -59,8 +62,8 @@ ExtrasMenu.prototype.getMenuBorder = function() {
     return this.menuBorderSize + "px " + this.menuBorderStyle + " " + this.menuBorderColor;
 };
 
-ExtrasMenu.prototype.getNextModelId = function() {
-    return this.nextModelId++;
+ExtrasMenu.prototype.getTotalMenuBarHeight = function() {
+    return this.menuBarHeight + this.menuBarBorderSize * 2;
 };
 
 ExtrasMenu.prototype.isMenuBarItemElement = function(itemElement) {
@@ -111,6 +114,7 @@ ExtrasMenu.prototype.openMenu = function(menuModel) {
 
 ExtrasMenu.prototype.processItemActivate = function(itemModel) {
     if (itemModel instanceof ExtrasMenu.OptionModel) {
+        this.renderMaskRemove();
         this.closeDescendantMenus(null);
 //        alert("click:" + itemModel.text);
     } else if (itemModel instanceof ExtrasMenu.MenuModel) {
@@ -126,16 +130,115 @@ ExtrasMenu.prototype.getItemElement = function(itemModel) {
     return itemElement;
 };
 
+ExtrasMenu.prototype.processCancel = function() {
+    this.renderMaskRemove();
+    this.closeDescendantMenus(null);
+};
+
 ExtrasMenu.prototype.processSelection = function(menuItemElement) {
     var modelId = this.getElementModelId(menuItemElement);
     var menuItemModel = this.menuModel.getItem(modelId);
     this.processItemActivate(menuItemModel);
 };
 
+ExtrasMenu.prototype.renderMaskAdd = function() {
+    if (this.maskDeployed) {
+        return;
+    }
+    this.maskDeployed = true;
+    
+    var menuDivElement = document.getElementById(this.elementId);
+    var bounds = new ExtrasUtil.Bounds(menuDivElement);
+    var bodyElement = document.getElementsByTagName("body")[0];    
+    bounds.height = this.getTotalMenuBarHeight();
+    
+    var topBlockDivElement = document.createElement("div");
+    topBlockDivElement.id = this.elementId + "_block_top";
+    topBlockDivElement.style.position = "absolute";
+    topBlockDivElement.style.top = "0px";
+    topBlockDivElement.style.left = "0px";
+    topBlockDivElement.style.width = "100%";
+    topBlockDivElement.style.height = bounds.top + "px";
+    if (this.maskImage) {
+        topBlockDivElement.style.backgroundImage = "url(" + this.maskImage + ")";
+    }
+    bodyElement.appendChild(topBlockDivElement);
+    EchoEventProcessor.addHandler(topBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
+
+    var bottomBlockDivElement = document.createElement("div");
+    bottomBlockDivElement.id = this.elementId + "_block_bottom";
+    bottomBlockDivElement.style.position = "absolute";
+    bottomBlockDivElement.style.height = (document.documentElement.clientHeight - (bounds.top + bounds.height)) + "px";
+    bottomBlockDivElement.style.left = "0px";
+    bottomBlockDivElement.style.width = "100%";
+    bottomBlockDivElement.style.bottom = "0px";
+    if (this.maskImage) {
+        bottomBlockDivElement.style.backgroundImage = "url(" + this.maskImage + ")";
+    }
+    bodyElement.appendChild(bottomBlockDivElement);
+    EchoEventProcessor.addHandler(bottomBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
+
+    var leftBlockDivElement = document.createElement("div");
+    leftBlockDivElement.id = this.elementId + "_block_left";
+    leftBlockDivElement.style.position = "absolute";
+    leftBlockDivElement.style.top = bounds.top + "px";
+    leftBlockDivElement.style.left = "0px";
+    leftBlockDivElement.style.width = bounds.left + "px";
+    leftBlockDivElement.style.height = bounds.height + "px";
+    if (this.maskImage) {
+        leftBlockDivElement.style.backgroundImage = "url(" + this.maskImage + ")";
+    }
+    bodyElement.appendChild(leftBlockDivElement);
+    EchoEventProcessor.addHandler(leftBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
+
+    var rightBlockDivElement = document.createElement("div");
+    rightBlockDivElement.id = this.elementId + "_block_right";
+    rightBlockDivElement.style.position = "absolute";
+    rightBlockDivElement.style.top = bounds.top + "px";
+    rightBlockDivElement.style.right = "0px";
+    rightBlockDivElement.style.height = bounds.height + "px";
+    rightBlockDivElement.style.width = (document.documentElement.clientWidth - (bounds.left + bounds.width)) + "px";
+    if (this.maskImage) {
+        rightBlockDivElement.style.backgroundImage = "url(" + this.maskImage + ")";
+    }
+    bodyElement.appendChild(rightBlockDivElement);
+    EchoEventProcessor.addHandler(rightBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
+};
+
+ExtrasMenu.prototype.renderMaskRemove = function() {
+    if (!this.maskDeployed) {
+        return;
+    }
+    this.maskDeployed = false;
+
+    var bodyElement = document.getElementsByTagName("body")[0];    
+    var topBlockDivElement = document.getElementById(this.elementId + "_block_top");
+    if (topBlockDivElement) {
+        EchoEventProcessor.removeHandler(topBlockDivElement.id, "click");
+        bodyElement.removeChild(topBlockDivElement);
+    }
+    var bottomBlockDivElement = document.getElementById(this.elementId + "_block_bottom");
+    if (bottomBlockDivElement) {
+        EchoEventProcessor.removeHandler(bottomBlockDivElement.id, "click");
+        bodyElement.removeChild(bottomBlockDivElement);
+    }
+    var leftBlockDivElement = document.getElementById(this.elementId + "_block_left");
+    if (leftBlockDivElement) {
+        EchoEventProcessor.removeHandler(leftBlockDivElement.id, "click");
+        bodyElement.removeChild(leftBlockDivElement);
+    }
+    var rightBlockDivElement = document.getElementById(this.elementId + "_block_right");
+    if (rightBlockDivElement) {
+        EchoEventProcessor.removeHandler(rightBlockDivElement.id, "click");
+        bodyElement.removeChild(rightBlockDivElement);
+    }
+}
+
 ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
     var menuDivElement = document.createElement("div");
     menuDivElement.id = this.elementId + "_menu_" + menuModel.id;
-    menuDivElement.style.padding = this.menuInsets;
+    menuDivElement.style.padding = this.menuInsetsTop + "px " + this.menuInsetsTop + "px " 
+            + this.menuInsetsTop + "px " + this.menuInsetsTop + "px";
     menuDivElement.style.border = this.getMenuBorder();
     menuDivElement.style.backgroundColor = this.menuBackground;
     menuDivElement.style.color = this.menuForeground;
@@ -188,13 +291,13 @@ ExtrasMenu.prototype.renderMenuDispose = function(menuModel) {
 };
 
 ExtrasMenu.prototype.renderMenuBarAdd = function() {
-    var menuPaneDivElement = document.getElementById(this.elementId);
+    var containerElement = document.getElementById(this.containerElementId);
     var menuBarDivElement = document.createElement("div");
-    menuBarDivElement.id = this.elementId + "_menubar";
+    menuBarDivElement.id = this.elementId;
     menuBarDivElement.style.position = "absolute";
     menuBarDivElement.style.left = "0px";
-    menuBarDivElement.style.right = "0px";
     menuBarDivElement.style.height = this.menuBarHeight + "px";
+    
     menuBarDivElement.style.backgroundColor = this.menuBarBackground;
     menuBarDivElement.style.borderTop = this.getMenuBarBorder();
     menuBarDivElement.style.borderBottom = this.getMenuBarBorder();
@@ -227,11 +330,13 @@ ExtrasMenu.prototype.renderMenuBarAdd = function() {
         }
     }
     
-    menuPaneDivElement.appendChild(menuBarDivElement);
+    containerElement.appendChild(menuBarDivElement);
 
-    EchoEventProcessor.addHandler(this.elementId + "_menubar", "click", "ExtrasMenu.processMenuBarClick");
-    EchoEventProcessor.addHandler(this.elementId + "_menubar", "mouseover", "ExtrasMenu.processMenuBarMouseOver");
-    EchoEventProcessor.addHandler(this.elementId + "_menubar", "mouseout", "ExtrasMenu.processMenuBarMouseOut");
+    ExtrasUtil.setCssPositionRight(menuBarDivElement.style, containerElement.id, 0, 8);
+
+    EchoEventProcessor.addHandler(this.elementId, "click", "ExtrasMenu.processMenuBarClick");
+    EchoEventProcessor.addHandler(this.elementId, "mouseover", "ExtrasMenu.processMenuBarMouseOver");
+    EchoEventProcessor.addHandler(this.elementId, "mouseout", "ExtrasMenu.processMenuBarMouseOut");
 };
 
 ExtrasMenu.prototype.setModel = function(menuModel) {
@@ -242,6 +347,7 @@ ExtrasMenu.processMenuBarClick = function(echoEvent) {
     var menuItemElement = echoEvent.target;
     var menuId = EchoDomUtil.getComponentId(menuItemElement.id);
     var menu = EchoDomPropertyStore.getPropertyValue(menuId, "menu");
+    menu.renderMaskAdd();
     menu.processSelection(menuItemElement);
 };
 
@@ -262,8 +368,14 @@ ExtrasMenu.processMenuItemClick = function(echoEvent) {
     menu.processSelection(trElement);
 };
 
-ExtrasMenu.MenuModel = function(id, text, icon) {
-    this.id = id;
+ExtrasMenu.processMenuCancel = function(echoEvent) {
+    var menuId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    var menu = EchoDomPropertyStore.getPropertyValue(menuId, "menu");
+    menu.processCancel();
+};
+
+ExtrasMenu.MenuModel = function(text, icon) {
+    this.id = ExtrasMenu.nextId++;
     this.parent = null;
     this.text = text;
     this.icon = icon;
@@ -297,8 +409,8 @@ ExtrasMenu.MenuModel.prototype.toString = function() {
     return "MenuModel \"" + this.text + "\" Items:" + this.items.length;
 };
 
-ExtrasMenu.OptionModel = function(id, text, icon) {
-    this.id = id;
+ExtrasMenu.OptionModel = function(text, icon) {
+    this.id = ExtrasMenu.nextId++;
     this.parent = null;
     this.text = text;
     this.icon = icon;
@@ -375,12 +487,12 @@ ExtrasMenu.MessageProcessor.processInit = function(initMessageElement) {
 };
 
 ExtrasMenu.MessageProcessor.processMenuModel = function(menuElement, menu) {
-    var menuModel = new ExtrasMenu.MenuModel(menu.getNextModelId(), menuElement.getAttribute("text"));
+    var menuModel = new ExtrasMenu.MenuModel(menuElement.getAttribute("text"));
     for (var i = 0; i < menuElement.childNodes.length; ++i) {
         var node = menuElement.childNodes[i];
         if (node.nodeType == 1) { // Element
             if (node.nodeName == "option") {
-                var optionModel = new ExtrasMenu.OptionModel(menu.getNextModelId(), node.getAttribute("text"));
+                var optionModel = new ExtrasMenu.OptionModel(node.getAttribute("text"));
                 menuModel.addItem(optionModel);
             } else if (node.nodeName == "menu") {
                 var childMenuModel = ExtrasMenu.MessageProcessor.processMenuModel(node, menu);
