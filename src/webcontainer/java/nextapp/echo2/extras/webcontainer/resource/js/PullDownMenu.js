@@ -63,7 +63,10 @@ ExtrasMenu.prototype.dispose = function() {
 };
 
 ExtrasMenu.prototype.getElementModelId = function(menuItemElement) {
-    if (!menuItemElement.id || menuItemElement.id.indexOf("_item_") == -1) {
+    if (!menuItemElement.id) {
+        return this.getElementModelId(menuItemElement.parentNode);
+    }
+    if (menuItemElement.id.indexOf("_item_") == -1) {
         return null;
     }
     var lastUnderscorePosition = menuItemElement.id.lastIndexOf("_");
@@ -97,7 +100,6 @@ ExtrasMenu.prototype.isMenuBarItemElement = function(itemElement) {
 ExtrasMenu.prototype.notifyServer = function(menuModel) {
     var path = ExtrasMenu.getItemPath(menuModel);
     EchoClientMessage.setActionValue(this.elementId, "select", path.join());
-    EchoServerTransaction.connect();
 };
 
 ExtrasMenu.prototype.openMenu = function(menuModel) {
@@ -276,6 +278,8 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
                 var menuItemArrowTdElement = document.createElement("td");
                 menuItemArrowTdElement.appendChild(document.createTextNode(">"));
                 menuItemTrElement.appendChild(menuItemArrowTdElement);
+            } else {
+                menuItemContentTdElement.colSpan = 2;
             }
         }
     }
@@ -284,6 +288,8 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
     bodyElement.appendChild(menuDivElement);
 
     EchoEventProcessor.addHandler(menuDivElement.id, "click", "ExtrasMenu.processMenuItemClick");
+    EchoEventProcessor.addHandler(menuDivElement.id, "mouseover", "ExtrasMenu.processMenuBarMouseOver");
+    EchoEventProcessor.addHandler(menuDivElement.id, "mouseout", "ExtrasMenu.processMenuBarMouseOut");
 };
 
 ExtrasMenu.prototype.renderMenuDispose = function(menuModel) {
@@ -338,11 +344,22 @@ ExtrasMenu.prototype.renderMenuBarAdd = function() {
     
     containerElement.appendChild(menuBarDivElement);
 
-    ExtrasUtil.setCssPositionRight(menuBarDivElement.style, containerElement.id, 0, 8);
+    ExtrasUtil.setCssPositionRight(menuBarDivElement.style, containerElement.id, 0, 0);
 
     EchoEventProcessor.addHandler(this.elementId, "click", "ExtrasMenu.processMenuBarClick");
     EchoEventProcessor.addHandler(this.elementId, "mouseover", "ExtrasMenu.processMenuBarMouseOver");
     EchoEventProcessor.addHandler(this.elementId, "mouseout", "ExtrasMenu.processMenuBarMouseOut");
+};
+
+ExtrasMenu.prototype.setHighlight = function(itemModel, state) {
+    var itemElement = this.getItemElement(itemModel);
+    if (state) {
+        itemElement.style.backgroundColor = this.menuSelectionBackground;
+        itemElement.style.color = this.menuSelectionForeground;
+    } else {
+        itemElement.style.backgroundColor = "";
+        itemElement.style.color = "";
+    }
 };
 
 ExtrasMenu.prototype.setModel = function(menuModel) {
@@ -359,6 +376,7 @@ ExtrasMenu.getItemPath = function(itemModel) {
 };
 
 ExtrasMenu.processMenuBarClick = function(echoEvent) {
+    EchoDomUtil.preventEventDefault(echoEvent);
     var menuItemElement = echoEvent.target;
     var menuId = EchoDomUtil.getComponentId(menuItemElement.id);
     var menu = EchoDomPropertyStore.getPropertyValue(menuId, "menu");
@@ -367,10 +385,25 @@ ExtrasMenu.processMenuBarClick = function(echoEvent) {
 };
 
 ExtrasMenu.processMenuBarMouseOut = function(echoEvent) {
-
+    var menuItemElement = echoEvent.target;
+    var menuId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    var menu = EchoDomPropertyStore.getPropertyValue(menuId, "menu");
+    var modelId = menu.getElementModelId(menuItemElement);
+    var itemModel = menu.menuModel.getItem(modelId);
+    if (itemModel) {
+        menu.setHighlight(itemModel, false);
+    }
 };
 
 ExtrasMenu.processMenuBarMouseOver = function(echoEvent) {
+    var menuItemElement = echoEvent.target;
+    var menuId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    var menu = EchoDomPropertyStore.getPropertyValue(menuId, "menu");
+    var modelId = menu.getElementModelId(menuItemElement);
+    var itemModel = menu.menuModel.getItem(modelId);
+    if (itemModel) {
+        menu.setHighlight(itemModel, true);
+    }
 };
 
 ExtrasMenu.processMenuItemClick = function(echoEvent) {

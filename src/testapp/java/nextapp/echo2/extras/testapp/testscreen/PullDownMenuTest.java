@@ -81,6 +81,14 @@ public class PullDownMenuTest extends SplitPane {
             }
         });
 
+        controlsColumn.addButton("Add Menu", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (menu.getParent() == null) {
+                    add(menu);
+                }
+            }
+        });
+        
         controlsColumn.addButton("Remove Menu", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 remove(menu);
