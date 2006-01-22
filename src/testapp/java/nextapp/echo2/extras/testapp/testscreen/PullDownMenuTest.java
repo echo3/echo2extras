@@ -42,6 +42,7 @@ import nextapp.echo2.extras.app.menu.DefaultOptionModel;
 import nextapp.echo2.extras.app.menu.DefaultMenuModel;
 import nextapp.echo2.extras.app.menu.MenuModel;
 import nextapp.echo2.extras.testapp.ButtonColumn;
+import nextapp.echo2.extras.testapp.InteractiveApp;
 import nextapp.echo2.extras.testapp.StyleUtil;
 
 /**
@@ -58,6 +59,12 @@ public class PullDownMenuTest extends SplitPane {
         add(controlsColumn);
         
         final PullDownMenu menu = new PullDownMenu(createMenuModel());
+        menu.addActionListener(new ActionListener(){
+        
+            public void actionPerformed(ActionEvent e) {
+                InteractiveApp.getApp().consoleWrite("Menu action: menu=" + e.getSource() + ", command=" + e.getActionCommand());
+            }
+        });
         add(menu);
         
         controlsColumn.addButton("Set Foreground", new ActionListener() {
@@ -82,14 +89,22 @@ public class PullDownMenuTest extends SplitPane {
         
         controlsColumn.addButton("Add Test WindowPane", new ActionListener(){
         
-            public void actionPerformed(ActionEvent arg0) {
+            public void actionPerformed(ActionEvent e) {
                 ContentPane rootContent = getApplicationInstance().getDefaultWindow().getContent();
                 WindowPane windowPane = new WindowPane();
                 windowPane.setTitle("Menu Test Window");
                 windowPane.setStyleName("Default");
                 SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM, new Extent(32));
                 windowPane.add(splitPane);
-                splitPane.add(new PullDownMenu(createMenuModel()));
+                PullDownMenu menu = new PullDownMenu(createMenuModel());
+                menu.addActionListener(new ActionListener() {
+                
+                    public void actionPerformed(ActionEvent e) {
+                        InteractiveApp.getApp().consoleWrite("Menu action: menu=" + e.getSource() 
+                                + ", command=" + e.getActionCommand());
+                    }
+                });
+                splitPane.add(menu);
                 splitPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
                 rootContent.add(windowPane);
             }

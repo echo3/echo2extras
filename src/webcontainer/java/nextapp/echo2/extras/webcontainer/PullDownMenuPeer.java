@@ -1,5 +1,7 @@
 package nextapp.echo2.extras.webcontainer;
 
+import java.util.StringTokenizer;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -11,6 +13,7 @@ import nextapp.echo2.extras.app.menu.ItemModel;
 import nextapp.echo2.extras.app.menu.MenuModel;
 import nextapp.echo2.extras.app.menu.OptionModel;
 import nextapp.echo2.extras.app.menu.SeparatorModel;
+import nextapp.echo2.webcontainer.ActionProcessor;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.PartialUpdateManager;
@@ -27,7 +30,7 @@ import nextapp.echo2.webrender.service.JavaScriptService;
  * <code>PullDownMenu</code> components.
  */
 public class PullDownMenuPeer 
-implements ComponentSynchronizePeer {
+implements ActionProcessor, ComponentSynchronizePeer {
 
     /**
      * Service to provide supporting JavaScript library.
@@ -56,6 +59,34 @@ implements ComponentSynchronizePeer {
      */
     public String getContainerId(Component component) {
         throw new UnsupportedOperationException("Component does not support children.");
+    }
+
+    /**
+     * @see nextapp.echo2.webcontainer.ActionProcessor#processAction(nextapp.echo2.webcontainer.ContainerInstance, 
+     *      nextapp.echo2.app.Component, org.w3c.dom.Element)
+     */
+    public void processAction(ContainerInstance ci, Component component, Element element) {
+        PullDownMenu menu = (PullDownMenu) component;
+        String actionName = element.getAttribute(ActionProcessor.ACTION_NAME);
+        String actionValue = element.getAttribute(ActionProcessor.ACTION_VALUE);
+        if ("select".equals(actionName)) {
+            OptionModel optionModel = null;
+            MenuModel menuModel = menu.getModel();
+            StringTokenizer st = new StringTokenizer(actionValue, ",");
+            while (st.hasMoreTokens()) {
+                int index = Integer.parseInt(st.nextToken());
+                if (st.hasMoreTokens()) {
+                    menuModel = (MenuModel) menuModel.getItem(index);
+                } else {
+                    optionModel = (OptionModel) menuModel.getItem(index);
+                }
+            }
+            if (optionModel == null) {
+                // Should not occur unless client input tampered with.
+                return;
+            }
+            ci.getUpdateManager().getClientUpdateManager().setComponentAction(menu, PullDownMenu.INPUT_SELECT, optionModel);
+        }
     }
 
     /**

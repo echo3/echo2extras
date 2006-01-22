@@ -37,6 +37,22 @@ ExtrasMenu = function(elementId, containerElementId) {
 
 ExtrasMenu.nextId = 0;
 
+/**
+ * @param menuModel the menu model whose descendants should be closed;
+ *        providing null will close all descendant menus; the specified
+ *        menuModel will remain open
+ */
+ExtrasMenu.prototype.closeDescendantMenus = function(menuModel) {
+    for (var i = this.openMenuPath.length - 1;  i >= 0; --i) {
+        if (menuModel != null && this.openMenuPath[i].id == menuModel.id) {
+            // Stop once specified menu is found.
+            return;
+        }
+        this.renderMenuDispose(this.openMenuPath[i]);
+        --this.openMenuPath.length
+    }
+};
+
 ExtrasMenu.prototype.create = function() {
     this.renderMenuBarAdd();
     
@@ -52,6 +68,14 @@ ExtrasMenu.prototype.getElementModelId = function(menuItemElement) {
     }
     var lastUnderscorePosition = menuItemElement.id.lastIndexOf("_");
     return menuItemElement.id.substring(lastUnderscorePosition + 1);
+};
+
+ExtrasMenu.prototype.getItemElement = function(itemModel) {
+    var itemElement = document.getElementById(this.elementId + "_bar_item_" + itemModel.id);
+    if (!itemElement) {
+        itemElement = document.getElementById(this.elementId + "_tr_item_" + itemModel.id);
+    }
+    return itemElement;
 };
 
 ExtrasMenu.prototype.getMenuBarBorder = function() {
@@ -70,20 +94,10 @@ ExtrasMenu.prototype.isMenuBarItemElement = function(itemElement) {
     return itemElement.id.indexOf("_bar_item") != -1;
 };
 
-/**
- * @param menuModel the menu model whose descendants should be closed;
- *        providing null will close all descendant menus; the specified
- *        menuModel will remain open
- */
-ExtrasMenu.prototype.closeDescendantMenus = function(menuModel) {
-    for (var i = this.openMenuPath.length - 1;  i >= 0; --i) {
-        if (menuModel != null && this.openMenuPath[i].id == menuModel.id) {
-            // Stop once specified menu is found.
-            return;
-        }
-        this.renderMenuDispose(this.openMenuPath[i]);
-        --this.openMenuPath.length
-    }
+ExtrasMenu.prototype.notifyServer = function(menuModel) {
+    var path = ExtrasMenu.getItemPath(menuModel);
+    EchoClientMessage.setActionValue(this.elementId, "select", path.join());
+    EchoServerTransaction.connect();
 };
 
 ExtrasMenu.prototype.openMenu = function(menuModel) {
@@ -112,27 +126,19 @@ ExtrasMenu.prototype.openMenu = function(menuModel) {
     }
 };
 
+ExtrasMenu.prototype.processCancel = function() {
+    this.renderMaskRemove();
+    this.closeDescendantMenus(null);
+};
+
 ExtrasMenu.prototype.processItemActivate = function(itemModel) {
     if (itemModel instanceof ExtrasMenu.OptionModel) {
         this.renderMaskRemove();
         this.closeDescendantMenus(null);
-//        alert("click:" + itemModel.text);
+        this.notifyServer(itemModel);
     } else if (itemModel instanceof ExtrasMenu.MenuModel) {
         this.openMenu(itemModel);
     }
-};
-
-ExtrasMenu.prototype.getItemElement = function(itemModel) {
-    var itemElement = document.getElementById(this.elementId + "_bar_item_" + itemModel.id);
-    if (!itemElement) {
-        itemElement = document.getElementById(this.elementId + "_tr_item_" + itemModel.id);
-    }
-    return itemElement;
-};
-
-ExtrasMenu.prototype.processCancel = function() {
-    this.renderMaskRemove();
-    this.closeDescendantMenus(null);
 };
 
 ExtrasMenu.prototype.processSelection = function(menuItemElement) {
@@ -343,6 +349,15 @@ ExtrasMenu.prototype.setModel = function(menuModel) {
     this.menuModel = menuModel;
 };
 
+ExtrasMenu.getItemPath = function(itemModel) {
+    var path = new Array();
+    while (itemModel.parent != null) {
+        path.unshift(itemModel.parent.indexOfItem(itemModel));
+        itemModel = itemModel.parent;
+    }
+    return path;
+};
+
 ExtrasMenu.processMenuBarClick = function(echoEvent) {
     var menuItemElement = echoEvent.target;
     var menuId = EchoDomUtil.getComponentId(menuItemElement.id);
@@ -403,6 +418,15 @@ ExtrasMenu.MenuModel.prototype.getItem = function(id) {
         }
     }
     return null;
+};
+
+ExtrasMenu.MenuModel.prototype.indexOfItem = function(item) {
+    for (var i = 0; i < this.items.length; ++i) {
+        if (this.items[i] == item) {
+            return i;
+        }
+    }
+    return -1;
 };
 
 ExtrasMenu.MenuModel.prototype.toString = function() {
