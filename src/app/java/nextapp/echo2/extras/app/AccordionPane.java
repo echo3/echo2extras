@@ -18,6 +18,8 @@ implements Pane, PaneContainer {
     public static final String ACTIVE_TAB_CHANGED_PROPERTY = "activeTab";
     public static final String INPUT_ACTIVE_TAB = "activeTab";
     
+    public static final String PROPERTY_DEFAULT_CONTENT_INSETS = "defaultContentInsets";
+    
     public static final String PROPERTY_TAB_BACKGROUND = "tabBackground";
     public static final String PROPERTY_TAB_BORDER = "tabBorder";
     public static final String PROPERTY_TAB_FOREGROUND = "tabForeground";
@@ -68,6 +70,16 @@ implements Pane, PaneContainer {
         } else {
             return null;
         }
+    }
+    
+    /**
+     * Returns the default content inset margin.  This margin is applied by applied 
+     * to each child component.
+     *
+     * @return the default content inset margin
+     */
+    public Insets getDefaultContentInsets() {
+        return (Insets) getProperty(PROPERTY_DEFAULT_CONTENT_INSETS);
     }
     
     /**
@@ -154,6 +166,16 @@ implements Pane, PaneContainer {
         firePropertyChange(ACTIVE_TAB_CHANGED_PROPERTY, null, null);
     }
     
+    /**
+     * Sets the default content inset margin.  This margin is applied by 
+     * applied to each child component.
+     *
+     * @param newValue the new default content inset margin
+     */
+    public void setDefaultContentInsets(Insets newValue) {
+        setProperty(PROPERTY_DEFAULT_CONTENT_INSETS, newValue);
+    }
+
     /**
      * Sets the active tab index.
      * 

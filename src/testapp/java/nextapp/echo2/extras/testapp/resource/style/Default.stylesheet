@@ -269,6 +269,27 @@
    </property>
   </properties>
  </style>
+ <style name="TestControlsAccordion" type="nextapp.echo2.extras.app.AccordionPane">
+  <properties>
+   <property name="layoutData">
+    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+     <properties>
+      <property name="background" value="#afafef"/>
+      <property name="backgroundImage">
+       <fill-image repeat="none">
+        <image type="nextapp.echo2.app.ResourceImageReference">
+         <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/ShadowBackgroundLightBlue.png"/>
+        </image>
+       </fill-image>
+      </property>
+      <property name="insets" value="10px 7px"/>
+      <property name="minimumSize" value="200px"/>
+      <property name="maximumSize" value="300px"/>
+     </properties>
+    </layout-data>
+   </property>
+  </properties>
+ </style>
  <style name="WelcomePane" type="nextapp.echo2.app.ContentPane">
   <properties>
    <property name="backgroundImage">
