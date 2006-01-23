@@ -95,7 +95,7 @@ implements ActionProcessor, ComponentSynchronizePeer {
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(ExtrasUtil.SERVICE.getId());
+        serverMessage.addLibrary(ExtrasUtil.JS_EXTRAS_UTIL_SERVICE.getId());
         serverMessage.addLibrary(PULL_DOWN_MENU_SERVICE.getId());
         PullDownMenu menu = (PullDownMenu) component;
         renderInitDirective(rc, menu, targetId);
@@ -107,7 +107,7 @@ implements ActionProcessor, ComponentSynchronizePeer {
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(ExtrasUtil.SERVICE.getId());
+        serverMessage.addLibrary(ExtrasUtil.JS_EXTRAS_UTIL_SERVICE.getId());
         serverMessage.addLibrary(PULL_DOWN_MENU_SERVICE.getId());
         renderDisposeDirective(rc, (PullDownMenu) component);
     }

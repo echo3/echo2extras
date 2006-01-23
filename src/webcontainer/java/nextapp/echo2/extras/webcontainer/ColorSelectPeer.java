@@ -34,20 +34,16 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
     public static final Service COLOR_SELECT_SERVICE = JavaScriptService.forResource("Echo2Extras.ColorSelect",
             "/nextapp/echo2/extras/webcontainer/resource/js/ColorSelect.js");
     
-    private static final String IMAGE_RESOURCE_PATH = "/nextapp/echo2/extras/webcontainer/resource/image/"; 
-
     private static final Service H_LINE_IMAGE_SERVICE= StaticBinaryService.forResource(
-            "Echo2Extras.ColorSelect.HLine", "image/gif", IMAGE_RESOURCE_PATH + "HLine.gif");
+            "Echo2Extras.ColorSelect.HLine", "image/gif", ExtrasUtil.IMAGE_RESOURCE_PATH + "HLine.gif");
     private static final Service S_LINE_IMAGE_SERVICE= StaticBinaryService.forResource(
-            "Echo2Extras.ColorSelect.SLine", "image/gif", IMAGE_RESOURCE_PATH + "SLine.gif");
+            "Echo2Extras.ColorSelect.SLine", "image/gif", ExtrasUtil.IMAGE_RESOURCE_PATH + "SLine.gif");
     private static final Service V_LINE_IMAGE_SERVICE= StaticBinaryService.forResource(
-            "Echo2Extras.ColorSelect.VLine", "image/gif", IMAGE_RESOURCE_PATH + "VLine.gif");
+            "Echo2Extras.ColorSelect.VLine", "image/gif", ExtrasUtil.IMAGE_RESOURCE_PATH + "VLine.gif");
     private static final Service H_GRADIENT_IMAGE_SERVICE= StaticBinaryService.forResource(
-            "Echo2Extras.ColorSelect.HGradient", "image/png", IMAGE_RESOURCE_PATH + "HGradient.png");
+            "Echo2Extras.ColorSelect.HGradient", "image/png", ExtrasUtil.IMAGE_RESOURCE_PATH + "HGradient.png");
     private static final Service SV_GRADIENT_IMAGE_SERVICE= StaticBinaryService.forResource(
-            "Echo2Extras.ColorSelect.SVGradient", "image/png", IMAGE_RESOURCE_PATH + "SVGradient.png");
-    private static final Service TRANSPARENT_IMAGE_SERVICE= StaticBinaryService.forResource(
-            "Echo2Extras.ColorSelect.Transparent", "image/gif", IMAGE_RESOURCE_PATH + "Transparent.gif");
+            "Echo2Extras.ColorSelect.SVGradient", "image/png", ExtrasUtil.IMAGE_RESOURCE_PATH + "SVGradient.png");
     
     static {
         ServiceRegistry services = WebRenderServlet.getServiceRegistry();
@@ -57,7 +53,6 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         services.add(V_LINE_IMAGE_SERVICE);
         services.add(H_GRADIENT_IMAGE_SERVICE);
         services.add(SV_GRADIENT_IMAGE_SERVICE);
-        services.add(TRANSPARENT_IMAGE_SERVICE);
     }
     
     /**
@@ -110,7 +105,7 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(COLOR_SELECT_SERVICE.getId());
-        serverMessage.addLibrary(ExtrasUtil.SERVICE.getId());
+        serverMessage.addLibrary(ExtrasUtil.JS_EXTRAS_UTIL_SERVICE.getId());
         renderInitDirective(rc, targetId, (ColorSelect) component);
         renderSetColorDirective(rc, (ColorSelect) component);
     }
@@ -123,7 +118,7 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(COLOR_SELECT_SERVICE.getId());
-        serverMessage.addLibrary(ExtrasUtil.SERVICE.getId());
+        serverMessage.addLibrary(ExtrasUtil.JS_EXTRAS_UTIL_SERVICE.getId());
         renderDisposeDirective(rc, (ColorSelect) component);
     }
 

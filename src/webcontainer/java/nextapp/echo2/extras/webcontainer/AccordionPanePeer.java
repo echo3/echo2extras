@@ -109,7 +109,7 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(ACCORDION_PANE_SERVICE.getId());
-        serverMessage.addLibrary(ExtrasUtil.SERVICE.getId());
+        serverMessage.addLibrary(ExtrasUtil.JS_EXTRAS_UTIL_SERVICE.getId());
         AccordionPane accordionPane = (AccordionPane) component;
         renderInitDirective(rc, accordionPane, targetId);
         Component[] children = accordionPane.getVisibleComponents();
@@ -231,7 +231,7 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(ACCORDION_PANE_SERVICE.getId());
-        serverMessage.addLibrary(ExtrasUtil.SERVICE.getId());
+        serverMessage.addLibrary(ExtrasUtil.JS_EXTRAS_UTIL_SERVICE.getId());
         renderDisposeDirective(rc, (AccordionPane) component);
     }
 

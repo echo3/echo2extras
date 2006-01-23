@@ -18,7 +18,6 @@ import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.PartialUpdateParticipant;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
-import nextapp.echo2.webcontainer.RenderState;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
@@ -35,23 +34,6 @@ import nextapp.echo2.webrender.service.JavaScriptService;
  */
 public class CalendarFieldPeer
 implements ComponentSynchronizePeer, PropertyUpdateProcessor {
-
-    /**
-     * <code>RenderState</code> to describe properties not relevant to 
-     * <code>Component</code>.
-     */
-    private class CalendarState implements RenderState {
-        
-        /**
-         * The currently displayed month.
-         */
-        private int displayedMonth;
-        
-        /**
-         * The currently displayed year.
-         */
-        private int displayedYear;
-    }
     
     /**
      * Service to provide supporting JavaScript library.
@@ -193,21 +175,10 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
      *      nextapp.echo2.app.Component, org.w3c.dom.Element)
      */
     public void processPropertyUpdate(ContainerInstance ci, Component component, Element element) {
-        CalendarField calendarField = (CalendarField) component;
-
         Element selectionElement = DomUtil.getChildElementByTagName(element, "calendar-selection");
         int month = Integer.parseInt(selectionElement.getAttribute("month"));
         int year = Integer.parseInt(selectionElement.getAttribute("year"));
         int date = selectionElement.hasAttribute("date") ? Integer.parseInt(selectionElement.getAttribute("date")) : -1;
-        
-        // Update RenderState
-        CalendarState renderState = (CalendarState) ci.getRenderState(calendarField);
-        if (renderState == null) {
-            renderState = new CalendarState();
-            ci.setRenderState(calendarField, renderState);
-        }
-        renderState.displayedMonth = month;
-        renderState.displayedYear = year;
         
         if (date == -1) {
             ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, 

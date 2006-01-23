@@ -29,6 +29,8 @@ ExtrasMenu = function(elementId, containerElementId) {
     this.menuSelectionBackground = "#3f3f3f";
     this.menuSelectionForeground = "#ffffff";
     
+    this.transparentImageSrc = null;
+    
     /**
      * Array containing ids of open menus.
      */
@@ -167,8 +169,8 @@ ExtrasMenu.prototype.renderMaskAdd = function() {
     topBlockDivElement.style.left = "0px";
     topBlockDivElement.style.width = "100%";
     topBlockDivElement.style.height = bounds.top + "px";
-    if (this.maskImage) {
-        topBlockDivElement.style.backgroundImage = "url(" + this.maskImage + ")";
+    if (this.transparentImageSrc) {
+        topBlockDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
     }
     bodyElement.appendChild(topBlockDivElement);
     EchoEventProcessor.addHandler(topBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
@@ -180,8 +182,8 @@ ExtrasMenu.prototype.renderMaskAdd = function() {
     bottomBlockDivElement.style.left = "0px";
     bottomBlockDivElement.style.width = "100%";
     bottomBlockDivElement.style.bottom = "0px";
-    if (this.maskImage) {
-        bottomBlockDivElement.style.backgroundImage = "url(" + this.maskImage + ")";
+    if (this.transparentImageSrc) {
+        bottomBlockDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
     }
     bodyElement.appendChild(bottomBlockDivElement);
     EchoEventProcessor.addHandler(bottomBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
@@ -193,8 +195,8 @@ ExtrasMenu.prototype.renderMaskAdd = function() {
     leftBlockDivElement.style.left = "0px";
     leftBlockDivElement.style.width = bounds.left + "px";
     leftBlockDivElement.style.height = bounds.height + "px";
-    if (this.maskImage) {
-        leftBlockDivElement.style.backgroundImage = "url(" + this.maskImage + ")";
+    if (this.transparentImageSrc) {
+        leftBlockDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
     }
     bodyElement.appendChild(leftBlockDivElement);
     EchoEventProcessor.addHandler(leftBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
@@ -206,8 +208,8 @@ ExtrasMenu.prototype.renderMaskAdd = function() {
     rightBlockDivElement.style.right = "0px";
     rightBlockDivElement.style.height = bounds.height + "px";
     rightBlockDivElement.style.width = (document.documentElement.clientWidth - (bounds.left + bounds.width)) + "px";
-    if (this.maskImage) {
-        rightBlockDivElement.style.backgroundImage = "url(" + this.maskImage + ")";
+    if (this.transparentImageSrc) {
+        rightBlockDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
     }
     bodyElement.appendChild(rightBlockDivElement);
     EchoEventProcessor.addHandler(rightBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
@@ -528,6 +530,7 @@ ExtrasMenu.MessageProcessor.processInit = function(initMessageElement) {
     var elementId = initMessageElement.getAttribute("eid");
     var containerElementId = initMessageElement.getAttribute("container-eid");
     var menu = new ExtrasMenu(elementId, containerElementId);
+    menu.transparentImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ExtrasUtil.Transparent";
     
     var menuBarModel;
     

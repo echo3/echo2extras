@@ -6,6 +6,7 @@ ExtrasColorSelect = function(elementId, containerElementId) {
     this.vLineImageSrc = "VLine.gif";
     this.sLineImageSrc = "SLine.gif";
     this.hLineImageSrc = "HLine.gif";
+    this.transparentImageSrc = "Transparent.gif"
     this.h = 0;
     this.s = 1;
     this.v = 1;
@@ -138,7 +139,7 @@ ExtrasColorSelect.prototype.create = function() {
     svListenerDivElement.style.width = "164px";
     svListenerDivElement.style.height = "164px";
     svListenerDivElement.style.cursor = "crosshair";
-    svListenerDivElement.style.backgroundImage = "url(Blank.gif)";
+    svListenerDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
     colorSelectDivElement.appendChild(svListenerDivElement);
 
     var hListenerDivElement = document.createElement("div");
@@ -150,7 +151,7 @@ ExtrasColorSelect.prototype.create = function() {
     hListenerDivElement.style.width = "34px";
     hListenerDivElement.style.height = "164px";
     hListenerDivElement.style.cursor = "crosshair";
-    hListenerDivElement.style.backgroundImage = "url(Blank.gif)";
+    hListenerDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
     colorSelectDivElement.appendChild(hListenerDivElement);
 
     containerElement.appendChild(colorSelectDivElement);
@@ -485,6 +486,7 @@ ExtrasColorSelect.MessageProcessor.processInit = function(initMessageElement) {
     var elementId = initMessageElement.getAttribute("eid");
     var containerElementId = initMessageElement.getAttribute("container-eid");
     var colorSelect = new ExtrasColorSelect(elementId, containerElementId);
+    colorSelect.transparentImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ExtrasUtil.Transparent";
     colorSelect.hGradientImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ColorSelect.HGradient";
     colorSelect.svGradientImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ColorSelect.SVGradient";
     colorSelect.hLineImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ColorSelect.HLine";
