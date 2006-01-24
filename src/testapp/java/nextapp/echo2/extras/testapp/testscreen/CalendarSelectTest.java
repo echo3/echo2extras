@@ -41,17 +41,17 @@ import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
-import nextapp.echo2.extras.app.CalendarField;
+import nextapp.echo2.extras.app.CalendarSelect;
 import nextapp.echo2.extras.testapp.ButtonColumn;
 import nextapp.echo2.extras.testapp.InteractiveApp;
 import nextapp.echo2.extras.testapp.StyleUtil;
 
 /**
- * Interactive test module for <code>CalendarField</code>s.
+ * Interactive test module for <code>CalendarSelect</code>s.
  */
-public class CalendarFieldTest extends SplitPane {
+public class CalendarSelectTest extends SplitPane {
 
-    public CalendarFieldTest() {
+    public CalendarSelectTest() {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
         setStyleName("DefaultResizable");
         
@@ -59,61 +59,61 @@ public class CalendarFieldTest extends SplitPane {
         controlsColumn.setStyleName("TestControlsColumn");
         add(controlsColumn);
         
-        final CalendarField calendarField = new CalendarField();
-        add(calendarField);
+        final CalendarSelect calendarSelect = new CalendarSelect();
+        add(calendarSelect);
         
         controlsColumn.addButton("Set Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
-                calendarField.setForeground(color);
+                calendarSelect.setForeground(color);
             }
         });
         
         controlsColumn.addButton("Set Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
-                calendarField.setBackground(color);
+                calendarSelect.setBackground(color);
             }
         });
 
         controlsColumn.addButton("Remove Calendar", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                remove(calendarField);
+                remove(calendarSelect);
             }
         });
 
         controlsColumn.addButton("Set Border (All Attributes)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                calendarField.setBorder(StyleUtil.randomBorder());
+                calendarSelect.setBorder(StyleUtil.randomBorder());
             }
         });
         controlsColumn.addButton("Set Border Color", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Border border = calendarField.getBorder();
+                Border border = calendarSelect.getBorder();
                 if (border == null) {
                     border = new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID);
                 }
-                calendarField.setBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
+                calendarSelect.setBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
             }
         });
         controlsColumn.addButton("Set Border Size", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                calendarField.setBorder(StyleUtil.nextBorderSize(calendarField.getBorder()));
+                calendarSelect.setBorder(StyleUtil.nextBorderSize(calendarSelect.getBorder()));
             }
         });
         controlsColumn.addButton("Set Border Style", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                calendarField.setBorder(StyleUtil.nextBorderStyle(calendarField.getBorder()));
+                calendarSelect.setBorder(StyleUtil.nextBorderStyle(calendarSelect.getBorder()));
             }
         });
         controlsColumn.addButton("Remove Border", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                calendarField.setBorder(null);
+                calendarSelect.setBorder(null);
             }
         });
         controlsColumn.addButton("Query Date", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Date date = calendarField.getDate();
+                Date date = calendarSelect.getDate();
                 InteractiveApp.getApp().consoleWrite(date == null ? "No Date" : date.toString());
             }
         });
@@ -121,17 +121,17 @@ public class CalendarFieldTest extends SplitPane {
             public void actionPerformed(ActionEvent e) {
                 Calendar calendar = new GregorianCalendar();
                 calendar.add(Calendar.DAY_OF_MONTH, ((int) (Math.random() * 10000)) - 5000);
-                calendarField.setDate(calendar.getTime());
+                calendarSelect.setDate(calendar.getTime());
             }
         });
-        controlsColumn.addButton("Add CalendarField WindowPane", new ActionListener() {
+        controlsColumn.addButton("Add CalendarSelect WindowPane", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                WindowPane windowPane = new WindowPane("Calendar Field Test", new Extent(240), new Extent(225));
+                WindowPane windowPane = new WindowPane("Calendar Select Test", new Extent(240), new Extent(225));
                 windowPane.setPositionX(new Extent((int) (Math.random() * 500)));
                 windowPane.setPositionY(new Extent((int) (Math.random() * 300) + 140));
                 windowPane.setStyleName("Default");
                 windowPane.setInsets(new Insets(10, 5));
-                windowPane.add(new CalendarField());
+                windowPane.add(new CalendarSelect());
                 InteractiveApp.getApp().getDefaultWindow().getContent().add(windowPane);
             }
         });

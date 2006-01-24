@@ -39,7 +39,7 @@ import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
-import nextapp.echo2.extras.app.CalendarField;
+import nextapp.echo2.extras.app.CalendarSelect;
 import nextapp.echo2.extras.app.AccordionPane;
 import nextapp.echo2.extras.app.layout.AccordionPaneLayoutData;
 import nextapp.echo2.extras.testapp.ButtonColumn;
@@ -259,13 +259,13 @@ public class AccordionPaneTest extends SplitPane {
             }
         });
         
-        controlsColumn.addButton("Add CalendarField", new ActionListener() {
+        controlsColumn.addButton("Add CalendarSelect", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                CalendarField calendarField = new CalendarField();
+                CalendarSelect calendarSelect = new CalendarSelect();
                 AccordionPaneLayoutData layoutData = new AccordionPaneLayoutData();
                 layoutData.setTitle("Calendar #" + tabNumber++);
-                calendarField.setLayoutData(layoutData);
-                accordionPane.add(calendarField);
+                calendarSelect.setLayoutData(layoutData);
+                accordionPane.add(calendarSelect);
             }
         });
 

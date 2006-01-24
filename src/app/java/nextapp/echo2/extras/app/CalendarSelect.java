@@ -8,7 +8,7 @@ import nextapp.echo2.app.Component;
 /**
  * A user-input component which allows for the selection of a single date.
  */
-public class CalendarField extends Component {
+public class CalendarSelect extends Component {
 
     public static final String DATE_CHANGED_PROPERTY = "date";
     public static final String PROPERTY_BORDER = "border";
@@ -16,18 +16,18 @@ public class CalendarField extends Component {
     private Date date;
     
     /**
-     * Creates a new <code>CalendarField</code>.
+     * Creates a new <code>CalendarSelect</code>.
      */
-    public CalendarField() {
+    public CalendarSelect() {
         this(null);
     }
     
     /**
-     * Creates a new <code>CalendarField</code>.
+     * Creates a new <code>CalendarSelect</code>.
      * 
      * @param date the initially selected date
      */
-    public CalendarField(Date date) {
+    public CalendarSelect(Date date) {
         super();
         this.date = date;
     }
