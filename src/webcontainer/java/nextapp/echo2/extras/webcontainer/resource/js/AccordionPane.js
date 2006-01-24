@@ -338,6 +338,10 @@ ExtrasAccordionPane.MessageProcessor.processInit = function(initMessageElement) 
     }
     
     accordionPane.create();
+    
+    if (initMessageElement.getAttribute("enabled") == "false") {
+        EchoDomPropertyStore.setPropertyValue(elementId, "EchoClientEngine.inputDisabled", true);
+    }
 };
 
 /**
