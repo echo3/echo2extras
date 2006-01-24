@@ -1,6 +1,6 @@
 /* 
- * This file is part of the Echo Web Application Framework (hereinafter "Echo").
- * Copyright (C) 2002-2005 NextApp, Inc.
+ * This file is part of the Echo2 Extras Project.
+ * Copyright (C) 2005-2006 NextApp, Inc.
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
@@ -32,6 +32,7 @@ package nextapp.echo2.extras.testapp;
 import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Column;
+import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Insets;
@@ -49,6 +50,7 @@ import nextapp.echo2.app.layout.SplitPaneLayoutData;
 public class ConsoleWindowPane extends WindowPane {
     
     private Column column;
+    private ContentPane logPane;
     
     public ConsoleWindowPane() {
         super();
@@ -67,7 +69,7 @@ public class ConsoleWindowPane extends WindowPane {
         splitPaneLayoutData.setInsets(new Insets(5));
         controlRow.setLayoutData(splitPaneLayoutData);
         splitPane.add(controlRow);
-        
+
         Button clearButton = new Button("Clear");
         clearButton.setStyleName("Default");
         clearButton.addActionListener(new ActionListener() {
@@ -77,17 +79,21 @@ public class ConsoleWindowPane extends WindowPane {
         });
         controlRow.add(clearButton);
         
-        column = new Column();
-        column.setFont(new Font(Font.MONOSPACE, Font.PLAIN, new Extent(10)));
-        column.setForeground(Color.GREEN);
+        logPane = new ContentPane();
+        logPane.setFont(new Font(Font.MONOSPACE, Font.PLAIN, new Extent(10)));
+        logPane.setForeground(Color.GREEN);
         splitPaneLayoutData = new SplitPaneLayoutData();
         splitPaneLayoutData.setBackground(Color.BLACK);
-        splitPaneLayoutData.setInsets(new Insets(5));
-        column.setLayoutData(splitPaneLayoutData);
-        splitPane.add(column);
+        logPane.setLayoutData(splitPaneLayoutData);
+        splitPane.add(logPane);
+        
+        column = new Column();
+        column.setInsets(new Insets(5));
+        logPane.add(column);
     }
     
     public void writeMessage(String message) {
         column.add(new Label(message));
+        logPane.setVerticalScroll(new Extent(-1));
     }
 }
