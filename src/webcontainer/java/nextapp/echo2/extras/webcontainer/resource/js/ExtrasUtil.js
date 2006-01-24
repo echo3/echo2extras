@@ -29,6 +29,32 @@
 
 ExtrasUtil = function() { };
 
+ExtrasUtil.Arrays = function() { };
+
+ExtrasUtil.Arrays.indexOf = function(array, element) {
+    for (var i = 0; i < array.length; ++i) {
+        if (array[i] == element) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+ExtrasUtil.Arrays.removeElement = function(array, element) {
+    var index = ExtrasUtil.Arrays.indexOf(array, element);
+    if (index == -1) {
+        return;
+    }
+    ExtrasUtil.Arrays.removeIndex(array, index);
+};
+
+ExtrasUtil.Arrays.removeIndex = function(array, index) {
+    for (i = index; i < array.length - 1; ++i) {
+        array[i] = array[i + 1];
+    }
+    array.length = array.length - 1;
+};
+
 ExtrasUtil.Bounds = function(element) {
     this.left = 0;
     this.top = 0;

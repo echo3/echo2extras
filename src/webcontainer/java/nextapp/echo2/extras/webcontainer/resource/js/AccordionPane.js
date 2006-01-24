@@ -140,7 +140,7 @@ ExtrasAccordionPane.prototype.removeTab = function(tabId) {
     EchoEventProcessor.removeHandler(tabDivElement.id, "click");
     EchoEventProcessor.removeHandler(tabDivElement.id, "mouseover");
     EchoEventProcessor.removeHandler(tabDivElement.id, "mouseout");
-    this.tabIds.pop(tabId);
+    ExtrasUtil.Arrays.removeElement(this.tabIds, tabId);
 
     tabDivElement.parentNode.removeChild(tabDivElement);
     tabContentDivElement.parentNode.removeChild(tabContentDivElement);
