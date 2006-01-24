@@ -83,6 +83,8 @@ ExtrasAccordionPane.prototype.addTab = function(tabId, tabIndex, tabName) {
     
     ExtrasUtil.setCssPositionRight(tabContentDivElement.style, accordionPaneDivElement.id, 0, 
             this.defaultContentInsets.left + this.defaultContentInsets.right);
+    ExtrasUtil.setCssPositionRight(tabDivElement.style, accordionPaneDivElement.id, 0, 
+            this.tabInsets.left + this.tabInsets.right);
     
     EchoEventProcessor.addHandler(tabDivElement.id, "click", "ExtrasAccordionPane.processTabClick");
     EchoEventProcessor.addHandler(tabDivElement.id, "mouseover", "ExtrasAccordionPane.processTabRolloverEnter");
@@ -133,6 +135,10 @@ ExtrasAccordionPane.prototype.getTabBorder = function() {
     return this.tabBorderSize + "px " + this.tabBorderStyle + " " + this.tabBorderColor;
 };
 
+ExtrasAccordionPane.prototype.getTabContentInsets = function(tabId) {
+    return this.defaultContentInsets;
+};
+
 ExtrasAccordionPane.prototype.removeTab = function(tabId) {
     var tabDivElement = this.getTabElement(tabId);
     var tabContentDivElement = this.getTabContentElement(tabId);
@@ -165,7 +171,8 @@ ExtrasAccordionPane.prototype.repositionTabs = function() {
             tabContentDivElement.style.display = "block";
             tabContentDivElement.style.top = (tabHeight * (i + 1)) + "px";
             var bottomPx = tabHeight * (this.tabIds.length - i - 1);
-            var subtractedHeight = tabHeight * this.tabIds.length;
+            var tabContentInsets = this.getTabContentInsets(this.tabIds[i]);
+            var subtractedHeight = tabHeight * this.tabIds.length + tabContentInsets.top + tabContentInsets.bottom;
             ExtrasUtil.setCssPositionBottom(tabContentDivElement.style, this.elementId, bottomPx, subtractedHeight);
             tabContentDivElement.style.bottom = bottomPx + "px";
         } else {
