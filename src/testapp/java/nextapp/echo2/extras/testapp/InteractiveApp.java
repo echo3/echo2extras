@@ -106,6 +106,7 @@ public class InteractiveApp extends ApplicationInstance {
      */
     public void displayTestPane() {
         mainWindow.setContent(new TestPane());
+        console = null;
     }
     
     /**
@@ -114,6 +115,7 @@ public class InteractiveApp extends ApplicationInstance {
      */
     public void displayWelcomePane() {
         mainWindow.setContent(new WelcomePane());
+        console = null;
     }
 
     /**
