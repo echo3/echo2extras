@@ -38,6 +38,7 @@ import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.extras.app.AccordionPane;
 import nextapp.echo2.extras.app.CalendarSelect;
 import nextapp.echo2.extras.app.TabPane;
@@ -170,6 +171,32 @@ public class TabPaneTest extends SplitPane {
                 layoutData.setTitle("ContentPane #" + tabNumber++);
                 contentPane.setLayoutData(layoutData);
                 tabPane.add(contentPane);
+            }
+        });
+
+        controlsColumn.addButton("Add SplitPane", new ActionListener(){
+        
+            public void actionPerformed(ActionEvent arg0) {
+                SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL_LEFT_RIGHT);
+                splitPane.setResizable(true);
+                TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                layoutData.setTitle("SplitPane #" + tabNumber++);
+                splitPane.setLayoutData(layoutData);
+                tabPane.add(splitPane);
+                
+                SplitPaneLayoutData splitPaneLayoutData;
+                
+                Label left = new Label("Left");
+                splitPaneLayoutData = new SplitPaneLayoutData();
+                splitPaneLayoutData.setBackground(new Color(0xafafff));
+                left.setLayoutData(splitPaneLayoutData);
+                splitPane.add(left);
+                
+                Label right = new Label("Right");
+                splitPaneLayoutData = new SplitPaneLayoutData();
+                splitPaneLayoutData.setBackground(new Color(0xafffaf));
+                right.setLayoutData(splitPaneLayoutData);
+                splitPane.add(right);
             }
         });
 

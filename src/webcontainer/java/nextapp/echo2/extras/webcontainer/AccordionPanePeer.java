@@ -35,6 +35,7 @@ import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Insets;
+import nextapp.echo2.app.Pane;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.extras.app.AccordionPane;
 import nextapp.echo2.extras.app.layout.AccordionPaneLayoutData;
@@ -137,8 +138,8 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
      */
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(ACCORDION_PANE_SERVICE.getId());
         serverMessage.addLibrary(ExtrasUtil.JS_EXTRAS_UTIL_SERVICE.getId());
+        serverMessage.addLibrary(ACCORDION_PANE_SERVICE.getId());
         AccordionPane accordionPane = (AccordionPane) component;
         renderInitDirective(rc, accordionPane, targetId);
         Component[] children = accordionPane.getVisibleComponents();
@@ -178,6 +179,9 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         addPartElement.setAttribute("eid", elementId);
         addPartElement.setAttribute("tab-id", child.getRenderId());
         addPartElement.setAttribute("tab-index", Integer.toString(accordionPane.indexOf(child)));
+        if  (child instanceof Pane) {
+            addPartElement.setAttribute("pane", "true");
+        }
         if (layoutData != null) {
             if (layoutData.getTitle() != null) {
                 addPartElement.setAttribute("title", layoutData.getTitle()); 
@@ -271,8 +275,8 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
      */
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
-        serverMessage.addLibrary(ACCORDION_PANE_SERVICE.getId());
         serverMessage.addLibrary(ExtrasUtil.JS_EXTRAS_UTIL_SERVICE.getId());
+        serverMessage.addLibrary(ACCORDION_PANE_SERVICE.getId());
         renderDisposeDirective(rc, (AccordionPane) component);
     }
 

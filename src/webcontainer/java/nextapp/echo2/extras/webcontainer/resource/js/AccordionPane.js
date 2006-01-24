@@ -46,16 +46,21 @@ ExtrasAccordionPane = function(elementId, containerElementId, activeTabId) {
     this.tabInsets = new ExtrasUtil.Insets(2, 5);
     
     this.tabIds = new Array();
+    this.tabIdToTabMap = new EchoCollectionsMap();
 };
 
-ExtrasAccordionPane.prototype.addTab = function(tabId, tabIndex, tabName) {
-    ExtrasUtil.Arrays.insertElement(this.tabIds, tabId, tabIndex);
+ExtrasAccordionPane.PANE_INSETS = new ExtrasUtil.Insets(0);
+
+ExtrasAccordionPane.prototype.addTab = function(tab, tabIndex) {
+    ExtrasUtil.Arrays.insertElement(this.tabIds, tab.tabId, tabIndex);
+    this.tabIdToTabMap.put(tab.tabId, tab);
+    
     if (this.activeTabId == null) {
-        this.activeTabId = tabId;
+        this.activeTabId = tab.tabId;
     }
 
     var tabDivElement = document.createElement("div");
-    tabDivElement.id = this.elementId + "_tab_" + tabId;
+    tabDivElement.id = this.elementId + "_tab_" + tab.tabId;
     tabDivElement.style.cursor = "pointer";
     tabDivElement.style.height = this.tabHeight + "px";
     tabDivElement.style.border = this.getTabBorder();
@@ -67,22 +72,23 @@ ExtrasAccordionPane.prototype.addTab = function(tabId, tabIndex, tabName) {
     tabDivElement.style.right = "0px";
     tabDivElement.style.overflow = "hidden";
     
-    tabDivElement.appendChild(document.createTextNode(tabName));
+    tabDivElement.appendChild(document.createTextNode(tab.title));
     var accordionPaneDivElement = document.getElementById(this.elementId);
     accordionPaneDivElement.appendChild(tabDivElement);
-    
+
     var tabContentDivElement = document.createElement("div");
-    tabContentDivElement.id = this.elementId + "_content_" + tabId;
+    var tabContentInsets = this.getTabContentInsets(tab.tabId);
+    tabContentDivElement.id = this.elementId + "_content_" + tab.tabId;
     tabContentDivElement.style.display = "none";
     tabContentDivElement.style.position = "absolute";
     tabContentDivElement.style.left = "0px";
     tabContentDivElement.style.right = "0px";
-    tabContentDivElement.style.padding = this.defaultContentInsets;
+    tabContentDivElement.style.padding = tabContentInsets.toString();
     tabContentDivElement.style.overflow = "auto";
     accordionPaneDivElement.appendChild(tabContentDivElement);
-    
-    ExtrasUtil.setCssPositionRight(tabContentDivElement.style, accordionPaneDivElement.id, 0, 
-            this.defaultContentInsets.left + this.defaultContentInsets.right);
+
+    var subtractedHeight = tabContentInsets.left + tabContentInsets.right;
+    ExtrasUtil.setCssPositionRight(tabContentDivElement.style, accordionPaneDivElement.id, 0, subtractedHeight);
     ExtrasUtil.setCssPositionRight(tabDivElement.style, accordionPaneDivElement.id, 0, 
             this.tabInsets.left + this.tabInsets.right);
     
@@ -136,7 +142,12 @@ ExtrasAccordionPane.prototype.getTabBorder = function() {
 };
 
 ExtrasAccordionPane.prototype.getTabContentInsets = function(tabId) {
-    return this.defaultContentInsets;
+    var tab = this.tabIdToTabMap.get(tabId);
+    if (tab.pane) {
+        return ExtrasAccordionPane.PANE_INSETS;
+    } else {
+        return this.defaultContentInsets;
+    }
 };
 
 ExtrasAccordionPane.prototype.removeTab = function(tabId) {
@@ -146,7 +157,9 @@ ExtrasAccordionPane.prototype.removeTab = function(tabId) {
     EchoEventProcessor.removeHandler(tabDivElement.id, "click");
     EchoEventProcessor.removeHandler(tabDivElement.id, "mouseover");
     EchoEventProcessor.removeHandler(tabDivElement.id, "mouseout");
+    
     ExtrasUtil.Arrays.removeElement(this.tabIds, tabId);
+    this.tabIdToTabMap.remove(tabId);
 
     tabDivElement.parentNode.removeChild(tabDivElement);
     tabContentDivElement.parentNode.removeChild(tabContentDivElement);
@@ -235,6 +248,12 @@ ExtrasAccordionPane.processTabRolloverExit = function(echoEvent) {
     accordion.setTabHighlight(tabId, false);
 };
 
+ExtrasAccordionPane.Tab = function(tabId, title, pane) { 
+    this.tabId = tabId;
+    this.title = title;
+    this.pane = pane;
+};
+
 /**
  * Static object/namespace for AccordionPane MessageProcessor 
  * implementation.
@@ -289,8 +308,11 @@ ExtrasAccordionPane.MessageProcessor.processAddTab = function(addTabMessageEleme
     var tabId = addTabMessageElement.getAttribute("tab-id");
     var tabIndex = addTabMessageElement.getAttribute("tab-index");
     var title = addTabMessageElement.getAttribute("title");
+    var pane = addTabMessageElement.getAttribute("pane") == "true";
     
-    accordionPane.addTab(tabId, tabIndex, title);    
+    var tab = new ExtrasAccordionPane.Tab(tabId, title, pane);
+    
+    accordionPane.addTab(tab, tabIndex);
 };
 
 /**

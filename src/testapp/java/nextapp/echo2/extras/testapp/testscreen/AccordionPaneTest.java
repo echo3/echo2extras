@@ -33,11 +33,13 @@ import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.extras.app.CalendarSelect;
 import nextapp.echo2.extras.app.AccordionPane;
 import nextapp.echo2.extras.app.layout.AccordionPaneLayoutData;
@@ -171,6 +173,32 @@ public class AccordionPaneTest extends SplitPane {
                 accordionPane.add(contentPane);
             }
         });
+        
+        controlsColumn.addButton("Add SplitPane", new ActionListener(){
+        
+            public void actionPerformed(ActionEvent arg0) {
+                SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL_LEFT_RIGHT);
+                splitPane.setResizable(true);
+                AccordionPaneLayoutData layoutData = new AccordionPaneLayoutData();
+                layoutData.setTitle("SplitPane #" + tabNumber++);
+                splitPane.setLayoutData(layoutData);
+                accordionPane.add(splitPane);
+                
+                SplitPaneLayoutData splitPaneLayoutData;
+                
+                Label left = new Label("Left");
+                splitPaneLayoutData = new SplitPaneLayoutData();
+                splitPaneLayoutData.setBackground(new Color(0xafafff));
+                left.setLayoutData(splitPaneLayoutData);
+                splitPane.add(left);
+                
+                Label right = new Label("Right");
+                splitPaneLayoutData = new SplitPaneLayoutData();
+                splitPaneLayoutData.setBackground(new Color(0xafffaf));
+                right.setLayoutData(splitPaneLayoutData);
+                splitPane.add(right);
+            }
+        });
 
         controlsColumn.addButton("Remove Last Tab", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -205,6 +233,31 @@ public class AccordionPaneTest extends SplitPane {
         controlsColumn.addButton("Clear Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 accordionPane.setBackground(null);
+            }
+        });
+        controlsColumn.addButton("Set DefaultcontentInsets = 0", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                accordionPane.setDefaultContentInsets(new Insets(0));
+            }
+        });
+        controlsColumn.addButton("Set DefaultcontentInsets = 5", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                accordionPane.setDefaultContentInsets(new Insets(5));
+            }
+        });
+        controlsColumn.addButton("Set DefaultcontentInsets = 10/20/40/80", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                accordionPane.setDefaultContentInsets(new Insets(10, 20, 40, 80));
+            }
+        });
+        controlsColumn.addButton("Clear DefaultContentInsets", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                accordionPane.setDefaultContentInsets(null);
+            }
+        });
+        controlsColumn.addButton("Clear DefaultContentInsets", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                accordionPane.setDefaultContentInsets(null);
             }
         });
         controlsColumn.addButton("Set Tab Foreground", new ActionListener() {
