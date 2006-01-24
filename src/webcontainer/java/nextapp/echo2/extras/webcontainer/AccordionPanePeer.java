@@ -191,6 +191,10 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         if (foreground != null) {
             initElement.setAttribute("foreground", ColorRender.renderCssAttributeValue(foreground));
         }
+        Insets defaultContentInsets = (Insets) accordionPane.getRenderProperty(AccordionPane.PROPERTY_DEFAULT_CONTENT_INSETS);
+        if (defaultContentInsets != null) {
+            initElement.setAttribute("default-content-insets", InsetsRender.renderCssAttributeValue(defaultContentInsets));
+        }
         
         Color tabBackground = (Color) accordionPane.getRenderProperty(AccordionPane.PROPERTY_TAB_BACKGROUND);
         if (tabBackground != null) {

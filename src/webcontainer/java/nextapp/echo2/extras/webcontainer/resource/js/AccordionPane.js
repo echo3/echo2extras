@@ -1,7 +1,8 @@
 ExtrasAccordionPane = function(elementId, containerElementId) {
     this.elementId = elementId;
     this.containerElementId = containerElementId;
-    
+
+    this.defaultContentInsets = new ExtrasUtil.Insets(0);
     this.tabHeight = 20;
     this.tabBorderSize = 1;
     this.tabBorderStyle = "outset";
@@ -12,10 +13,7 @@ ExtrasAccordionPane = function(elementId, containerElementId) {
     this.tabRolloverBackground = "#efefef";
     this.tabRolloverBorderColor = "#cfcfcf";
     this.tabRolloverBorderStyle = "outset";
-    this.tabInsetsTop = 2;
-    this.tabInsetsBottom = 2;
-    this.tabInsetsLeft = 5;
-    this.tabInsetsRight = 5;
+    this.tabInsets = new ExtrasUtil.Insets(2, 5);
     
     this.selectedTabId = null;
     this.tabIds = new Array();
@@ -32,13 +30,13 @@ ExtrasAccordionPane.prototype.addTab = function(tabId, tabName) {
     tabDivElement.style.cursor = "pointer";
     tabDivElement.style.height = this.tabHeight + "px";
     tabDivElement.style.border = this.getTabBorder();
-    tabDivElement.style.padding = this.tabInsetsTop + "px " + this.tabInsetsRight + "px " + 
-            this.tabInsetsBottom + "px " + this.tabInsetsLeft + "px";
+    tabDivElement.style.padding = this.tabInsets.toString();
     tabDivElement.style.backgroundColor = this.tabBackground;
     tabDivElement.style.color = this.tabForeground;
     tabDivElement.style.position = "absolute";
     tabDivElement.style.left = "0px";
     tabDivElement.style.right = "0px";
+    tabDivElement.style.overflow = "hidden";
     
     tabDivElement.appendChild(document.createTextNode(tabName));
     var accordionPaneDivElement = document.getElementById(this.elementId);
@@ -49,8 +47,13 @@ ExtrasAccordionPane.prototype.addTab = function(tabId, tabName) {
     tabContentDivElement.style.display = "none";
     tabContentDivElement.style.position = "absolute";
     tabContentDivElement.style.left = "0px";
-    tabContentDivElement.style.width = "100%";
+    tabContentDivElement.style.right = "0px";
+    tabContentDivElement.style.padding = this.defaultContentInsets;
+    tabContentDivElement.style.overflow = "auto";
     accordionPaneDivElement.appendChild(tabContentDivElement);
+    
+    ExtrasUtil.setCssPositionRight(tabContentDivElement.style, accordionPaneDivElement.id, 0, 
+            this.defaultContentInsets.left + this.defaultContentInsets.right);
     
     EchoEventProcessor.addHandler(tabDivElement.id, "click", "ExtrasAccordionPane.processTabClick");
     EchoEventProcessor.addHandler(tabDivElement.id, "mouseover", "ExtrasAccordionPane.processTabRolloverEnter");
@@ -58,7 +61,7 @@ ExtrasAccordionPane.prototype.addTab = function(tabId, tabName) {
 };
 
 ExtrasAccordionPane.prototype.calculateTabHeight = function() {
-    return this.tabHeight + this.tabInsetsTop + this.tabInsetsBottom + (this.tabBorderSize * 2);
+    return this.tabHeight + this.tabInsets.top + this.tabInsets.bottom + (this.tabBorderSize * 2);
 };
 
 ExtrasAccordionPane.prototype.create = function() {
@@ -287,6 +290,12 @@ ExtrasAccordionPane.MessageProcessor.processInit = function(initMessageElement) 
     }
     if (initMessageElement.getAttribute("tab-rollover-foreground")) {
         accordionPane.tabRolloverForeground = initMessageElement.getAttribute("tab-rollover-foreground");
+    }
+    if (initMessageElement.getAttribute("default-content-insets")) {
+        accordionPane.defaultContentInsets = new ExtrasUtil.Insets(initMessageElement.getAttribute("default-content-insets"));
+    }
+    if (initMessageElement.getAttribute("tab-insets")) {
+        accordionPane.tabInsets = new ExtrasUtil.Insets(initMessageElement.getAttribute("tab-insets"));
     }
     
     accordionPane.create();
