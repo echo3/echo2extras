@@ -27,9 +27,10 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-ExtrasAccordionPane = function(elementId, containerElementId) {
+ExtrasAccordionPane = function(elementId, containerElementId, activeTabId) {
     this.elementId = elementId;
     this.containerElementId = containerElementId;
+    this.activeTabId = activeTabId;
 
     this.defaultContentInsets = new ExtrasUtil.Insets(0);
     this.tabHeight = 20;
@@ -44,14 +45,13 @@ ExtrasAccordionPane = function(elementId, containerElementId) {
     this.tabRolloverBorderStyle = "outset";
     this.tabInsets = new ExtrasUtil.Insets(2, 5);
     
-    this.selectedTabId = null;
     this.tabIds = new Array();
 };
 
 ExtrasAccordionPane.prototype.addTab = function(tabId, tabName) {
     this.tabIds.push(tabId);
-    if (this.selectedTabId == null) {
-        this.selectedTabId = tabId;
+    if (this.activeTabId == null) {
+        this.activeTabId = tabId;
     }
 
     var tabDivElement = document.createElement("div");
@@ -160,7 +160,7 @@ ExtrasAccordionPane.prototype.repositionTabs = function() {
             tabDivElement.style.bottom = ""; 
         }
         
-        if (this.selectedTabId == this.tabIds[i]) {
+        if (this.activeTabId == this.tabIds[i]) {
             selectionPassed = true;
             tabContentDivElement.style.display = "block";
             tabContentDivElement.style.top = (tabHeight * (i + 1)) + "px";
@@ -176,7 +176,7 @@ ExtrasAccordionPane.prototype.repositionTabs = function() {
 
 ExtrasAccordionPane.prototype.selectTab = function(tabId) {
     EchoClientMessage.setPropertyValue(this.elementId, "activeTab", tabId);
-    this.selectedTabId = tabId;
+    this.activeTabId = tabId;
     this.repositionTabs();
 };
 
@@ -300,7 +300,8 @@ ExtrasAccordionPane.MessageProcessor.processDispose = function(disposeMessageEle
 ExtrasAccordionPane.MessageProcessor.processInit = function(initMessageElement) {
     var elementId = initMessageElement.getAttribute("eid");
     var containerElementId = initMessageElement.getAttribute("container-eid");
-    var accordionPane = new ExtrasAccordionPane(elementId, containerElementId);
+    var activeTabId = initMessageElement.getAttribute("active-tab");
+    var accordionPane = new ExtrasAccordionPane(elementId, containerElementId, activeTabId);
     
     if (initMessageElement.getAttribute("background")) {
         accordionPane.background = initMessageElement.getAttribute("background");
@@ -339,15 +340,10 @@ ExtrasAccordionPane.MessageProcessor.processInit = function(initMessageElement) 
 ExtrasAccordionPane.MessageProcessor.processRedraw = function(redrawMessageElement) {
     var elementId = redrawMessageElement.getAttribute("eid");
     var accordionPane = ExtrasAccordionPane.getComponent(elementId);
-    var activeTabId = redrawMessageElement.getAttribute("active-tab");
     if (!accordionPane) {
         throw "AccordionPane not found with id: " + elementId;
     }
     accordionPane.repositionTabs();
-    
-//    if (activeTabId) {
-//        accordionPane.activeTabId = activeTabId;
-//    }
 };
 
 /**

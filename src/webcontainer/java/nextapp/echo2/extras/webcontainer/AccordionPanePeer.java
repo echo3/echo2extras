@@ -253,6 +253,11 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         if (tabRolloverForeground != null) {
             initElement.setAttribute("tab-rollover-foreground", ColorRender.renderCssAttributeValue(tabRolloverForeground));
         }
+
+        Component activeTabComponent = accordionPane.getActiveTab();
+        if (activeTabComponent != null) {
+            initElement.setAttribute("active-tab", activeTabComponent.getRenderId());
+        }
         
         partElement.appendChild(initElement);
     }
@@ -294,11 +299,7 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         Element partElement = serverMessage.addPart(ServerMessage.GROUP_ID_UPDATE, "ExtrasAccordionPane.MessageProcessor");
         Element initElement = serverMessage.getDocument().createElement("redraw");
         initElement.setAttribute("eid", elementId);
-        
-        Component activeTabComponent = accordionPane.getActiveTab();
-        if (activeTabComponent != null) {
-            initElement.setAttribute("active-tab", activeTabComponent.getRenderId());
-        }
+
         partElement.appendChild(initElement);
     }
     
