@@ -48,8 +48,8 @@ ExtrasAccordionPane = function(elementId, containerElementId, activeTabId) {
     this.tabIds = new Array();
 };
 
-ExtrasAccordionPane.prototype.addTab = function(tabId, tabName) {
-    this.tabIds.push(tabId);
+ExtrasAccordionPane.prototype.addTab = function(tabId, tabIndex, tabName) {
+    ExtrasUtil.Arrays.insertElement(this.tabIds, tabId, tabIndex);
     if (this.activeTabId == null) {
         this.activeTabId = tabId;
     }
@@ -283,7 +283,7 @@ ExtrasAccordionPane.MessageProcessor.processAddTab = function(addTabMessageEleme
     var tabIndex = addTabMessageElement.getAttribute("tab-index");
     var title = addTabMessageElement.getAttribute("title");
     
-    accordionPane.addTab(tabId, title);    
+    accordionPane.addTab(tabId, tabIndex, title);    
 };
 
 /**

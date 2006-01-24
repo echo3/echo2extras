@@ -40,6 +40,21 @@ ExtrasUtil.Arrays.indexOf = function(array, element) {
     return -1;
 }
 
+ExtrasUtil.Arrays.insertElement = function(array, element, index) {
+    if (index == 0) {
+        array.unshift(element);
+    } else if (index == -1 || index == array.length) {
+        array.push(element);
+    } else if (index > array.length) {
+        throw "Array index of bounds: " + index + " (size=" + array.length + ")";
+    } else {
+        for (var i = array.length - 1; i >= index; --i) {
+            array[i + 1] = array[i];
+        }
+        array[index] = element;
+    }
+};
+
 ExtrasUtil.Arrays.removeElement = function(array, element) {
     var index = ExtrasUtil.Arrays.indexOf(array, element);
     if (index == -1) {
