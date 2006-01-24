@@ -198,6 +198,9 @@ ExtrasAccordionPane.getTabId = function(tabDivElementId) {
 ExtrasAccordionPane.processTabClick = function(echoEvent) {
     var tabDivElement = echoEvent.registeredTarget;
     var componentId = EchoDomUtil.getComponentId(tabDivElement.id);
+    if (!EchoClientEngine.verifyInput(componentId, false)) {
+        return;
+    }
     var accordion = ExtrasAccordionPane.getComponent(componentId);
     var tabId = ExtrasAccordionPane.getTabId(tabDivElement.id);
     accordion.selectTab(tabId);
@@ -206,6 +209,9 @@ ExtrasAccordionPane.processTabClick = function(echoEvent) {
 ExtrasAccordionPane.processTabRolloverEnter = function(echoEvent) {
     var tabDivElement = echoEvent.registeredTarget;
     var componentId = EchoDomUtil.getComponentId(tabDivElement.id);
+    if (!EchoClientEngine.verifyInput(componentId, false)) {
+        return;
+    }
     var accordion = ExtrasAccordionPane.getComponent(componentId);
     var tabId = ExtrasAccordionPane.getTabId(tabDivElement.id);
     accordion.setTabHighlight(tabId, true);
@@ -214,6 +220,9 @@ ExtrasAccordionPane.processTabRolloverEnter = function(echoEvent) {
 ExtrasAccordionPane.processTabRolloverExit = function(echoEvent) {
     var tabDivElement = echoEvent.registeredTarget;
     var componentId = EchoDomUtil.getComponentId(tabDivElement.id);
+    if (!EchoClientEngine.verifyInput(componentId, false)) {
+        return;
+    }
     var accordion = ExtrasAccordionPane.getComponent(componentId);
     var tabId = ExtrasAccordionPane.getTabId(tabDivElement.id);
     accordion.setTabHighlight(tabId, false);

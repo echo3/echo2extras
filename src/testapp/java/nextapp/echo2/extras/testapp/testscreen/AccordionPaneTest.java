@@ -42,6 +42,7 @@ import nextapp.echo2.extras.app.CalendarSelect;
 import nextapp.echo2.extras.app.AccordionPane;
 import nextapp.echo2.extras.app.layout.AccordionPaneLayoutData;
 import nextapp.echo2.extras.testapp.ButtonColumn;
+import nextapp.echo2.extras.testapp.InteractiveApp;
 import nextapp.echo2.extras.testapp.StyleUtil;
 
 /**
@@ -305,14 +306,14 @@ public class AccordionPaneTest extends SplitPane {
             }
         });
 
-        // Add/Remove AccordionPane
+        // Integration Tests
         controlsColumn = new ButtonColumn();
         accordionPaneLayoutData = new AccordionPaneLayoutData();
-        accordionPaneLayoutData.setTitle("Add/Remove AccordionPane");
+        accordionPaneLayoutData.setTitle("Integration Tests");
         controlsColumn.setLayoutData(accordionPaneLayoutData);
         controlGroupsAccordion.add(controlsColumn);
 
-        controlsColumn.addButton("Add AccordionPane", new ActionListener() {
+        controlsColumn.addButton("Add Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (getComponentCount() < 2) {
                     add(accordionPane);
@@ -320,9 +321,30 @@ public class AccordionPaneTest extends SplitPane {
             }
         });
 
-        controlsColumn.addButton("Remove AccordionPane", new ActionListener() {
+        controlsColumn.addButton("Remove Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 remove(accordionPane);
+            }
+        });
+
+        controlsColumn.addButton("Enable Component", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                accordionPane.setEnabled(true);
+            }
+        });
+
+        controlsColumn.addButton("Disable Component", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                accordionPane.setEnabled(false);
+            }
+        });
+
+        controlsColumn.addButton("Add Modal WindowPane", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                WindowPane modalWindow = new WindowPane();
+                modalWindow.setTitle("Blocking Modal WindowPane");
+                modalWindow.setModal(true);
+                InteractiveApp.getApp().getDefaultWindow().getContent().add(modalWindow);
             }
         });
     }
