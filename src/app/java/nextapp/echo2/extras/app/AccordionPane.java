@@ -53,9 +53,10 @@ implements Pane, PaneContainer {
     public static final String PROPERTY_TAB_BORDER = "tabBorder";
     public static final String PROPERTY_TAB_FOREGROUND = "tabForeground";
     public static final String PROPERTY_TAB_INSETS = "tabInsets";
-    public static final String PROPERTY_TAB_ROLLOVER_FOREGROUND = "tabRolloverForeground";
     public static final String PROPERTY_TAB_ROLLOVER_BACKGROUND = "tabRolloverBackground";
     public static final String PROPERTY_TAB_ROLLOVER_BORDER = "tabRolloverBorder";
+    public static final String PROPERTY_TAB_ROLLOVER_ENABLED = "tabRolloverEnabled";
+    public static final String PROPERTY_TAB_ROLLOVER_FOREGROUND = "tabRolloverForeground";
 
     /**
      * <code>renderId</code> of the active tab <code>Component</code>.
@@ -175,6 +176,16 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Determines whether rollover effects are enabled.
+     * 
+     * @return true if rollover effects should be enabled.
+     */
+    public boolean isTabRolloverEnabled() {
+        Boolean value = (Boolean) getProperty(PROPERTY_TAB_ROLLOVER_ENABLED);
+        return value == null ? false : value.booleanValue();
+    }
+    
+    /**
      * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
      */
     public void processInput(String inputName, Object inputValue) {
@@ -269,6 +280,15 @@ implements Pane, PaneContainer {
      */
     public void setTabRolloverBorder(Border newValue) {
         setProperty(PROPERTY_TAB_ROLLOVER_BORDER, newValue);
+    }
+    
+    /**
+     * Sets whether tab rollover effects are enabled.
+     *
+     * @param newValue thew new rollover effect state
+     */
+    public void setTabRolloverEnabled(boolean newValue) {
+        setProperty(PROPERTY_TAB_ROLLOVER_ENABLED, new Boolean(newValue));
     }
     
     /**

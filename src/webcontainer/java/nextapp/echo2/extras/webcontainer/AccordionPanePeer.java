@@ -34,6 +34,7 @@ import org.w3c.dom.Element;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
+import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Pane;
 import nextapp.echo2.app.update.ServerComponentUpdate;
@@ -238,7 +239,13 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         }
         Border tabBorder = (Border) accordionPane.getRenderProperty(AccordionPane.PROPERTY_TAB_BORDER);
         if (tabBorder != null) {
-            initElement.setAttribute("tab-border", BorderRender.renderCssAttributeValue(tabBorder));
+            if (tabBorder.getColor() != null) {
+                initElement.setAttribute("tab-border-color", ColorRender.renderCssAttributeValue(tabBorder.getColor()));
+            }
+            if (tabBorder.getSize() != null && tabBorder.getSize().getUnits() == Extent.PX) {
+                initElement.setAttribute("tab-border-size", Integer.toString(tabBorder.getSize().getValue()));
+            }
+            initElement.setAttribute("tab-border-style", BorderRender.getStyleValue(tabBorder.getStyle())); 
         }
         Color tabForeground = (Color) accordionPane.getRenderProperty(AccordionPane.PROPERTY_TAB_FOREGROUND);
         if (tabForeground != null) {
@@ -248,17 +255,25 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         if (tabInsets != null) {
             initElement.setAttribute("tab-insets", InsetsRender.renderCssAttributeValue(tabInsets));
         }
-        Color tabRolloverBackground = (Color) accordionPane.getRenderProperty(AccordionPane.PROPERTY_TAB_ROLLOVER_BACKGROUND);
-        if (tabRolloverBackground != null) {
-            initElement.setAttribute("tab-rollover-background", ColorRender.renderCssAttributeValue(tabRolloverBackground));
-        }
-        Border tabRolloverBorder = (Border) accordionPane.getRenderProperty(AccordionPane.PROPERTY_TAB_ROLLOVER_BORDER);
-        if (tabRolloverBorder != null) {
-            initElement.setAttribute("tab-rollover-border", BorderRender.renderCssAttributeValue(tabRolloverBorder));
-        }
-        Color tabRolloverForeground = (Color) accordionPane.getRenderProperty(AccordionPane.PROPERTY_TAB_ROLLOVER_FOREGROUND);
-        if (tabRolloverForeground != null) {
-            initElement.setAttribute("tab-rollover-foreground", ColorRender.renderCssAttributeValue(tabRolloverForeground));
+        Boolean tabRolloverEnabled = (Boolean) accordionPane.getRenderProperty(AccordionPane.PROPERTY_TAB_ROLLOVER_ENABLED);
+        if (tabRolloverEnabled != null && tabRolloverEnabled.booleanValue()) {
+            initElement.setAttribute("tab-rollover-enabled","true");
+            Color tabRolloverBackground = (Color) accordionPane.getRenderProperty(AccordionPane.PROPERTY_TAB_ROLLOVER_BACKGROUND);
+            if (tabRolloverBackground != null) {
+                initElement.setAttribute("tab-rollover-background", ColorRender.renderCssAttributeValue(tabRolloverBackground));
+            }
+            Border tabRolloverBorder = (Border) accordionPane.getRenderProperty(AccordionPane.PROPERTY_TAB_ROLLOVER_BORDER);
+            if (tabRolloverBorder != null) {
+                if (tabRolloverBorder.getColor() != null) {
+                    initElement.setAttribute("tab-rollover-border-color", 
+                            ColorRender.renderCssAttributeValue(tabRolloverBorder.getColor()));
+                }
+                initElement.setAttribute("tab-rollover-border-style", BorderRender.getStyleValue(tabRolloverBorder.getStyle())); 
+            }
+            Color tabRolloverForeground = (Color) accordionPane.getRenderProperty(AccordionPane.PROPERTY_TAB_ROLLOVER_FOREGROUND);
+            if (tabRolloverForeground != null) {
+                initElement.setAttribute("tab-rollover-foreground", ColorRender.renderCssAttributeValue(tabRolloverForeground));
+            }
         }
 
         Component activeTabComponent = accordionPane.getActiveTab();

@@ -32,13 +32,14 @@ ExtrasAccordionPane = function(elementId, containerElementId, activeTabId) {
     this.containerElementId = containerElementId;
     this.activeTabId = activeTabId;
 
-    this.defaultContentInsets = new ExtrasUtil.Insets(0);
+    this.defaultContentInsets = ExtrasAccordionPane.PANE_INSETS;
     this.tabHeight = 20;
     this.tabBorderSize = 1;
     this.tabBorderStyle = "outset";
     this.tabBorderColor = "#cfcfcf";
     this.tabForeground = "#000000";
     this.tabBackground = "#cfcfcf";
+    this.tabRolloverEnabled = false;
     this.tabRolloverForeground = "#00007f";
     this.tabRolloverBackground = "#efefef";
     this.tabRolloverBorderColor = "#cfcfcf";
@@ -204,6 +205,8 @@ ExtrasAccordionPane.prototype.setTabHighlight = function(tabId, state) {
     var tabDivElement = this.getTabElement(tabId);
     tabDivElement.style.backgroundColor = state ? this.tabRolloverBackground : this.tabBackground;
     tabDivElement.style.color = state ? this.tabRolloverForeground : this.tabForeground;
+    tabDivElement.style.borderColor = state ? this.tabRolloverBorderColor : this.tabBorderColor;
+    tabDivElement.style.borderStyle = state ? this.tabRolloverBorderStyle : this.tabBorderStyle;
 };
 
 ExtrasAccordionPane.getComponent = function(componentId) {
@@ -233,6 +236,9 @@ ExtrasAccordionPane.processTabRolloverEnter = function(echoEvent) {
         return;
     }
     var accordion = ExtrasAccordionPane.getComponent(componentId);
+    if (!accordion.tabRolloverEnabled) {
+        return;
+    }
     var tabId = ExtrasAccordionPane.getTabId(tabDivElement.id);
     accordion.setTabHighlight(tabId, true);
 };
@@ -244,6 +250,9 @@ ExtrasAccordionPane.processTabRolloverExit = function(echoEvent) {
         return;
     }
     var accordion = ExtrasAccordionPane.getComponent(componentId);
+    if (!accordion.tabRolloverEnabled) {
+        return;
+    }
     var tabId = ExtrasAccordionPane.getTabId(tabDivElement.id);
     accordion.setTabHighlight(tabId, false);
 };
@@ -353,11 +362,29 @@ ExtrasAccordionPane.MessageProcessor.processInit = function(initMessageElement) 
     if (initMessageElement.getAttribute("tab-foreground")) {
         accordionPane.tabForeground = initMessageElement.getAttribute("tab-foreground");
     }
+    if (initMessageElement.getAttribute("tab-border-size")) {
+        accordionPane.tabBorderSize = parseInt(initMessageElement.getAttribute("tab-border-size"));
+    }
+    if (initMessageElement.getAttribute("tab-border-style")) {
+        accordionPane.tabBorderStyle = initMessageElement.getAttribute("tab-border-style");
+    }
+    if (initMessageElement.getAttribute("tab-border-color")) {
+        accordionPane.tabBorderColor = initMessageElement.getAttribute("tab-border-color");
+    }
+    if (initMessageElement.getAttribute("tab-rollover-enabled")) {
+        accordionPane.tabRolloverEnabled = initMessageElement.getAttribute("tab-rollover-enabled") == "true";
+    }
     if (initMessageElement.getAttribute("tab-rollover-background")) {
         accordionPane.tabRolloverBackground = initMessageElement.getAttribute("tab-rollover-background");
     }
     if (initMessageElement.getAttribute("tab-rollover-foreground")) {
         accordionPane.tabRolloverForeground = initMessageElement.getAttribute("tab-rollover-foreground");
+    }
+    if (initMessageElement.getAttribute("tab-rollover-border-style")) {
+        accordionPane.tabRolloverBorderStyle = initMessageElement.getAttribute("tab-rollover-border-style");
+    }
+    if (initMessageElement.getAttribute("tab-rollover-border-color")) {
+        accordionPane.tabRolloverBorderColor = initMessageElement.getAttribute("tab-rollover-border-color");
     }
     if (initMessageElement.getAttribute("default-content-insets")) {
         accordionPane.defaultContentInsets = new ExtrasUtil.Insets(initMessageElement.getAttribute("default-content-insets"));

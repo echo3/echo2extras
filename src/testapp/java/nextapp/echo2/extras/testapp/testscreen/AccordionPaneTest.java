@@ -235,27 +235,22 @@ public class AccordionPaneTest extends SplitPane {
                 accordionPane.setBackground(null);
             }
         });
-        controlsColumn.addButton("Set DefaultcontentInsets = 0", new ActionListener() {
+        controlsColumn.addButton("Set Default Content Insets to 0", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 accordionPane.setDefaultContentInsets(new Insets(0));
             }
         });
-        controlsColumn.addButton("Set DefaultcontentInsets = 5", new ActionListener() {
+        controlsColumn.addButton("Set Default Content Insets to 5", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 accordionPane.setDefaultContentInsets(new Insets(5));
             }
         });
-        controlsColumn.addButton("Set DefaultcontentInsets = 10/20/40/80", new ActionListener() {
+        controlsColumn.addButton("Set Default Content Insets to 10/20/40/80", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 accordionPane.setDefaultContentInsets(new Insets(10, 20, 40, 80));
             }
         });
-        controlsColumn.addButton("Clear DefaultContentInsets", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                accordionPane.setDefaultContentInsets(null);
-            }
-        });
-        controlsColumn.addButton("Clear DefaultContentInsets", new ActionListener() {
+        controlsColumn.addButton("Clear Default Content Insets", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 accordionPane.setDefaultContentInsets(null);
             }
@@ -309,6 +304,16 @@ public class AccordionPaneTest extends SplitPane {
                 accordionPane.setTabBorder(null);
             }
         });
+        controlsColumn.addButton("Enable Rollover Effects", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                accordionPane.setTabRolloverEnabled(true);
+            }
+        });
+        controlsColumn.addButton("Disable Rollover Effects", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                accordionPane.setTabRolloverEnabled(false);
+            }
+        });
         controlsColumn.addButton("Set Tab Rollover Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 accordionPane.setTabRolloverForeground(StyleUtil.randomColor());
@@ -327,6 +332,30 @@ public class AccordionPaneTest extends SplitPane {
         controlsColumn.addButton("Clear Tab Rollover Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 accordionPane.setTabRolloverBackground(null);
+            }
+        });
+        controlsColumn.addButton("Set Tab Rollover Border (All Attributes)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                accordionPane.setTabRolloverBorder(StyleUtil.randomBorder());
+            }
+        });
+        controlsColumn.addButton("Set Tab Rollover Border Color", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Border border = accordionPane.getTabRolloverBorder();
+                if (border == null) {
+                    border = new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID);
+                }
+                accordionPane.setTabRolloverBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
+            }
+        });
+        controlsColumn.addButton("Set Tab Rollover Border Style", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                accordionPane.setTabRolloverBorder(StyleUtil.nextBorderStyle(accordionPane.getTabRolloverBorder()));
+            }
+        });
+        controlsColumn.addButton("Remove Tab Rollover Border", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                accordionPane.setTabRolloverBorder(null);
             }
         });
         

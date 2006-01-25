@@ -86,14 +86,14 @@ ExtrasUtil.Bounds.prototype.toString = function() {
     return "(" + this.left + ", " + this.top + ") [" + this.width + "x" + this.height + "]";
 };
 
-ExtrasUtil.Insets = function(insetsString) {
+ExtrasUtil.Insets = function() {
     this.top = 0;
     this.right = 0;
     this.bottom = 0;
     this.left = 0;
     
     if (arguments.length == 1) {
-        this.loadValuesFromString(insetsString);
+        this.loadValuesFromString(arguments[0]);
     } else if (arguments.length == 2) {
         this.top = this.bottom = arguments[0];
         this.right = this.left = arguments[1];
