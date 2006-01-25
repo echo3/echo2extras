@@ -27,6 +27,16 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
+/**
+ * ExtrasAccordionPane Namespace/Object/Constructor.
+ * Creates a new AccordionPane data object.
+ *
+ * @param elementId the DOM element id of the AccordionPane that will be
+ *        rendered (when the create() method is invoked)
+ * @param containerElementId the DOM element id of the container to which the
+ *        AccordionPane will be added
+ * @param activeTabId the id of the initially active tab
+ */
 ExtrasAccordionPane = function(elementId, containerElementId, activeTabId) {
     this.elementId = elementId;
     this.containerElementId = containerElementId;
@@ -52,6 +62,12 @@ ExtrasAccordionPane = function(elementId, containerElementId, activeTabId) {
 
 ExtrasAccordionPane.PANE_INSETS = new ExtrasUtil.Insets(0);
 
+/**
+ * Adds a Tab to the AccordionPane.
+ *
+ * @param the ExtrasAccordionPane.Tab data object representing the tab
+ * @param tabIndex the index at which the tab should be inserted
+ */
 ExtrasAccordionPane.prototype.addTab = function(tab, tabIndex) {
     ExtrasUtil.Arrays.insertElement(this.tabIds, tab.tabId, tabIndex);
     this.tabIdToTabMap.put(tab.tabId, tab);
@@ -102,6 +118,10 @@ ExtrasAccordionPane.prototype.calculateTabHeight = function() {
     return this.tabHeight + this.tabInsets.top + this.tabInsets.bottom + (this.tabBorderSize * 2);
 };
 
+/**
+ * Renders the AccordionPane to the DOM, beneath its previously specified
+ * container element.
+ */
 ExtrasAccordionPane.prototype.create = function() {
     var containerElement = document.getElementById(this.containerElementId);
     var accordionPaneDivElement = document.createElement("div");
