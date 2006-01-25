@@ -36,7 +36,9 @@ import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.extras.app.AccordionPane;
 import nextapp.echo2.extras.app.ColorSelect;
+import nextapp.echo2.extras.app.layout.AccordionPaneLayoutData;
 import nextapp.echo2.extras.testapp.ButtonColumn;
 import nextapp.echo2.extras.testapp.InteractiveApp;
 import nextapp.echo2.extras.testapp.StyleUtil;
@@ -50,18 +52,22 @@ public class ColorSelectTest extends SplitPane {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
         setStyleName("DefaultResizable");
         
-        ButtonColumn controlsColumn = new ButtonColumn();
-        controlsColumn.setStyleName("TestControlsColumn");
-        add(controlsColumn);
+        AccordionPane controlGroupsAccordion = new AccordionPane();
+        controlGroupsAccordion.setStyleName("TestControlsAccordion");
+        add(controlGroupsAccordion);
         
         final ColorSelect colorSelect = new ColorSelect();
         add(colorSelect);
         
-        controlsColumn.addButton("Remove ColorSelect", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                remove(colorSelect);
-            }
-        });
+        ButtonColumn controlsColumn;
+        AccordionPaneLayoutData accordionPaneLayoutData;
+        
+        // Properties
+        controlsColumn = new ButtonColumn();
+        accordionPaneLayoutData = new AccordionPaneLayoutData();
+        accordionPaneLayoutData.setTitle("Properties");
+        controlsColumn.setLayoutData(accordionPaneLayoutData);
+        controlGroupsAccordion.add(controlsColumn);
         
         controlsColumn.addButton("Query Color", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -88,6 +94,27 @@ public class ColorSelectTest extends SplitPane {
             }
         });
 
+        // Integration
+        controlsColumn = new ButtonColumn();
+        accordionPaneLayoutData = new AccordionPaneLayoutData();
+        accordionPaneLayoutData.setTitle("Integration Tests");
+        controlsColumn.setLayoutData(accordionPaneLayoutData);
+        controlGroupsAccordion.add(controlsColumn);
+
+        controlsColumn.addButton("Add Component", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (getComponentCount() < 2) {
+                    add(colorSelect);
+                }
+            }
+        });
+
+        controlsColumn.addButton("Remove Component", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                remove(colorSelect);
+            }
+        });
+        
         controlsColumn.addButton("Enable Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 colorSelect.setEnabled(true);
