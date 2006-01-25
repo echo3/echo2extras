@@ -251,51 +251,51 @@ ExtrasColorSelect.prototype.setColor = function(rgb) {
 };
 
 ExtrasColorSelect.prototype.updateColor = function() {
-   var svDivElement = document.getElementById(this.elementId + "_sv");
-   var baseColor;
-   if (this.enabled) {
-       baseColor = ExtrasColorSelect.hsvToRgb(this.h, 1, 1);
-   } else {
-       baseColor = ExtrasColorSelect.hsvToRgb(this.h, 0.3, 0.7);
-   }
-   svDivElement.style.backgroundColor = baseColor.toHexTriplet();
+    var svDivElement = document.getElementById(this.elementId + "_sv");
+    var baseColor;
+    if (this.enabled) {
+        baseColor = ExtrasColorSelect.hsvToRgb(this.h, 1, 1);
+    } else {
+        baseColor = ExtrasColorSelect.hsvToRgb(this.h, 0.3, 0.7);
+    }
+    svDivElement.style.backgroundColor = baseColor.toHexTriplet();
    
-   var colorDivElement = document.getElementById(this.elementId + "_color");
-   var renderColor = ExtrasColorSelect.hsvToRgb(this.h, this.s, this.v);
-   var renderHexTriplet = renderColor.toHexTriplet();
-   colorDivElement.style.backgroundColor = renderHexTriplet;
-   colorDivElement.style.borderColor = renderHexTriplet;
-   colorDivElement.style.color = this.v < 0.67 ? "#ffffff" : "#000000";
-   colorDivElement.childNodes[0].nodeValue = renderHexTriplet;
+    var colorDivElement = document.getElementById(this.elementId + "_color");
+    var renderColor = ExtrasColorSelect.hsvToRgb(this.h, this.s, this.v);
+    var renderHexTriplet = renderColor.toHexTriplet();
+    colorDivElement.style.backgroundColor = renderHexTriplet;
+    colorDivElement.style.borderColor = renderHexTriplet;
+    colorDivElement.style.color = this.v < 0.67 ? "#ffffff" : "#000000";
+    colorDivElement.childNodes[0].nodeValue = renderHexTriplet;
    
-   var sLineElement = document.getElementById(this.elementId + "_sline");
-   var sLineTop = parseInt((1 - this.s) * 150) + 2;
-   if (sLineTop < 2) {
-       sLineTop = 2;
-   } else if (sLineTop > 152) {
-       sLineTop = 152;
-   }
-   sLineElement.style.top = sLineTop + "px";
+    var sLineElement = document.getElementById(this.elementId + "_sline");
+    var sLineTop = parseInt((1 - this.s) * 150) + 2;
+    if (sLineTop < 2) {
+         sLineTop = 2;
+    } else if (sLineTop > 152) {
+        sLineTop = 152;
+    }
+    sLineElement.style.top = sLineTop + "px";
 
-   var vLineElement = document.getElementById(this.elementId + "_vline");
-   var vLineLeft = parseInt(this.v * 150) + 2;
-   if (vLineLeft < 2) {
-       vLineLeft = 2;
-   } else if (vLineLeft > 152) {
-       vLineLeft = 152;
-   }
-   vLineElement.style.left = vLineLeft + "px";
+    var vLineElement = document.getElementById(this.elementId + "_vline");
+    var vLineLeft = parseInt(this.v * 150) + 2;
+    if (vLineLeft < 2) {
+        vLineLeft = 2;
+    } else if (vLineLeft > 152) {
+        vLineLeft = 152;
+    }
+    vLineElement.style.left = vLineLeft + "px";
    
-   var hLineElement = document.getElementById(this.elementId + "_hline");
-   var hLineTop = parseInt((360 - this.h) / 360 * 150) + 2;
-   if (hLineTop < 2) {
-       hLineTop = 2;
-   } else if (hLineTop > 152) {
-       hLineTop = 152;
-   }
-   hLineElement.style.top = hLineTop + "px";
+    var hLineElement = document.getElementById(this.elementId + "_hline");
+    var hLineTop = parseInt((360 - this.h) / 360 * 150) + 2;
+    if (hLineTop < 2) {
+        hLineTop = 2;
+    } else if (hLineTop > 152) {
+        hLineTop = 152;
+    }
+    hLineElement.style.top = hLineTop + "px";
    
-   this.updateClientMessage(renderColor);
+    this.updateClientMessage(renderColor);
 };
 
 /**
