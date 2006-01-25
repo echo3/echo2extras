@@ -31,6 +31,9 @@ package nextapp.echo2.extras.app.menu;
 
 import nextapp.echo2.app.ImageReference;
 
+/**
+ * A default <code>OptionModel</code> implementation.
+ */
 public class DefaultOptionModel 
 implements OptionModel {
 

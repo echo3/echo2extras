@@ -31,13 +31,41 @@ package nextapp.echo2.extras.app.menu;
 
 import nextapp.echo2.app.ImageReference;
 
+/**
+ * Representation of a single-level menu that may contain
+ * menu options, separators and sub-menus.
+ */
 public interface MenuModel extends ItemModel {
     
+    /**
+     * Returns the text of the menu.  This text is displayed in the parent
+     * menu if this menu is used as a sub-menu.
+     * 
+     * @return the text
+     */
     public String getText();
     
+    /**
+     * Returns the number of items in the menu.
+     * 
+     * @return the number of items
+     */
     public int getItemCount();
     
+    /**
+     * Retrieves the <code>ItemModel</code> contained in this menu at the
+     * specified index.
+     * 
+     * @param itemIndex the index of the item to retrieve
+     * @return the item
+     */
     public ItemModel getItem(int itemIndex);
     
+    /**
+     * Returns the icon of the menu.  This icon is displayed in the parent
+     * menu if this menu is used as a sub-menu.
+     * 
+     * @return the icon
+     */
     public ImageReference getIcon();
 }

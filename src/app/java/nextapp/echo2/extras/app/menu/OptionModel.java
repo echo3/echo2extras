@@ -31,11 +31,31 @@ package nextapp.echo2.extras.app.menu;
 
 import nextapp.echo2.app.ImageReference;
 
+/**
+ * Representation of a menu option.
+ */
 public interface OptionModel extends ItemModel {
     
+    /**
+     * Returns the action command that will be provided in 
+     * <code>ActionEvent</code>s fired by the menu in the event this option 
+     * is selected.
+     * 
+     * @return the action command
+     */
     public String getActionCommand();
     
+    /**
+     * Returns the text of this menu option.
+     * 
+     * @return the text
+     */
     public String getText();
     
+    /**
+     * Returns the icon of this menu option.
+     * 
+     * @return the icon
+     */
     public ImageReference getIcon();
 }

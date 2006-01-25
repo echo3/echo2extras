@@ -34,6 +34,10 @@ import java.util.List;
 
 import nextapp.echo2.app.ImageReference;
 
+/**
+ * Default <code>MenuModel</code> implementation.
+ * Provides capabilities to add and remove menu items.
+ */
 public class DefaultMenuModel 
 implements MenuModel {
 
@@ -41,25 +45,52 @@ implements MenuModel {
     private String text;
     private ImageReference icon;
     
+    /**
+     * Creates a new <code>DefaultMenuModel</code>.
+     */
     public DefaultMenuModel() {
         super();
     }
     
+    /**
+     * Creates a new <code>DefaultMenuModel</code> with the specified title 
+     * text.
+     * 
+     * @param text the title text
+     */
     public DefaultMenuModel(String text) {
         super();
         this.text = text;
     }
     
+    /**
+     * Creates a new <code>DefaultMenuModel</code> with the specified title 
+     * text and icon
+     * 
+     * @param text the title text
+     * @param icon the title icon
+     */
     public DefaultMenuModel(String text, ImageReference icon) {
         super();
         this.text = text;
         this.icon = icon;
     }
     
+    /**
+     * Adds an <code>ItemModel</code> to the end of the menu.
+     * 
+     * @param item the <code>ItemModel</code> to add
+     */
     public void addItem(ItemModel item) {
         addItem(item, -1);
     }
     
+    /**
+     * Adds an <code>ItemModel</code> to the menu at the specified index
+     * 
+     * @param item the <code>ItemModel</code> to add
+     * @param index the index at which to insert it within the menu
+     */
     public void addItem(ItemModel item, int index) {
         if (items == null) {
             items = new ArrayList();
@@ -99,6 +130,11 @@ implements MenuModel {
         return text;
     }
     
+    /**
+     * REmoves an <code>ItemModel</code> from the menu
+     * 
+     * @param item the <code>ItemModel</code> to remove
+     */
     public void removeItem(ItemModel item) {
         if (items == null) {
             return;
@@ -106,10 +142,20 @@ implements MenuModel {
         items.remove(item);
     }
     
+    /**
+     * Sets the title icon of the menu
+     * 
+     * @param newValue the new title icon
+     */
     public void setIcon(ImageReference newValue) {
         icon = newValue;
     }
     
+    /**
+     * Sets the title text of the menu
+     * 
+     * @param newValue the new title text
+     */
     public void setText(String newValue) {
         text = newValue;
     }

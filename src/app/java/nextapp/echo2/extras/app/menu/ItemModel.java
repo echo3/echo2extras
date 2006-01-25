@@ -29,6 +29,11 @@
 
 package nextapp.echo2.extras.app.menu;
 
+/**
+ * Representation of an item contained in a menu.
+ * All menu item interfaces are derived from this interface. 
+ * This is an empty marker interface.
+ */
 public interface ItemModel {
 
 }
