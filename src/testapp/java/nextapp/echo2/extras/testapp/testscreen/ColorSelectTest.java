@@ -87,5 +87,26 @@ public class ColorSelectTest extends SplitPane {
                 InteractiveApp.getApp().getDefaultWindow().getContent().add(windowPane);
             }
         });
+
+        controlsColumn.addButton("Enable Component", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                colorSelect.setEnabled(true);
+            }
+        });
+
+        controlsColumn.addButton("Disable Component", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                colorSelect.setEnabled(false);
+            }
+        });
+
+        controlsColumn.addButton("Add Modal WindowPane", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                WindowPane modalWindow = new WindowPane();
+                modalWindow.setTitle("Blocking Modal WindowPane");
+                modalWindow.setModal(true);
+                InteractiveApp.getApp().getDefaultWindow().getContent().add(modalWindow);
+            }
+        });
     }
 }

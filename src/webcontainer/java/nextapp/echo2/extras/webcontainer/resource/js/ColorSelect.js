@@ -43,6 +43,7 @@ ExtrasColorSelect = function(elementId, containerElementId) {
     
     this.hActive = false;
     this.svActive = false;
+    this.enabled = true;
 };
 
 ExtrasColorSelect.prototype.create = function() {
@@ -251,7 +252,12 @@ ExtrasColorSelect.prototype.setColor = function(rgb) {
 
 ExtrasColorSelect.prototype.updateColor = function() {
    var svDivElement = document.getElementById(this.elementId + "_sv");
-   var baseColor = ExtrasColorSelect.hsvToRgb(this.h, 1, 1);
+   var baseColor;
+   if (this.enabled) {
+       baseColor = ExtrasColorSelect.hsvToRgb(this.h, 1, 1);
+   } else {
+       baseColor = ExtrasColorSelect.hsvToRgb(this.h, 0.3, 0.7);
+   }
    svDivElement.style.backgroundColor = baseColor.toHexTriplet();
    
    var colorDivElement = document.getElementById(this.elementId + "_color");
@@ -378,6 +384,9 @@ ExtrasColorSelect.hsvToRgb = function(h, s, v) {
 ExtrasColorSelect.processSVMouseDown = function(echoEvent) {
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
     var colorSelect = ExtrasColorSelect.getComponent(componentId);
+    if (!colorSelect.enabled || !EchoClientEngine.verifyInput(componentId, false)) {
+        return;
+    }
     colorSelect.hActive = false;
     colorSelect.svActive = true;
     EchoDomUtil.preventEventDefault(echoEvent);
@@ -386,6 +395,9 @@ ExtrasColorSelect.processSVMouseDown = function(echoEvent) {
 ExtrasColorSelect.processHMouseDown = function(echoEvent) {
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
     var colorSelect = ExtrasColorSelect.getComponent(componentId);
+    if (!colorSelect.enabled || !EchoClientEngine.verifyInput(componentId, false)) {
+        return;
+    }
     colorSelect.hActive = true;
     colorSelect.svActive = false;
     EchoDomUtil.preventEventDefault(echoEvent);
@@ -515,6 +527,7 @@ ExtrasColorSelect.MessageProcessor.processInit = function(initMessageElement) {
     var elementId = initMessageElement.getAttribute("eid");
     var containerElementId = initMessageElement.getAttribute("container-eid");
     var colorSelect = new ExtrasColorSelect(elementId, containerElementId);
+    colorSelect.enabled = initMessageElement.getAttribute("enabled") != "false";
     colorSelect.transparentImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ExtrasUtil.Transparent";
     colorSelect.hGradientImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ColorSelect.HGradient";
     colorSelect.svGradientImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ColorSelect.SVGradient";
@@ -540,5 +553,3 @@ ExtrasColorSelect.MessageProcessor.processSetColor = function(setColorMessageEle
     var b = parseInt(setColorMessageElement.getAttribute("b"));
     colorSelect.setColor(new ExtrasColorSelect.RGB(r, g, b));
 };
-
-

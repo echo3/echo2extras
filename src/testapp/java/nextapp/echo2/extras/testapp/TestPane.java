@@ -107,8 +107,8 @@ public class TestPane extends ContentPane {
 
         addTest("Accordion Pane", "AccordionPaneTest");
         addTest("Border Pane", "BorderPaneTest");
-        addTest("Color Select", "ColorSelectTest");
         addTest("Calendar Select", "CalendarSelectTest");
+        addTest("Color Select", "ColorSelectTest");
         addTest("Pull Down Menu", "PullDownMenuTest");
         addTest("Tab Pane", "TabPaneTest");
         

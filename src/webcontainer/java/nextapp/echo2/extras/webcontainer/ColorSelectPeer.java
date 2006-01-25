@@ -179,6 +179,9 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
                 "ExtrasColorSelect.MessageProcessor", "init");
         initElement.setAttribute("eid", elementId);
         initElement.setAttribute("container-eid", containerId);
+        if (!colorSelect.isRenderEnabled()) {
+            initElement.setAttribute("enabled", "false");
+        }
     }
     
     /**
