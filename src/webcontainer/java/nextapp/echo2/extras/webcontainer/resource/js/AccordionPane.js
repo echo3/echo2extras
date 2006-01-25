@@ -40,10 +40,10 @@ ExtrasAccordionPane = function(elementId, containerElementId, activeTabId) {
     this.tabForeground = "#000000";
     this.tabBackground = "#cfcfcf";
     this.tabRolloverEnabled = false;
-    this.tabRolloverForeground = "#00007f";
-    this.tabRolloverBackground = "#efefef";
-    this.tabRolloverBorderColor = "#cfcfcf";
-    this.tabRolloverBorderStyle = "outset";
+    this.tabRolloverForeground = null;
+    this.tabRolloverBackground = null;
+    this.tabRolloverBorderColor = null;
+    this.tabRolloverBorderStyle = null;
     this.tabInsets = new ExtrasUtil.Insets(2, 5);
     
     this.tabIds = new Array();
@@ -124,9 +124,9 @@ ExtrasAccordionPane.prototype.create = function() {
 
 ExtrasAccordionPane.prototype.dispose = function() {
     for (var i = 0; i < this.tabIds.length; ++i) {
-	    EchoEventProcessor.removeHandler(this.tabIds[i], "click");
-	    EchoEventProcessor.removeHandler(this.tabIds[i], "mouseover");
-	    EchoEventProcessor.removeHandler(this.tabIds[i], "mouseout");
+        EchoEventProcessor.removeHandler(this.tabIds[i], "click");
+        EchoEventProcessor.removeHandler(this.tabIds[i], "mouseover");
+        EchoEventProcessor.removeHandler(this.tabIds[i], "mouseout");
     }
 };
 
@@ -203,10 +203,32 @@ ExtrasAccordionPane.prototype.selectTab = function(tabId) {
 
 ExtrasAccordionPane.prototype.setTabHighlight = function(tabId, state) {
     var tabDivElement = this.getTabElement(tabId);
-    tabDivElement.style.backgroundColor = state ? this.tabRolloverBackground : this.tabBackground;
-    tabDivElement.style.color = state ? this.tabRolloverForeground : this.tabForeground;
-    tabDivElement.style.borderColor = state ? this.tabRolloverBorderColor : this.tabBorderColor;
-    tabDivElement.style.borderStyle = state ? this.tabRolloverBorderStyle : this.tabBorderStyle;
+    if (state) {
+        if (this.tabRolloverBackground) {
+            tabDivElement.style.backgroundColor = this.tabRolloverBackground;
+        } else {
+            tabDivElement.style.backgroundColor = ExtrasUtil.Color.adjustIntensity(this.tabBackground, 1.4);
+        }
+        if (this.tabRolloverBorderColor) {
+            tabDivElement.style.borderColor = this.tabRolloverBorderColor;
+        } else {
+            tabDivElement.style.borderColor = ExtrasUtil.Color.adjustIntensity(this.tabBorderColor, 1.4);
+        }
+        if (this.tabRolloverForeground) {
+            tabDivElement.style.color = this.tabRolloverForeground;
+        }
+        if (this.tabRolloverBorderStyle) {
+            tabDivElement.style.borderStyle = this.tabRolloverBorderStyle;
+        }
+    } else {
+        tabDivElement.style.backgroundColor = this.tabBackground;
+        tabDivElement.style.color = this.tabForeground;
+        tabDivElement.style.borderColor = this.tabBorderColor;
+        tabDivElement.style.borderStyle = this.tabBorderStyle;
+    }
+    
+    
+    
 };
 
 ExtrasAccordionPane.getComponent = function(componentId) {

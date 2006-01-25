@@ -167,22 +167,23 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Determines whether rollover effects are enabled.
+     * Default value is true.
+     * 
+     * @return true if rollover effects should be enabled.
+     */
+    public boolean isTabRolloverEnabled() {
+        Boolean value = (Boolean) getProperty(PROPERTY_TAB_ROLLOVER_ENABLED);
+        return value == null ? true : value.booleanValue();
+    }
+    
+    /**
      * Returns the tab rollover foreground color.
      *
      * @return the tab rollover foreground color
      */
     public Color getTabRolloverForeground() {
         return (Color) getProperty(PROPERTY_TAB_ROLLOVER_FOREGROUND);
-    }
-    
-    /**
-     * Determines whether rollover effects are enabled.
-     * 
-     * @return true if rollover effects should be enabled.
-     */
-    public boolean isTabRolloverEnabled() {
-        Boolean value = (Boolean) getProperty(PROPERTY_TAB_ROLLOVER_ENABLED);
-        return value == null ? false : value.booleanValue();
     }
     
     /**

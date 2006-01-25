@@ -256,7 +256,7 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
             initElement.setAttribute("tab-insets", InsetsRender.renderCssAttributeValue(tabInsets));
         }
         Boolean tabRolloverEnabled = (Boolean) accordionPane.getRenderProperty(AccordionPane.PROPERTY_TAB_ROLLOVER_ENABLED);
-        if (tabRolloverEnabled != null && tabRolloverEnabled.booleanValue()) {
+        if (tabRolloverEnabled == null || tabRolloverEnabled.booleanValue()) {
             initElement.setAttribute("tab-rollover-enabled","true");
             Color tabRolloverBackground = (Color) accordionPane.getRenderProperty(AccordionPane.PROPERTY_TAB_ROLLOVER_BACKGROUND);
             if (tabRolloverBackground != null) {
