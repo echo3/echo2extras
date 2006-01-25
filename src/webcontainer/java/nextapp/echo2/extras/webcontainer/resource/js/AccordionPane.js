@@ -80,7 +80,7 @@ ExtrasAccordionPane.prototype.addTab = function(tab, tabIndex) {
     tabDivElement.id = this.elementId + "_tab_" + tab.tabId;
     tabDivElement.style.cursor = "pointer";
     tabDivElement.style.height = this.tabHeight + "px";
-    tabDivElement.style.border = this.getTabBorder();
+    tabDivElement.style.border = this.tabBorderSize + "px " + this.tabBorderStyle + " " + this.tabBorderColor;
     tabDivElement.style.padding = this.tabInsets.toString();
     tabDivElement.style.backgroundColor = this.tabBackground;
     tabDivElement.style.color = this.tabForeground;
@@ -121,6 +121,9 @@ ExtrasAccordionPane.prototype.calculateTabHeight = function() {
 /**
  * Renders the AccordionPane to the DOM, beneath its previously specified
  * container element.
+ *
+ * Note: When the tab pane is destroyed,  the dispose() method must be invoked
+ * to release resources allocated by this method.
  */
 ExtrasAccordionPane.prototype.create = function() {
     var containerElement = document.getElementById(this.containerElementId);
@@ -142,6 +145,9 @@ ExtrasAccordionPane.prototype.create = function() {
     EchoDomPropertyStore.setPropertyValue(this.elementId, "component", this);
 };
 
+/**
+ * Releases resources held by the AccordionPane.
+ */
 ExtrasAccordionPane.prototype.dispose = function() {
     for (var i = 0; i < this.tabIds.length; ++i) {
         EchoEventProcessor.removeHandler(this.tabIds[i], "click");
@@ -150,18 +156,33 @@ ExtrasAccordionPane.prototype.dispose = function() {
     }
 };
 
+/**
+ * Retrieves the DOM element that will contain a specific tab's content.
+ *
+ * @param tabId the id of the tab
+ * @return the tab content DIV element
+ */
 ExtrasAccordionPane.prototype.getTabContentElement = function(tabId) {
     return document.getElementById(this.elementId + "_content_" + tabId);
 };
 
+/**
+ * Retrieves the DOM element that represents a tab header.
+ *
+ * @param tabId the id of the tab
+ * @return the tab header DIV element
+ */
 ExtrasAccordionPane.prototype.getTabElement = function(tabId) {
     return document.getElementById(this.elementId + "_tab_" + tabId);
 };
 
-ExtrasAccordionPane.prototype.getTabBorder = function() {
-    return this.tabBorderSize + "px " + this.tabBorderStyle + " " + this.tabBorderColor;
-};
-
+/**
+ * Returns an ExtrasUtil.Insets representing the insets with which the 
+ * specified tab should be rendered.
+ *
+ * @param tabId the id of the tab
+ * @return the insets
+ */
 ExtrasAccordionPane.prototype.getTabContentInsets = function(tabId) {
     var tab = this.tabIdToTabMap.get(tabId);
     if (tab.pane) {
@@ -171,6 +192,11 @@ ExtrasAccordionPane.prototype.getTabContentInsets = function(tabId) {
     }
 };
 
+/**
+ * Removes a tab from an AccordionPane.
+ *
+ * @param tabId the id of the tab to remove
+ */
 ExtrasAccordionPane.prototype.removeTab = function(tabId) {
     var tabDivElement = this.getTabElement(tabId);
     var tabContentDivElement = this.getTabContentElement(tabId);
@@ -186,7 +212,11 @@ ExtrasAccordionPane.prototype.removeTab = function(tabId) {
     tabContentDivElement.parentNode.removeChild(tabContentDivElement);
 };
 
-ExtrasAccordionPane.prototype.repositionTabs = function() {
+/**
+ * Redraws tabs in the appropriate positions, exposing the content of the 
+ * selected tab.
+ */
+ExtrasAccordionPane.prototype.redrawTabs = function() {
     var selectionPassed = false;
     var tabHeight = this.calculateTabHeight();
     for (var i = 0; i < this.tabIds.length; ++i) {
@@ -215,12 +245,24 @@ ExtrasAccordionPane.prototype.repositionTabs = function() {
     }
 };
 
+/**
+ * Selects a specific tab.
+ * 
+ * @param tabId the id of the tab to select
+ */
 ExtrasAccordionPane.prototype.selectTab = function(tabId) {
     EchoClientMessage.setPropertyValue(this.elementId, "activeTab", tabId);
     this.activeTabId = tabId;
-    this.repositionTabs();
+    this.redrawTabs();
 };
 
+/**
+ * Sets the highlight (i.e. rollover effect) state of a specific tab.
+ *
+ * @param tabId the id of the tab
+ * @param state the highlight state (true indicating it should be highlighted,
+ *        false indicating it should not)
+ */
 ExtrasAccordionPane.prototype.setTabHighlight = function(tabId, state) {
     var tabDivElement = this.getTabElement(tabId);
     if (state) {
@@ -246,20 +288,35 @@ ExtrasAccordionPane.prototype.setTabHighlight = function(tabId, state) {
         tabDivElement.style.borderColor = this.tabBorderColor;
         tabDivElement.style.borderStyle = this.tabBorderStyle;
     }
-    
-    
-    
 };
 
+/**
+ * Returns the AccordionPane data object instance based on the root element id
+ * of the AccordionPane.
+ *
+ * @param componentId the root element id of the AccordionPane
+ * @return the relevant AccordionPane instance
+ */
 ExtrasAccordionPane.getComponent = function(componentId) {
     return EchoDomPropertyStore.getPropertyValue(componentId, "component");
 };
 
+/**
+ * Returns the tab id of the specified tab header element.
+ *
+ * @param tabDivElement the DOM element id of the tab header
+ * @return the tab id.
+ */
 ExtrasAccordionPane.getTabId = function(tabDivElementId) {
     var lastUnderscoreIndex = tabDivElementId.lastIndexOf("_");
     return tabDivElementId.substring(lastUnderscoreIndex + 1);
 };
 
+/**
+ * Event handler to process a user click on a tab header.
+ *
+ * @param echoEvent the event (must be forwarded by EchoEventProcessor)
+ */
 ExtrasAccordionPane.processTabClick = function(echoEvent) {
     var tabDivElement = echoEvent.registeredTarget;
     var componentId = EchoDomUtil.getComponentId(tabDivElement.id);
@@ -271,6 +328,11 @@ ExtrasAccordionPane.processTabClick = function(echoEvent) {
     accordion.selectTab(tabId);
 };
 
+/**
+ * Event handler to process a tab header rollover-enter event
+ *
+ * @param echoEvent the event (must be forwarded by EchoEventProcessor)
+ */
 ExtrasAccordionPane.processTabRolloverEnter = function(echoEvent) {
     var tabDivElement = echoEvent.registeredTarget;
     var componentId = EchoDomUtil.getComponentId(tabDivElement.id);
@@ -285,6 +347,11 @@ ExtrasAccordionPane.processTabRolloverEnter = function(echoEvent) {
     accordion.setTabHighlight(tabId, true);
 };
 
+/**
+ * Event handler to process  a tab header rollover-exit event
+ *
+ * @param echoEvent the event (must be forwarded by EchoEventProcessor)
+ */
 ExtrasAccordionPane.processTabRolloverExit = function(echoEvent) {
     var tabDivElement = echoEvent.registeredTarget;
     var componentId = EchoDomUtil.getComponentId(tabDivElement.id);
@@ -299,6 +366,15 @@ ExtrasAccordionPane.processTabRolloverExit = function(echoEvent) {
     accordion.setTabHighlight(tabId, false);
 };
 
+/**
+ * A data object which represents a single tab within an AccordionPane.
+ * Creates a new Tab.
+ *
+ * @param tabId the id of the tab
+ * @param title the title text to display in the tab header
+ * @param pane a boolean flag indicating whether the tab's content is a pane
+ *        component
+ */
 ExtrasAccordionPane.Tab = function(tabId, title, pane) { 
     this.tabId = tabId;
     this.title = title;
@@ -454,7 +530,7 @@ ExtrasAccordionPane.MessageProcessor.processRedraw = function(redrawMessageEleme
     if (!accordionPane) {
         throw "AccordionPane not found with id: " + elementId;
     }
-    accordionPane.repositionTabs();
+    accordionPane.redrawTabs();
 };
 
 /**

@@ -38,6 +38,9 @@ import nextapp.echo2.extras.app.menu.DefaultMenuModel;
 import nextapp.echo2.extras.app.menu.MenuModel;
 import nextapp.echo2.extras.app.menu.OptionModel;
 
+/**
+ * A pull-down menu component.
+ */
 public class PullDownMenu extends Component {
     
     public static final String MODEL_CHANGED_PROPERTY = "model";
