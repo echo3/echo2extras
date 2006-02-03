@@ -56,6 +56,9 @@ ExtrasAccordionPane = function(elementId, containerElementId, activeTabId) {
     this.tabRolloverBorderStyle = null;
     this.tabInsets = new ExtrasUtil.Insets(2, 5);
     
+    this.animationStepCount = 20;
+    this.animationStepInterval = 5;
+
     this.tabIds = new Array();
     this.tabIdToTabMap = new EchoCollectionsMap();
 };
@@ -421,8 +424,6 @@ ExtrasAccordionPane.Rotation = function(accordionPane, oldTabId, newTabId) {
     this.rotatingTabIds = new Array();
     
     this.animationStepIndex = 0;
-    this.animationStepCount = 20;
-    this.animationStepInterval = 5;
     
     this.oldTabIndex = ExtrasUtil.Arrays.indexOf(this.accordionPane.tabIds, oldTabId);
     this.newTabIndex = ExtrasUtil.Arrays.indexOf(this.accordionPane.tabIds, newTabId);
@@ -449,7 +450,7 @@ ExtrasAccordionPane.Rotation.prototype.cancel = function() {
 };
 
 ExtrasAccordionPane.Rotation.prototype.animationStep = function() {
-    if (this.animationStepIndex < this.animationStepCount) {
+    if (this.animationStepIndex < this.accordionPane.animationStepCount) {
         var accordionPaneDivElement = document.getElementById(this.accordionPane.elementId);
         var regionHeight = accordionPaneDivElement.offsetHeight;
         var tabHeight = this.accordionPane.calculateTabHeight();
@@ -472,7 +473,7 @@ ExtrasAccordionPane.Rotation.prototype.animationStep = function() {
             var endTopPosition = regionHeight - tabHeight * (numberOfTabsBelow);
             
             // Number of pixels to step with each animation frame.
-            var stepUnit = (endTopPosition - startTopPosition) / this.animationStepCount;
+            var stepUnit = (endTopPosition - startTopPosition) / this.accordionPane.animationStepCount;
             
             // Number of pixels (from 0) to step current current frame.
             var stepPosition = Math.round(stepUnit * this.animationStepIndex);
@@ -523,7 +524,7 @@ ExtrasAccordionPane.Rotation.prototype.animationStep = function() {
             var endBottomPosition = regionHeight - tabHeight * (numberOfTabsAbove + 1);
             
             // Number of pixels to step with each animation frame.
-            var stepUnit = (endBottomPosition - startBottomPosition) / this.animationStepCount;
+            var stepUnit = (endBottomPosition - startBottomPosition) / this.accordionPane.animationStepCount;
             
             // Number of pixels (from 0) to step current current frame.
             var stepPosition = Math.round(stepUnit * this.animationStepIndex);
@@ -566,7 +567,7 @@ ExtrasAccordionPane.Rotation.prototype.animationStep = function() {
     
         // Continue Rotation.
         window.setTimeout("ExtrasAccordionPane.Rotation.animationStep(\"" + this.accordionPane.elementId + "\")", 
-                this.animationStepInterval);
+                this.accordionPane.animationStepInterval);
     } else {
         // Complete Rotation.
         
