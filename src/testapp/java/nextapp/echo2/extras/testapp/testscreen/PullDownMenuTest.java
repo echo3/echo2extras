@@ -41,6 +41,7 @@ import nextapp.echo2.extras.app.PullDownMenu;
 import nextapp.echo2.extras.app.menu.DefaultOptionModel;
 import nextapp.echo2.extras.app.menu.DefaultMenuModel;
 import nextapp.echo2.extras.app.menu.MenuModel;
+import nextapp.echo2.extras.app.menu.SeparatorModel;
 import nextapp.echo2.extras.testapp.ButtonColumn;
 import nextapp.echo2.extras.testapp.InteractiveApp;
 import nextapp.echo2.extras.testapp.StyleUtil;
@@ -139,6 +140,7 @@ public class PullDownMenuTest extends SplitPane {
         openRecentMenuModel.addItem(new DefaultOptionModel("q1-earnings.txt", null, "open-recent-11"));
         openRecentMenuModel.addItem(new DefaultOptionModel("Foxtrot.odt", null, "open-recent-12"));
         fileMenuModel.addItem(openRecentMenuModel);
+        fileMenuModel.addItem(new SeparatorModel());
         fileMenuModel.addItem(new DefaultOptionModel("Save", null, "save"));
         fileMenuModel.addItem(new DefaultOptionModel("Save as...", null, "save-as"));
         menuModel.addItem(fileMenuModel);

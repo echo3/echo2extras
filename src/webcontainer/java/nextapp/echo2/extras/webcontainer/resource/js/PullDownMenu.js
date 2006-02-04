@@ -307,12 +307,22 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
             menuItemTrElement.appendChild(menuItemContentTdElement);
             
             if (menuModel.items[i] instanceof ExtrasMenu.MenuModel) {
+                // Submenus have adjacent column containing 'expand' icons.
                 var menuItemArrowTdElement = document.createElement("td");
                 menuItemArrowTdElement.appendChild(document.createTextNode(">"));
                 menuItemTrElement.appendChild(menuItemArrowTdElement);
             } else {
+                // Menu items fill both columns.
                 menuItemContentTdElement.colSpan = 2;
             }
+        } else if (menuModel.items[i] instanceof ExtrasMenu.SeparatorModel) {
+            var menuItemTrElement = document.createElement("tr");
+            menuTbodyElement.appendChild(menuItemTrElement);
+            var menuItemContentTdElement = document.createElement("td");
+            menuItemContentTdElement.colSpan = 2;
+            menuItemContentTdElement.style.padding = "0px";
+            menuItemContentTdElement.appendChild(document.createElement("hr"));
+            menuItemTrElement.appendChild(menuItemContentTdElement);
         }
     }
     
@@ -385,6 +395,9 @@ ExtrasMenu.prototype.renderMenuBarAdd = function() {
 
 ExtrasMenu.prototype.setHighlight = function(itemModel, state) {
     var itemElement = this.getItemElement(itemModel);
+    if (!itemElement) {
+        return;
+    }
     if (state) {
         itemElement.style.backgroundColor = this.menuSelectionBackground;
         itemElement.style.color = this.menuSelectionForeground;
@@ -587,6 +600,9 @@ ExtrasMenu.MessageProcessor.processMenuModel = function(menuElement, menu) {
             } else if (node.nodeName == "menu") {
                 var childMenuModel = ExtrasMenu.MessageProcessor.processMenuModel(node, menu);
                 menuModel.addItem(childMenuModel);
+            } else if (node.nodeName == "separator") {
+                var separatorModel = new ExtrasMenu.SeparatorModel();
+                menuModel.addItem(separatorModel);
             }
         }
     }

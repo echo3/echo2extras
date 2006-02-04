@@ -32,6 +32,6 @@ package nextapp.echo2.extras.app.menu;
 /**
  * A representation of a separator within a menu.
  */
-public class SeparatorModel {
+public class SeparatorModel implements ItemModel {
 
 }
