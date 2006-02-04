@@ -55,7 +55,12 @@ ExtrasAccordionPane = function(elementId, containerElementId, activeTabId) {
     this.tabRolloverBorderColor = null;
     this.tabRolloverBorderStyle = null;
     this.tabInsets = new ExtrasUtil.Insets(2, 5);
-    
+
+    // By default, disable animation on IE due to performance and rendering issues.
+    // It works, but it can be a bit slower than desired and uncovers some of IE's
+    // repainting issues.
+        
+    this.animationEnabled = !EchoClientProperties.get("browserInternetExplorer");
     this.animationStepCount = 20;
     this.animationStepInterval = 5;
 
@@ -284,7 +289,11 @@ ExtrasAccordionPane.prototype.selectTab = function(newTabId) {
     EchoClientMessage.setPropertyValue(this.elementId, "activeTab", newTabId);
     var oldTabId = this.activeTabId;
     this.activeTabId = newTabId;
-    this.rotateTabs(oldTabId, newTabId);
+    if (this.animationEnabled) {
+        this.rotateTabs(oldTabId, newTabId);
+    } else {
+        this.redrawTabs();
+    }
 };
 
 /**
