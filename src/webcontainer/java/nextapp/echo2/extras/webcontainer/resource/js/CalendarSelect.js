@@ -471,7 +471,9 @@ ExtrasCalendarSelect.MessageProcessor.process = function(messagePartElement) {
 ExtrasCalendarSelect.MessageProcessor.processDispose = function(disposeMessageElement) {
     var elementId = disposeMessageElement.getAttribute("eid");
     var calendar = ExtrasCalendarSelect.getComponent(elementId);
-    calendar.dispose();
+    if (calendar) {
+	    calendar.dispose();
+    }
 };
 
 /**

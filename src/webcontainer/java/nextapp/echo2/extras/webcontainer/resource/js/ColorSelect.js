@@ -514,7 +514,9 @@ ExtrasColorSelect.MessageProcessor.process = function(messagePartElement) {
 ExtrasColorSelect.MessageProcessor.processDispose = function(disposeMessageElement) {
     var elementId = disposeMessageElement.getAttribute("eid");
     var colorSelect = ExtrasColorSelect.getComponent(elementId);
-    colorSelect.dispose();
+    if (colorSelect) {
+        colorSelect.dispose();
+    }
 };
 
 /**

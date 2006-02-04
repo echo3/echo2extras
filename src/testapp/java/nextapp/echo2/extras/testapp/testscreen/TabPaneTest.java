@@ -45,6 +45,7 @@ import nextapp.echo2.extras.app.TabPane;
 import nextapp.echo2.extras.app.layout.AccordionPaneLayoutData;
 import nextapp.echo2.extras.app.layout.TabPaneLayoutData;
 import nextapp.echo2.extras.testapp.ButtonColumn;
+import nextapp.echo2.extras.testapp.InteractiveApp;
 import nextapp.echo2.extras.testapp.StyleUtil;
 
 /**
@@ -356,10 +357,10 @@ public class TabPaneTest extends SplitPane {
             }
         });
 
-        // Add/Remove TabPane
+        // Integration Tests
         controlsColumn = new ButtonColumn();
         accordionPaneLayoutData = new AccordionPaneLayoutData();
-        accordionPaneLayoutData.setTitle("Add/Remove TabPane");
+        accordionPaneLayoutData.setTitle("Integration Tests");
         controlsColumn.setLayoutData(accordionPaneLayoutData);
 
         controlGroupsAccordion.add(controlsColumn);
@@ -375,6 +376,27 @@ public class TabPaneTest extends SplitPane {
         controlsColumn.addButton("Remove TabPane", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 remove(tabPane);
+            }
+        });
+        
+        controlsColumn.addButton("Enable Component", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	tabPane.setEnabled(true);
+            }
+        });
+
+        controlsColumn.addButton("Disable Component", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	tabPane.setEnabled(false);
+            }
+        });
+
+        controlsColumn.addButton("Add Modal WindowPane", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                WindowPane modalWindow = new WindowPane();
+                modalWindow.setTitle("Blocking Modal WindowPane");
+                modalWindow.setModal(true);
+                InteractiveApp.getApp().getDefaultWindow().getContent().add(modalWindow);
             }
         });
     }

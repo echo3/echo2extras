@@ -679,10 +679,9 @@ ExtrasAccordionPane.MessageProcessor.processAddTab = function(addTabMessageEleme
 ExtrasAccordionPane.MessageProcessor.processDispose = function(disposeMessageElement) {
     var elementId = disposeMessageElement.getAttribute("eid");
     var accordionPane = ExtrasAccordionPane.getComponent(elementId);
-    if (!accordionPane) {
-        throw "AccordionPane not found with id: " + elementId;
+    if (accordionPane) {
+        accordionPane.dispose();
     }
-    accordionPane.dispose();
 };
 
 /**

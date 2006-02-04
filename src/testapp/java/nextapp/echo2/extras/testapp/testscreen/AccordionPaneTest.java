@@ -211,7 +211,7 @@ public class AccordionPaneTest extends SplitPane {
         // General Properties
         controlsColumn = new ButtonColumn();
         accordionPaneLayoutData = new AccordionPaneLayoutData();
-        accordionPaneLayoutData.setTitle("General Properties");
+        accordionPaneLayoutData.setTitle("Properties");
         controlsColumn.setLayoutData(accordionPaneLayoutData);
         controlGroupsAccordion.add(controlsColumn);
 

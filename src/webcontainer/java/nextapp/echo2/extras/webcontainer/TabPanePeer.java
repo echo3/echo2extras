@@ -235,6 +235,9 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         initElement.setAttribute("container-eid", targetId);
         initElement.setAttribute("eid", elementId);
         
+        if (!tabPane.isRenderEnabled()) {
+        	initElement.setAttribute("enabled", "false");
+        }
         Color background = (Color) tabPane.getRenderProperty(TabPane.PROPERTY_BACKGROUND);
         if (background != null) {
             initElement.setAttribute("default-background", ColorRender.renderCssAttributeValue(background));

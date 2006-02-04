@@ -65,6 +65,8 @@ ExtrasTabPane = function(elementId, containerElementId, activeTabId) {
     
     this.headerHeight = 32;
     this.activeHeaderHeightIncrease = 2;
+    
+    this.enabled = true;
 };
 
 /**
@@ -307,6 +309,10 @@ ExtrasTabPane.processClick = function(echoEvent) {
     var elementId = echoEvent.target.id;
     var tabPaneId = EchoDomUtil.getComponentId(elementId);
     var tabPane = ExtrasTabPane.getTabPane(tabPaneId);
+    if (!tabPane.enabled || !EchoClientEngine.verifyInput(tabPaneId, false)) {
+        return;
+    }
+    
     var headerDivTextIndex = elementId.indexOf("_header_div_");
     if (headerDivTextIndex == -1) {
         return;
@@ -452,6 +458,8 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     var containerElementId = initMessageElement.getAttribute("container-eid");
     var activeTabId = initMessageElement.getAttribute("active-tab");
     var tabPane = new ExtrasTabPane(elementId, containerElementId, activeTabId);
+
+    tabPane.enabled = initMessageElement.getAttribute("enabled") != "false";
 
     tabPane.tabPosition = initMessageElement.getAttribute("tab-position") == "bottom" ? 
             ExtrasTabPane.TAB_POSITION_BOTTOM : ExtrasTabPane.TAB_POSITION_TOP;
