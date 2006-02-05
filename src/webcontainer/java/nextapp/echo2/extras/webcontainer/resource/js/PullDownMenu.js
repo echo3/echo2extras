@@ -344,7 +344,9 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
 ExtrasMenu.prototype.renderMenuDispose = function(menuModel) {
     var menuDivElement = document.getElementById(this.elementId + "_menu_" + menuModel.id);
 
-    EchoEventProcessor.removeHandler(menuDivElement.id, "click", "ExtrasMenu.processMenuItemClick");
+    EchoEventProcessor.removeHandler(menuDivElement.id, "click");
+    EchoEventProcessor.removeHandler(menuDivElement.id, "mouseover");
+    EchoEventProcessor.removeHandler(menuDivElement.id, "mouseout");
     
     if (menuDivElement) {
         menuDivElement.parentNode.removeChild(menuDivElement);
