@@ -32,6 +32,7 @@ package nextapp.echo2.extras.app;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Pane;
 import nextapp.echo2.app.PaneContainer;
 
@@ -44,9 +45,10 @@ implements Pane, PaneContainer {
     public static final String ACTIVE_TAB_CHANGED_PROPERTY = "activeTab";
     public static final String INPUT_ACTIVE_TAB = "activeTab";
 
-    public static final String PROPERTY_INACTIVE_BORDER = "inactiveBorder";
-    public static final String PROPERTY_BORDER_TYPE = "borderType";
     public static final String PROPERTY_ACTIVE_BORDER = "activeBorder";
+    public static final String PROPERTY_BORDER_TYPE = "borderType";
+    public static final String PROPERTY_INACTIVE_BORDER = "inactiveBorder";
+    public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_TAB_HEIGHT = "tabHeight";
     public static final String PROPERTY_TAB_POSITION = "tabPosition";
     public static final String PROPERTY_TAB_WIDTH = "tabWidth";
@@ -172,6 +174,19 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Returns the <code>Insets</code> around the entire <code>TabPane</code>.
+     * Insets will only be drawn on sides of the <code>TabPane</code> which have
+     * a border (i.e., based on the value of the <code>borderType</code> 
+     * property).
+     * Values for this property must be in pixel units.
+     * 
+     * @return the insets
+     */
+    public Insets getInsets() {
+    	return (Insets) getProperty(PROPERTY_INSETS);
+    }
+    
+    /**
      * Returns the height of an individual tab.
      * <code>Extent</code> values for this property must be in pixel units.
      * 
@@ -272,6 +287,19 @@ implements Pane, PaneContainer {
      */
     public void setInactiveBorder(Border newValue) {
         setProperty(PROPERTY_INACTIVE_BORDER, newValue);
+    }
+    
+    /**
+     * Sets the <code>Insets</code> around the entire <code>TabPane</code>.
+     * Insets will only be drawn on sides of the <code>TabPane</code> which have
+     * a border (i.e., based on the value of the <code>borderType</code> 
+     * property).
+     * Values for this property must be in pixel units.
+     * 
+     * @return newValue the new inset
+     */
+    public void setInsets(Insets newValue) {
+    	setProperty(PROPERTY_INSETS, newValue);
     }
     
     /**

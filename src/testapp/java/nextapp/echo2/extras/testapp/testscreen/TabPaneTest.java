@@ -33,6 +33,7 @@ import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.WindowPane;
@@ -325,6 +326,32 @@ public class TabPaneTest extends SplitPane {
         controlsColumn.addButton("Set Border Type = Surround", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setBorderType(TabPane.BORDER_TYPE_SURROUND);
+            }
+        });
+        
+        controlsColumn.addButton("Set Insets = Null", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setInsets(null);
+            }
+        });
+        controlsColumn.addButton("Set Insets = 0px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setInsets(new Insets(0));
+            }
+        });
+        controlsColumn.addButton("Set Insets = 2px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setInsets(new Insets(2));
+            }
+        });
+        controlsColumn.addButton("Set Insets = 5px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setInsets(new Insets(5));
+            }
+        });
+        controlsColumn.addButton("Set Insets = 10/20/40/80px", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setInsets(new Insets(10, 20, 40, 80));
             }
         });
         

@@ -35,6 +35,7 @@ import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.extras.app.TabPane;
 import nextapp.echo2.extras.app.layout.TabPaneLayoutData;
@@ -47,6 +48,7 @@ import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
+import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
@@ -245,6 +247,11 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         Color foreground = (Color) tabPane.getRenderProperty(TabPane.PROPERTY_FOREGROUND);
         if (foreground != null) {
             initElement.setAttribute("default-foreground", ColorRender.renderCssAttributeValue(foreground));
+        }
+        
+        Insets insets = (Insets) tabPane.getRenderProperty(TabPane.PROPERTY_INSETS);
+        if (insets != null) {
+        	initElement.setAttribute("insets", InsetsRender.renderCssAttributeValue(insets));
         }
         
         Integer tabPosition = (Integer) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_POSITION);
