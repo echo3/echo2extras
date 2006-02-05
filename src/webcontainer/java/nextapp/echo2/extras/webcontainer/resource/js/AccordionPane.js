@@ -159,10 +159,22 @@ ExtrasAccordionPane.prototype.create = function() {
  */
 ExtrasAccordionPane.prototype.dispose = function() {
     for (var i = 0; i < this.tabIds.length; ++i) {
-        EchoEventProcessor.removeHandler(this.tabIds[i], "click");
-        EchoEventProcessor.removeHandler(this.tabIds[i], "mouseover");
-        EchoEventProcessor.removeHandler(this.tabIds[i], "mouseout");
+        this.disposeTab(this.tabIds[i]);
     }
+};
+
+/**
+ * Disposes of resources used by a tab in an AccordionPane.
+ * Invoked prior to removing tab or in process of disposing entire
+ * AccordionPane.
+ *
+ * @param tabId the id of the tab to dispose
+ */
+ExtrasAccordionPane.prototype.disposeTab = function(tabId) {
+    var tabDivElement = this.getTabElement(tabId);
+    EchoEventProcessor.removeHandler(tabDivElement.id, "click");
+    EchoEventProcessor.removeHandler(tabDivElement.id, "mouseover");
+    EchoEventProcessor.removeHandler(tabDivElement.id, "mouseout");
 };
 
 /**
@@ -210,9 +222,7 @@ ExtrasAccordionPane.prototype.removeTab = function(tabId) {
     var tabDivElement = this.getTabElement(tabId);
     var tabContentDivElement = this.getTabContentElement(tabId);
 
-    EchoEventProcessor.removeHandler(tabDivElement.id, "click");
-    EchoEventProcessor.removeHandler(tabDivElement.id, "mouseover");
-    EchoEventProcessor.removeHandler(tabDivElement.id, "mouseout");
+    this.disposeTab(tabId);
     
     ExtrasUtil.Arrays.removeElement(this.tabIds, tabId);
     this.tabIdToTabMap.remove(tabId);
