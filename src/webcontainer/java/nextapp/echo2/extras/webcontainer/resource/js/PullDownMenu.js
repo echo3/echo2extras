@@ -590,7 +590,7 @@ ExtrasMenu.MessageProcessor.processInit = function(initMessageElement) {
     
     for (var i = 0; i < initMessageElement.childNodes.length; ++i) {
         if (initMessageElement.childNodes[i].nodeType == 1 && initMessageElement.childNodes[i].nodeName == "menu") {
-            menuBarModel = ExtrasMenu.MessageProcessor.processMenuModel(initMessageElement.childNodes[i], menu);
+            menuBarModel = ExtrasMenu.MessageProcessor.processMenuModel(initMessageElement.childNodes[i]);
             break;
         }
     }
@@ -600,7 +600,14 @@ ExtrasMenu.MessageProcessor.processInit = function(initMessageElement) {
     menu.create();
 };
 
-ExtrasMenu.MessageProcessor.processMenuModel = function(menuElement, menu) {
+/**
+ * Translates a MenuModel represented as an XML 'menu' element into a 
+ * ExtrasMenu.MenuModel instance.
+ *
+ * @param menuElement the 'menu' element to translate
+ * @return the created ExtrasMenu.MenuModel instance
+ */
+ExtrasMenu.MessageProcessor.processMenuModel = function(menuElement) {
     var menuModel = new ExtrasMenu.MenuModel(menuElement.getAttribute("text"));
     for (var i = 0; i < menuElement.childNodes.length; ++i) {
         var node = menuElement.childNodes[i];
@@ -609,7 +616,7 @@ ExtrasMenu.MessageProcessor.processMenuModel = function(menuElement, menu) {
                 var optionModel = new ExtrasMenu.OptionModel(node.getAttribute("text"));
                 menuModel.addItem(optionModel);
             } else if (node.nodeName == "menu") {
-                var childMenuModel = ExtrasMenu.MessageProcessor.processMenuModel(node, menu);
+                var childMenuModel = ExtrasMenu.MessageProcessor.processMenuModel(node);
                 menuModel.addItem(childMenuModel);
             } else if (node.nodeName == "separator") {
                 var separatorModel = new ExtrasMenu.SeparatorModel();
