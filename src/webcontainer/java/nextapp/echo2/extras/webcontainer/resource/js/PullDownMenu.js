@@ -84,13 +84,20 @@ ExtrasMenu.prototype.closeDescendantMenus = function(menuModel) {
     }
 };
 
+/**
+ * Renders the menu to the DOM, beneath its previously specified
+ * container element.
+ *
+ * Note: When the menu is destroyed,  the dispose() method must be invoked
+ * to release resources allocated by this method.
+ */
 ExtrasMenu.prototype.create = function() {
     this.renderMenuBarAdd();
-    
     EchoDomPropertyStore.setPropertyValue(this.elementId, "component", this);
 };
 
 ExtrasMenu.prototype.dispose = function() {
+    this.renderMenuBarDispose();
 };
 
 ExtrasMenu.prototype.getElementModelId = function(menuItemElement) {
@@ -393,6 +400,12 @@ ExtrasMenu.prototype.renderMenuBarAdd = function() {
     EchoEventProcessor.addHandler(this.elementId, "mouseout", "ExtrasMenu.processMenuBarMouseOut");
 };
 
+ExtrasMenu.prototype.renderMenuBarDispose = function() {
+    EchoEventProcessor.removeHandler(this.elementId, "click");
+    EchoEventProcessor.removeHandler(this.elementId, "mouseover");
+    EchoEventProcessor.removeHandler(this.elementId, "mouseout");
+};
+
 ExtrasMenu.prototype.setHighlight = function(itemModel, state) {
     var itemElement = this.getItemElement(itemModel);
     if (!itemElement) {
@@ -478,6 +491,15 @@ ExtrasMenu.processMenuCancel = function(echoEvent) {
     menu.processCancel();
 };
 
+/**
+ * Represenation of a menu that may contain submenus, options, and separators.
+ * Creates a new MenuModel.
+ *
+ * @param text the title of the menu model which will appear in its parent menu
+ *        when this menu is used as a submenu
+ * @param icon the icon of the menu model which will appear in its parent menu
+ *        when this menu is used as a submenu
+ */
 ExtrasMenu.MenuModel = function(text, icon) {
     this.id = ExtrasMenu.nextId++;
     this.parent = null;
@@ -486,6 +508,11 @@ ExtrasMenu.MenuModel = function(text, icon) {
     this.items = new Array();
 };
 
+/**
+ * Adds an item to the MenuModel.
+ *
+ * @param item the item (must be a MenuModel, OptionModel, or SeparatorModel.
+ */
 ExtrasMenu.MenuModel.prototype.addItem = function(item) {
     this.items.push(item);
     item.parent = this;
@@ -518,6 +545,9 @@ ExtrasMenu.MenuModel.prototype.indexOfItem = function(item) {
     return -1;
 };
 
+/**
+ * toString() implementation.
+ */
 ExtrasMenu.MenuModel.prototype.toString = function() {
     return "MenuModel \"" + this.text + "\" Items:" + this.items.length;
 };
@@ -529,10 +559,16 @@ ExtrasMenu.OptionModel = function(text, icon) {
     this.icon = icon;
 };
 
+/**
+ * toString() implementation.
+ */
 ExtrasMenu.OptionModel.prototype.toString = function() {
     return "OptionModel \"" + this.text + "\"";
 };
 
+/**
+ * A representation of a menu separator.
+ */
 ExtrasMenu.SeparatorModel = function() {
     this.parent = null;
 };
@@ -572,6 +608,10 @@ ExtrasMenu.MessageProcessor.process = function(messagePartElement) {
  */
 ExtrasMenu.MessageProcessor.processDispose = function(disposeMessageElement) {
     var menuId = disposeMessageElement.getAttribute("eid");
+    var menu = ExtrasMenu.getComponent(menuId);
+    if (menu) {
+        menu.dispose();
+    }
 };
 
 /**
