@@ -87,7 +87,7 @@ ExtrasMenu.prototype.closeDescendantMenus = function(menuModel) {
 ExtrasMenu.prototype.create = function() {
     this.renderMenuBarAdd();
     
-    EchoDomPropertyStore.setPropertyValue(this.elementId, "menu", this);
+    EchoDomPropertyStore.setPropertyValue(this.elementId, "component", this);
 };
 
 ExtrasMenu.prototype.dispose = function() {
@@ -411,6 +411,17 @@ ExtrasMenu.prototype.setModel = function(menuModel) {
     this.menuModel = menuModel;
 };
 
+/**
+ * Returns the Menu data object instance based on the root element id
+ * of the Menu.
+ *
+ * @param componentId the root element id of the Menu
+ * @return the relevant Menu instance
+ */
+ExtrasMenu.getComponent = function(componentId) {
+    return EchoDomPropertyStore.getPropertyValue(componentId, "component");
+};
+
 ExtrasMenu.getItemPath = function(itemModel) {
     var path = new Array();
     while (itemModel.parent != null) {
@@ -424,7 +435,7 @@ ExtrasMenu.processMenuBarClick = function(echoEvent) {
     EchoDomUtil.preventEventDefault(echoEvent);
     var menuItemElement = echoEvent.target;
     var menuId = EchoDomUtil.getComponentId(menuItemElement.id);
-    var menu = EchoDomPropertyStore.getPropertyValue(menuId, "menu");
+    var menu = ExtrasMenu.getComponent(menuId);
     menu.renderMaskAdd();
     menu.processSelection(menuItemElement);
 };
@@ -432,7 +443,7 @@ ExtrasMenu.processMenuBarClick = function(echoEvent) {
 ExtrasMenu.processMenuBarMouseOut = function(echoEvent) {
     var menuItemElement = echoEvent.target;
     var menuId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
-    var menu = EchoDomPropertyStore.getPropertyValue(menuId, "menu");
+    var menu = ExtrasMenu.getComponent(menuId);
     var modelId = menu.getElementModelId(menuItemElement);
     var itemModel = menu.menuModel.getItem(modelId);
     if (itemModel) {
@@ -443,7 +454,7 @@ ExtrasMenu.processMenuBarMouseOut = function(echoEvent) {
 ExtrasMenu.processMenuBarMouseOver = function(echoEvent) {
     var menuItemElement = echoEvent.target;
     var menuId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
-    var menu = EchoDomPropertyStore.getPropertyValue(menuId, "menu");
+    var menu = ExtrasMenu.getComponent(menuId);
     var modelId = menu.getElementModelId(menuItemElement);
     var itemModel = menu.menuModel.getItem(modelId);
     if (itemModel) {
@@ -457,13 +468,13 @@ ExtrasMenu.processMenuItemClick = function(echoEvent) {
         return;
     }
     var menuId = EchoDomUtil.getComponentId(trElement.id);
-    var menu = EchoDomPropertyStore.getPropertyValue(menuId, "menu");
+    var menu = ExtrasMenu.getComponent(menuId);
     menu.processSelection(trElement);
 };
 
 ExtrasMenu.processMenuCancel = function(echoEvent) {
     var menuId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
-    var menu = EchoDomPropertyStore.getPropertyValue(menuId, "menu");
+    var menu = ExtrasMenu.getComponent(menuId);
     menu.processCancel();
 };
 
