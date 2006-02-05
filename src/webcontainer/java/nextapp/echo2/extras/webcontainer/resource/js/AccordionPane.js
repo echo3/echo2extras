@@ -284,6 +284,7 @@ ExtrasAccordionPane.prototype.rotateTabs = function(oldTabId, newTabId) {
     if (this.rotation) {
         // Rotation was already in progress, cancel
         this.rotation.cancel();
+        this.redrawTabs();
     } else {
         // Start new rotation.
         new ExtrasAccordionPane.Rotation(this, oldTabId, newTabId);
@@ -463,11 +464,17 @@ ExtrasAccordionPane.Rotation = function(accordionPane, oldTabId, newTabId) {
     this.animationStep();
 };
 
+/**
+ * Cancels the rotation.
+ */
 ExtrasAccordionPane.Rotation.prototype.cancel = function() {
     this.accordionPane.rotation = null;
-    this.accordionPane.redrawTabs();
 };
 
+/**
+ * Renders the next step of the rotation animation.
+ * Queues subsequent frame of animation via Window.setTimeout() call to self.
+ */
 ExtrasAccordionPane.Rotation.prototype.animationStep = function() {
     if (this.animationStepIndex < this.accordionPane.animationStepCount) {
         var accordionPaneDivElement = document.getElementById(this.accordionPane.elementId);
@@ -596,6 +603,12 @@ ExtrasAccordionPane.Rotation.prototype.animationStep = function() {
     }
 };
 
+/**
+ * Static method invoked by Window.setTimeout which invokes appropriate
+ * AccordionPane.setTimeout() instance method.
+ *
+ * @param accordionPaneId the id of the AccordionPane to step
+ */
 ExtrasAccordionPane.Rotation.animationStep = function(accordionPaneId) {
     var accordionPane = ExtrasAccordionPane.getComponent(accordionPaneId);
     if (accordionPane == null || accordionPane.rotation == null) {
