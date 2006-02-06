@@ -84,6 +84,8 @@ ExtrasAccordionPane.prototype.addTab = function(tab, tabIndex) {
         this.activeTabId = tab.tabId;
     }
 
+    var accordionPaneDivElement = document.getElementById(this.elementId);
+
     var tabDivElement = document.createElement("div");
     tabDivElement.id = this.elementId + "_tab_" + tab.tabId;
     tabDivElement.style.cursor = "pointer";
@@ -97,9 +99,7 @@ ExtrasAccordionPane.prototype.addTab = function(tab, tabIndex) {
     tabDivElement.style.left = "0px";
     tabDivElement.style.right = "0px";
     tabDivElement.style.overflow = "hidden";
-    
     tabDivElement.appendChild(document.createTextNode(tab.title));
-    var accordionPaneDivElement = document.getElementById(this.elementId);
     accordionPaneDivElement.appendChild(tabDivElement);
 
     var tabContentDivElement = document.createElement("div");
@@ -113,8 +113,8 @@ ExtrasAccordionPane.prototype.addTab = function(tab, tabIndex) {
     tabContentDivElement.style.overflow = "auto";
     accordionPaneDivElement.appendChild(tabContentDivElement);
 
-    var subtractedHeight = tabContentInsets.left + tabContentInsets.right;
-    ExtrasUtil.setCssPositionRight(tabContentDivElement.style, accordionPaneDivElement.id, 0, subtractedHeight);
+    ExtrasUtil.setCssPositionRight(tabContentDivElement.style, accordionPaneDivElement.id, 0, 
+            tabContentInsets.left + tabContentInsets.right);
     ExtrasUtil.setCssPositionRight(tabDivElement.style, accordionPaneDivElement.id, 0, 
             this.tabInsets.left + this.tabInsets.right);
     
@@ -249,12 +249,15 @@ ExtrasAccordionPane.prototype.redrawTabs = function() {
             tabDivElement.style.top = "";
             tabDivElement.style.bottom = (tabHeight * (this.tabIds.length - i - 1)) + "px";
         } else {
+            tabDivElement.style.bottom = "";
             tabDivElement.style.top = (tabHeight * i) + "px";
-            tabDivElement.style.bottom = ""; 
         }
-        
-        tabContentDivElement.style.height = "";
 
+        if (tabContentDivElement.style.removeExpression) {
+            tabContentDivElement.style.removeExpression("height");
+        }
+        tabContentDivElement.style.height = "";
+        
         if (this.activeTabId == this.tabIds[i]) {
             selectionPassed = true;
             tabContentDivElement.style.display = "block";
@@ -263,7 +266,6 @@ ExtrasAccordionPane.prototype.redrawTabs = function() {
             var tabContentInsets = this.getTabContentInsets(this.tabIds[i]);
             var subtractedHeight = tabHeight * this.tabIds.length + tabContentInsets.top + tabContentInsets.bottom;
             ExtrasUtil.setCssPositionBottom(tabContentDivElement.style, this.elementId, bottomPx, subtractedHeight);
-            tabContentDivElement.style.bottom = bottomPx + "px";
         } else {
             tabContentDivElement.style.display = "none";
         }
