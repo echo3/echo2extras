@@ -41,6 +41,7 @@ ExtrasTabPane = function(elementId, containerElementId, activeTabId) {
     this.activeTabId = activeTabId;
 
     this.borderType = ExtrasTabPane.BORDER_TYPE_ADJACENT_TO_TABS;
+    this.defaultContentInsets = ExtrasAccordionPane.PANE_INSETS;
     
     this.defaultBackground = "#ffffff";
     this.defaultForeground = "#000000";
@@ -69,6 +70,9 @@ ExtrasTabPane = function(elementId, containerElementId, activeTabId) {
     this.activeHeaderHeightIncrease = 2;
     
     this.enabled = true;
+    
+    this.horizontalBorderPixels = 0;
+    this.verticalBorderPixels = 0;
     
     this.tabIds = new Array();
     this.tabIdToTabMap = new EchoCollectionsMap();
@@ -103,6 +107,8 @@ ExtrasTabPane.BORDER_TYPE_PARALLEL_TO_TABS = 2;
  * borders should be drawn on all sides of the content.
  */
 ExtrasTabPane.BORDER_TYPE_SURROUND = 3;
+
+ExtrasTabPane.PANE_INSETS = new ExtrasUtil.Insets(0);
 
 ExtrasTabPane.TAB_POSITION_TOP = 0;
 ExtrasTabPane.TAB_POSITION_BOTTOM = 1;
@@ -156,11 +162,18 @@ ExtrasTabPane.prototype.addTab = function(tab, tabIndex) {
     
     var contentContainerDivElement = document.getElementById(this.elementId + "_content");
     var contentDivElement = document.createElement("div");
+    var contentInsets = this.getTabContentInsets(tab.tabId);
     contentDivElement.id = this.elementId + "_content_" + tab.tabId;
     contentDivElement.style.display = "none";
     contentDivElement.style.position = "absolute";
-    contentDivElement.style.width = "100%";
-    contentDivElement.style.height = "100%";
+    contentDivElement.style.left = "0px";
+    contentDivElement.style.top = "0px";
+    var horizontalBorderSize = 
+    ExtrasUtil.setCssPositionRight(contentDivElement.style, contentContainerDivElement.id, 0,
+            contentInsets.left + contentInsets.right + this.horizontalBorderPixels);
+    ExtrasUtil.setCssPositionBottom(contentDivElement.style, contentContainerDivElement.id, 0,
+            contentInsets.top + contentInsets.bottom + this.verticalBorderPixels);
+    contentDivElement.style.padding = contentInsets.toString();
     contentContainerDivElement.appendChild(contentDivElement);
     
     if (tabIndex < headerTrElement.childNodes.length) {
@@ -189,6 +202,23 @@ ExtrasTabPane.prototype.create = function() {
     var containerElement = document.getElementById(this.containerElementId);
     if (!containerElement) {
         throw "Container element not found: " + this.containerElementId;
+    }
+    
+    switch (this.borderType) {
+    case ExtrasTabPane.BORDER_TYPE_NONE:
+        this.horizontalBorderPixels = this.verticalBorderPixels = 0;
+        break;
+    case ExtrasTabPane.BORDER_TYPE_SURROUND:
+        this.horizontalBorderPixels = this.verticalBorderPixels = this.activeBorderSize * 2;
+        break;
+    case ExtrasTabPane.BORDER_TYPE_PARALLEL_TO_TABS:
+        this.horizontalBorderPixels = 0;
+        this.verticalBorderPixels = this.activeBorderSize * 2;
+        break;
+    default:
+        this.horizontalBorderPixels = 0;
+        this.verticalBorderPixels = this.activeBorderSize;
+        break;
     }
 
     var tabPaneDivElement = document.createElement("div");
@@ -280,12 +310,28 @@ ExtrasTabPane.prototype.dispose = function() {
     EchoEventProcessor.removeHandler(headerContainerDivElemenId, "click");
 };
 
+ExtrasTabPane.prototype.getActiveBorder = function() {
+    return this.activeBorderSize + "px " + this.activeBorderStyle + " " + this.activeBorderColor;
+};
+
 ExtrasTabPane.prototype.getInactiveBorder = function() {
     return this.inactiveBorderSize + "px " + this.inactiveBorderStyle + " " + this.inactiveBorderColor;
 };
 
-ExtrasTabPane.prototype.getActiveBorder = function() {
-    return this.activeBorderSize + "px " + this.activeBorderStyle + " " + this.activeBorderColor;
+/**
+ * Returns an ExtrasUtil.Insets representing the insets with which the 
+ * specified tab should be rendered.
+ *
+ * @param tabId the id of the tab
+ * @return the insets
+ */
+ExtrasTabPane.prototype.getTabContentInsets = function(tabId) {
+    var tab = this.tabIdToTabMap.get(tabId);
+    if (tab.pane) {
+        return ExtrasTabPane.PANE_INSETS;
+    } else {
+        return this.defaultContentInsets;
+    }
 };
 
 ExtrasTabPane.prototype.removeTab = function(tabId) {
@@ -541,6 +587,9 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     }
     if (initMessageElement.getAttribute("insets")) {
         tabPane.insets = new ExtrasUtil.Insets(initMessageElement.getAttribute("insets"));
+    }
+    if (initMessageElement.getAttribute("default-content-insets")) {
+        tabPane.defaultContentInsets = new ExtrasUtil.Insets(initMessageElement.getAttribute("default-content-insets"));
     }
     
     switch (initMessageElement.getAttribute("border-type")) {

@@ -354,6 +354,26 @@ public class TabPaneTest extends SplitPane {
                 tabPane.setInsets(new Insets(10, 20, 40, 80));
             }
         });
+        controlsColumn.addButton("Set Default Content Insets to 0", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setDefaultContentInsets(new Insets(0));
+            }
+        });
+        controlsColumn.addButton("Set Default Content Insets to 5", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setDefaultContentInsets(new Insets(5));
+            }
+        });
+        controlsColumn.addButton("Set Default Content Insets to 10/20/40/80", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setDefaultContentInsets(new Insets(10, 20, 40, 80));
+            }
+        });
+        controlsColumn.addButton("Clear Default Content Insets", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setDefaultContentInsets(null);
+            }
+        });
         
         // Selection Properties
         controlsColumn = new ButtonColumn();

@@ -36,6 +36,7 @@ import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
+import nextapp.echo2.app.Pane;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.extras.app.TabPane;
 import nextapp.echo2.extras.app.layout.TabPaneLayoutData;
@@ -179,6 +180,9 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         addPartElement.setAttribute("eid", elementId);
         addPartElement.setAttribute("tab-id", child.getRenderId());
         addPartElement.setAttribute("tab-index", Integer.toString(tabPane.indexOf(child)));
+        if  (child instanceof Pane) {
+            addPartElement.setAttribute("pane", "true");
+        }
         if (layoutData != null) {
             if (layoutData.getTitle() != null) {
                 addPartElement.setAttribute("title", layoutData.getTitle()); 
@@ -248,7 +252,10 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         if (foreground != null) {
             initElement.setAttribute("default-foreground", ColorRender.renderCssAttributeValue(foreground));
         }
-        
+        Insets defaultContentInsets = (Insets) tabPane.getRenderProperty(TabPane.PROPERTY_DEFAULT_CONTENT_INSETS);
+        if (defaultContentInsets != null) {
+            initElement.setAttribute("default-content-insets", InsetsRender.renderCssAttributeValue(defaultContentInsets));
+        }
         Insets insets = (Insets) tabPane.getRenderProperty(TabPane.PROPERTY_INSETS);
         if (insets != null) {
         	initElement.setAttribute("insets", InsetsRender.renderCssAttributeValue(insets));
