@@ -47,6 +47,7 @@ implements Pane, PaneContainer {
 
     public static final String PROPERTY_ACTIVE_BORDER = "activeBorder";
     public static final String PROPERTY_BORDER_TYPE = "borderType";
+    public static final String PROPERTY_DEFAULT_CONTENT_INSETS = "defaultContentInsets";
     public static final String PROPERTY_INACTIVE_BORDER = "inactiveBorder";
     public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_TAB_HEIGHT = "tabHeight";
@@ -165,6 +166,16 @@ implements Pane, PaneContainer {
     }
 
     /**
+     * Returns the default content inset margin.  This margin is applied by
+     * default to each child component.
+     *
+     * @return the default content inset margin
+     */
+    public Insets getDefaultContentInsets() {
+        return (Insets) getProperty(PROPERTY_DEFAULT_CONTENT_INSETS);
+    }
+    
+    /**
      * Returns the <code>Border</code> used to draw inactive tabs.
      * 
      * @return the border
@@ -277,6 +288,16 @@ implements Pane, PaneContainer {
      */
     public void setBorderType(int newValue) {
         setProperty(PROPERTY_BORDER_TYPE, new Integer(newValue));
+    }
+
+    /**
+     * Sets the default content inset margin.  This margin is applied by 
+     * default to each child component.
+     *
+     * @param newValue the new default content inset margin
+     */
+    public void setDefaultContentInsets(Insets newValue) {
+        setProperty(PROPERTY_DEFAULT_CONTENT_INSETS, newValue);
     }
 
     /**

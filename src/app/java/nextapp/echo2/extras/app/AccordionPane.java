@@ -103,8 +103,8 @@ implements Pane, PaneContainer {
     }
     
     /**
-     * Returns the default content inset margin.  This margin is applied by applied 
-     * to each child component.
+     * Returns the default content inset margin.  This margin is applied by 
+     * default to each child component.
      *
      * @return the default content inset margin
      */
@@ -209,7 +209,7 @@ implements Pane, PaneContainer {
     
     /**
      * Sets the default content inset margin.  This margin is applied by 
-     * applied to each child component.
+     * default to each child component.
      *
      * @param newValue the new default content inset margin
      */
