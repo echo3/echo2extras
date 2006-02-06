@@ -63,10 +63,15 @@ ExtrasTabPane = function(elementId, containerElementId, activeTabId) {
     this.renderBox = false;
     this.tabPosition = ExtrasTabPane.TAB_POSITION_TOP;
     
+    this.insets = new ExtrasUtil.Insets(2);
+    
     this.headerHeight = 32;
     this.activeHeaderHeightIncrease = 2;
     
     this.enabled = true;
+    
+    this.tabIds = new Array();
+    this.tabIdToTabMap = new EchoCollectionsMap();
 };
 
 /**
@@ -101,6 +106,73 @@ ExtrasTabPane.BORDER_TYPE_SURROUND = 3;
 
 ExtrasTabPane.TAB_POSITION_TOP = 0;
 ExtrasTabPane.TAB_POSITION_BOTTOM = 1;
+
+ExtrasTabPane.prototype.addTab = function(tab, tabIndex) {
+    ExtrasUtil.Arrays.insertElement(this.tabIds, tab.tabId, tabIndex);
+    this.tabIdToTabMap.put(tab.tabId, tab);
+
+    tabPaneDivElement = document.getElementById(this.elementId);
+    if (!tabPaneDivElement) {
+        throw "TabPane DIV element not found: " + this.elementId;
+    }
+    
+    var headerTrElement = document.getElementById(this.elementId + "_header_tr");
+    var headerTdElement = document.createElement("td");
+    headerTdElement.style.borderWidth = "0px";
+    headerTdElement.style.padding = "0px";
+    headerTdElement.style.verticalAlign = "top";
+    headerTdElement.id = this.elementId + "_header_td_" + tab.tabId;
+    
+    var inactiveBorder = this.getInactiveBorder();
+    headerDivElement = document.createElement("div");
+    headerDivElement.id = this.elementId + "_header_div_" + tab.tabId;
+    headerDivElement.style.overflow = "hidden";
+    switch (this.tabPosition) {
+    case ExtrasTabPane.TAB_POSITION_BOTTOM:
+        headerDivElement.style.marginTop = this.activeBorderSize + "px";
+        headerDivElement.style.borderTop = "0px none";
+        headerDivElement.style.borderLeft = inactiveBorder;
+        headerDivElement.style.borderRight = inactiveBorder;
+        headerDivElement.style.borderBottom = inactiveBorder;
+        break;
+    default:
+        headerDivElement.style.marginTop = this.activeHeaderHeightIncrease + "px";
+        headerDivElement.style.borderTop = inactiveBorder;
+        headerDivElement.style.borderLeft = inactiveBorder;
+        headerDivElement.style.borderRight = inactiveBorder;
+        headerDivElement.style.borderBottom = "0px none";
+    }
+    headerDivElement.style.height = this.calculateInactiveHeaderHeight() + "px";
+    headerDivElement.style.backgroundColor = this.inactiveHeaderBackground;
+    headerDivElement.style.color = this.inactiveHeaderForeground;
+    headerDivElement.style.paddingTop = this.headerPaddingTop + "px";
+    headerDivElement.style.paddingBottom = this.headerPaddingBottom + "px";
+    headerDivElement.style.paddingLeft = this.headerPaddingLeft + "px";
+    headerDivElement.style.paddingRight = this.headerPaddingRight + "px";
+    headerDivElement.style.cursor = "pointer";
+    headerTdElement.appendChild(headerDivElement);
+    
+    headerDivElement.appendChild(document.createTextNode(tab.title === null ? "*" : tab.title));
+    
+    var contentContainerDivElement = document.getElementById(this.elementId + "_content");
+    var contentDivElement = document.createElement("div");
+    contentDivElement.id = this.elementId + "_content_" + tab.tabId;
+    contentDivElement.style.display = "none";
+    contentDivElement.style.position = "absolute";
+    contentDivElement.style.width = "100%";
+    contentDivElement.style.height = "100%";
+    contentContainerDivElement.appendChild(contentDivElement);
+    
+    if (tabIndex < headerTrElement.childNodes.length) {
+        headerTrElement.insertBefore(headerTdElement, headerTrElement.childNodes[tabIndex]);
+    } else {
+        headerTrElement.appendChild(headerTdElement);
+    }
+    
+    if (this.activeTabId == null || this.activeTabId == tab.tabId) {
+        this.selectTab(tab.tabId);
+    }
+};
 
 ExtrasTabPane.prototype.calculateInactiveHeaderHeight = function() {
     var largerBorderSize = this.inactiveBorder > this.activeBorderSize ? this.inactiveBorderSize : this.activeBorderSize;
@@ -203,12 +275,40 @@ ExtrasTabPane.prototype.create = function() {
     EchoEventProcessor.addHandler(headerContainerDivElement.id, "click", "ExtrasTabPane.processClick");
 };
 
+ExtrasTabPane.prototype.dispose = function() {
+    var headerContainerDivElemenId = this.elementId + "_header";
+    EchoEventProcessor.removeHandler(headerContainerDivElemenId, "click");
+};
+
 ExtrasTabPane.prototype.getInactiveBorder = function() {
     return this.inactiveBorderSize + "px " + this.inactiveBorderStyle + " " + this.inactiveBorderColor;
 };
 
 ExtrasTabPane.prototype.getActiveBorder = function() {
     return this.activeBorderSize + "px " + this.activeBorderStyle + " " + this.activeBorderColor;
+};
+
+ExtrasTabPane.prototype.removeTab = function(tabId) {
+    ExtrasUtil.Arrays.removeElement(this.tabIds, tabId);
+    this.tabIdToTabMap.remove(tabId);
+
+    var headerTdElementId = this.elementId + "_header_td_" + tabId;
+    var headerTdElement = document.getElementById(headerTdElementId);
+    if (!headerTdElement) {
+        throw "Tab header not found for id: " + headerTdElementId;
+    }
+    headerTdElement.parentNode.removeChild(headerTdElement);
+    
+    var contentDivElementId = this.elementId + "_content_" + tabId;
+    var contentDivElement = document.getElementById(contentDivElementId);
+    if (!contentDivElement) {
+        throw "Content not found for id: " + contentDivElementId;
+    }
+    contentDivElement.parentNode.removeChild(contentDivElement);
+
+    if (this.activeTabId === tabId) {
+        this.selectTab(null);
+    }
 };
 
 ExtrasTabPane.prototype.selectTab = function(newTabId) {
@@ -301,14 +401,14 @@ ExtrasTabPane.prototype.selectTab = function(newTabId) {
     this.activeTabId = newTabId;
 };
 
-ExtrasTabPane.getTabPane = function(tabPaneId) {
+ExtrasTabPane.getComponent = function(tabPaneId) {
     return EchoDomPropertyStore.getPropertyValue(tabPaneId, "tabPane");
 };
 
 ExtrasTabPane.processClick = function(echoEvent) {
     var elementId = echoEvent.target.id;
     var tabPaneId = EchoDomUtil.getComponentId(elementId);
-    var tabPane = ExtrasTabPane.getTabPane(tabPaneId);
+    var tabPane = ExtrasTabPane.getComponent(tabPaneId);
     if (!tabPane.enabled || !EchoClientEngine.verifyInput(tabPaneId, false)) {
         return;
     }
@@ -321,6 +421,21 @@ ExtrasTabPane.processClick = function(echoEvent) {
     
     EchoClientMessage.setPropertyValue(tabPaneId, "activeTab", tabId);
     tabPane.selectTab(tabId);
+};
+
+/**
+ * A data object which represents a single tab within an TabPane.
+ * Creates a new Tab.
+ *
+ * @param tabId the id of the tab
+ * @param title the title text to display in the tab header
+ * @param pane a boolean flag indicating whether the tab's content is a pane
+ *        component
+ */
+ExtrasTabPane.Tab = function(tabId, title, pane) { 
+    this.tabId = tabId;
+    this.title = title;
+    this.pane = pane;
 };
 
 /**
@@ -366,73 +481,19 @@ ExtrasTabPane.MessageProcessor.process = function(messagePartElement) {
  */
 ExtrasTabPane.MessageProcessor.processAddTab = function(addTabMessageElement) {
     var elementId = addTabMessageElement.getAttribute("eid");
-    var tabPane = ExtrasTabPane.getTabPane(elementId);
+    var tabPane = ExtrasTabPane.getComponent(elementId);
+    if (!tabPane) {
+        throw "TabPane not found with id: " + elementId;
+    }
     
     var tabId = addTabMessageElement.getAttribute("tab-id");
     var tabIndex = addTabMessageElement.getAttribute("tab-index");
     var title = addTabMessageElement.getAttribute("title");
+    var pane = addTabMessageElement.getAttribute("pane") == "true";
+
+    var tab = new ExtrasTabPane.Tab(tabId, title, pane);
     
-    tabPaneDivElement = document.getElementById(elementId);
-    if (!tabPaneDivElement) {
-        throw "TabPane DIV element not found: " + elementId;
-    }
-    
-    var headerTrElement = document.getElementById(elementId + "_header_tr");
-    var headerTdElement = document.createElement("td");
-    headerTdElement.style.borderWidth = "0px";
-    headerTdElement.style.padding = "0px";
-    headerTdElement.style.verticalAlign = "top";
-    headerTdElement.id = elementId + "_header_td_" + tabId;
-    
-    var inactiveBorder = tabPane.getInactiveBorder();
-    headerDivElement = document.createElement("div");
-    headerDivElement.id = elementId + "_header_div_" + tabId;
-    headerDivElement.style.overflow = "hidden";
-    switch (tabPane.tabPosition) {
-    case ExtrasTabPane.TAB_POSITION_BOTTOM:
-        headerDivElement.style.marginTop = tabPane.activeBorderSize + "px";
-        headerDivElement.style.borderTop = "0px none";
-        headerDivElement.style.borderLeft = inactiveBorder;
-        headerDivElement.style.borderRight = inactiveBorder;
-        headerDivElement.style.borderBottom = inactiveBorder;
-        break;
-    default:
-        headerDivElement.style.marginTop = tabPane.activeHeaderHeightIncrease + "px";
-        headerDivElement.style.borderTop = inactiveBorder;
-        headerDivElement.style.borderLeft = inactiveBorder;
-        headerDivElement.style.borderRight = inactiveBorder;
-        headerDivElement.style.borderBottom = "0px none";
-    }
-    headerDivElement.style.height = tabPane.calculateInactiveHeaderHeight() + "px";
-    headerDivElement.style.backgroundColor = tabPane.inactiveHeaderBackground;
-    headerDivElement.style.color = tabPane.inactiveHeaderForeground;
-    headerDivElement.style.paddingTop = tabPane.headerPaddingTop + "px";
-    headerDivElement.style.paddingBottom = tabPane.headerPaddingBottom + "px";
-    headerDivElement.style.paddingLeft = tabPane.headerPaddingLeft + "px";
-    headerDivElement.style.paddingRight = tabPane.headerPaddingRight + "px";
-    headerDivElement.style.cursor = "pointer";
-    headerTdElement.appendChild(headerDivElement);
-    
-    headerDivElement.appendChild(document.createTextNode(title === null ? "*" : title));
-    
-    var contentContainerDivElement = document.getElementById(elementId + "_content");
-    var contentDivElement = document.createElement("div");
-    contentDivElement.id = elementId + "_content_" + tabId;
-    contentDivElement.style.display = "none";
-    contentDivElement.style.position = "absolute";
-    contentDivElement.style.width = "100%";
-    contentDivElement.style.height = "100%";
-    contentContainerDivElement.appendChild(contentDivElement);
-    
-    if (tabIndex < headerTrElement.childNodes.length) {
-        headerTrElement.insertBefore(headerTdElement, headerTrElement.childNodes[tabIndex]);
-    } else {
-        headerTrElement.appendChild(headerTdElement);
-    }
-    
-    if (tabPane.activeTabId == null || tabPane.activeTabId == tabId) {
-        tabPane.selectTab(tabId);
-    }
+    tabPane.addTab(tab, tabIndex);
 };
 
 /**
@@ -442,9 +503,11 @@ ExtrasTabPane.MessageProcessor.processAddTab = function(addTabMessageElement) {
  * @param disposeMessageElement the <code>dispose</code> element to process
  */
 ExtrasTabPane.MessageProcessor.processDispose = function(disposeMessageElement) {
-    var tabPaneId = disposeMessageElement.getAttribute("eid");
-    var headerDivElementId = tabPaneId + "_header";
-    EchoEventProcessor.removeHandler(headerDivElementId, "click");
+    var elementId = disposeMessageElement.getAttribute("eid");
+    var tabPane = ExtrasTabPane.getComponent(elementId);
+    if (tabPane) {
+        tabPane.dispose();
+    }
 };
 
 /**
@@ -475,6 +538,9 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     }
     if (initMessageElement.getAttribute("default-font")) {
         tabPane.defaultFont = initMessageElement.getAttribute("default-font");
+    }
+    if (initMessageElement.getAttribute("insets")) {
+        tabPane.insets = new ExtrasUtil.Insets(initMessageElement.getAttribute("insets"));
     }
     
     switch (initMessageElement.getAttribute("border-type")) {
@@ -520,25 +586,8 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
 ExtrasTabPane.MessageProcessor.processRemoveTab = function(removeTabMessageElement) {
     var elementId = removeTabMessageElement.getAttribute("eid");
     var tabId = removeTabMessageElement.getAttribute("tab-id");
-    var tabPane = ExtrasTabPane.getTabPane(elementId);
-    
-    var headerTdElementId = elementId + "_header_td_" + tabId;
-    var headerTdElement = document.getElementById(headerTdElementId);
-    if (!headerTdElement) {
-        throw "Tab header not found for id: " + headerTdElementId;
-    }
-    headerTdElement.parentNode.removeChild(headerTdElement);
-    
-    var contentDivElementId = elementId + "_content_" + tabId;
-    var contentDivElement = document.getElementById(contentDivElementId);
-    if (!contentDivElement) {
-        throw "Content not found for id: " + contentDivElementId;
-    }
-    contentDivElement.parentNode.removeChild(contentDivElement);
-
-    if (tabPane.activeTabId === tabId) {
-        tabPane.selectTab(null);
-    }
+    var tabPane = ExtrasTabPane.getComponent(elementId);
+    tabPane.removeTab(tabId);
 };
 
 /**
@@ -549,6 +598,6 @@ ExtrasTabPane.MessageProcessor.processRemoveTab = function(removeTabMessageEleme
 ExtrasTabPane.MessageProcessor.processSetActiveTab = function(setActiveTabMessageElement) {
     var tabPaneId = setActiveTabMessageElement.getAttribute("eid");
     var tabId = setActiveTabMessageElement.getAttribute("tab-id");
-    var tabPane = ExtrasTabPane.getTabPane(tabPaneId);
+    var tabPane = ExtrasTabPane.getComponent(tabPaneId);
     tabPane.selectTab(tabId);
 };
