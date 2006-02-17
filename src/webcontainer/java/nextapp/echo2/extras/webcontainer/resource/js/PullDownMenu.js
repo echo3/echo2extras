@@ -359,6 +359,7 @@ ExtrasMenu.prototype.renderMenuBarAdd = function() {
     menuBarDivElement.id = this.elementId;
     menuBarDivElement.style.position = "absolute";
     menuBarDivElement.style.left = "0px";
+    menuBarDivElement.style.right = "0px";
     menuBarDivElement.style.height = this.menuBarHeight + "px";
     
     menuBarDivElement.style.backgroundColor = this.menuBarBackground;
@@ -395,7 +396,7 @@ ExtrasMenu.prototype.renderMenuBarAdd = function() {
     
     containerElement.appendChild(menuBarDivElement);
 
-    ExtrasUtil.setCssPositionRight(menuBarDivElement.style, containerElement.id, 0, 0);
+    EchoVirtualPosition.register(menuBarDivElement.id);
 
     EchoEventProcessor.addHandler(this.elementId, "click", "ExtrasMenu.processMenuBarClick");
     EchoEventProcessor.addHandler(this.elementId, "mouseover", "ExtrasMenu.processMenuBarMouseOver");

@@ -41,7 +41,7 @@ ExtrasTabPane = function(elementId, containerElementId, activeTabId) {
     this.activeTabId = activeTabId;
 
     this.borderType = ExtrasTabPane.BORDER_TYPE_ADJACENT_TO_TABS;
-    this.defaultContentInsets = ExtrasAccordionPane.PANE_INSETS;
+    this.defaultContentInsets = ExtrasTabPane.PANE_INSETS;
     
     this.defaultBackground = "#ffffff";
     this.defaultForeground = "#000000";
@@ -70,9 +70,6 @@ ExtrasTabPane = function(elementId, containerElementId, activeTabId) {
     this.activeHeaderHeightIncrease = 2;
     
     this.enabled = true;
-    
-    this.horizontalBorderPixels = 0;
-    this.verticalBorderPixels = 0;
     
     this.tabIds = new Array();
     this.tabIdToTabMap = new EchoCollectionsMap();
@@ -167,14 +164,13 @@ ExtrasTabPane.prototype.addTab = function(tab, tabIndex) {
     contentDivElement.style.display = "none";
     contentDivElement.style.position = "absolute";
     contentDivElement.style.left = "0px";
+    contentDivElement.style.right = "0px";
+    contentDivElement.style.bottom = "0px";
     contentDivElement.style.top = "0px";
-    var horizontalBorderSize = 
-    ExtrasUtil.setCssPositionRight(contentDivElement.style, contentContainerDivElement.id, 0,
-            contentInsets.left + contentInsets.right + this.horizontalBorderPixels);
-    ExtrasUtil.setCssPositionBottom(contentDivElement.style, contentContainerDivElement.id, 0,
-            contentInsets.top + contentInsets.bottom + this.verticalBorderPixels);
     contentDivElement.style.padding = contentInsets.toString();
     contentContainerDivElement.appendChild(contentDivElement);
+    
+    EchoVirtualPosition.register(contentDivElement.id);
     
     if (tabIndex < headerTrElement.childNodes.length) {
         headerTrElement.insertBefore(headerTdElement, headerTrElement.childNodes[tabIndex]);
@@ -203,29 +199,16 @@ ExtrasTabPane.prototype.create = function() {
     if (!containerElement) {
         throw "Container element not found: " + this.containerElementId;
     }
-    
-    switch (this.borderType) {
-    case ExtrasTabPane.BORDER_TYPE_NONE:
-        this.horizontalBorderPixels = this.verticalBorderPixels = 0;
-        break;
-    case ExtrasTabPane.BORDER_TYPE_SURROUND:
-        this.horizontalBorderPixels = this.verticalBorderPixels = this.activeBorderSize * 2;
-        break;
-    case ExtrasTabPane.BORDER_TYPE_PARALLEL_TO_TABS:
-        this.horizontalBorderPixels = 0;
-        this.verticalBorderPixels = this.activeBorderSize * 2;
-        break;
-    default:
-        this.horizontalBorderPixels = 0;
-        this.verticalBorderPixels = this.activeBorderSize;
-        break;
-    }
 
     var tabPaneDivElement = document.createElement("div");
     tabPaneDivElement.id = this.elementId;
     tabPaneDivElement.style.position = "absolute";
-    tabPaneDivElement.style.width = "100%";
-    tabPaneDivElement.style.height = "100%";
+    tabPaneDivElement.style.overflow = "hidden";
+    tabPaneDivElement.style.top = "0px";
+    tabPaneDivElement.style.bottom = "0px";
+    tabPaneDivElement.style.left = "0px";
+    tabPaneDivElement.style.right = "0px";
+    EchoVirtualPosition.register(tabPaneDivElement.id);
     containerElement.appendChild(tabPaneDivElement);
     
     var headerContainerDivElement = document.createElement("div");
@@ -265,17 +248,16 @@ ExtrasTabPane.prototype.create = function() {
     contentContainerDivElement.style.position = "absolute";
     contentContainerDivElement.style.backgroundColor = this.defaultBackground;
     contentContainerDivElement.style.color = this.defaultForeground;
-    switch (this.tabPosition) {
-    case ExtrasTabPane.TAB_POSITION_BOTTOM:
-        ExtrasUtil.setCssPositionTop(contentContainerDivElement.style, tabPaneDivElement.id, 0, 33); //BUGBUG (33)
+    if (this.tabPosition == ExtrasTabPane.TAB_POSITION_BOTTOM) {
+        contentContainerDivElement.style.top = "0px";
         contentContainerDivElement.style.bottom = this.headerHeight + "px";
-        break;
-    default:
+    } else {
         contentContainerDivElement.style.top = this.headerHeight + "px";
-        ExtrasUtil.setCssPositionBottom(contentContainerDivElement.style, tabPaneDivElement.id, 0, 33);
+        contentContainerDivElement.style.bottom = "0px";
     }
     contentContainerDivElement.style.left = "0px";
-    ExtrasUtil.setCssPositionRight(contentContainerDivElement.style, tabPaneDivElement.id, 0, 0);
+    contentContainerDivElement.style.right = "0px";
+    EchoVirtualPosition.register(contentContainerDivElement.id);
 
     var activeBorder = this.getActiveBorder();
     switch (this.borderType) {
@@ -430,21 +412,12 @@ ExtrasTabPane.prototype.selectTab = function(newTabId) {
         // Display selected content.
         var newContentDivElement = document.getElementById(this.elementId + "_content_" + newTabId);
         newContentDivElement.style.display = "block";
-        
-        // Begin Internet Explorer workaround: Adjusting size of TabPane to eliminate scroll bars and ensure tab content
-        // is displayed.
-        if (EchoClientProperties.get("quirkCssPositioningOneSideOnly")) {
-            // Internet Explorer Hack: Forces repaint, if not performed tab content will not be displayed if content
-            // is a Pane (i.e., an absolute CSS positioned element).
-            var tabPaneDivElement = document.getElementById(this.elementId);
-            tabPaneDivElement.style.width = "99%";
-            window.setTimeout("document.getElementById(\"" + this.elementId + "\").style.width = \"100%\";", 1);
-        }
-        // End Internet Explorer workaround.
     }
     
     // Update state information.
     this.activeTabId = newTabId;
+    
+    EchoVirtualPosition.redraw();
 };
 
 ExtrasTabPane.getComponent = function(tabPaneId) {

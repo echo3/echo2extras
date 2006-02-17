@@ -60,7 +60,7 @@ ExtrasAccordionPane = function(elementId, containerElementId, activeTabId) {
     // It works, but it can be a bit slower than desired and uncovers some of IE's
     // repainting issues.
     this.animationEnabled = !EchoClientProperties.get("browserInternetExplorer");
-    
+    this.animationStepCount = 20;
     this.animationStepInterval = 5;
 
     this.tabIds = new Array();
@@ -265,6 +265,8 @@ ExtrasAccordionPane.prototype.redrawTabs = function() {
             tabContentDivElement.style.display = "none";
         }
     }
+    
+    EchoVirtualPosition.redraw();
 };
 
 /**
