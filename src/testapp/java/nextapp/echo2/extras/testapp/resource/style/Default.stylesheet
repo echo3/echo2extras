@@ -288,6 +288,20 @@
      </properties>
     </layout-data>
    </property>
+   <property name="tabBackgroundImage">
+    <fill-image repeat="none">
+     <image type="nextapp.echo2.app.ResourceImageReference">
+      <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/TabBackground.png"/>
+     </image>
+    </fill-image>
+   </property>
+   <property name="tabRolloverBackgroundImage">
+    <fill-image repeat="none">
+     <image type="nextapp.echo2.app.ResourceImageReference">
+      <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/TabRolloverBackground.png"/>
+     </image>
+    </fill-image>
+   </property>
   </properties>
  </style>
  <style name="WelcomePane" type="nextapp.echo2.app.ContentPane">

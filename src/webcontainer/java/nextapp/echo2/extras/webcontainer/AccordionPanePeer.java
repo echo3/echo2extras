@@ -35,6 +35,8 @@ import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.FillImage;
+import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Pane;
 import nextapp.echo2.app.update.ServerComponentUpdate;
@@ -47,19 +49,24 @@ import nextapp.echo2.webcontainer.PartialUpdateParticipant;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
+import nextapp.echo2.webcontainer.image.ImageRenderSupport;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
+import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
+import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
 import nextapp.echo2.webrender.service.JavaScriptService;
 
 public class AccordionPanePeer 
-implements ComponentSynchronizePeer, PropertyUpdateProcessor {
+implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor {
 
     private static final String PROPERTY_ACTIVE_TAB = "activeTab";
+    private static final String IMAGE_ID_TAB_BACKGROUND = "tabBackground";
+    private static final String IMAGE_ID_TAB_ROLLOVER_BACKGROUND = "tabRolloverBackground";
 
     /**
      * Service to provide supporting JavaScript library.
@@ -111,6 +118,21 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
      */
     public String getContainerId(Component child) {
         return ContainerInstance.getElementId(child.getParent()) + "_content_" + child.getRenderId();
+    }
+
+    /**
+     * @see nextapp.echo2.webcontainer.image.ImageRenderSupport#getImage(nextapp.echo2.app.Component, java.lang.String)
+     */
+    public ImageReference getImage(Component component, String imageId) {
+        if (IMAGE_ID_TAB_BACKGROUND.equals(imageId)) {
+            FillImage fillImage = (FillImage) component.getRenderProperty(AccordionPane.PROPERTY_TAB_BACKGROUND_IMAGE);
+            return fillImage == null ? null : fillImage.getImage();
+        } else if (IMAGE_ID_TAB_ROLLOVER_BACKGROUND.equals(imageId)) {
+            FillImage fillImage = (FillImage) component.getRenderProperty(AccordionPane.PROPERTY_TAB_ROLLOVER_BACKGROUND_IMAGE);
+            return fillImage == null ? null : fillImage.getImage();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -237,6 +259,13 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         if (tabBackground != null) {
             initElement.setAttribute("tab-background", ColorRender.renderCssAttributeValue(tabBackground));
         }
+        FillImage tabBackgroundImage = (FillImage) accordionPane.getRenderProperty(AccordionPane.PROPERTY_TAB_BACKGROUND_IMAGE);
+        if (tabBackgroundImage != null) {
+            CssStyle backgroundImageCssStyle = new CssStyle();
+            FillImageRender.renderToStyle(backgroundImageCssStyle, rc, this, accordionPane, IMAGE_ID_TAB_BACKGROUND, 
+                    tabBackgroundImage, 0);
+            initElement.setAttribute("tab-background-image", backgroundImageCssStyle.renderInline());
+        }
         Border tabBorder = (Border) accordionPane.getRenderProperty(AccordionPane.PROPERTY_TAB_BORDER);
         if (tabBorder != null) {
             if (tabBorder.getColor() != null) {
@@ -261,6 +290,14 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
             Color tabRolloverBackground = (Color) accordionPane.getRenderProperty(AccordionPane.PROPERTY_TAB_ROLLOVER_BACKGROUND);
             if (tabRolloverBackground != null) {
                 initElement.setAttribute("tab-rollover-background", ColorRender.renderCssAttributeValue(tabRolloverBackground));
+            }
+            FillImage tabRolloverBackgroundImage = (FillImage) accordionPane.getRenderProperty(
+                    AccordionPane.PROPERTY_TAB_ROLLOVER_BACKGROUND_IMAGE);
+            if (tabRolloverBackgroundImage != null) {
+                CssStyle rolloverBackgroundImageCssStyle = new CssStyle();
+                FillImageRender.renderToStyle(rolloverBackgroundImageCssStyle, rc, this, accordionPane, 
+                        IMAGE_ID_TAB_ROLLOVER_BACKGROUND, tabRolloverBackgroundImage, 0);
+                initElement.setAttribute("tab-background-image", rolloverBackgroundImageCssStyle.renderInline());
             }
             Border tabRolloverBorder = (Border) accordionPane.getRenderProperty(AccordionPane.PROPERTY_TAB_ROLLOVER_BORDER);
             if (tabRolloverBorder != null) {

@@ -49,9 +49,11 @@ ExtrasAccordionPane = function(elementId, containerElementId, activeTabId) {
     this.tabBorderColor = "#cfcfcf";
     this.tabForeground = "#000000";
     this.tabBackground = "#cfcfcf";
+    this.tabBackgroundImage = null;
     this.tabRolloverEnabled = false;
     this.tabRolloverForeground = null;
     this.tabRolloverBackground = null;
+    this.tabRolloverBackgroundImage = null;
     this.tabRolloverBorderColor = null;
     this.tabRolloverBorderStyle = null;
     this.tabInsets = new EchoCoreProperties.Insets(2, 5);
@@ -93,6 +95,9 @@ ExtrasAccordionPane.prototype.addTab = function(tab, tabIndex) {
     tabDivElement.style.borderBottom = this.tabBorderSize + "px " + this.tabBorderStyle + " " + this.tabBorderColor;
     tabDivElement.style.padding = this.tabInsets.toString();
     tabDivElement.style.backgroundColor = this.tabBackground;
+    if (this.tabBackgroundImage) {
+        EchoCssUtil.applyStyle(tabDivElement, this.tabBackgroundImage);
+    }
     tabDivElement.style.color = this.tabForeground;
     tabDivElement.style.position = "absolute";
     tabDivElement.style.left = "0px";
@@ -314,6 +319,14 @@ ExtrasAccordionPane.prototype.selectTab = function(newTabId) {
  *        false indicating it should not)
  */
 ExtrasAccordionPane.prototype.setTabHighlight = function(tabId, state) {
+/*
+	    if (this.tabBackgroundImage) {
+	        tabDivElement.style.backgroundImage = "";
+	        tabDivElement.style.backgroundPosition = "";
+	        tabDivElement.style.backgroundRepeat = "";
+	    }
+*/
+
     var tabDivElement = this.getTabElement(tabId);
     if (state) {
         if (this.tabRolloverBackground) {
@@ -726,6 +739,9 @@ ExtrasAccordionPane.MessageProcessor.processInit = function(initMessageElement) 
     if (initMessageElement.getAttribute("tab-background")) {
         accordionPane.tabBackground = initMessageElement.getAttribute("tab-background");
     }
+    if (initMessageElement.getAttribute("tab-background-image")) {
+        accordionPane.tabBackgroundImage = initMessageElement.getAttribute("tab-background-image");
+    }
     if (initMessageElement.getAttribute("tab-foreground")) {
         accordionPane.tabForeground = initMessageElement.getAttribute("tab-foreground");
     }
@@ -743,6 +759,9 @@ ExtrasAccordionPane.MessageProcessor.processInit = function(initMessageElement) 
     }
     if (initMessageElement.getAttribute("tab-rollover-background")) {
         accordionPane.tabRolloverBackground = initMessageElement.getAttribute("tab-rollover-background");
+    }
+    if (initMessageElement.getAttribute("tab-rollover-background-image")) {
+        accordionPane.tabRolloverBackgroundImage = initMessageElement.getAttribute("tab-rollover-background-image");
     }
     if (initMessageElement.getAttribute("tab-rollover-foreground")) {
         accordionPane.tabRolloverForeground = initMessageElement.getAttribute("tab-rollover-foreground");

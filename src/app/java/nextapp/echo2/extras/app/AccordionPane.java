@@ -32,6 +32,7 @@ package nextapp.echo2.extras.app;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Pane;
 import nextapp.echo2.app.PaneContainer;
@@ -50,10 +51,12 @@ implements Pane, PaneContainer {
     public static final String PROPERTY_DEFAULT_CONTENT_INSETS = "defaultContentInsets";
     
     public static final String PROPERTY_TAB_BACKGROUND = "tabBackground";
+    public static final String PROPERTY_TAB_BACKGROUND_IMAGE = "tabBackgroundImage";
     public static final String PROPERTY_TAB_BORDER = "tabBorder";
     public static final String PROPERTY_TAB_FOREGROUND = "tabForeground";
     public static final String PROPERTY_TAB_INSETS = "tabInsets";
     public static final String PROPERTY_TAB_ROLLOVER_BACKGROUND = "tabRolloverBackground";
+    public static final String PROPERTY_TAB_ROLLOVER_BACKGROUND_IMAGE = "tabRolloverBackgroundImage";
     public static final String PROPERTY_TAB_ROLLOVER_BORDER = "tabRolloverBorder";
     public static final String PROPERTY_TAB_ROLLOVER_ENABLED = "tabRolloverEnabled";
     public static final String PROPERTY_TAB_ROLLOVER_FOREGROUND = "tabRolloverForeground";
@@ -122,6 +125,15 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Returns the tab background image.
+     * 
+     * @return the tab background image
+     */
+    public FillImage getTabBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_TAB_BACKGROUND_IMAGE);
+    }
+    
+    /**
      * Returns the tab border.
      *
      * @return the tab border
@@ -155,6 +167,15 @@ implements Pane, PaneContainer {
      */
     public Color getTabRolloverBackground() {
         return (Color) getProperty(PROPERTY_TAB_ROLLOVER_BACKGROUND);
+    }
+    
+    /**
+     * Returns the tab rollover background image.
+     * 
+     * @return the tab rollover background image
+     */
+    public FillImage getTabRolloverBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_TAB_ROLLOVER_BACKGROUND_IMAGE);
     }
     
     /**
@@ -239,6 +260,15 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Sets the tab background image.
+     *
+     * @param newValue the new tab background image
+     */
+    public void setTabBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_TAB_BACKGROUND_IMAGE, newValue);
+    }
+    
+    /**
      * Sets the tab border.
      *
      * @param newValue the new tab border
@@ -272,6 +302,15 @@ implements Pane, PaneContainer {
      */
     public void setTabRolloverBackground(Color newValue) {
         setProperty(PROPERTY_TAB_ROLLOVER_BACKGROUND, newValue);
+    }
+    
+    /**
+     * Sets the tab rollover background image.
+     *
+     * @param newValue the new tab rollover background image
+     */
+    public void setTabRolloverBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_TAB_ROLLOVER_BACKGROUND_IMAGE, newValue);
     }
     
     /**
