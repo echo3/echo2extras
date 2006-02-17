@@ -64,7 +64,7 @@ ExtrasTabPane = function(elementId, containerElementId, activeTabId) {
     this.renderBox = false;
     this.tabPosition = ExtrasTabPane.TAB_POSITION_TOP;
     
-    this.insets = new ExtrasUtil.Insets(2);
+    this.insets = new EchoCoreProperties.Insets(2);
     
     this.headerHeight = 32;
     this.activeHeaderHeightIncrease = 2;
@@ -105,7 +105,7 @@ ExtrasTabPane.BORDER_TYPE_PARALLEL_TO_TABS = 2;
  */
 ExtrasTabPane.BORDER_TYPE_SURROUND = 3;
 
-ExtrasTabPane.PANE_INSETS = new ExtrasUtil.Insets(0);
+ExtrasTabPane.PANE_INSETS = new EchoCoreProperties.Insets(0);
 
 ExtrasTabPane.TAB_POSITION_TOP = 0;
 ExtrasTabPane.TAB_POSITION_BOTTOM = 1;
@@ -301,7 +301,7 @@ ExtrasTabPane.prototype.getInactiveBorder = function() {
 };
 
 /**
- * Returns an ExtrasUtil.Insets representing the insets with which the 
+ * Returns an EchoCoreProperties.Insets representing the insets with which the 
  * specified tab should be rendered.
  *
  * @param tabId the id of the tab
@@ -559,10 +559,10 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
         tabPane.defaultFont = initMessageElement.getAttribute("default-font");
     }
     if (initMessageElement.getAttribute("insets")) {
-        tabPane.insets = new ExtrasUtil.Insets(initMessageElement.getAttribute("insets"));
+        tabPane.insets = new EchoCoreProperties.Insets(initMessageElement.getAttribute("insets"));
     }
     if (initMessageElement.getAttribute("default-content-insets")) {
-        tabPane.defaultContentInsets = new ExtrasUtil.Insets(initMessageElement.getAttribute("default-content-insets"));
+        tabPane.defaultContentInsets = new EchoCoreProperties.Insets(initMessageElement.getAttribute("default-content-insets"));
     }
     
     switch (initMessageElement.getAttribute("border-type")) {
