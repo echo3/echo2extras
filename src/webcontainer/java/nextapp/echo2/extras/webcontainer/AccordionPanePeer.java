@@ -297,7 +297,7 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
                 CssStyle rolloverBackgroundImageCssStyle = new CssStyle();
                 FillImageRender.renderToStyle(rolloverBackgroundImageCssStyle, rc, this, accordionPane, 
                         IMAGE_ID_TAB_ROLLOVER_BACKGROUND, tabRolloverBackgroundImage, 0);
-                initElement.setAttribute("tab-background-image", rolloverBackgroundImageCssStyle.renderInline());
+                initElement.setAttribute("tab-rollover-background-image", rolloverBackgroundImageCssStyle.renderInline());
             }
             Border tabRolloverBorder = (Border) accordionPane.getRenderProperty(AccordionPane.PROPERTY_TAB_ROLLOVER_BORDER);
             if (tabRolloverBorder != null) {

@@ -319,13 +319,6 @@ ExtrasAccordionPane.prototype.selectTab = function(newTabId) {
  *        false indicating it should not)
  */
 ExtrasAccordionPane.prototype.setTabHighlight = function(tabId, state) {
-/*
-	    if (this.tabBackgroundImage) {
-	        tabDivElement.style.backgroundImage = "";
-	        tabDivElement.style.backgroundPosition = "";
-	        tabDivElement.style.backgroundRepeat = "";
-	    }
-*/
 
     var tabDivElement = this.getTabElement(tabId);
     if (state) {
@@ -333,6 +326,14 @@ ExtrasAccordionPane.prototype.setTabHighlight = function(tabId, state) {
             tabDivElement.style.backgroundColor = this.tabRolloverBackground;
         } else {
             tabDivElement.style.backgroundColor = ExtrasUtil.Color.adjustIntensity(this.tabBackground, 1.4);
+        }
+        if (this.tabRolloverBackgroundImage) {
+		    if (this.tabBackgroundImage) {
+		        tabDivElement.style.backgroundImage = "";
+		        tabDivElement.style.backgroundPosition = "";
+		        tabDivElement.style.backgroundRepeat = "";
+		    }
+		    EchoCssUtil.applyStyle(tabDivElement, this.tabRolloverBackgroundImage);
         }
         if (this.tabRolloverBorderColor) {
             tabDivElement.style.borderTopColor = this.tabRolloverBorderColor;
@@ -355,6 +356,14 @@ ExtrasAccordionPane.prototype.setTabHighlight = function(tabId, state) {
         tabDivElement.style.borderBottomColor = this.tabBorderColor;
         tabDivElement.style.borderTopStyle = this.tabBorderStyle;
         tabDivElement.style.borderBottomStyle = this.tabBorderStyle;
+        if (this.tabBackgroundImage) {
+		    if (this.tabRolloverBackgroundImage) {
+		        tabDivElement.style.backgroundImage = "";
+		        tabDivElement.style.backgroundPosition = "";
+		        tabDivElement.style.backgroundRepeat = "";
+			    EchoCssUtil.applyStyle(tabDivElement, this.tabBackgroundImage);
+		    }
+        }
     }
 };
 

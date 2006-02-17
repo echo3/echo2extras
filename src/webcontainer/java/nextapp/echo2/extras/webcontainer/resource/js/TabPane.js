@@ -562,7 +562,8 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
         tabPane.insets = new EchoCoreProperties.Insets(initMessageElement.getAttribute("insets"));
     }
     if (initMessageElement.getAttribute("default-content-insets")) {
-        tabPane.defaultContentInsets = new EchoCoreProperties.Insets(initMessageElement.getAttribute("default-content-insets"));
+        tabPane.defaultContentInsets = new EchoCoreProperties.Insets(
+                initMessageElement.getAttribute("default-content-insets"));
     }
     
     switch (initMessageElement.getAttribute("border-type")) {
