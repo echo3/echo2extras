@@ -54,21 +54,20 @@ ExtrasAccordionPane = function(elementId, containerElementId, activeTabId) {
     this.tabRolloverBackground = null;
     this.tabRolloverBorderColor = null;
     this.tabRolloverBorderStyle = null;
-    this.tabInsets = new ExtrasUtil.Insets(2, 5);
+    this.tabInsets = new EchoCoreProperties.Insets(2, 5);
 
     // By default, disable animation on IE due to performance and rendering issues.
     // It works, but it can be a bit slower than desired and uncovers some of IE's
     // repainting issues.
-        
     this.animationEnabled = !EchoClientProperties.get("browserInternetExplorer");
-    this.animationStepCount = 20;
+    
     this.animationStepInterval = 5;
 
     this.tabIds = new Array();
     this.tabIdToTabMap = new EchoCollectionsMap();
 };
 
-ExtrasAccordionPane.PANE_INSETS = new ExtrasUtil.Insets(0);
+ExtrasAccordionPane.PANE_INSETS = new EchoCoreProperties.Insets(0);
 
 /**
  * Adds a Tab to the AccordionPane.
@@ -113,10 +112,8 @@ ExtrasAccordionPane.prototype.addTab = function(tab, tabIndex) {
     tabContentDivElement.style.overflow = "auto";
     accordionPaneDivElement.appendChild(tabContentDivElement);
 
-    ExtrasUtil.setCssPositionRight(tabContentDivElement.style, accordionPaneDivElement.id, 0, 
-            tabContentInsets.left + tabContentInsets.right);
-    ExtrasUtil.setCssPositionRight(tabDivElement.style, accordionPaneDivElement.id, 0, 
-            this.tabInsets.left + this.tabInsets.right);
+    EchoVirtualPosition.register(tabDivElement.id);
+    EchoVirtualPosition.register(tabContentDivElement.id);
     
     EchoEventProcessor.addHandler(tabDivElement.id, "click", "ExtrasAccordionPane.processTabClick");
     EchoEventProcessor.addHandler(tabDivElement.id, "mouseover", "ExtrasAccordionPane.processTabRolloverEnter");
@@ -198,7 +195,7 @@ ExtrasAccordionPane.prototype.getTabElement = function(tabId) {
 };
 
 /**
- * Returns an ExtrasUtil.Insets representing the insets with which the 
+ * Returns an new EchoCoreProperties.Insets representing the insets with which the 
  * specified tab should be rendered.
  *
  * @param tabId the id of the tab
@@ -263,9 +260,7 @@ ExtrasAccordionPane.prototype.redrawTabs = function() {
             tabContentDivElement.style.display = "block";
             tabContentDivElement.style.top = (tabHeight * (i + 1)) + "px";
             var bottomPx = tabHeight * (this.tabIds.length - i - 1);
-            var tabContentInsets = this.getTabContentInsets(this.tabIds[i]);
-            var subtractedHeight = tabHeight * this.tabIds.length + tabContentInsets.top + tabContentInsets.bottom;
-            ExtrasUtil.setCssPositionBottom(tabContentDivElement.style, this.elementId, bottomPx, subtractedHeight);
+            tabContentDivElement.style.bottom = bottomPx + "px";
         } else {
             tabContentDivElement.style.display = "none";
         }
@@ -757,10 +752,11 @@ ExtrasAccordionPane.MessageProcessor.processInit = function(initMessageElement) 
         accordionPane.tabRolloverBorderColor = initMessageElement.getAttribute("tab-rollover-border-color");
     }
     if (initMessageElement.getAttribute("default-content-insets")) {
-        accordionPane.defaultContentInsets = new ExtrasUtil.Insets(initMessageElement.getAttribute("default-content-insets"));
+        accordionPane.defaultContentInsets 
+                = new EchoCoreProperties.Insets(initMessageElement.getAttribute("default-content-insets"));
     }
     if (initMessageElement.getAttribute("tab-insets")) {
-        accordionPane.tabInsets = new ExtrasUtil.Insets(initMessageElement.getAttribute("tab-insets"));
+        accordionPane.tabInsets = new EchoCoreProperties.Insets(initMessageElement.getAttribute("tab-insets"));
     }
     
     accordionPane.create();
