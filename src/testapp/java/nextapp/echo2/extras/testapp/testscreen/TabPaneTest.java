@@ -29,11 +29,8 @@
 
 package nextapp.echo2.extras.testapp.testscreen;
 
-import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.ContentPane;
-import nextapp.echo2.app.Extent;
-import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.WindowPane;
@@ -43,6 +40,7 @@ import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.extras.app.CalendarSelect;
 import nextapp.echo2.extras.app.TabPane;
 import nextapp.echo2.extras.app.layout.TabPaneLayoutData;
+import nextapp.echo2.extras.testapp.AbstractTest;
 import nextapp.echo2.extras.testapp.ButtonColumn;
 import nextapp.echo2.extras.testapp.StyleUtil;
 import nextapp.echo2.extras.testapp.TestControlsPane;
@@ -50,20 +48,16 @@ import nextapp.echo2.extras.testapp.TestControlsPane;
 /**
  * Interactive test module for <code>TabPane</code>s.
  */
-public class TabPaneTest extends SplitPane {
+public class TabPaneTest extends AbstractTest {
         
     private int tabNumber;
 
     public TabPaneTest() {
         
-        super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
-        setStyleName("DefaultResizable");
-        
-        TestControlsPane testControlsPane = new TestControlsPane("TabPane");
-        add(testControlsPane);
+        super("TabPane");
         
         final TabPane tabPane = new TabPane();
-        add(tabPane);
+        setComponent(tabPane);
         
         // Add/Remove Tabs
 
@@ -213,84 +207,12 @@ public class TabPaneTest extends SplitPane {
             }
         });
 
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Foreground", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setForeground(StyleUtil.randomColor());
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Clear Foreground", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setForeground(null);
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Background", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setBackground(StyleUtil.randomColor());
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Clear Background", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setBackground(null);
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Inactive Border (All Attributes)", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setInactiveBorder(StyleUtil.randomBorder());
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Inactive Border Color", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Border border = tabPane.getInactiveBorder();
-                if (border == null) {
-                    border = new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID);
-                }
-                tabPane.setInactiveBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Inactive Border Size", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setInactiveBorder(StyleUtil.nextBorderSize(tabPane.getInactiveBorder()));
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Inactive Border Style", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setInactiveBorder(StyleUtil.nextBorderStyle(tabPane.getInactiveBorder()));
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Remove Inactive Border", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setInactiveBorder(null);
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Active Border (All Attributes)", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setActiveBorder(StyleUtil.randomBorder());
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Active Border Color", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Border border = tabPane.getActiveBorder();
-                if (border == null) {
-                    border = new Border(new Extent(1), Color.BLUE, Border.STYLE_SOLID);
-                }
-                tabPane.setActiveBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Active Border Size", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setActiveBorder(StyleUtil.nextBorderSize(tabPane.getActiveBorder()));
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Active Border Style", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setActiveBorder(StyleUtil.nextBorderStyle(tabPane.getActiveBorder()));
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Remove Active Border", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setActiveBorder(null);
-            }
-        });
+        addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "foreground");
+        addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "background");
+        addFontPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "font");
+        addBorderPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "inactiveBorder");
+        addBorderPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "activeBorder");
+        
         testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Border Type = None", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setBorderType(TabPane.BORDER_TYPE_NONE);
@@ -312,51 +234,8 @@ public class TabPaneTest extends SplitPane {
             }
         });
         
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Insets = Null", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setInsets(null);
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Insets = 0px", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setInsets(new Insets(0));
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Insets = 2px", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setInsets(new Insets(2));
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Insets = 5px", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setInsets(new Insets(5));
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Insets = 10/20/40/80px", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setInsets(new Insets(10, 20, 40, 80));
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Default Content Insets to 0", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setDefaultContentInsets(new Insets(0));
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Default Content Insets to 5", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setDefaultContentInsets(new Insets(5));
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Default Content Insets to 10/20/40/80", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setDefaultContentInsets(new Insets(10, 20, 40, 80));
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Clear Default Content Insets", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setDefaultContentInsets(null);
-            }
-        });
+        addInsetsPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "insets");
+        addInsetsPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "defaultContentInsets");
         
         // Selection Properties
 
@@ -379,30 +258,7 @@ public class TabPaneTest extends SplitPane {
                 }
             }
         });
-
-        // Integration Tests
-
-        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Add TabPane", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (getComponentCount() < 2) {
-                    add(tabPane);
-                }
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Remove TabPane", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                remove(tabPane);
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Enable Component", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            	tabPane.setEnabled(true);
-            }
-        });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Disable Component", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            	tabPane.setEnabled(false);
-            }
-        });
+        
+        addStandardIntegrationTests();
     }
 }

@@ -161,7 +161,7 @@ public class AccordionPaneTest extends SplitPane {
                 accordionPane.add(contentPane);
             }
         });
-        
+
         testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Add SplitPane", new ActionListener(){
         
             public void actionPerformed(ActionEvent arg0) {

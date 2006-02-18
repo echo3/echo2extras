@@ -31,6 +31,7 @@ package nextapp.echo2.extras.testapp;
 
 import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Column;
+import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
@@ -60,7 +61,7 @@ public class TestControlsPane extends SplitPane {
         add(controlGroupsAccordion);
     }
     
-    public void addButton(String category, String label, ActionListener listener) {
+    public void addControl(String category, Component control) {
         Column controlsColumn = (Column) getComponent(category);
         if (controlsColumn == null) {
             controlsColumn = new Column();
@@ -71,10 +72,13 @@ public class TestControlsPane extends SplitPane {
             controlsColumn.setLayoutData(layoutData);
             controlGroupsAccordion.add(controlsColumn);
         }
-        
+        controlsColumn.add(control);
+    }
+    
+    public void addButton(String category, String label, ActionListener listener) {
         Button button = new Button(label);
         button.setStyleName("Default");
         button.addActionListener(listener);
-        controlsColumn.add(button);
+        addControl(category, button);
     }
 }

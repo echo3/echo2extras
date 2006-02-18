@@ -172,6 +172,9 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         initElement.setAttribute("year", Integer.toString(calendar.get(Calendar.YEAR)));
         initElement.setAttribute("month", Integer.toString(calendar.get(Calendar.MONTH)));
         initElement.setAttribute("date", Integer.toString(calendar.get(Calendar.DATE)));
+        if (!calendarSelect.isRenderEnabled()) {
+            initElement.setAttribute("enabled", "false");
+        }
         
         Color background = (Color) calendarSelect.getRenderProperty(CalendarSelect.PROPERTY_BACKGROUND);
         if (background != null) {
