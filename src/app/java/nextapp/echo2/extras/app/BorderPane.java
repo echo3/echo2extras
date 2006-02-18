@@ -33,13 +33,14 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.FillImageBorder;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Pane;
+import nextapp.echo2.app.PaneContainer;
 
 /**
  * A container which renders a <code>FillImageBorder</code> around its
  * content.
  */
 public class BorderPane extends Component 
-implements Pane {
+implements Pane, PaneContainer {
     
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_INSETS = "insets";

@@ -40,14 +40,12 @@ import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.app.layout.SplitPaneLayoutData;
-import nextapp.echo2.extras.app.AccordionPane;
 import nextapp.echo2.extras.app.CalendarSelect;
 import nextapp.echo2.extras.app.TabPane;
-import nextapp.echo2.extras.app.layout.AccordionPaneLayoutData;
 import nextapp.echo2.extras.app.layout.TabPaneLayoutData;
 import nextapp.echo2.extras.testapp.ButtonColumn;
-import nextapp.echo2.extras.testapp.InteractiveApp;
 import nextapp.echo2.extras.testapp.StyleUtil;
+import nextapp.echo2.extras.testapp.TestControlsPane;
 
 /**
  * Interactive test module for <code>TabPane</code>s.
@@ -61,30 +59,21 @@ public class TabPaneTest extends SplitPane {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
         setStyleName("DefaultResizable");
         
-        AccordionPane controlGroupsAccordion = new AccordionPane();
-        controlGroupsAccordion.setStyleName("TestControlsAccordion");
-        add(controlGroupsAccordion);
+        TestControlsPane testControlsPane = new TestControlsPane("TabPane");
+        add(testControlsPane);
         
         final TabPane tabPane = new TabPane();
         add(tabPane);
         
-        ButtonColumn controlsColumn;
-        AccordionPaneLayoutData accordionPaneLayoutData;
-        
         // Add/Remove Tabs
-        controlsColumn = new ButtonColumn();
-        accordionPaneLayoutData = new AccordionPaneLayoutData();
-        accordionPaneLayoutData.setTitle("Add/Remove Child Tabs");
-        controlsColumn.setLayoutData(accordionPaneLayoutData);
-        controlGroupsAccordion.add(controlsColumn);
 
-        controlsColumn.addButton("Add Label (No LayoutData)", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Add Label (No LayoutData)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.add(new Label("Generic Label"));
             }
         });
 
-        controlsColumn.addButton("Add Label", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Add Label", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Label label = new Label("Tab Pane Child " + tabNumber);
                 label.setBackground(StyleUtil.randomBrightColor());
@@ -96,7 +85,7 @@ public class TabPaneTest extends SplitPane {
             }
         });
 
-        controlsColumn.addButton("Add Label (index 0)", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Add Label (index 0)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Label label = new Label("Tab Pane Child " + tabNumber);
                 label.setBackground(StyleUtil.randomBrightColor());
@@ -108,7 +97,7 @@ public class TabPaneTest extends SplitPane {
             }
         });
         
-        controlsColumn.addButton("Add Label (index 2)", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Add Label (index 2)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (tabPane.getComponentCount() < 2) {
                     // Do nothing
@@ -124,7 +113,7 @@ public class TabPaneTest extends SplitPane {
             }
         });
         
-        controlsColumn.addButton("Add CalendarSelect", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Add CalendarSelect", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 CalendarSelect calendarSelect = new CalendarSelect();
                 TabPaneLayoutData layoutData = new TabPaneLayoutData();
@@ -134,7 +123,7 @@ public class TabPaneTest extends SplitPane {
             }
         });
 
-        controlsColumn.addButton("Add TabPaneTest", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Add TabPaneTest", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 TabPaneTest tabPaneTest = new TabPaneTest();
                 TabPaneLayoutData layoutData = new TabPaneLayoutData();
@@ -144,7 +133,7 @@ public class TabPaneTest extends SplitPane {
             }
         });
 
-        controlsColumn.addButton("Add ContentPane", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Add ContentPane", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 final ContentPane contentPane = new ContentPane();
                 ButtonColumn buttonColumn = new ButtonColumn();
@@ -176,7 +165,7 @@ public class TabPaneTest extends SplitPane {
             }
         });
 
-        controlsColumn.addButton("Add SplitPane", new ActionListener(){
+        testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Add SplitPane", new ActionListener(){
         
             public void actionPerformed(ActionEvent arg0) {
                 SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL_LEFT_RIGHT);
@@ -202,7 +191,7 @@ public class TabPaneTest extends SplitPane {
             }
         });
 
-        controlsColumn.addButton("Remove Last Tab", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Remove Last Tab", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (tabPane.getComponentCount() > 0) {
                     tabPane.remove(tabPane.getComponentCount() - 1);
@@ -211,51 +200,45 @@ public class TabPaneTest extends SplitPane {
         });
 
         // General Properties
-        controlsColumn = new ButtonColumn();
-        accordionPaneLayoutData = new AccordionPaneLayoutData();
-        accordionPaneLayoutData.setTitle("Properties");
-        controlsColumn.setLayoutData(accordionPaneLayoutData);
-        
-        controlGroupsAccordion.add(controlsColumn);
 
-        controlsColumn.addButton("Set Tab Position = Top", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Tab Position = Top", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setTabPosition(TabPane.TAB_POSITION_TOP);
             }
         });
 
-        controlsColumn.addButton("Set Tab Position = Bottom", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Tab Position = Bottom", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setTabPosition(TabPane.TAB_POSITION_BOTTOM);
             }
         });
 
-        controlsColumn.addButton("Set Foreground", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setForeground(StyleUtil.randomColor());
             }
         });
-        controlsColumn.addButton("Clear Foreground", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Clear Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setForeground(null);
             }
         });
-        controlsColumn.addButton("Set Background", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setBackground(StyleUtil.randomColor());
             }
         });
-        controlsColumn.addButton("Clear Background", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Clear Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setBackground(null);
             }
         });
-        controlsColumn.addButton("Set Inactive Border (All Attributes)", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Inactive Border (All Attributes)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setInactiveBorder(StyleUtil.randomBorder());
             }
         });
-        controlsColumn.addButton("Set Inactive Border Color", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Inactive Border Color", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Border border = tabPane.getInactiveBorder();
                 if (border == null) {
@@ -264,27 +247,27 @@ public class TabPaneTest extends SplitPane {
                 tabPane.setInactiveBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
             }
         });
-        controlsColumn.addButton("Set Inactive Border Size", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Inactive Border Size", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setInactiveBorder(StyleUtil.nextBorderSize(tabPane.getInactiveBorder()));
             }
         });
-        controlsColumn.addButton("Set Inactive Border Style", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Inactive Border Style", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setInactiveBorder(StyleUtil.nextBorderStyle(tabPane.getInactiveBorder()));
             }
         });
-        controlsColumn.addButton("Remove Inactive Border", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Remove Inactive Border", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setInactiveBorder(null);
             }
         });
-        controlsColumn.addButton("Set Active Border (All Attributes)", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Active Border (All Attributes)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setActiveBorder(StyleUtil.randomBorder());
             }
         });
-        controlsColumn.addButton("Set Active Border Color", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Active Border Color", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Border border = tabPane.getActiveBorder();
                 if (border == null) {
@@ -293,110 +276,103 @@ public class TabPaneTest extends SplitPane {
                 tabPane.setActiveBorder(new Border(border.getSize(), StyleUtil.randomColor(), border.getStyle()));
             }
         });
-        controlsColumn.addButton("Set Active Border Size", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Active Border Size", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setActiveBorder(StyleUtil.nextBorderSize(tabPane.getActiveBorder()));
             }
         });
-        controlsColumn.addButton("Set Active Border Style", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Active Border Style", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setActiveBorder(StyleUtil.nextBorderStyle(tabPane.getActiveBorder()));
             }
         });
-        controlsColumn.addButton("Remove Active Border", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Remove Active Border", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setActiveBorder(null);
             }
         });
-        controlsColumn.addButton("Set Border Type = None", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Border Type = None", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setBorderType(TabPane.BORDER_TYPE_NONE);
             }
         });
-        controlsColumn.addButton("Set Border Type = Adjacent", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Border Type = Adjacent", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setBorderType(TabPane.BORDER_TYPE_ADJACENT_TO_TABS);
             }
         });
-        controlsColumn.addButton("Set Border Type = Parallel", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Border Type = Parallel", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setBorderType(TabPane.BORDER_TYPE_PARALLEL_TO_TABS);
             }
         });
-        controlsColumn.addButton("Set Border Type = Surround", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Border Type = Surround", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setBorderType(TabPane.BORDER_TYPE_SURROUND);
             }
         });
         
-        controlsColumn.addButton("Set Insets = Null", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Insets = Null", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setInsets(null);
             }
         });
-        controlsColumn.addButton("Set Insets = 0px", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Insets = 0px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setInsets(new Insets(0));
             }
         });
-        controlsColumn.addButton("Set Insets = 2px", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Insets = 2px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setInsets(new Insets(2));
             }
         });
-        controlsColumn.addButton("Set Insets = 5px", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Insets = 5px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setInsets(new Insets(5));
             }
         });
-        controlsColumn.addButton("Set Insets = 10/20/40/80px", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Insets = 10/20/40/80px", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setInsets(new Insets(10, 20, 40, 80));
             }
         });
-        controlsColumn.addButton("Set Default Content Insets to 0", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Default Content Insets to 0", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setDefaultContentInsets(new Insets(0));
             }
         });
-        controlsColumn.addButton("Set Default Content Insets to 5", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Default Content Insets to 5", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setDefaultContentInsets(new Insets(5));
             }
         });
-        controlsColumn.addButton("Set Default Content Insets to 10/20/40/80", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Default Content Insets to 10/20/40/80", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setDefaultContentInsets(new Insets(10, 20, 40, 80));
             }
         });
-        controlsColumn.addButton("Clear Default Content Insets", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Clear Default Content Insets", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setDefaultContentInsets(null);
             }
         });
         
         // Selection Properties
-        controlsColumn = new ButtonColumn();
-        accordionPaneLayoutData = new AccordionPaneLayoutData();
-        accordionPaneLayoutData.setTitle("Selection");
-        controlsColumn.setLayoutData(accordionPaneLayoutData);
-        controlGroupsAccordion.add(controlsColumn);
 
-        controlsColumn.addButton("Select TabIndex 0", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_SELECTION, "Select TabIndex 0", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tabPane.setActiveTabIndex(0);
             }
         });
-
-        controlsColumn.addButton("Select TabIndex 2", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_SELECTION, "Select TabIndex 2", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (tabPane.getComponentCount() > 0) {
                     tabPane.setActiveTabIndex(2);
                 }
             }
         });
-        
-        controlsColumn.addButton("Select Tab Null", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_SELECTION, "Select Tab Null", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (tabPane.getComponentCount() > 0) {
                     tabPane.setActiveTab(null);
@@ -405,45 +381,27 @@ public class TabPaneTest extends SplitPane {
         });
 
         // Integration Tests
-        controlsColumn = new ButtonColumn();
-        accordionPaneLayoutData = new AccordionPaneLayoutData();
-        accordionPaneLayoutData.setTitle("Integration Tests");
-        controlsColumn.setLayoutData(accordionPaneLayoutData);
 
-        controlGroupsAccordion.add(controlsColumn);
-
-        controlsColumn.addButton("Add TabPane", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Add TabPane", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (getComponentCount() < 2) {
                     add(tabPane);
                 }
             }
         });
-
-        controlsColumn.addButton("Remove TabPane", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Remove TabPane", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 remove(tabPane);
             }
         });
-        
-        controlsColumn.addButton("Enable Component", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Enable Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	tabPane.setEnabled(true);
             }
         });
-
-        controlsColumn.addButton("Disable Component", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Disable Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	tabPane.setEnabled(false);
-            }
-        });
-
-        controlsColumn.addButton("Add Modal WindowPane", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                WindowPane modalWindow = new WindowPane();
-                modalWindow.setTitle("Blocking Modal WindowPane");
-                modalWindow.setModal(true);
-                InteractiveApp.getApp().getDefaultWindow().getContent().add(modalWindow);
             }
         });
     }

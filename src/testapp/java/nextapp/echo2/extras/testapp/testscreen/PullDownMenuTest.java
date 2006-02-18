@@ -42,9 +42,9 @@ import nextapp.echo2.extras.app.menu.DefaultOptionModel;
 import nextapp.echo2.extras.app.menu.DefaultMenuModel;
 import nextapp.echo2.extras.app.menu.MenuModel;
 import nextapp.echo2.extras.app.menu.SeparatorModel;
-import nextapp.echo2.extras.testapp.ButtonColumn;
 import nextapp.echo2.extras.testapp.InteractiveApp;
 import nextapp.echo2.extras.testapp.StyleUtil;
+import nextapp.echo2.extras.testapp.TestControlsPane;
 
 /**
  * Interactive test module for <code>PullDownMenu</code>s.
@@ -55,9 +55,8 @@ public class PullDownMenuTest extends SplitPane {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
         setStyleName("DefaultResizable");
         
-        ButtonColumn controlsColumn = new ButtonColumn();
-        controlsColumn.setStyleName("TestControlsColumn");
-        add(controlsColumn);
+        TestControlsPane testControlsPane = new TestControlsPane("PullDownMenu");
+        add(testControlsPane);
         
         final PullDownMenu menu = new PullDownMenu(createMenuModel());
         menu.addActionListener(new ActionListener(){
@@ -68,21 +67,21 @@ public class PullDownMenuTest extends SplitPane {
         });
         add(menu);
         
-        controlsColumn.addButton("Set Foreground", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Foreground", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
                 menu.setForeground(color);
             }
         });
         
-        controlsColumn.addButton("Set Background", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Background", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = StyleUtil.randomColor();
                 menu.setBackground(color);
             }
         });
 
-        controlsColumn.addButton("Add Menu", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Add Menu", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (menu.getParent() == null) {
                     add(menu);
@@ -90,13 +89,13 @@ public class PullDownMenuTest extends SplitPane {
             }
         });
         
-        controlsColumn.addButton("Remove Menu", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Remove Menu", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 remove(menu);
             }
         });
         
-        controlsColumn.addButton("Add Test WindowPane", new ActionListener(){
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Add Test WindowPane", new ActionListener(){
         
             public void actionPerformed(ActionEvent e) {
                 ContentPane rootContent = getApplicationInstance().getDefaultWindow().getContent();

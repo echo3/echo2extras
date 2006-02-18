@@ -120,6 +120,32 @@
    </property>
   </properties>
  </style>
+ <style name="TitleLabel2" type="nextapp.echo2.app.Label">
+  <properties>
+   <property name="font">
+    <font typeface="Verdana" size="16px" bold="true"/>
+   </property>
+   <property name="foreground" value="#000000"/>
+   <property name="layoutData">
+    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
+     <properties>
+      <property name="alignment">
+       <alignment horizontal="center"/>
+      </property>
+      <property name="backgroundImage">
+       <fill-image repeat="none" vertical="100%">
+        <image type="nextapp.echo2.app.ResourceImageReference">
+         <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/TitleBackground2.png"/>
+        </image>
+       </fill-image>
+      </property>
+      <property name="insets" value="8px"/>
+      <property name="overflow" value="OVERFLOW_HIDDEN"/>
+     </properties>
+    </layout-data>
+   </property>
+  </properties>
+ </style>
  <style name="Default" type="nextapp.echo2.app.WindowPane">
   <properties>
    <!-- Container-specific property to enable Internet Explorer PNG Alpha Renderer for shadow window border. -->

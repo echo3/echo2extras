@@ -89,6 +89,8 @@ public class InteractiveApp extends ApplicationInstance {
      * fired events.
      * 
      * @param message the message to write to the console
+     *        (if null, console will be raised but not content
+     *        will be written to it)
      */
     public void consoleWrite(String message) {
         if (console == null) {
@@ -97,7 +99,9 @@ public class InteractiveApp extends ApplicationInstance {
         } else if (console.getParent() == null) {
             getDefaultWindow().getContent().add(console);
         }
-        console.writeMessage(message);
+        if (message != null) {
+            console.writeMessage(message);
+        }
     }
     
     /**

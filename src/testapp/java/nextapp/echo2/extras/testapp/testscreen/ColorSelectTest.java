@@ -36,12 +36,10 @@ import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
-import nextapp.echo2.extras.app.AccordionPane;
 import nextapp.echo2.extras.app.ColorSelect;
-import nextapp.echo2.extras.app.layout.AccordionPaneLayoutData;
-import nextapp.echo2.extras.testapp.ButtonColumn;
 import nextapp.echo2.extras.testapp.InteractiveApp;
 import nextapp.echo2.extras.testapp.StyleUtil;
+import nextapp.echo2.extras.testapp.TestControlsPane;
 
 /**
  * Interactive test module for <code>ColorSelect</code>s.
@@ -49,40 +47,32 @@ import nextapp.echo2.extras.testapp.StyleUtil;
 public class ColorSelectTest extends SplitPane {
 
     public ColorSelectTest() {
+        
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
         setStyleName("DefaultResizable");
         
-        AccordionPane controlGroupsAccordion = new AccordionPane();
-        controlGroupsAccordion.setStyleName("TestControlsAccordion");
-        add(controlGroupsAccordion);
+        TestControlsPane testControlsPane = new TestControlsPane("ColorSelect");
+        add(testControlsPane);
         
         final ColorSelect colorSelect = new ColorSelect();
         add(colorSelect);
         
-        ButtonColumn controlsColumn;
-        AccordionPaneLayoutData accordionPaneLayoutData;
-        
         // Properties
-        controlsColumn = new ButtonColumn();
-        accordionPaneLayoutData = new AccordionPaneLayoutData();
-        accordionPaneLayoutData.setTitle("Properties");
-        controlsColumn.setLayoutData(accordionPaneLayoutData);
-        controlGroupsAccordion.add(controlsColumn);
-        
-        controlsColumn.addButton("Query Color", new ActionListener() {
+
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Query Color", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = colorSelect.getColor();
                 InteractiveApp.getApp().consoleWrite("Color: " + color == null ? "null" : color.toString());
             }
         });
         
-        controlsColumn.addButton("Set Color", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Color", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 colorSelect.setColor(StyleUtil.randomColor());
             }
         });
         
-        controlsColumn.addButton("Add ColorSelect WindowPane", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Add ColorSelect WindowPane", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 WindowPane windowPane = new WindowPane("Color Select Test", new Extent(250), new Extent(270));
                 windowPane.setPositionX(new Extent((int) (Math.random() * 500)));
@@ -95,13 +85,8 @@ public class ColorSelectTest extends SplitPane {
         });
 
         // Integration
-        controlsColumn = new ButtonColumn();
-        accordionPaneLayoutData = new AccordionPaneLayoutData();
-        accordionPaneLayoutData.setTitle("Integration Tests");
-        controlsColumn.setLayoutData(accordionPaneLayoutData);
-        controlGroupsAccordion.add(controlsColumn);
 
-        controlsColumn.addButton("Add Component", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Add Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (getComponentCount() < 2) {
                     add(colorSelect);
@@ -109,30 +94,21 @@ public class ColorSelectTest extends SplitPane {
             }
         });
 
-        controlsColumn.addButton("Remove Component", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Remove Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 remove(colorSelect);
             }
         });
         
-        controlsColumn.addButton("Enable Component", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Enable Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 colorSelect.setEnabled(true);
             }
         });
 
-        controlsColumn.addButton("Disable Component", new ActionListener() {
+        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Disable Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 colorSelect.setEnabled(false);
-            }
-        });
-
-        controlsColumn.addButton("Add Modal WindowPane", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                WindowPane modalWindow = new WindowPane();
-                modalWindow.setTitle("Blocking Modal WindowPane");
-                modalWindow.setModal(true);
-                InteractiveApp.getApp().getDefaultWindow().getContent().add(modalWindow);
             }
         });
     }

@@ -57,28 +57,23 @@ public class ConsoleWindowPane extends WindowPane {
         setTitle("Console");
         setStyleName("Default");
         
-        SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP, new Extent(40));
-        splitPane.setSeparatorHeight(new Extent(1));
+        SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_BOTTOM_TOP, new Extent(32));
         add(splitPane);
         
-        SplitPaneLayoutData splitPaneLayoutData;
-        
         Row controlRow = new Row();
-        splitPaneLayoutData = new SplitPaneLayoutData();
-        splitPaneLayoutData.setBackground(new Color(0xafafbf));
-        splitPaneLayoutData.setInsets(new Insets(5));
-        controlRow.setLayoutData(splitPaneLayoutData);
+        controlRow.setStyleName("ControlPane");
         splitPane.add(controlRow);
-
-        Button clearButton = new Button("Clear");
-        clearButton.setStyleName("Default");
-        clearButton.addActionListener(new ActionListener() {
+        
+        Button button = new Button("Clear", Styles.ICON_24_NO);
+        button.setStyleName("ControlPane.Button");
+        button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 column.removeAll();
             }
         });
-        controlRow.add(clearButton);
+        controlRow.add(button);
         
+        SplitPaneLayoutData splitPaneLayoutData;
         logPane = new ContentPane();
         logPane.setFont(new Font(Font.MONOSPACE, Font.PLAIN, new Extent(10)));
         logPane.setForeground(Color.GREEN);

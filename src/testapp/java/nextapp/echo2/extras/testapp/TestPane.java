@@ -75,6 +75,8 @@ public class TestPane extends ContentPane {
                     modalWindow.setModal(true);
                     modalWindow.add(new Label("Verify this modal WindowPane blocks input to all components."));
                     InteractiveApp.getApp().getDefaultWindow().getContent().add(modalWindow);
+                } else if (e.getActionCommand().equals("OpenConsole")) {
+                    InteractiveApp.getApp().consoleWrite(null);
                 }
             } catch (ClassNotFoundException ex) {
                 throw new RuntimeException(ex.toString());
@@ -105,6 +107,7 @@ public class TestPane extends ContentPane {
         menuBarMenu.addItem(testsMenu);
 
         DefaultMenuModel optionsMenu = new DefaultMenuModel("Options");
+        optionsMenu.addItem(new DefaultOptionModel("Open Console", null, "OpenConsole"));
         optionsMenu.addItem(new DefaultOptionModel("Open Model Dialog", null, "OpenModalDialog"));
         menuBarMenu.addItem(optionsMenu);
 
