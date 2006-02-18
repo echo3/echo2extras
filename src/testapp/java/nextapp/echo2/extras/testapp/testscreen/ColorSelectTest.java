@@ -32,11 +32,11 @@ package nextapp.echo2.extras.testapp.testscreen;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Insets;
-import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.ColorSelect;
+import nextapp.echo2.extras.testapp.AbstractTest;
 import nextapp.echo2.extras.testapp.InteractiveApp;
 import nextapp.echo2.extras.testapp.StyleUtil;
 import nextapp.echo2.extras.testapp.TestControlsPane;
@@ -44,18 +44,14 @@ import nextapp.echo2.extras.testapp.TestControlsPane;
 /**
  * Interactive test module for <code>ColorSelect</code>s.
  */
-public class ColorSelectTest extends SplitPane {
+public class ColorSelectTest extends AbstractTest {
 
     public ColorSelectTest() {
         
-        super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
-        setStyleName("DefaultResizable");
-        
-        TestControlsPane testControlsPane = new TestControlsPane("ColorSelect");
-        add(testControlsPane);
+        super("ColorSelect");
         
         final ColorSelect colorSelect = new ColorSelect();
-        add(colorSelect);
+        setTestComponent(colorSelect);
         
         // Properties
 
@@ -85,31 +81,7 @@ public class ColorSelectTest extends SplitPane {
         });
 
         // Integration
-
-        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Add Component", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (getComponentCount() < 2) {
-                    add(colorSelect);
-                }
-            }
-        });
-
-        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Remove Component", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                remove(colorSelect);
-            }
-        });
         
-        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Enable Component", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                colorSelect.setEnabled(true);
-            }
-        });
-
-        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Disable Component", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                colorSelect.setEnabled(false);
-            }
-        });
+        addStandardIntegrationTests();
     }
 }

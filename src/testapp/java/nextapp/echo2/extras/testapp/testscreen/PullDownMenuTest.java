@@ -29,7 +29,6 @@
 
 package nextapp.echo2.extras.testapp.testscreen;
 
-import nextapp.echo2.app.Color;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Label;
@@ -42,6 +41,7 @@ import nextapp.echo2.extras.app.menu.DefaultOptionModel;
 import nextapp.echo2.extras.app.menu.DefaultMenuModel;
 import nextapp.echo2.extras.app.menu.MenuModel;
 import nextapp.echo2.extras.app.menu.SeparatorModel;
+import nextapp.echo2.extras.testapp.AbstractTest;
 import nextapp.echo2.extras.testapp.InteractiveApp;
 import nextapp.echo2.extras.testapp.StyleUtil;
 import nextapp.echo2.extras.testapp.TestControlsPane;
@@ -49,15 +49,11 @@ import nextapp.echo2.extras.testapp.TestControlsPane;
 /**
  * Interactive test module for <code>PullDownMenu</code>s.
  */
-public class PullDownMenuTest extends SplitPane {
+public class PullDownMenuTest extends AbstractTest {
 
     public PullDownMenuTest() {
-        super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
-        setStyleName("DefaultResizable");
-        
-        TestControlsPane testControlsPane = new TestControlsPane("PullDownMenu");
-        add(testControlsPane);
-        
+        super("PullDownMenu");
+
         final PullDownMenu menu = new PullDownMenu(createMenuModel());
         menu.addActionListener(new ActionListener(){
         
@@ -65,35 +61,12 @@ public class PullDownMenuTest extends SplitPane {
                 InteractiveApp.getApp().consoleWrite("Menu action: menu=" + e.getSource() + ", command=" + e.getActionCommand());
             }
         });
-        add(menu);
-        
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Foreground", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Color color = StyleUtil.randomColor();
-                menu.setForeground(color);
-            }
-        });
-        
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Background", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Color color = StyleUtil.randomColor();
-                menu.setBackground(color);
-            }
-        });
+        setTestComponent(menu);
 
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Add Menu", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (menu.getParent() == null) {
-                    add(menu);
-                }
-            }
-        });
-        
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Remove Menu", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                remove(menu);
-            }
-        });
+        addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "foreground");
+        addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "background");
+        addFontPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "font");
+        addBorderPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "border");
         
         testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Add Test WindowPane", new ActionListener(){
         
@@ -117,6 +90,8 @@ public class PullDownMenuTest extends SplitPane {
                 rootContent.add(windowPane);
             }
         });
+        
+        addStandardIntegrationTests();
     }
     
     private MenuModel createMenuModel() {

@@ -57,7 +57,7 @@ public class TabPaneTest extends AbstractTest {
         super("TabPane");
         
         final TabPane tabPane = new TabPane();
-        setComponent(tabPane);
+        setTestComponent(tabPane);
         
         // Add/Remove Tabs
 
@@ -206,7 +206,7 @@ public class TabPaneTest extends AbstractTest {
                 tabPane.setTabPosition(TabPane.TAB_POSITION_BOTTOM);
             }
         });
-
+        
         addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "foreground");
         addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "background");
         addFontPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "font");

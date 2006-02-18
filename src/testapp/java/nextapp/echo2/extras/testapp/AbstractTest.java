@@ -56,12 +56,25 @@ public class AbstractTest extends SplitPane {
         add(testControlsPane);
     }
     
-    protected void setComponent(Component component) {
+    protected void setTestComponent(Component component) {
         if (getComponentCount() == 2) {
             remove(1);
         }
         this.component = component;
         add(component);
+    }
+    
+    protected void addBooleanPropertyTests(String category, final String propertyName) {
+        testControlsPane.addButton(category, propertyName + ": true", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                setTestComponentProperty(propertyName, boolean.class, Boolean.TRUE);
+            }
+        });
+        testControlsPane.addButton(category, propertyName + ": false", new ActionListener(){
+            public void actionPerformed(ActionEvent e) {
+                setTestComponentProperty(propertyName, boolean.class, Boolean.FALSE);
+            }
+        });
     }
     
     protected void addBorderPropertyTests(String category, final String propertyName) {
