@@ -30,6 +30,7 @@
 ExtrasCalendarSelect = function(elementId, containerElementId, year, month, selectedDay) {
     this.elementId = elementId;
     this.containerElementId = containerElementId;
+    this.enabled = true;
 
     this.firstDayOfMonth = 4;
     this.daysInPreviousMonth = 29;
@@ -206,6 +207,10 @@ ExtrasCalendarSelect.prototype.dispose = function() {
 };
 
 ExtrasCalendarSelect.prototype.processDaySelect = function(elementId) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId, false)) {
+        return;
+    }
+
     if (elementId.indexOf("_dayofweek_") !== -1) {
         // Day of week clicked.
         return;
@@ -219,11 +224,20 @@ ExtrasCalendarSelect.prototype.processDaySelect = function(elementId) {
 };
 
 ExtrasCalendarSelect.prototype.processMonthSelect = function() {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId, false)) {
+        //BUGBUG. reset month.
+        return;
+    }
+    
     var monthSelect = document.getElementById(this.elementId + "_month");
     this.setDate(this.year, monthSelect.selectedIndex, this.selectedDay, true);
 };
 
 ExtrasCalendarSelect.prototype.processYearDecrement = function() {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId, false)) {
+        return;
+    }
+    
     if (this.year <= ExtrasCalendarSelect.MINIMUM_YEAR) {
         return;
     }
@@ -233,6 +247,10 @@ ExtrasCalendarSelect.prototype.processYearDecrement = function() {
 };
 
 ExtrasCalendarSelect.prototype.processYearEntry = function() {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId, false)) {
+        return;
+    }
+    
     var yearField = document.getElementById(this.elementId + "_year");
     if (isNaN(yearField.value)) {
         return;
@@ -241,6 +259,10 @@ ExtrasCalendarSelect.prototype.processYearEntry = function() {
 };
 
 ExtrasCalendarSelect.prototype.processYearIncrement = function() {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId, false)) {
+        return;
+    }
+    
     if (this.year >= ExtrasCalendarSelect.MAXIMUM_YEAR) {
         return;
     }
@@ -490,6 +512,8 @@ ExtrasCalendarSelect.MessageProcessor.processInit = function(initMessageElement)
     var date = parseInt(initMessageElement.getAttribute("date"));
 
     var calendar = new ExtrasCalendarSelect(elementId, containerElementId, year, month, date);
+
+    calendar.enabled = initMessageElement.getAttribute("enabled") != "false";
 
     if (initMessageElement.getAttribute("border")) {
 	    calendar.border = initMessageElement.getAttribute("border");

@@ -168,6 +168,9 @@ implements ActionProcessor, ComponentSynchronizePeer {
         Element initElement = serverMessage.getDocument().createElement("init");
         initElement.setAttribute("container-eid", targetId);
         initElement.setAttribute("eid", elementId);
+        if (!menu.isRenderEnabled()) {
+            initElement.setAttribute("enabled", "false");
+        }
         
         Color background = (Color) menu.getRenderProperty(PullDownMenu.PROPERTY_BACKGROUND);
         if (background != null) {

@@ -30,6 +30,7 @@
 ExtrasMenu = function(elementId, containerElementId) {
     this.elementId = elementId;
     this.containerElementId = containerElementId;
+    this.enabled = true;
     this.menuModel = null;
     
     this.maskDeployed = false;
@@ -629,6 +630,8 @@ ExtrasMenu.MessageProcessor.processInit = function(initMessageElement) {
     var menu = new ExtrasMenu(elementId, containerElementId);
     menu.transparentImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ExtrasUtil.Transparent";
     
+    menu.enabled = initMessageElement.getAttribute("enabled") != "false";
+
     var menuBarModel;
     
     for (var i = 0; i < initMessageElement.childNodes.length; ++i) {
