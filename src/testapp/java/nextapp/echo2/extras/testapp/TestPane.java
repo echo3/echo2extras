@@ -29,46 +29,42 @@
 
 package nextapp.echo2.extras.testapp;
 
-import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Label;
-import nextapp.echo2.app.Column;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.extras.app.PullDownMenu;
+import nextapp.echo2.extras.app.menu.DefaultMenuModel;
+import nextapp.echo2.extras.app.menu.DefaultOptionModel;
+import nextapp.echo2.extras.app.menu.SeparatorModel;
 
 /**
  * Main InteractiveTest <code>ContentPane</code> which displays a menu
  * of available tests.
  */
 public class TestPane extends ContentPane {
-
-    private SplitPane horizontalPane;
     
     private ActionListener commandActionListener = new ActionListener() {
-        
-        private Button activeButton = null;
         
         /**
          * @see nextapp.echo2.app.event.ActionListener#actionPerformed(nextapp.echo2.app.event.ActionEvent)
          */
         public void actionPerformed(ActionEvent e) {
             try {
-                if (activeButton != null) {
-                    activeButton.setStyleName("Default");
+                if (e.getActionCommand() == null) {
+                    InteractiveApp.getApp().displayWelcomePane();
+                } else {
+                    String screenClassName = "nextapp.echo2.extras.testapp.testscreen." + e.getActionCommand();
+                    Class screenClass = Class.forName(screenClassName);
+                    Component content = (Component) screenClass.newInstance();
+                    if (menuVerticalPane.getComponentCount() > 1) {
+                        menuVerticalPane.remove(1);
+                    }
+                    menuVerticalPane.add(content);
                 }
-                Button button = (Button) e.getSource();
-                button.setStyleName("Selected");
-                activeButton = button;
-                String screenClassName = "nextapp.echo2.extras.testapp.testscreen." + e.getActionCommand();
-                Class screenClass = Class.forName(screenClassName);
-                Component content = (Component) screenClass.newInstance();
-                if (horizontalPane.getComponentCount() > 1) {
-                    horizontalPane.remove(1);
-                }
-                horizontalPane.add(content);
             } catch (ClassNotFoundException ex) {
                 throw new RuntimeException(ex.toString());
             } catch (InstantiationException ex) {
@@ -79,57 +75,40 @@ public class TestPane extends ContentPane {
         }
     };
     
-    private Column testLaunchButtonsColumn;
+    private SplitPane menuVerticalPane;
     
     public TestPane() {
         super();
         
-        SplitPane verticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL);
-        verticalPane.setStyleName("TestPane");
-        add(verticalPane);
+        DefaultMenuModel menuBarMenu = new DefaultMenuModel();
+
+        DefaultMenuModel testsMenu = new DefaultMenuModel("Test");
+        testsMenu.addItem(new DefaultOptionModel("Accordion Pane", null, "AccordionPaneTest"));
+        testsMenu.addItem(new DefaultOptionModel("Border Pane", null, "BorderPaneTest"));
+        testsMenu.addItem(new DefaultOptionModel("Calendar Select", null, "CalendarSelectTest"));
+        testsMenu.addItem(new DefaultOptionModel("Color Select", null, "ColorSelectTest"));
+        testsMenu.addItem(new DefaultOptionModel("Pull Down Menu", null, "PullDownMenuTest"));
+        testsMenu.addItem(new DefaultOptionModel("Tab Pane", null, "TabPaneTest"));
+        testsMenu.addItem(new SeparatorModel());
+        testsMenu.addItem(new DefaultOptionModel("Exit", null, null));
+        menuBarMenu.addItem(testsMenu);
+
+        DefaultMenuModel optionsMenu = new DefaultMenuModel("Options");
+        menuBarMenu.addItem(optionsMenu);
+
+        SplitPane titleVerticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL);
+        titleVerticalPane.setStyleName("TestPane");
+        add(titleVerticalPane);
 
         Label titleLabel = new Label("NextApp Echo2 Extras Test Application");
         titleLabel.setStyleName("TitleLabel");
-        verticalPane.add(titleLabel);
+        titleVerticalPane.add(titleLabel);
         
-        horizontalPane = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL, new Extent(215));
-        horizontalPane.setStyleName("DefaultResizable");
-        verticalPane.add(horizontalPane);
+        menuVerticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(26));
+        titleVerticalPane.add(menuVerticalPane);
         
-        Column controlsColumn = new Column();
-        controlsColumn.setStyleName("ApplicationControlsColumn");
-        controlsColumn.setCellSpacing(new Extent(5));
-        
-        horizontalPane.add(controlsColumn);
-        
-        testLaunchButtonsColumn = new Column();
-        controlsColumn.add(testLaunchButtonsColumn);
-
-        addTest("Accordion Pane", "AccordionPaneTest");
-        addTest("Border Pane", "BorderPaneTest");
-        addTest("Calendar Select", "CalendarSelectTest");
-        addTest("Color Select", "ColorSelectTest");
-        addTest("Pull Down Menu", "PullDownMenuTest");
-        addTest("Tab Pane", "TabPaneTest");
-        
-        Column applicationControlsColumn = new Column();
-        controlsColumn.add(applicationControlsColumn);
-
-        Button button = new Button("Exit");
-        button.setStyleName("Default");
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                InteractiveApp.getApp().displayWelcomePane();
-            }
-        });
-        applicationControlsColumn.add(button);
-    }
-    
-    private void addTest(String name, String action) {
-        Button button = new Button(name);
-        button.setActionCommand(action);
-        button.setStyleName("Default");
-        button.addActionListener(commandActionListener);
-        testLaunchButtonsColumn.add(button);
+        PullDownMenu menu = new PullDownMenu(menuBarMenu);
+        menu.addActionListener(commandActionListener);
+        menuVerticalPane.add(menu);
     }
 }
