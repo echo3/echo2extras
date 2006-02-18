@@ -32,8 +32,10 @@ package nextapp.echo2.extras.testapp;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
+import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.PullDownMenu;
@@ -56,14 +58,23 @@ public class TestPane extends ContentPane {
             try {
                 if (e.getActionCommand() == null) {
                     InteractiveApp.getApp().displayWelcomePane();
-                } else {
-                    String screenClassName = "nextapp.echo2.extras.testapp.testscreen." + e.getActionCommand();
+                } else if (e.getActionCommand().startsWith("Launch_")) {
+                    String screenClassName = "nextapp.echo2.extras.testapp.testscreen." 
+                            + e.getActionCommand().substring("Launch ".length());
                     Class screenClass = Class.forName(screenClassName);
                     Component content = (Component) screenClass.newInstance();
                     if (menuVerticalPane.getComponentCount() > 1) {
                         menuVerticalPane.remove(1);
                     }
                     menuVerticalPane.add(content);
+                } else if (e.getActionCommand().equals("OpenModalDialog")) {
+                    WindowPane modalWindow = new WindowPane();
+                    modalWindow.setStyleName("Default");
+                    modalWindow.setInsets(new Insets(10, 5));
+                    modalWindow.setTitle("Blocking Modal WindowPane");
+                    modalWindow.setModal(true);
+                    modalWindow.add(new Label("Verify this modal WindowPane blocks input to all components."));
+                    InteractiveApp.getApp().getDefaultWindow().getContent().add(modalWindow);
                 }
             } catch (ClassNotFoundException ex) {
                 throw new RuntimeException(ex.toString());
@@ -83,17 +94,18 @@ public class TestPane extends ContentPane {
         DefaultMenuModel menuBarMenu = new DefaultMenuModel();
 
         DefaultMenuModel testsMenu = new DefaultMenuModel("Test");
-        testsMenu.addItem(new DefaultOptionModel("Accordion Pane", null, "AccordionPaneTest"));
-        testsMenu.addItem(new DefaultOptionModel("Border Pane", null, "BorderPaneTest"));
-        testsMenu.addItem(new DefaultOptionModel("Calendar Select", null, "CalendarSelectTest"));
-        testsMenu.addItem(new DefaultOptionModel("Color Select", null, "ColorSelectTest"));
-        testsMenu.addItem(new DefaultOptionModel("Pull Down Menu", null, "PullDownMenuTest"));
-        testsMenu.addItem(new DefaultOptionModel("Tab Pane", null, "TabPaneTest"));
+        testsMenu.addItem(new DefaultOptionModel("Accordion Pane", null, "Launch_AccordionPaneTest"));
+        testsMenu.addItem(new DefaultOptionModel("Border Pane", null, "Launch_BorderPaneTest"));
+        testsMenu.addItem(new DefaultOptionModel("Calendar Select", null, "Launch_CalendarSelectTest"));
+        testsMenu.addItem(new DefaultOptionModel("Color Select", null, "Launch_ColorSelectTest"));
+        testsMenu.addItem(new DefaultOptionModel("Pull Down Menu", null, "Launch_PullDownMenuTest"));
+        testsMenu.addItem(new DefaultOptionModel("Tab Pane", null, "Launch_TabPaneTest"));
         testsMenu.addItem(new SeparatorModel());
         testsMenu.addItem(new DefaultOptionModel("Exit", null, null));
         menuBarMenu.addItem(testsMenu);
 
         DefaultMenuModel optionsMenu = new DefaultMenuModel("Options");
+        optionsMenu.addItem(new DefaultOptionModel("Open Model Dialog", null, "OpenModalDialog"));
         menuBarMenu.addItem(optionsMenu);
 
         SplitPane titleVerticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL);
