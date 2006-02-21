@@ -251,13 +251,6 @@ public class TabPaneTest extends AbstractTest {
                 }
             }
         });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_SELECTION, "Select Tab Null", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (tabPane.getComponentCount() > 0) {
-                    tabPane.setActiveTab(null);
-                }
-            }
-        });
         
         addStandardIntegrationTests();
     }

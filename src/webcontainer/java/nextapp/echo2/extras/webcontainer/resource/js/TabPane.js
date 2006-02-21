@@ -145,7 +145,7 @@ ExtrasTabPane.prototype.addTab = function(tab, tabIndex) {
         headerDivElement.style.borderRight = inactiveBorder;
         headerDivElement.style.borderBottom = "0px none";
     }
-    headerDivElement.style.height = this.calculateInactiveHeaderHeight() + "px";
+    headerDivElement.style.height = this.calculateHeaderHeight(false) + "px";
     headerDivElement.style.backgroundColor = this.inactiveHeaderBackground;
     headerDivElement.style.color = this.inactiveHeaderForeground;
     headerDivElement.style.paddingTop = this.headerPaddingTop + "px";
@@ -183,15 +183,15 @@ ExtrasTabPane.prototype.addTab = function(tab, tabIndex) {
     }
 };
 
-ExtrasTabPane.prototype.calculateInactiveHeaderHeight = function() {
-    var largerBorderSize = this.inactiveBorder > this.activeBorderSize ? this.inactiveBorderSize : this.activeBorderSize;
-    return this.headerHeight - this.headerPaddingTop - this.headerPaddingBottom - this.activeHeaderHeightIncrease
-            - this.inactiveBorderSize;
-};
-
-ExtrasTabPane.prototype.calculateActiveHeaderHeight = function() {
-    // Note: Border size is added and then removed for no effect.
-    return this.headerHeight - this.headerPaddingTop - this.headerPaddingBottom;
+ExtrasTabPane.prototype.calculateHeaderHeight = function(active) {
+    if (active) {
+	    // Note: Border size is added and then removed for no effect.
+	    return this.headerHeight - this.headerPaddingTop - this.headerPaddingBottom;
+    } else {
+	    var largerBorderSize = this.inactiveBorder > this.activeBorderSize ? this.inactiveBorderSize : this.activeBorderSize;
+	    return this.headerHeight - this.headerPaddingTop - this.headerPaddingBottom - this.activeHeaderHeightIncrease
+	            - this.inactiveBorderSize;
+            }
 };
 
 ExtrasTabPane.prototype.create = function() {
@@ -334,90 +334,70 @@ ExtrasTabPane.prototype.removeTab = function(tabId) {
     }
     contentDivElement.parentNode.removeChild(contentDivElement);
 
-    if (this.activeTabId === tabId) {
+    if (this.activeTabId == tabId) {
         this.selectTab(null);
     }
 };
 
-ExtrasTabPane.prototype.selectTab = function(newTabId) {
+ExtrasTabPane.prototype.selectTab = function(newValue) {
     if (this.activeTabId) {
-        // Update state of previous active header.
-        var oldHeaderDivElement = document.getElementById(this.elementId + "_header_div_" + this.activeTabId);
-        if (oldHeaderDivElement != null) {
-            var inactiveBorder = this.getInactiveBorder();
-            oldHeaderDivElement.style.backgroundColor = this.inactiveHeaderBackground;
-            oldHeaderDivElement.style.color = this.inactiveHeaderForeground;
-            oldHeaderDivElement.style.borderLeft = inactiveBorder;
-            oldHeaderDivElement.style.borderRight = inactiveBorder;
-            oldHeaderDivElement.style.cursor = "pointer";
-            oldHeaderDivElement.style.height = this.calculateInactiveHeaderHeight() + "px";
-            
-            switch (this.tabPosition) {
-            case ExtrasTabPane.TAB_POSITION_BOTTOM:
-                oldHeaderDivElement.style.marginTop = this.activeBorderSize + "px";
-                oldHeaderDivElement.style.borderBottom = inactiveBorder;
-                break;
-            default: 
-                oldHeaderDivElement.style.marginTop = this.activeHeaderHeightIncrease + "px";
-                oldHeaderDivElement.style.borderTop = inactiveBorder;
-                break;
-            }
-        }
-
-        // Hide deselected content.
-        var oldContentDivElement = document.getElementById(this.elementId + "_content_" + this.activeTabId);
-        if (oldContentDivElement != null) {
-            oldContentDivElement.style.display = "none";
+        this.updateTabState(this.activeTabId, false);
+    }
+    
+    if (newValue == null) {
+        // Select last tab if null is specified.
+        if (this.tabIds.length > 0) {
+	        newValue = this.tabIds[this.tabIds.length - 1];
+        } else {
+	        newValue = null;
         }
     }
     
-    if (!newTabId) {
-        // Select last existing tab.
-        var headerTrElement = document.getElementById(this.elementId + "_header_tr");
-        if (headerTrElement.childNodes.length > 0) {
-            var tdId = headerTrElement.childNodes[headerTrElement.childNodes.length - 1].id;
-            newTabId = tdId.substring(tdId.lastIndexOf("_") + 1);
-        }
-    }
-    
-    if (newTabId) {
-        // Update state of newly active header.
-        var newHeaderDivElement = document.getElementById(this.elementId + "_header_div_" + newTabId);
-        newHeaderDivElement.style.backgroundColor = this.activeHeaderBackground;
-        newHeaderDivElement.style.color = this.activeHeaderForeground;
-        var activeBorder = this.getActiveBorder();
-        newHeaderDivElement.style.cursor = "default";
-        newHeaderDivElement.style.borderLeft = activeBorder;
-        newHeaderDivElement.style.borderRight = activeBorder;
-        newHeaderDivElement.style.height = this.calculateActiveHeaderHeight() + "px";
-  
-        // Begin Mozilla workaround: Removing and re-adding header div element is done to make Mozilla 1.7 rendering
-        // engine happy.  Without this workaround tab sizes shrink when clicked.
-        var parentNode = newHeaderDivElement.parentNode;
-        parentNode.removeChild(newHeaderDivElement);
-        parentNode.appendChild(newHeaderDivElement);
-        // End Mozilla workaround.
-
-        switch (this.tabPosition) {
-        case ExtrasTabPane.TAB_POSITION_BOTTOM:
-            newHeaderDivElement.style.marginTop = "0px";
-            newHeaderDivElement.style.borderBottom = activeBorder;
-            break;
-        default: 
-            newHeaderDivElement.style.marginTop = "0px";
-            newHeaderDivElement.style.borderTop = activeBorder;
-            break;
-        }
-        
-        // Display selected content.
-        var newContentDivElement = document.getElementById(this.elementId + "_content_" + newTabId);
-        newContentDivElement.style.display = "block";
+    if (newValue != null) {
+        this.updateTabState(newValue, true);
     }
     
     // Update state information.
-    this.activeTabId = newTabId;
+    this.activeTabId = newValue;
     
     EchoVirtualPosition.redraw();
+};
+
+ExtrasTabPane.prototype.updateTabState = function(tabId, selected) {
+    var headerDivElement = document.getElementById(this.elementId + "_header_div_" + tabId);
+    if (!headerDivElement) {
+        // Do nothing.
+        return;
+    }
+
+    // Begin Mozilla workaround: Removing and re-adding header div element is done to make Mozilla 1.7 rendering
+    // engine happy.  Without this workaround tab sizes shrink when clicked.
+    var parentNode = headerDivElement.parentNode;
+    parentNode.removeChild(headerDivElement);
+    parentNode.appendChild(headerDivElement);
+    // End Mozilla workaround.
+
+    var border = selected ? this.getActiveBorder() : this.getInactiveBorder();
+    headerDivElement.style.backgroundColor = selected ? this.activeHeaderBackground : this.inactiveHeaderBackground;
+    headerDivElement.style.color = selected ? this.activeHeaderForeground : this.inactiveHeaderForeground;
+    headerDivElement.style.cursor = selected ? "default" : "pointer";
+    headerDivElement.style.borderLeft = border;
+    headerDivElement.style.borderRight = border;
+    headerDivElement.style.height = this.calculateHeaderHeight(selected) + "px";
+
+    switch (this.tabPosition) {
+    case ExtrasTabPane.TAB_POSITION_BOTTOM:
+        headerDivElement.style.marginTop = this.activeBorderSize + "px";
+        headerDivElement.style.borderBottom = border;
+        break;
+    default: 
+        headerDivElement.style.marginTop = (selected ? 0 : this.activeHeaderHeightIncrease) + "px";
+        headerDivElement.style.borderTop = border;
+        break;
+    }
+
+    var newContentDivElement = document.getElementById(this.elementId + "_content_" + tabId);
+    newContentDivElement.style.display = selected ? "block" : "none";
 };
 
 ExtrasTabPane.getComponent = function(tabPaneId) {
@@ -437,7 +417,7 @@ ExtrasTabPane.processClick = function(echoEvent) {
         return;
     }
     var tabId = elementId.substring(headerDivTextIndex + 12);
-    
+   
     EchoClientMessage.setPropertyValue(tabPaneId, "activeTab", tabId);
     tabPane.selectTab(tabId);
 };

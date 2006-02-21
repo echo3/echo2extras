@@ -107,7 +107,7 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
      */
     public TabPanePeer() {
         partialUpdateManager = new PartialUpdateManager();
-        partialUpdateManager.add(TabPane.ACTIVE_TAB_CHANGED_PROPERTY, activeTabUpdateParticipant);
+        partialUpdateManager.add(TabPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY, activeTabUpdateParticipant);
     }
 
     /**
@@ -125,13 +125,12 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         String propertyName = propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME);
         if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
             String propertyValue = propertyElement.getAttribute("value");
-            int length = component.getVisibleComponentCount();
-            for (int i = 0; i < length; ++i) {
-                Component child = component.getVisibleComponent(i);
-                if (propertyValue.equals(child.getRenderId())) {
+            Component[] children = component.getVisibleComponents();
+            for (int i = 0; i < children.length; ++i) {
+                if (children[i].getRenderId().equals(propertyValue)) {
                     ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, 
-                            TabPane.INPUT_ACTIVE_TAB, child);
-                    break;
+                            TabPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY, new Integer(i));
+                    return;
                 }
             }
         }
@@ -306,10 +305,11 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
             initElement.setAttribute("active-border-style", BorderRender.getStyleValue(activeBorder.getStyle())); 
         }
         
-        Component activeTabComponent = tabPane.getActiveTab();
-        if (activeTabComponent != null) {
-            initElement.setAttribute("active-tab", activeTabComponent.getRenderId());
+        int activeTabIndex = tabPane.getActiveTabIndex();
+        if (activeTabIndex != -1 && activeTabIndex < tabPane.getVisibleComponentCount()) {
+            initElement.setAttribute("active-tab", tabPane.getVisibleComponent(activeTabIndex).getRenderId());
         }
+        
         partElement.appendChild(initElement);
     }
     
@@ -323,22 +323,18 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
     
     private void renderRemoveTabDirective(RenderContext rc, ServerComponentUpdate update, TabPane tabPane, Component child) {
         String elementId = ContainerInstance.getElementId(tabPane);
-        Element removePartElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_REMOVE, 
+        Element removeTabElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_REMOVE, 
                 "ExtrasTabPane.MessageProcessor", "remove-tab");
-        removePartElement.setAttribute("eid", elementId);
-        removePartElement.setAttribute("tab-id", child.getRenderId());
+        removeTabElement.setAttribute("eid", elementId);
+        removeTabElement.setAttribute("tab-id", child.getRenderId());
     }
     
     private void renderSetActiveTabDirective(RenderContext rc, ServerComponentUpdate update, TabPane tabPane) {
-        Component activeTab = tabPane.getActiveTab();
-        if (activeTab == null) {
-            return;
-        }
         String elementId = ContainerInstance.getElementId(tabPane);
-        Element removePartElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
+        Element setActiveTabElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
                 "ExtrasTabPane.MessageProcessor", "set-active-tab");
-        removePartElement.setAttribute("eid", elementId);
-        removePartElement.setAttribute("tab-id", activeTab.getRenderId());
+        setActiveTabElement.setAttribute("eid", elementId);
+        setActiveTabElement.setAttribute("tab-index", Integer.toString(tabPane.getActiveTabIndex()));
     }
     
     /**
