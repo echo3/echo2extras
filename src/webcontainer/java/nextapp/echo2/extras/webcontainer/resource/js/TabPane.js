@@ -191,7 +191,7 @@ ExtrasTabPane.prototype.calculateHeaderHeight = function(active) {
 	    var largerBorderSize = this.inactiveBorder > this.activeBorderSize ? this.inactiveBorderSize : this.activeBorderSize;
 	    return this.headerHeight - this.headerPaddingTop - this.headerPaddingBottom - this.activeHeaderHeightIncrease
 	            - this.inactiveBorderSize;
-            }
+    }
 };
 
 ExtrasTabPane.prototype.create = function() {

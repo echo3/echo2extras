@@ -231,6 +231,12 @@ ExtrasAccordionPane.prototype.removeTab = function(tabId) {
 
     tabDivElement.parentNode.removeChild(tabDivElement);
     tabContentDivElement.parentNode.removeChild(tabContentDivElement);
+    
+    if (this.activeTabId == tabId) {
+        if (this.tabIds.length > 0) {
+            this.selectTab(this.tabIds[this.tabIds.length - 1]);
+        }
+    }
 };
 
 /**
@@ -285,6 +291,11 @@ ExtrasAccordionPane.prototype.rotateTabs = function(oldTabId, newTabId) {
         // Do nothing.
         return;
     }
+    if (this.tabIdToTabMap.get(oldTabId) == null) {
+        // Old tab has been removed.
+        this.redrawTabs();
+        return;
+    }
     if (this.rotation) {
         // Rotation was already in progress, cancel
         this.rotation.cancel();
@@ -304,7 +315,7 @@ ExtrasAccordionPane.prototype.selectTab = function(newTabId) {
     EchoClientMessage.setPropertyValue(this.elementId, "activeTab", newTabId);
     var oldTabId = this.activeTabId;
     this.activeTabId = newTabId;
-    if (this.animationEnabled) {
+    if (oldTabId != null && this.animationEnabled) {
         this.rotateTabs(oldTabId, newTabId);
     } else {
         this.redrawTabs();

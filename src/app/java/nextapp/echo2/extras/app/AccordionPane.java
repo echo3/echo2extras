@@ -45,8 +45,7 @@ import nextapp.echo2.app.PaneContainer;
 public class AccordionPane extends Component
 implements Pane, PaneContainer {
 
-    public static final String ACTIVE_TAB_CHANGED_PROPERTY = "activeTab";
-    public static final String INPUT_ACTIVE_TAB = "activeTab";
+    public static final String ACTIVE_TAB_INDEX_CHANGED_PROPERTY = "activeTabIndex";
     
     public static final String PROPERTY_DEFAULT_CONTENT_INSETS = "defaultContentInsets";
     
@@ -60,11 +59,11 @@ implements Pane, PaneContainer {
     public static final String PROPERTY_TAB_ROLLOVER_BORDER = "tabRolloverBorder";
     public static final String PROPERTY_TAB_ROLLOVER_ENABLED = "tabRolloverEnabled";
     public static final String PROPERTY_TAB_ROLLOVER_FOREGROUND = "tabRolloverForeground";
-
+    
     /**
-     * <code>renderId</code> of the active tab <code>Component</code>.
-     */
-    private String activeTabRenderId;
+     * Index of active tab.
+     */ 
+    private int activeTabIndex = -1;
 
     /**
      * Default constructor.
@@ -79,30 +78,7 @@ implements Pane, PaneContainer {
      * @return the active tab index
      */
     public int getActiveTabIndex() {
-        if (activeTabRenderId == null) {
-            return 0;
-        }
-        int length = getComponentCount();
-        for (int i = 0; i < length; ++i) {
-            if (activeTabRenderId.equals(getComponent(i).getRenderId())) {
-                return i;
-            }
-        }
-        return 0;
-    }
-    
-    /**
-     * Returns the <code>Component</code> contained in the active tab.
-     * 
-     * @return the active tab <code>Component</code>
-     */
-    public Component getActiveTab() {
-        int activeTabIndex = getActiveTabIndex();
-        if (activeTabIndex < getComponentCount()) {
-            return getComponent(activeTabIndex);
-        } else {
-            return null;
-        }
+        return activeTabIndex;
     }
     
     /**
@@ -212,22 +188,23 @@ implements Pane, PaneContainer {
      */
     public void processInput(String inputName, Object inputValue) {
         super.processInput(inputName, inputValue);
-        if (inputName.equals(INPUT_ACTIVE_TAB)) {
-            setActiveTab((Component) inputValue);
+        if (inputName.equals(ACTIVE_TAB_INDEX_CHANGED_PROPERTY)) {
+            setActiveTabIndex(((Integer) inputValue).intValue());
         }
     }
     
     /**
-     * Sets the active tab.
+     * Sets the active tab index.
      * 
-     * @param newValue the child <code>Component</code> whose tab should 
-     *        be displayed.
+     * @param newValue the index of the child <code>Component</code> whose tab
+     *        should be displayed
      */
-    public void setActiveTab(Component newValue) {
-        activeTabRenderId = newValue == null ? null : newValue.getRenderId();
-        firePropertyChange(ACTIVE_TAB_CHANGED_PROPERTY, null, null);
+    public void setActiveTabIndex(int newValue) {
+        int oldValue = activeTabIndex;
+        activeTabIndex = newValue;
+        firePropertyChange(ACTIVE_TAB_INDEX_CHANGED_PROPERTY, new Integer(oldValue), new Integer(newValue));
     }
-    
+
     /**
      * Sets the default content inset margin.  This margin is applied by 
      * default to each child component.
@@ -236,18 +213,6 @@ implements Pane, PaneContainer {
      */
     public void setDefaultContentInsets(Insets newValue) {
         setProperty(PROPERTY_DEFAULT_CONTENT_INSETS, newValue);
-    }
-
-    /**
-     * Sets the active tab index.
-     * 
-     * @param newValue the index of the child <code>Component</code> whose tab
-     *        should be displayed
-     */
-    public void setActiveTabIndex(int newValue) {
-        if (newValue < getComponentCount()) {
-            setActiveTab(getComponent(newValue));
-        }
     }
     
     /**

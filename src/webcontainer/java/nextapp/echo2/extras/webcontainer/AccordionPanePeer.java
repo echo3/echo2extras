@@ -110,7 +110,7 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
      */
     public AccordionPanePeer() {
         partialUpdateManager = new PartialUpdateManager();
-        partialUpdateManager.add(AccordionPane.ACTIVE_TAB_CHANGED_PROPERTY, activeTabUpdateParticipant);
+        partialUpdateManager.add(AccordionPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY, activeTabUpdateParticipant);
     }
 
     /**
@@ -143,13 +143,12 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
         String propertyName = propertyElement.getAttribute(PropertyUpdateProcessor.PROPERTY_NAME);
         if (PROPERTY_ACTIVE_TAB.equals(propertyName)) {
             String propertyValue = propertyElement.getAttribute("value");
-            int length = component.getVisibleComponentCount();
-            for (int i = 0; i < length; ++i) {
-                Component child = component.getVisibleComponent(i);
-                if (propertyValue.equals(child.getRenderId())) {
+            Component[] children = component.getVisibleComponents();
+            for (int i = 0; i < children.length; ++i) {
+                if (children[i].getRenderId().equals(propertyValue)) {
                     ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, 
-                            AccordionPane.INPUT_ACTIVE_TAB, child);
-                    break;
+                            AccordionPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY, new Integer(i));
+                    return;
                 }
             }
         }
@@ -313,11 +312,11 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
             }
         }
 
-        Component activeTabComponent = accordionPane.getActiveTab();
-        if (activeTabComponent != null) {
-            initElement.setAttribute("active-tab", activeTabComponent.getRenderId());
+        int activeTabIndex = accordionPane.getActiveTabIndex();
+        if (activeTabIndex != -1 && activeTabIndex < accordionPane.getVisibleComponentCount()) {
+            initElement.setAttribute("active-tab", accordionPane.getVisibleComponent(activeTabIndex).getRenderId());
         }
-        
+
         partElement.appendChild(initElement);
     }
     
@@ -381,15 +380,11 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
     }
     
     private void renderSetActiveTabDirective(RenderContext rc, ServerComponentUpdate update, AccordionPane accordionPane) {
-        Component activeTab = accordionPane.getActiveTab();
-        if (activeTab == null) {
-            return;
-        }
         String elementId = ContainerInstance.getElementId(accordionPane);
-        Element removePartElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
+        Element setActiveTabElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
                 "ExtrasAccordionPane.MessageProcessor", "set-active-tab");
-        removePartElement.setAttribute("eid", elementId);
-        removePartElement.setAttribute("tab-id", activeTab.getRenderId());
+        setActiveTabElement.setAttribute("eid", elementId);
+        setActiveTabElement.setAttribute("tab-index", Integer.toString(accordionPane.getActiveTabIndex()));
     }
     
     /**

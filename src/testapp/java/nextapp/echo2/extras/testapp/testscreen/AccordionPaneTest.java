@@ -219,14 +219,6 @@ public class AccordionPaneTest extends AbstractTest {
                 }
             }
         });
-        
-        testControlsPane.addButton(TestControlsPane.CATEGORY_SELECTION, "Select Tab Null", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (accordionPane.getComponentCount() > 0) {
-                    accordionPane.setActiveTab(null);
-                }
-            }
-        });
 
         // Integration Tests
         
