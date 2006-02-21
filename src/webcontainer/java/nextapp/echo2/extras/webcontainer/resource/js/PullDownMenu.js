@@ -452,6 +452,9 @@ ExtrasMenu.processMenuBarClick = function(echoEvent) {
     EchoDomUtil.preventEventDefault(echoEvent);
     var menuItemElement = echoEvent.target;
     var menuId = EchoDomUtil.getComponentId(menuItemElement.id);
+    if (menuId == null) {
+        return;
+    }
     var menu = ExtrasMenu.getComponent(menuId);
     menu.renderMaskAdd();
     menu.processSelection(menuItemElement);
