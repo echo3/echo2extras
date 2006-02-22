@@ -53,7 +53,8 @@ public class CalendarSelectTest extends AbstractTest {
         setStyleName("DefaultResizable");
         
         final CalendarSelect calendarSelect = new CalendarSelect();
-        setTestComponent(calendarSelect);
+        setTestComponent(this, calendarSelect);
+        add(calendarSelect);
         
         addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "foreground");
         addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "background");

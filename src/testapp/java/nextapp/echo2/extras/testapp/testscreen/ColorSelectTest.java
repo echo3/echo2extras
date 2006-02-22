@@ -50,11 +50,11 @@ public class ColorSelectTest extends AbstractTest {
             new Extent(128), new Extent(256), new Extent(512)};
 
     public ColorSelectTest() {
-        
         super("ColorSelect");
         
         final ColorSelect colorSelect = new ColorSelect();
-        setTestComponent(colorSelect);
+        add(colorSelect);
+        setTestComponent(this, colorSelect);
         
         // Properties
 

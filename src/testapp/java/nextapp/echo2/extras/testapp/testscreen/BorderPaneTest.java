@@ -49,7 +49,8 @@ public class BorderPaneTest extends AbstractTest {
         super("BorderPane");
         final BorderPane borderPane = new BorderPane();
         borderPane.setStyleName("Shadow");
-        setTestComponent(borderPane);
+        add(borderPane);
+        setTestComponent(this, borderPane);
         
         testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Small Label", new ActionListener() {
             public void actionPerformed(ActionEvent e) {

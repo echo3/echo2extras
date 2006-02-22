@@ -35,7 +35,6 @@ ExtrasMenu = function(elementId, containerElementId) {
     
     this.maskDeployed = false;
     
-    this.menuBarHeight = 24;
     this.menuBarBorderSize = 1;
     this.menuBarBorderStyle = "outset";
     this.menuBarBorderColor = "#cfcfcf";
@@ -101,19 +100,8 @@ ExtrasMenu.prototype.dispose = function() {
     this.renderMenuBarDispose();
 };
 
-ExtrasMenu.prototype.getElementModelId = function(menuItemElement) {
-    if (!menuItemElement.id) {
-        return this.getElementModelId(menuItemElement.parentNode);
-    }
-    if (menuItemElement.id.indexOf("_item_") == -1) {
-        return null;
-    }
-    var lastUnderscorePosition = menuItemElement.id.lastIndexOf("_");
-    return menuItemElement.id.substring(lastUnderscorePosition + 1);
-};
-
 ExtrasMenu.prototype.getItemElement = function(itemModel) {
-    var itemElement = document.getElementById(this.elementId + "_bar_item_" + itemModel.id);
+    var itemElement = document.getElementById(this.elementId + "_bar_td_item_" + itemModel.id);
     if (!itemElement) {
         itemElement = document.getElementById(this.elementId + "_tr_item_" + itemModel.id);
     }
@@ -128,12 +116,13 @@ ExtrasMenu.prototype.getMenuBorder = function() {
     return this.menuBorderSize + "px " + this.menuBorderStyle + " " + this.menuBorderColor;
 };
 
-ExtrasMenu.prototype.getTotalMenuBarHeight = function() {
-    return this.menuBarHeight + this.menuBarBorderSize * 2;
+ExtrasMenu.prototype.getMenuBarHeight = function() {
+    var menuBarDivElement = document.getElementById(this.elementId);
+    return menuBarDivElement.offsetHeight;
 };
 
 ExtrasMenu.prototype.isMenuBarItemElement = function(itemElement) {
-    return itemElement.id.indexOf("_bar_item") != -1;
+    return itemElement.id.indexOf("_bar_td_item") != -1;
 };
 
 ExtrasMenu.prototype.notifyServer = function(menuModel) {
@@ -159,7 +148,7 @@ ExtrasMenu.prototype.openMenu = function(menuModel) {
     var itemElement = this.getItemElement(menuModel);
     var bounds = new ExtrasUtil.Bounds(itemElement);
     if (this.isMenuBarItemElement(itemElement)) {
-        var offsetTop = (this.menuBarBorderSize * 2) + this.menuBarHeight + bounds.top;
+        var offsetTop = this.getMenuBarHeight() + bounds.top;
         this.renderMenuAdd(menuModel, bounds.left, offsetTop);
     } else {
         var menuDivElement = itemElement.parentNode.parentNode.parentNode;
@@ -169,13 +158,13 @@ ExtrasMenu.prototype.openMenu = function(menuModel) {
 };
 
 ExtrasMenu.prototype.processCancel = function() {
-    this.renderMaskRemove();
+    this.renderMenuBarMaskRemove();
     this.closeDescendantMenus(null);
 };
 
 ExtrasMenu.prototype.processItemActivate = function(itemModel) {
     if (itemModel instanceof ExtrasMenu.OptionModel) {
-        this.renderMaskRemove();
+        this.renderMenuBarMaskRemove();
         this.closeDescendantMenus(null);
         this.notifyServer(itemModel);
     } else if (itemModel instanceof ExtrasMenu.MenuModel) {
@@ -183,104 +172,10 @@ ExtrasMenu.prototype.processItemActivate = function(itemModel) {
     }
 };
 
-ExtrasMenu.prototype.processSelection = function(menuItemElement) {
-    var modelId = this.getElementModelId(menuItemElement);
+ExtrasMenu.prototype.processSelection = function(modelId) {
     var menuItemModel = this.menuModel.getItem(modelId);
     this.processItemActivate(menuItemModel);
 };
-
-ExtrasMenu.prototype.renderMaskAdd = function() {
-    if (this.maskDeployed) {
-        return;
-    }
-    this.maskDeployed = true;
-    
-    var menuDivElement = document.getElementById(this.elementId);
-    var bounds = new ExtrasUtil.Bounds(menuDivElement);
-    var bodyElement = document.getElementsByTagName("body")[0];    
-    bounds.height = this.getTotalMenuBarHeight();
-    
-    var topBlockDivElement = document.createElement("div");
-    topBlockDivElement.id = this.elementId + "_block_top";
-    topBlockDivElement.style.position = "absolute";
-    topBlockDivElement.style.top = "0px";
-    topBlockDivElement.style.left = "0px";
-    topBlockDivElement.style.width = "100%";
-    topBlockDivElement.style.height = bounds.top + "px";
-    if (this.transparentImageSrc) {
-        topBlockDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
-    }
-    bodyElement.appendChild(topBlockDivElement);
-    EchoEventProcessor.addHandler(topBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
-
-    var bottomBlockDivElement = document.createElement("div");
-    bottomBlockDivElement.id = this.elementId + "_block_bottom";
-    bottomBlockDivElement.style.position = "absolute";
-    bottomBlockDivElement.style.height = (document.documentElement.clientHeight - (bounds.top + bounds.height)) + "px";
-    bottomBlockDivElement.style.left = "0px";
-    bottomBlockDivElement.style.width = "100%";
-    bottomBlockDivElement.style.bottom = "0px";
-    if (this.transparentImageSrc) {
-        bottomBlockDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
-    }
-    bodyElement.appendChild(bottomBlockDivElement);
-    EchoEventProcessor.addHandler(bottomBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
-
-    var leftBlockDivElement = document.createElement("div");
-    leftBlockDivElement.id = this.elementId + "_block_left";
-    leftBlockDivElement.style.position = "absolute";
-    leftBlockDivElement.style.top = bounds.top + "px";
-    leftBlockDivElement.style.left = "0px";
-    leftBlockDivElement.style.width = bounds.left + "px";
-    leftBlockDivElement.style.height = bounds.height + "px";
-    if (this.transparentImageSrc) {
-        leftBlockDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
-    }
-    bodyElement.appendChild(leftBlockDivElement);
-    EchoEventProcessor.addHandler(leftBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
-
-    var rightBlockDivElement = document.createElement("div");
-    rightBlockDivElement.id = this.elementId + "_block_right";
-    rightBlockDivElement.style.position = "absolute";
-    rightBlockDivElement.style.top = bounds.top + "px";
-    rightBlockDivElement.style.right = "0px";
-    rightBlockDivElement.style.height = bounds.height + "px";
-    rightBlockDivElement.style.width = (document.documentElement.clientWidth - (bounds.left + bounds.width)) + "px";
-    if (this.transparentImageSrc) {
-        rightBlockDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
-    }
-    bodyElement.appendChild(rightBlockDivElement);
-    EchoEventProcessor.addHandler(rightBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
-};
-
-ExtrasMenu.prototype.renderMaskRemove = function() {
-    if (!this.maskDeployed) {
-        return;
-    }
-    this.maskDeployed = false;
-
-    var bodyElement = document.getElementsByTagName("body")[0];    
-    var topBlockDivElement = document.getElementById(this.elementId + "_block_top");
-    if (topBlockDivElement) {
-        EchoEventProcessor.removeHandler(topBlockDivElement.id, "click");
-        bodyElement.removeChild(topBlockDivElement);
-    }
-    var bottomBlockDivElement = document.getElementById(this.elementId + "_block_bottom");
-    if (bottomBlockDivElement) {
-        EchoEventProcessor.removeHandler(bottomBlockDivElement.id, "click");
-        bodyElement.removeChild(bottomBlockDivElement);
-    }
-    var leftBlockDivElement = document.getElementById(this.elementId + "_block_left");
-    if (leftBlockDivElement) {
-        EchoEventProcessor.removeHandler(leftBlockDivElement.id, "click");
-        bodyElement.removeChild(leftBlockDivElement);
-    }
-    var rightBlockDivElement = document.getElementById(this.elementId + "_block_right");
-    if (rightBlockDivElement) {
-        EchoEventProcessor.removeHandler(rightBlockDivElement.id, "click");
-        bodyElement.removeChild(rightBlockDivElement);
-    }
-}
 
 ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
     var menuDivElement = document.createElement("div");
@@ -338,8 +233,8 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
     bodyElement.appendChild(menuDivElement);
 
     EchoEventProcessor.addHandler(menuDivElement.id, "click", "ExtrasMenu.processMenuItemClick");
-    EchoEventProcessor.addHandler(menuDivElement.id, "mouseover", "ExtrasMenu.processMenuBarMouseOver");
-    EchoEventProcessor.addHandler(menuDivElement.id, "mouseout", "ExtrasMenu.processMenuBarMouseOut");
+    EchoEventProcessor.addHandler(menuDivElement.id, "mouseover", "ExtrasMenu.processMenuItemMouseOver");
+    EchoEventProcessor.addHandler(menuDivElement.id, "mouseout", "ExtrasMenu.processMenuItemMouseOut");
 };
 
 ExtrasMenu.prototype.renderMenuDispose = function(menuModel) {
@@ -361,13 +256,15 @@ ExtrasMenu.prototype.renderMenuBarAdd = function() {
     menuBarDivElement.style.position = "absolute";
     menuBarDivElement.style.left = "0px";
     menuBarDivElement.style.right = "0px";
-    menuBarDivElement.style.height = this.menuBarHeight + "px";
+    menuBarDivElement.style.top = "0px";
+    menuBarDivElement.style.bottom = "0px";
     
     menuBarDivElement.style.backgroundColor = this.menuBarBackground;
     menuBarDivElement.style.borderTop = this.getMenuBarBorder();
     menuBarDivElement.style.borderBottom = this.getMenuBarBorder();
     
     var menuBarTableElement = document.createElement("table");
+    menuBarTableElement.style.height = "100%";
     menuBarTableElement.style.borderCollapse = "collapse";
     menuBarDivElement.appendChild(menuBarTableElement);
     
@@ -382,11 +279,12 @@ ExtrasMenu.prototype.renderMenuBarAdd = function() {
             if (this.menuModel.items[i] instanceof ExtrasMenu.OptionModel
                     || this.menuModel.items[i] instanceof ExtrasMenu.MenuModel) {
                 var menuBarItemTdElement = document.createElement("td");
+                menuBarItemTdElement.id = this.elementId + "_bar_td_item_" + this.menuModel.items[i].id;
                 menuBarItemTdElement.style.padding = "0px";
+                menuBarItemTdElement.style.height = "100%";
+                menuBarItemTdElement.style.cursor = "pointer";
                 menuBarTrElement.appendChild(menuBarItemTdElement);
                 var menuBarItemDivElement = document.createElement("div");
-                menuBarItemDivElement.id = this.elementId + "_bar_item_" + this.menuModel.items[i].id;
-                menuBarItemDivElement.style.cursor = "pointer";
                 menuBarItemDivElement.style.padding = this.menuBarItemInsets;
                 menuBarItemTdElement.appendChild(menuBarItemDivElement);
                 var textNode = document.createTextNode(this.menuModel.items[i].text);
@@ -398,10 +296,9 @@ ExtrasMenu.prototype.renderMenuBarAdd = function() {
     containerElement.appendChild(menuBarDivElement);
 
     EchoVirtualPosition.register(menuBarDivElement.id);
-
     EchoEventProcessor.addHandler(this.elementId, "click", "ExtrasMenu.processMenuBarClick");
-    EchoEventProcessor.addHandler(this.elementId, "mouseover", "ExtrasMenu.processMenuBarMouseOver");
-    EchoEventProcessor.addHandler(this.elementId, "mouseout", "ExtrasMenu.processMenuBarMouseOut");
+    EchoEventProcessor.addHandler(this.elementId, "mouseover", "ExtrasMenu.processMenuItemMouseOver");
+    EchoEventProcessor.addHandler(this.elementId, "mouseout", "ExtrasMenu.processMenuItemMouseOut");
 };
 
 ExtrasMenu.prototype.renderMenuBarDispose = function() {
@@ -409,6 +306,101 @@ ExtrasMenu.prototype.renderMenuBarDispose = function() {
     EchoEventProcessor.removeHandler(this.elementId, "mouseover");
     EchoEventProcessor.removeHandler(this.elementId, "mouseout");
 };
+
+ExtrasMenu.prototype.renderMenuBarMaskAdd = function() {
+    if (this.maskDeployed) {
+        return;
+    }
+    this.maskDeployed = true;
+    
+    var menuDivElement = document.getElementById(this.elementId);
+    var bounds = new ExtrasUtil.Bounds(menuDivElement);
+    var bodyElement = document.getElementsByTagName("body")[0];    
+    bounds.height = this.getMenuBarHeight();
+    
+    var topBlockDivElement = document.createElement("div");
+    topBlockDivElement.id = this.elementId + "_block_top";
+    topBlockDivElement.style.position = "absolute";
+    topBlockDivElement.style.top = "0px";
+    topBlockDivElement.style.left = "0px";
+    topBlockDivElement.style.width = "100%";
+    topBlockDivElement.style.height = bounds.top + "px";
+    if (this.transparentImageSrc) {
+        topBlockDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
+    }
+    bodyElement.appendChild(topBlockDivElement);
+    EchoEventProcessor.addHandler(topBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
+
+    var bottomBlockDivElement = document.createElement("div");
+    bottomBlockDivElement.id = this.elementId + "_block_bottom";
+    bottomBlockDivElement.style.position = "absolute";
+    var height = (document.documentElement.clientHeight - (bounds.top + bounds.height));
+    height = height > 0 ? height : 0;
+    bottomBlockDivElement.style.height = height + "px";
+    bottomBlockDivElement.style.left = "0px";
+    bottomBlockDivElement.style.width = "100%";
+    bottomBlockDivElement.style.bottom = "0px";
+    if (this.transparentImageSrc) {
+        bottomBlockDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
+    }
+    bodyElement.appendChild(bottomBlockDivElement);
+    EchoEventProcessor.addHandler(bottomBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
+
+    var leftBlockDivElement = document.createElement("div");
+    leftBlockDivElement.id = this.elementId + "_block_left";
+    leftBlockDivElement.style.position = "absolute";
+    leftBlockDivElement.style.top = bounds.top + "px";
+    leftBlockDivElement.style.left = "0px";
+    leftBlockDivElement.style.width = bounds.left + "px";
+    leftBlockDivElement.style.height = bounds.height + "px";
+    if (this.transparentImageSrc) {
+        leftBlockDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
+    }
+    bodyElement.appendChild(leftBlockDivElement);
+    EchoEventProcessor.addHandler(leftBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
+
+    var rightBlockDivElement = document.createElement("div");
+    rightBlockDivElement.id = this.elementId + "_block_right";
+    rightBlockDivElement.style.position = "absolute";
+    rightBlockDivElement.style.top = bounds.top + "px";
+    rightBlockDivElement.style.right = "0px";
+    rightBlockDivElement.style.height = bounds.height + "px";
+    rightBlockDivElement.style.width = (document.documentElement.clientWidth - (bounds.left + bounds.width)) + "px";
+    if (this.transparentImageSrc) {
+        rightBlockDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
+    }
+    bodyElement.appendChild(rightBlockDivElement);
+    EchoEventProcessor.addHandler(rightBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
+};
+
+ExtrasMenu.prototype.renderMenuBarMaskRemove = function() {
+    if (!this.maskDeployed) {
+        return;
+    }
+    this.maskDeployed = false;
+
+    var bodyElement = document.getElementsByTagName("body")[0];    
+    var topBlockDivElement = document.getElementById(this.elementId + "_block_top");
+    if (topBlockDivElement) {
+        EchoEventProcessor.removeHandler(topBlockDivElement.id, "click");
+        bodyElement.removeChild(topBlockDivElement);
+    }
+    var bottomBlockDivElement = document.getElementById(this.elementId + "_block_bottom");
+    if (bottomBlockDivElement) {
+        EchoEventProcessor.removeHandler(bottomBlockDivElement.id, "click");
+        bodyElement.removeChild(bottomBlockDivElement);
+    }
+    var leftBlockDivElement = document.getElementById(this.elementId + "_block_left");
+    if (leftBlockDivElement) {
+        EchoEventProcessor.removeHandler(leftBlockDivElement.id, "click");
+        bodyElement.removeChild(leftBlockDivElement);
+    }
+    var rightBlockDivElement = document.getElementById(this.elementId + "_block_right");
+    if (rightBlockDivElement) {
+        EchoEventProcessor.removeHandler(rightBlockDivElement.id, "click");
+        bodyElement.removeChild(rightBlockDivElement);
+    }
+}
 
 ExtrasMenu.prototype.setHighlight = function(itemModel, state) {
     var itemElement = this.getItemElement(itemModel);
@@ -439,6 +431,17 @@ ExtrasMenu.getComponent = function(componentId) {
     return EchoDomPropertyStore.getPropertyValue(componentId, "component");
 };
 
+ExtrasMenu.getElementModelId = function(menuItemElement) {
+    if (!menuItemElement.id) {
+        return ExtrasMenu.getElementModelId(menuItemElement.parentNode);
+    }
+    if (menuItemElement.id.indexOf("_item_") == -1) {
+        return null;
+    }
+    var lastUnderscorePosition = menuItemElement.id.lastIndexOf("_");
+    return menuItemElement.id.substring(lastUnderscorePosition + 1);
+};
+
 ExtrasMenu.getItemPath = function(itemModel) {
     var path = new Array();
     while (itemModel.parent != null) {
@@ -450,32 +453,43 @@ ExtrasMenu.getItemPath = function(itemModel) {
 
 ExtrasMenu.processMenuBarClick = function(echoEvent) {
     EchoDomUtil.preventEventDefault(echoEvent);
+
     var menuItemElement = echoEvent.target;
-    var menuId = EchoDomUtil.getComponentId(menuItemElement.id);
+    var modelId = ExtrasMenu.getElementModelId(menuItemElement);
+    var menuId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
     if (menuId == null) {
         return;
     }
     var menu = ExtrasMenu.getComponent(menuId);
-    menu.renderMaskAdd();
-    menu.processSelection(menuItemElement);
+    
+    menu.renderMenuBarMaskAdd();
+    menu.processSelection(modelId);
 };
 
-ExtrasMenu.processMenuBarMouseOut = function(echoEvent) {
+ExtrasMenu.processMenuItemMouseOut = function(echoEvent) {
     var menuItemElement = echoEvent.target;
+    var modelId = ExtrasMenu.getElementModelId(menuItemElement);
     var menuId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    if (menuId == null) {
+        return;
+    }
     var menu = ExtrasMenu.getComponent(menuId);
-    var modelId = menu.getElementModelId(menuItemElement);
+
     var itemModel = menu.menuModel.getItem(modelId);
     if (itemModel) {
         menu.setHighlight(itemModel, false);
     }
 };
 
-ExtrasMenu.processMenuBarMouseOver = function(echoEvent) {
+ExtrasMenu.processMenuItemMouseOver = function(echoEvent) {
     var menuItemElement = echoEvent.target;
+    var modelId = ExtrasMenu.getElementModelId(menuItemElement);
     var menuId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    if (menuId == null) {
+        return;
+    }
     var menu = ExtrasMenu.getComponent(menuId);
-    var modelId = menu.getElementModelId(menuItemElement);
+    
     var itemModel = menu.menuModel.getItem(modelId);
     if (itemModel) {
         menu.setHighlight(itemModel, true);
@@ -483,13 +497,14 @@ ExtrasMenu.processMenuBarMouseOver = function(echoEvent) {
 };
 
 ExtrasMenu.processMenuItemClick = function(echoEvent) {
-    var trElement = echoEvent.target.parentNode;
-    if (!trElement || trElement.id.indexOf("_tr_item_") == -1) {
+    var menuItemElement = echoEvent.target;
+    var modelId = ExtrasMenu.getElementModelId(menuItemElement);
+    var menuId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    if (menuId == null) {
         return;
     }
-    var menuId = EchoDomUtil.getComponentId(trElement.id);
     var menu = ExtrasMenu.getComponent(menuId);
-    menu.processSelection(trElement);
+    menu.processSelection(modelId);
 };
 
 ExtrasMenu.processMenuCancel = function(echoEvent) {

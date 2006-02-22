@@ -44,7 +44,8 @@ import nextapp.echo2.app.event.ActionListener;
 
 public class AbstractTest extends SplitPane {
 
-    private Component component;
+    private Component testComponentParent;
+    private Component testComponent;
     protected TestControlsPane testControlsPane;
     
     public AbstractTest(String testName) {
@@ -56,12 +57,9 @@ public class AbstractTest extends SplitPane {
         add(testControlsPane);
     }
     
-    protected void setTestComponent(Component component) {
-        if (getComponentCount() == 2) {
-            remove(1);
-        }
-        this.component = component;
-        add(component);
+    protected void setTestComponent(Component testComponentParent, Component testComponent) {
+        this.testComponentParent = testComponentParent;
+        this.testComponent = testComponent;
     }
     
     protected void addBooleanPropertyTests(String category, final String propertyName) {
@@ -189,27 +187,27 @@ public class AbstractTest extends SplitPane {
 
         testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Add Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (getComponentCount() < 2) {
-                    add(component);
+                if (testComponentParent.indexOf(testComponent) == -1) {
+                    testComponentParent.add(testComponent);
                 }
             }
         });
 
         testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Remove Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                remove(component);
+                testComponentParent.remove(testComponent);
             }
         });
         
         testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Enable Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                component.setEnabled(true);
+                testComponent.setEnabled(true);
             }
         });
 
         testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Disable Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                component.setEnabled(false);
+                testComponent.setEnabled(false);
             }
         });
     }
@@ -217,8 +215,8 @@ public class AbstractTest extends SplitPane {
     private Object getTestComponentProperty(String propertyName) {
         try {
             String methodName = "get" + Character.toUpperCase(propertyName.charAt(0)) +  propertyName.substring(1);
-            Method setPropertyMethod = component.getClass().getMethod(methodName, new Class[]{});
-            return setPropertyMethod.invoke(component, new Object[]{});
+            Method setPropertyMethod = testComponent.getClass().getMethod(methodName, new Class[]{});
+            return setPropertyMethod.invoke(testComponent, new Object[]{});
         } catch (NoSuchMethodException ex) {
             InteractiveApp.getApp().consoleWrite(ex.toString());
         } catch (IllegalArgumentException ex) {
@@ -234,8 +232,8 @@ public class AbstractTest extends SplitPane {
     private void setTestComponentProperty(String propertyName, Class propertyClass, Object newValue) {
         try {
             String methodName = "set" + Character.toUpperCase(propertyName.charAt(0)) +  propertyName.substring(1);
-            Method setPropertyMethod = component.getClass().getMethod(methodName, new Class[]{propertyClass});
-            setPropertyMethod.invoke(component, new Object[]{newValue});
+            Method setPropertyMethod = testComponent.getClass().getMethod(methodName, new Class[]{propertyClass});
+            setPropertyMethod.invoke(testComponent, new Object[]{newValue});
         } catch (NoSuchMethodException ex) {
             InteractiveApp.getApp().consoleWrite(ex.toString());
         } catch (IllegalArgumentException ex) {

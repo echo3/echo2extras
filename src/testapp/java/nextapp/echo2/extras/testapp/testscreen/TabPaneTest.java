@@ -57,7 +57,8 @@ public class TabPaneTest extends AbstractTest {
         super("TabPane");
         
         final TabPane tabPane = new TabPane();
-        setTestComponent(tabPane);
+        add(tabPane);
+        setTestComponent(this, tabPane);
         
         // Add/Remove Tabs
 

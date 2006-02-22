@@ -40,7 +40,10 @@ import nextapp.echo2.extras.app.menu.MenuModel;
 import nextapp.echo2.extras.app.menu.OptionModel;
 
 /**
- * A pull-down menu pane.
+ * A pull-down menu pane.  This component should generally be used as a child 
+ * of a vertically-oriented <code>SplitPane</code> component.  For a 
+ * "traditional looking" pulldown menu bar with normal-sized fonts, set the 
+ * height of the containing region to between 26 and 32 pixels.
  */
 public class MenuBarPane extends Component 
 implements Pane {

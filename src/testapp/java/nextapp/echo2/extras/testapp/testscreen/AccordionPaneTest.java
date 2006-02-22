@@ -54,8 +54,10 @@ public class AccordionPaneTest extends AbstractTest {
 
     public AccordionPaneTest() {
         super("AccordionPane");
+        
         final AccordionPane accordionPane = new AccordionPane();
-        setTestComponent(accordionPane);
+        add(accordionPane);
+        setTestComponent(this, accordionPane);
         
         testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Add Label (No LayoutData)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {

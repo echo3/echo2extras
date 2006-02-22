@@ -50,10 +50,16 @@ import nextapp.echo2.extras.testapp.TestControlsPane;
  * Interactive test module for <code>MenuBarPane</code>s.
  */
 public class MenuBarPaneTest extends AbstractTest {
+    
+    private static final Extent DEFAULT_MENU_HEIGHT = new Extent(26);
 
     public MenuBarPaneTest() {
         super("MenuBarPane");
-
+        
+        SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, DEFAULT_MENU_HEIGHT);
+        splitPane.setStyleName("DefaultResizable");
+        add(splitPane);
+        
         final MenuBarPane menu = new MenuBarPane(createMenuModel());
         menu.addActionListener(new ActionListener(){
         
@@ -61,7 +67,9 @@ public class MenuBarPaneTest extends AbstractTest {
                 InteractiveApp.getApp().consoleWrite("Menu action: menu=" + e.getSource() + ", command=" + e.getActionCommand());
             }
         });
-        setTestComponent(menu);
+        splitPane.add(menu);
+        
+        setTestComponent(splitPane, menu);
 
         addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "foreground");
         addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "background");
@@ -75,7 +83,7 @@ public class MenuBarPaneTest extends AbstractTest {
                 WindowPane windowPane = new WindowPane();
                 windowPane.setTitle("Menu Test Window");
                 windowPane.setStyleName("Default");
-                SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM, new Extent(32));
+                SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM, DEFAULT_MENU_HEIGHT);
                 windowPane.add(splitPane);
                 MenuBarPane menu = new MenuBarPane(createMenuModel());
                 menu.addActionListener(new ActionListener() {
