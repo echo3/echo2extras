@@ -77,6 +77,19 @@ public class AccordionPaneTest extends AbstractTest {
             }
         });
 
+        testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Add and Select Label", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Label label = new Label("Tab Pane Child " + tabNumber);
+                label.setBackground(StyleUtil.randomBrightColor());
+                AccordionPaneLayoutData layoutData = new AccordionPaneLayoutData();
+                layoutData.setTitle("Label #" + tabNumber);
+                label.setLayoutData(layoutData);
+                accordionPane.add(label);
+                ++tabNumber;
+                accordionPane.setActiveTabIndex(accordionPane.visibleIndexOf(label));
+            }
+        });
+
         testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Add Label (index 0)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Label label = new Label("Tab Pane Child " + tabNumber);

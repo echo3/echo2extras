@@ -845,7 +845,7 @@ ExtrasAccordionPane.MessageProcessor.processRemoveTab = function(removeTabMessag
  */
 ExtrasAccordionPane.MessageProcessor.processSetActiveTab = function(setActiveTabMessageElement) {
     var elementId = setActiveTabMessageElement.getAttribute("eid");
-    var tabId = setActiveTabMessageElement.getAttribute("tab-id");
+    var tabId = setActiveTabMessageElement.getAttribute("active-tab");
     var accordionPane = ExtrasAccordionPane.getComponent(elementId);
     accordionPane.selectTab(tabId);
 };

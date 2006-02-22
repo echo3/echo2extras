@@ -380,11 +380,17 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
     }
     
     private void renderSetActiveTabDirective(RenderContext rc, ServerComponentUpdate update, AccordionPane accordionPane) {
+        int activeTabIndex = accordionPane.getActiveTabIndex();
+        if (activeTabIndex == -1 || activeTabIndex >= accordionPane.getVisibleComponentCount()) {
+            // Do nothing.
+            return;
+        }
+        
         String elementId = ContainerInstance.getElementId(accordionPane);
         Element setActiveTabElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
                 "ExtrasAccordionPane.MessageProcessor", "set-active-tab");
         setActiveTabElement.setAttribute("eid", elementId);
-        setActiveTabElement.setAttribute("tab-index", Integer.toString(accordionPane.getActiveTabIndex()));
+        setActiveTabElement.setAttribute("active-tab", accordionPane.getVisibleComponent(activeTabIndex).getRenderId());
     }
     
     /**
@@ -413,11 +419,11 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
             if (update.hasRemovedChildren()) {
                 renderRemoveChildren(rc, update);
             }
-            if (update.hasUpdatedProperties()) {
-                partialUpdateManager.process(rc, update);
-            }
             if (update.hasAddedChildren()) {
                 renderAddChildren(rc, update);
+            }
+            if (update.hasUpdatedProperties()) {
+                partialUpdateManager.process(rc, update);
             }
         }
         
