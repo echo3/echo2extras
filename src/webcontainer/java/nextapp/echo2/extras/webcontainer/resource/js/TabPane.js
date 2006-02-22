@@ -600,7 +600,7 @@ ExtrasTabPane.MessageProcessor.processRemoveTab = function(removeTabMessageEleme
  */
 ExtrasTabPane.MessageProcessor.processSetActiveTab = function(setActiveTabMessageElement) {
     var tabPaneId = setActiveTabMessageElement.getAttribute("eid");
-    var tabId = setActiveTabMessageElement.getAttribute("tab-id");
+    var tabId = setActiveTabMessageElement.getAttribute("active-tab");
     var tabPane = ExtrasTabPane.getComponent(tabPaneId);
     tabPane.selectTab(tabId);
 };

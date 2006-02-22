@@ -330,11 +330,17 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
     }
     
     private void renderSetActiveTabDirective(RenderContext rc, ServerComponentUpdate update, TabPane tabPane) {
+        int activeTabIndex = tabPane.getActiveTabIndex();
+        if (activeTabIndex == -1 || activeTabIndex >= tabPane.getVisibleComponentCount()) {
+            // Do nothing.
+            return;
+        }
+        
         String elementId = ContainerInstance.getElementId(tabPane);
         Element setActiveTabElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
                 "ExtrasTabPane.MessageProcessor", "set-active-tab");
         setActiveTabElement.setAttribute("eid", elementId);
-        setActiveTabElement.setAttribute("tab-index", Integer.toString(tabPane.getActiveTabIndex()));
+        setActiveTabElement.setAttribute("active-tab", tabPane.getVisibleComponent(activeTabIndex).getRenderId());
     }
     
     /**
@@ -362,11 +368,11 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
             if (update.hasRemovedChildren()) {
                 renderRemoveChildren(rc, update);
             }
-            if (update.hasUpdatedProperties()) {
-                partialUpdateManager.process(rc, update);
-            }
             if (update.hasAddedChildren()) {
                 renderAddChildren(rc, update);
+            }
+            if (update.hasUpdatedProperties()) {
+                partialUpdateManager.process(rc, update);
             }
         }
         
