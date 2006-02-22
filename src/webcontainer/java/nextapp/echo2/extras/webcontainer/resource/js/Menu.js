@@ -473,6 +473,10 @@ ExtrasMenu.processMenuBarClick = function(echoEvent) {
         return;
     }
     var menu = ExtrasMenu.getComponent(menuId);
+
+    if (!menu.enabled || !EchoClientEngine.verifyInput(menuId, false)) {
+        return;
+    }
     
     menu.renderMenuBarMaskAdd();
     menu.processSelection(modelId);
@@ -486,6 +490,10 @@ ExtrasMenu.processMenuItemMouseOut = function(echoEvent) {
         return;
     }
     var menu = ExtrasMenu.getComponent(menuId);
+
+    if (!menu.enabled || !EchoClientEngine.verifyInput(menuId, false)) {
+        return;
+    }
 
     var itemModel = menu.menuModel.getItem(modelId);
     if (itemModel) {
@@ -501,6 +509,10 @@ ExtrasMenu.processMenuItemMouseOver = function(echoEvent) {
         return;
     }
     var menu = ExtrasMenu.getComponent(menuId);
+
+    if (!menu.enabled || !EchoClientEngine.verifyInput(menuId, false)) {
+        return;
+    }
     
     var itemModel = menu.menuModel.getItem(modelId);
     if (itemModel) {
@@ -516,6 +528,11 @@ ExtrasMenu.processMenuItemClick = function(echoEvent) {
         return;
     }
     var menu = ExtrasMenu.getComponent(menuId);
+    
+    if (!menu.enabled || !EchoClientEngine.verifyInput(menuId, false)) {
+        return;
+    }
+    
     menu.processSelection(modelId);
 };
 
