@@ -34,6 +34,7 @@ import java.util.StringTokenizer;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.update.ServerComponentUpdate;
@@ -47,6 +48,7 @@ import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.RenderContext;
+import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
@@ -174,11 +176,35 @@ implements ActionProcessor, ComponentSynchronizePeer {
         
         Color background = (Color) menu.getRenderProperty(MenuBarPane.PROPERTY_BACKGROUND);
         if (background != null) {
-            initElement.setAttribute("default-background", ColorRender.renderCssAttributeValue(background));
+            initElement.setAttribute("background", ColorRender.renderCssAttributeValue(background));
+        }
+        Border border = (Border) menu.getRenderProperty(MenuBarPane.PROPERTY_BORDER);
+        if (border != null) {
+            initElement.setAttribute("border", BorderRender.renderCssAttributeValue(border));
         }
         Color foreground = (Color) menu.getRenderProperty(MenuBarPane.PROPERTY_FOREGROUND);
         if (foreground != null) {
-            initElement.setAttribute("default-foreground", ColorRender.renderCssAttributeValue(foreground));
+            initElement.setAttribute("foreground", ColorRender.renderCssAttributeValue(foreground));
+        }
+        Color menuBackground = (Color) menu.getRenderProperty(MenuBarPane.PROPERTY_MENU_BACKGROUND);
+        if (menuBackground != null) {
+            initElement.setAttribute("menu-background", ColorRender.renderCssAttributeValue(menuBackground));
+        }
+        Border menuBorder = (Border) menu.getRenderProperty(MenuBarPane.PROPERTY_MENU_BORDER);
+        if (menuBorder != null) {
+            initElement.setAttribute("menu-border", BorderRender.renderCssAttributeValue(menuBorder));
+        }
+        Color menuForeground = (Color) menu.getRenderProperty(MenuBarPane.PROPERTY_MENU_FOREGROUND);
+        if (menuForeground != null) {
+            initElement.setAttribute("menu-foreground", ColorRender.renderCssAttributeValue(menuForeground));
+        }
+        Color selectionBackground = (Color) menu.getRenderProperty(MenuBarPane.PROPERTY_SELECTION_BACKGROUND);
+        if (selectionBackground != null) {
+            initElement.setAttribute("selection-background", ColorRender.renderCssAttributeValue(selectionBackground));
+        }
+        Color selectionForeground = (Color) menu.getRenderProperty(MenuBarPane.PROPERTY_SELECTION_FOREGROUND);
+        if (selectionForeground != null) {
+            initElement.setAttribute("selection-foreground", ColorRender.renderCssAttributeValue(selectionForeground));
         }
         
         renderModel(rc, menu.getModel(), initElement);

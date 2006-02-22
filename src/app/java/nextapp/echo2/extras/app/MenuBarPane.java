@@ -31,6 +31,8 @@ package nextapp.echo2.extras.app;
 
 import java.util.EventListener;
 
+import nextapp.echo2.app.Border;
+import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Pane;
 import nextapp.echo2.app.event.ActionEvent;
@@ -48,8 +50,15 @@ import nextapp.echo2.extras.app.menu.OptionModel;
 public class MenuBarPane extends Component 
 implements Pane {
     
-    public static final String MODEL_CHANGED_PROPERTY = "model";
     public static final String INPUT_SELECT = "select";
+    public static final String MODEL_CHANGED_PROPERTY = "model";
+
+    public static final String PROPERTY_BORDER = "border";
+    public static final String PROPERTY_MENU_BACKGROUND = "menuBackground";
+    public static final String PROPERTY_MENU_BORDER = "menuBorder";
+    public static final String PROPERTY_MENU_FOREGROUND = "menuForeground";
+    public static final String PROPERTY_SELECTION_BACKGROUND = "selectionBackground";
+    public static final String PROPERTY_SELECTION_FOREGROUND = "selectionForeground";
     
     private MenuModel model;
     
@@ -99,12 +108,79 @@ implements Pane {
     }
     
     /**
+     * Returns the border that will be displayed around the 
+     * <code>MenuBarPane</code>.  This border will also be used around
+     * pull-down menus in the event that a menu border is not specified.
+     * 
+     * @return the default border
+     */
+    public Border getBorder() {
+        return (Border) getProperty(PROPERTY_BORDER);
+    }
+    
+    /**
+     * Returns the background color that will be displayed in pull-down
+     * menus.  Use this property only if a color different from
+     * the one used for the menu bar is desired for pull-down menus
+     * (otherwise use only the "brackground" property").
+     * 
+     * @return the menu background
+     */
+    public Color getMenuBackground() {
+        return (Color) getProperty(PROPERTY_MENU_BACKGROUND);
+    }
+    
+    /**
+     * Returns the border that will be displayed around pull-down
+     * menus.  Use this property only if a border different from
+     * the one used for the menu bar is desired for pull-down menus
+     * (otherwise use only the "border" property").
+     * 
+     * @return the menu border
+     */
+    public Border getMenuBorder() {
+        return (Border) getProperty(PROPERTY_MENU_BORDER);
+    }
+    
+    /**
+     * Returns the foreground color that will be displayed in pull-down
+     * menus.  Use this property only if a color different from
+     * the one used for the menu bar is desired for pull-down menus
+     * (otherwise use only the "foreground" property").
+     * 
+     * @return the menu foreground
+     */
+    public Color getMenuForeground() {
+        return (Color) getProperty(PROPERTY_MENU_FOREGROUND);
+    }
+    
+    /**
      * Returns the model
      * 
      * @return the model
      */
     public MenuModel getModel() {
         return model;
+    }
+    
+    /**
+     * Returns the background color used to highlight the currently 
+     * selected menu item.
+     * 
+     * @return the selection background
+     */
+    public Color getSelectionBackground() {
+        return (Color) getProperty(PROPERTY_SELECTION_BACKGROUND);
+    }
+    
+    /**
+     * Returns the foreground color used to highlight the currently 
+     * selected menu item.
+     * 
+     * @return the selection foreground
+     */
+    public Color getSelectionForeground() {
+        return (Color) getProperty(PROPERTY_SELECTION_FOREGROUND);
     }
 
     /**
@@ -128,6 +204,53 @@ implements Pane {
     }
     
     /**
+     * Sets the border that will be displayed around the 
+     * <code>MenuBarPane</code>.  This border will also be used around
+     * pull-down menus in the event that a menu border is not specified.
+     * 
+     * @param newValue the new default border
+     */
+    public void setBorder(Border newValue) {
+        setProperty(PROPERTY_BORDER, newValue);
+    }
+    
+    /**
+     * Sets the background color that will be displayed in pull-down
+     * menus.  Use this property only if a color different from
+     * the one used for the menu bar is desired for pull-down menus
+     * (otherwise use only the "brackground" property").
+     * 
+     * @param newValue the new menu background
+     */
+    public void setMenuBackground(Color newValue) {
+        setProperty(PROPERTY_MENU_BACKGROUND, newValue);
+    }
+    
+    /**
+     * Sets the border that will be displayed around pull-down
+     * menus.  Use this property only if a border different from
+     * the one used for the menu bar is desired for pull-down menus
+     * (otherwise use only the "border" property").
+     * 
+     * @param newValue the new menu border
+     */
+    public void setMenuBorder(Border newValue) {
+        setProperty(PROPERTY_MENU_BORDER, newValue);
+    }
+    
+    /**
+     * Sets the foreground color that will be displayed in pull-down
+     * menus.  Use this property only if a color different from
+     * the one used for the menu bar is desired for pull-down menus
+     * (otherwise use only the "foreground" property").
+     * 
+     * @param newValue the new menu foreground
+     */
+    public void setMenuForeground(Color newValue) {
+        setProperty(PROPERTY_MENU_FOREGROUND, newValue);
+    }
+    
+    /**
      * Sets the model.
      * 
      * @param newValue the new model
@@ -136,5 +259,25 @@ implements Pane {
         MenuModel oldValue = model;
         model = newValue;
         firePropertyChange(MODEL_CHANGED_PROPERTY, oldValue, newValue);
+    }
+    
+    /**
+     * Sets the background color used to highlight the currently 
+     * selected menu item.
+     * 
+     * @param newValue the new selection background
+     */
+    public void setSelectionBackground(Color newValue) {
+        setProperty(PROPERTY_SELECTION_BACKGROUND, newValue);
+    }
+    
+    /**
+     * Sets the foreground color used to highlight the currently 
+     * selected menu item.
+     * 
+     * @param newValue the new selection foreground
+     */
+    public void setSelectionForeground(Color newValue) {
+        setProperty(PROPERTY_SELECTION_FOREGROUND, newValue);
     }
 }

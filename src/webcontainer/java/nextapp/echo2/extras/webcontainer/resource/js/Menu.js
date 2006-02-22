@@ -35,28 +35,21 @@ ExtrasMenu = function(elementId, containerElementId) {
     
     this.maskDeployed = false;
     
-    this.menuBarBorderSize = 1;
-    this.menuBarBorderStyle = "outset";
-    this.menuBarBorderColor = "#cfcfcf";
-    this.menuBarForeground = "#000000";
-    this.menuBarBackground = "#cfcfcf";
+    this.border = "1px outset #cfcfcf";
+    this.foreground = "#000000";
+    this.background = "#cfcfcf";
     this.menuBarItemInsets = "3px 12px";
-    
-    this.menuBarRolloverBackground = "#00007f";
-    this.menuBarRolloverForeground = "#ffffff";
     
     this.menuInsetsTop = 2;
     this.menuInsetsBottom = 2;
     this.menuInsetsLeft = 2;
     this.menuInsetsRight = 2;
     this.menuItemInsets = "1px 12px";
-    this.menuBorderSize = 1;
-    this.menuBorderStyle = "outset";
-    this.menuBorderColor = "#cfcfcf";
-    this.menuForeground = "#000000";
-    this.menuBackground = "#cfcfcf";
-    this.menuSelectionBackground = "#3f3f3f";
-    this.menuSelectionForeground = "#ffffff";
+    this.menuBorder = null;
+    this.menuForeground = null;
+    this.menuBackground = null;
+    this.selectionBackground = "#3f3f3f";
+    this.selectionForeground = "#ffffff";
     
     this.transparentImageSrc = null;
     
@@ -106,14 +99,6 @@ ExtrasMenu.prototype.getItemElement = function(itemModel) {
         itemElement = document.getElementById(this.elementId + "_tr_item_" + itemModel.id);
     }
     return itemElement;
-};
-
-ExtrasMenu.prototype.getMenuBarBorder = function() {
-    return this.menuBarBorderSize + "px " + this.menuBarBorderStyle + " " + this.menuBarBorderColor;
-};
-
-ExtrasMenu.prototype.getMenuBorder = function() {
-    return this.menuBorderSize + "px " + this.menuBorderStyle + " " + this.menuBorderColor;
 };
 
 ExtrasMenu.prototype.getMenuBarHeight = function() {
@@ -192,9 +177,9 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
     menuDivElement.id = this.elementId + "_menu_" + menuModel.id;
     menuDivElement.style.padding = this.menuInsetsTop + "px " + this.menuInsetsTop + "px " 
             + this.menuInsetsTop + "px " + this.menuInsetsTop + "px";
-    menuDivElement.style.border = this.getMenuBorder();
-    menuDivElement.style.backgroundColor = this.menuBackground;
-    menuDivElement.style.color = this.menuForeground;
+    menuDivElement.style.border = this.menuBorder == null ? this.border : this.menuBorder;
+    menuDivElement.style.backgroundColor = this.menuBackground == null ? this.background : this.menuBackground;
+    menuDivElement.style.color = this.menuForeground == null ? this.foreground : this.menuForeground;
     menuDivElement.style.position = "absolute";
     menuDivElement.style.top = yPosition + "px";
     menuDivElement.style.left = xPosition + "px";
@@ -271,9 +256,10 @@ ExtrasMenu.prototype.renderMenuBarAdd = function() {
     menuBarDivElement.style.top = "0px";
     menuBarDivElement.style.bottom = "0px";
     
-    menuBarDivElement.style.backgroundColor = this.menuBarBackground;
-    menuBarDivElement.style.borderTop = this.getMenuBarBorder();
-    menuBarDivElement.style.borderBottom = this.getMenuBarBorder();
+    menuBarDivElement.style.backgroundColor = this.background;
+    menuBarDivElement.style.color = this.foreground;
+    menuBarDivElement.style.borderTop = this.border;
+    menuBarDivElement.style.borderBottom = this.border;
     
     var menuBarTableElement = document.createElement("table");
     menuBarTableElement.style.height = "100%";
@@ -420,8 +406,8 @@ ExtrasMenu.prototype.setHighlight = function(itemModel, state) {
         return;
     }
     if (state) {
-        itemElement.style.backgroundColor = this.menuSelectionBackground;
-        itemElement.style.color = this.menuSelectionForeground;
+        itemElement.style.backgroundColor = this.selectionBackground;
+        itemElement.style.color = this.selectionForeground;
     } else {
         itemElement.style.backgroundColor = "";
         itemElement.style.color = "";
@@ -678,6 +664,30 @@ ExtrasMenu.MessageProcessor.processInit = function(initMessageElement) {
     menu.transparentImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ExtrasUtil.Transparent";
     
     menu.enabled = initMessageElement.getAttribute("enabled") != "false";
+    if (initMessageElement.getAttribute("background")) {
+        menu.background = initMessageElement.getAttribute("background");
+    }
+    if (initMessageElement.getAttribute("border")) {
+        menu.border = initMessageElement.getAttribute("border");
+    }
+    if (initMessageElement.getAttribute("foreground")) {
+        menu.foreground = initMessageElement.getAttribute("foreground");
+    }
+    if (initMessageElement.getAttribute("menu-background")) {
+        menu.menuBackground = initMessageElement.getAttribute("menu-background");
+    }
+    if (initMessageElement.getAttribute("menu-border")) {
+        menu.menuBorder = initMessageElement.getAttribute("menu-border");
+    }
+    if (initMessageElement.getAttribute("menu-foreground")) {
+        menu.menuForeground = initMessageElement.getAttribute("menu-foreground");
+    }
+    if (initMessageElement.getAttribute("selection-background")) {
+        menu.selectionBackground = initMessageElement.getAttribute("selection-background");
+    }
+    if (initMessageElement.getAttribute("selection-foreground")) {
+        menu.selectionForeground = initMessageElement.getAttribute("selection-foreground");
+    }
 
     var menuBarModel;
     
