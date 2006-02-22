@@ -147,13 +147,23 @@ ExtrasMenu.prototype.openMenu = function(menuModel) {
 
     var itemElement = this.getItemElement(menuModel);
     var bounds = new ExtrasUtil.Bounds(itemElement);
+    var menuDivElement;
     if (this.isMenuBarItemElement(itemElement)) {
         var offsetTop = this.getMenuBarHeight() + bounds.top;
-        this.renderMenuAdd(menuModel, bounds.left, offsetTop);
+        menuDivElement = this.renderMenuAdd(menuModel, bounds.left, offsetTop);
+
+        var bottomDistance = menuDivElement.parentNode.offsetHeight - (menuDivElement.offsetTop + menuDivElement.offsetHeight);
+        if (bottomDistance < 0) {
+            // Menu descends being bottom of window.
+            var newTop = bounds.top - menuDivElement.offsetHeight;
+            if (newTop > 0) {
+                menuDivElement.style.top = newTop + "px";
+            }
+        }
     } else {
         var menuDivElement = itemElement.parentNode.parentNode.parentNode;
         var offsetLeft = bounds.left + menuDivElement.clientWidth;
-        this.renderMenuAdd(menuModel, offsetLeft, bounds.top);
+        menuDivElement = this.renderMenuAdd(menuModel, offsetLeft, bounds.top);
     }
 };
 
@@ -235,6 +245,8 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
     EchoEventProcessor.addHandler(menuDivElement.id, "click", "ExtrasMenu.processMenuItemClick");
     EchoEventProcessor.addHandler(menuDivElement.id, "mouseover", "ExtrasMenu.processMenuItemMouseOver");
     EchoEventProcessor.addHandler(menuDivElement.id, "mouseout", "ExtrasMenu.processMenuItemMouseOut");
+    
+    return menuDivElement;
 };
 
 ExtrasMenu.prototype.renderMenuDispose = function(menuModel) {
