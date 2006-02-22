@@ -32,6 +32,7 @@ package nextapp.echo2.extras.app;
 import java.util.EventListener;
 
 import nextapp.echo2.app.Component;
+import nextapp.echo2.app.Pane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.menu.DefaultMenuModel;
@@ -39,9 +40,10 @@ import nextapp.echo2.extras.app.menu.MenuModel;
 import nextapp.echo2.extras.app.menu.OptionModel;
 
 /**
- * A pull-down menu component.
+ * A pull-down menu pane.
  */
-public class PullDownMenu extends Component {
+public class MenuBarPane extends Component 
+implements Pane {
     
     public static final String MODEL_CHANGED_PROPERTY = "model";
     public static final String INPUT_SELECT = "select";
@@ -49,20 +51,20 @@ public class PullDownMenu extends Component {
     private MenuModel model;
     
     /**
-     * Creates a new <code>PullDownMenu</code> with an empty
+     * Creates a new <code>MenuBarPane</code> with an empty
      * <code>DefaultMenuModel</code> as its model.
      */
-    public PullDownMenu() {
+    public MenuBarPane() {
         this(new DefaultMenuModel());
     }
     
     /**
-     * Creates a new <code>PullDownMenu</code> displaying the specified 
+     * Creates a new <code>MenuBarPane</code> displaying the specified 
      * <code>MenuModel</code>.
      * 
      * @param model the model
      */
-    public PullDownMenu(MenuModel model) {
+    public MenuBarPane(MenuModel model) {
         super();
         setModel(model);
     }

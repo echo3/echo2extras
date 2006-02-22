@@ -37,7 +37,7 @@ import org.w3c.dom.Element;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.update.ServerComponentUpdate;
-import nextapp.echo2.extras.app.PullDownMenu;
+import nextapp.echo2.extras.app.MenuBarPane;
 import nextapp.echo2.extras.app.menu.ItemModel;
 import nextapp.echo2.extras.app.menu.MenuModel;
 import nextapp.echo2.extras.app.menu.OptionModel;
@@ -56,19 +56,19 @@ import nextapp.echo2.webrender.service.JavaScriptService;
 
 /**
  * <code>ComponentSynchronizePeer</code> implementation for synchronizing
- * <code>PullDownMenu</code> components.
+ * <code>MenuBarPane</code> components.
  */
-public class PullDownMenuPeer 
+public class MenuBarPanePeer 
 implements ActionProcessor, ComponentSynchronizePeer {
 
     /**
      * Service to provide supporting JavaScript library.
      */
-    public static final Service PULL_DOWN_MENU_SERVICE = JavaScriptService.forResource("Echo2Extras.PullDownMenu",
-            "/nextapp/echo2/extras/webcontainer/resource/js/PullDownMenu.js");
+    public static final Service MENU_SERVICE = JavaScriptService.forResource("Echo2Extras.Menu",
+            "/nextapp/echo2/extras/webcontainer/resource/js/Menu.js");
 
     static {
-        WebRenderServlet.getServiceRegistry().add(PULL_DOWN_MENU_SERVICE);
+        WebRenderServlet.getServiceRegistry().add(MENU_SERVICE);
     }
     
     /**
@@ -79,7 +79,7 @@ implements ActionProcessor, ComponentSynchronizePeer {
     /**
      * Default constructor.
      */
-    public PullDownMenuPeer() {
+    public MenuBarPanePeer() {
         partialUpdateManager = new PartialUpdateManager();
     }
     
@@ -95,7 +95,7 @@ implements ActionProcessor, ComponentSynchronizePeer {
      *      nextapp.echo2.app.Component, org.w3c.dom.Element)
      */
     public void processAction(ContainerInstance ci, Component component, Element element) {
-        PullDownMenu menu = (PullDownMenu) component;
+        MenuBarPane menu = (MenuBarPane) component;
         String actionName = element.getAttribute(ActionProcessor.ACTION_NAME);
         String actionValue = element.getAttribute(ActionProcessor.ACTION_VALUE);
         if ("select".equals(actionName)) {
@@ -114,7 +114,7 @@ implements ActionProcessor, ComponentSynchronizePeer {
                 // Should not occur unless client input tampered with.
                 return;
             }
-            ci.getUpdateManager().getClientUpdateManager().setComponentAction(menu, PullDownMenu.INPUT_SELECT, optionModel);
+            ci.getUpdateManager().getClientUpdateManager().setComponentAction(menu, MenuBarPane.INPUT_SELECT, optionModel);
         }
     }
 
@@ -125,8 +125,8 @@ implements ActionProcessor, ComponentSynchronizePeer {
     public void renderAdd(RenderContext rc, ServerComponentUpdate update, String targetId, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(ExtrasUtil.JS_EXTRAS_UTIL_SERVICE.getId());
-        serverMessage.addLibrary(PULL_DOWN_MENU_SERVICE.getId());
-        PullDownMenu menu = (PullDownMenu) component;
+        serverMessage.addLibrary(MENU_SERVICE.getId());
+        MenuBarPane menu = (MenuBarPane) component;
         renderInitDirective(rc, menu, targetId);
     }
     
@@ -137,17 +137,17 @@ implements ActionProcessor, ComponentSynchronizePeer {
     public void renderDispose(RenderContext rc, ServerComponentUpdate update, Component component) {
         ServerMessage serverMessage = rc.getServerMessage();
         serverMessage.addLibrary(ExtrasUtil.JS_EXTRAS_UTIL_SERVICE.getId());
-        serverMessage.addLibrary(PULL_DOWN_MENU_SERVICE.getId());
-        renderDisposeDirective(rc, (PullDownMenu) component);
+        serverMessage.addLibrary(MENU_SERVICE.getId());
+        renderDisposeDirective(rc, (MenuBarPane) component);
     }
 
     /**
      * Renders a dispose directive.
      * 
      * @param rc the relevant <code>RenderContext</code>
-     * @param menu the <code>PullDownMenu</code> being rendered
+     * @param menu the <code>MenuBarPane</code> being rendered
      */
-    private void renderDisposeDirective(RenderContext rc, PullDownMenu menu) {
+    private void renderDisposeDirective(RenderContext rc, MenuBarPane menu) {
         String elementId = ContainerInstance.getElementId(menu);
         ServerMessage serverMessage = rc.getServerMessage();
         Element initElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_PREREMOVE, 
@@ -159,9 +159,9 @@ implements ActionProcessor, ComponentSynchronizePeer {
      * Renders an initialization directive.
      * 
      * @param rc the relevant <code>RenderContext</code>
-     * @param menu the <code>PullDownMenu</code> being rendered
+     * @param menu the <code>MenuBarPane</code> being rendered
      */
-    private void renderInitDirective(RenderContext rc, PullDownMenu menu, String targetId) {
+    private void renderInitDirective(RenderContext rc, MenuBarPane menu, String targetId) {
         String elementId = ContainerInstance.getElementId(menu);
         ServerMessage serverMessage = rc.getServerMessage();
         Element partElement = serverMessage.addPart(ServerMessage.GROUP_ID_UPDATE, "ExtrasMenu.MessageProcessor");
@@ -172,11 +172,11 @@ implements ActionProcessor, ComponentSynchronizePeer {
             initElement.setAttribute("enabled", "false");
         }
         
-        Color background = (Color) menu.getRenderProperty(PullDownMenu.PROPERTY_BACKGROUND);
+        Color background = (Color) menu.getRenderProperty(MenuBarPane.PROPERTY_BACKGROUND);
         if (background != null) {
             initElement.setAttribute("default-background", ColorRender.renderCssAttributeValue(background));
         }
-        Color foreground = (Color) menu.getRenderProperty(PullDownMenu.PROPERTY_FOREGROUND);
+        Color foreground = (Color) menu.getRenderProperty(MenuBarPane.PROPERTY_FOREGROUND);
         if (foreground != null) {
             initElement.setAttribute("default-foreground", ColorRender.renderCssAttributeValue(foreground));
         }

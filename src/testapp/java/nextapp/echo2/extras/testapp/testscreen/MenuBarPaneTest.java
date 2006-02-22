@@ -36,7 +36,7 @@ import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
-import nextapp.echo2.extras.app.PullDownMenu;
+import nextapp.echo2.extras.app.MenuBarPane;
 import nextapp.echo2.extras.app.menu.DefaultOptionModel;
 import nextapp.echo2.extras.app.menu.DefaultMenuModel;
 import nextapp.echo2.extras.app.menu.MenuModel;
@@ -47,14 +47,14 @@ import nextapp.echo2.extras.testapp.StyleUtil;
 import nextapp.echo2.extras.testapp.TestControlsPane;
 
 /**
- * Interactive test module for <code>PullDownMenu</code>s.
+ * Interactive test module for <code>MenuBarPane</code>s.
  */
-public class PullDownMenuTest extends AbstractTest {
+public class MenuBarPaneTest extends AbstractTest {
 
-    public PullDownMenuTest() {
-        super("PullDownMenu");
+    public MenuBarPaneTest() {
+        super("MenuBarPane");
 
-        final PullDownMenu menu = new PullDownMenu(createMenuModel());
+        final MenuBarPane menu = new MenuBarPane(createMenuModel());
         menu.addActionListener(new ActionListener(){
         
             public void actionPerformed(ActionEvent e) {
@@ -77,7 +77,7 @@ public class PullDownMenuTest extends AbstractTest {
                 windowPane.setStyleName("Default");
                 SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM, new Extent(32));
                 windowPane.add(splitPane);
-                PullDownMenu menu = new PullDownMenu(createMenuModel());
+                MenuBarPane menu = new MenuBarPane(createMenuModel());
                 menu.addActionListener(new ActionListener() {
                 
                     public void actionPerformed(ActionEvent e) {

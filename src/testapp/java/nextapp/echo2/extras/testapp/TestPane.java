@@ -38,7 +38,7 @@ import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
-import nextapp.echo2.extras.app.PullDownMenu;
+import nextapp.echo2.extras.app.MenuBarPane;
 import nextapp.echo2.extras.app.menu.DefaultMenuModel;
 import nextapp.echo2.extras.app.menu.DefaultOptionModel;
 import nextapp.echo2.extras.app.menu.SeparatorModel;
@@ -100,7 +100,7 @@ public class TestPane extends ContentPane {
         testsMenu.addItem(new DefaultOptionModel("Border Pane", null, "Launch_BorderPaneTest"));
         testsMenu.addItem(new DefaultOptionModel("Calendar Select", null, "Launch_CalendarSelectTest"));
         testsMenu.addItem(new DefaultOptionModel("Color Select", null, "Launch_ColorSelectTest"));
-        testsMenu.addItem(new DefaultOptionModel("Pull Down Menu", null, "Launch_PullDownMenuTest"));
+        testsMenu.addItem(new DefaultOptionModel("Menu Bar Pane", null, "Launch_MenuBarPaneTest"));
         testsMenu.addItem(new DefaultOptionModel("Tab Pane", null, "Launch_TabPaneTest"));
         testsMenu.addItem(new SeparatorModel());
         testsMenu.addItem(new DefaultOptionModel("Exit", null, null));
@@ -122,7 +122,7 @@ public class TestPane extends ContentPane {
         menuVerticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(26));
         titleVerticalPane.add(menuVerticalPane);
         
-        PullDownMenu menu = new PullDownMenu(menuBarMenu);
+        MenuBarPane menu = new MenuBarPane(menuBarMenu);
         menu.addActionListener(commandActionListener);
         menuVerticalPane.add(menu);
     }
