@@ -33,6 +33,7 @@ import org.w3c.dom.Element;
 
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
+import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.app.util.DomUtil;
 import nextapp.echo2.extras.app.ColorSelect;
@@ -42,6 +43,7 @@ import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.PartialUpdateParticipant;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
+import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.ServiceRegistry;
@@ -63,23 +65,26 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
     public static final Service COLOR_SELECT_SERVICE = JavaScriptService.forResource("Echo2Extras.ColorSelect",
             "/nextapp/echo2/extras/webcontainer/resource/js/ColorSelect.js");
     
-    private static final Service H_LINE_IMAGE_SERVICE= StaticBinaryService.forResource(
-            "Echo2Extras.ColorSelect.HLine", "image/gif", ExtrasUtil.IMAGE_RESOURCE_PATH + "HLine.gif");
-    private static final Service S_LINE_IMAGE_SERVICE= StaticBinaryService.forResource(
-            "Echo2Extras.ColorSelect.SLine", "image/gif", ExtrasUtil.IMAGE_RESOURCE_PATH + "SLine.gif");
-    private static final Service V_LINE_IMAGE_SERVICE= StaticBinaryService.forResource(
-            "Echo2Extras.ColorSelect.VLine", "image/gif", ExtrasUtil.IMAGE_RESOURCE_PATH + "VLine.gif");
-    private static final Service H_GRADIENT_IMAGE_SERVICE= StaticBinaryService.forResource(
+    private static final Service ARROW_DOWN_IMAGE_SERVICE = StaticBinaryService.forResource(
+            "Echo2Extras.ColorSelect.ArrowDown", "image/gif", ExtrasUtil.IMAGE_RESOURCE_PATH + "ArrowDown.gif");
+    private static final Service ARROW_LEFT_IMAGE_SERVICE = StaticBinaryService.forResource(
+            "Echo2Extras.ColorSelect.ArrowLeft", "image/gif", ExtrasUtil.IMAGE_RESOURCE_PATH + "ArrowLeft.gif");
+    private static final Service ARROW_RIGHT_IMAGE_SERVICE = StaticBinaryService.forResource(
+            "Echo2Extras.ColorSelect.ArrowRight", "image/gif", ExtrasUtil.IMAGE_RESOURCE_PATH + "ArrowRight.gif");
+    private static final Service ARROW_UP_IMAGE_SERVICE = StaticBinaryService.forResource(
+            "Echo2Extras.ColorSelect.ArrowUp", "image/gif", ExtrasUtil.IMAGE_RESOURCE_PATH + "ArrowUp.gif");
+    private static final Service H_GRADIENT_IMAGE_SERVICE = StaticBinaryService.forResource(
             "Echo2Extras.ColorSelect.HGradient", "image/png", ExtrasUtil.IMAGE_RESOURCE_PATH + "HGradient.png");
-    private static final Service SV_GRADIENT_IMAGE_SERVICE= StaticBinaryService.forResource(
+    private static final Service SV_GRADIENT_IMAGE_SERVICE = StaticBinaryService.forResource(
             "Echo2Extras.ColorSelect.SVGradient", "image/png", ExtrasUtil.IMAGE_RESOURCE_PATH + "SVGradient.png");
     
     static {
         ServiceRegistry services = WebRenderServlet.getServiceRegistry();
         services.add(COLOR_SELECT_SERVICE);
-        services.add(H_LINE_IMAGE_SERVICE);
-        services.add(S_LINE_IMAGE_SERVICE);
-        services.add(V_LINE_IMAGE_SERVICE);
+        services.add(ARROW_DOWN_IMAGE_SERVICE);
+        services.add(ARROW_LEFT_IMAGE_SERVICE);
+        services.add(ARROW_RIGHT_IMAGE_SERVICE);
+        services.add(ARROW_UP_IMAGE_SERVICE);
         services.add(H_GRADIENT_IMAGE_SERVICE);
         services.add(SV_GRADIENT_IMAGE_SERVICE);
     }
@@ -181,6 +186,22 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         initElement.setAttribute("container-eid", containerId);
         if (!colorSelect.isRenderEnabled()) {
             initElement.setAttribute("enabled", "false");
+        }
+        Boolean displayValue = (Boolean) colorSelect.getRenderProperty(ColorSelect.PROPERTY_DISPLAY_VALUE);
+        if (displayValue != null && !displayValue.booleanValue()) {
+            initElement.setAttribute("display-value", "false");
+        }
+        Extent hueWidth = (Extent) colorSelect.getRenderProperty(ColorSelect.PROPERTY_HUE_WIDTH);
+        if (hueWidth != null) {
+            initElement.setAttribute("hue-width", ExtentRender.renderCssAttributeValue(hueWidth));
+        }
+        Extent saturationHeight = (Extent) colorSelect.getRenderProperty(ColorSelect.PROPERTY_SATURATION_HEIGHT);
+        if (saturationHeight != null) {
+            initElement.setAttribute("saturation-height", ExtentRender.renderCssAttributeValue(saturationHeight));
+        }
+        Extent valueWidth = (Extent) colorSelect.getRenderProperty(ColorSelect.PROPERTY_VALUE_WIDTH);
+        if (valueWidth != null) {
+            initElement.setAttribute("value-width", ExtentRender.renderCssAttributeValue(valueWidth));
         }
     }
     

@@ -31,6 +31,7 @@ package nextapp.echo2.extras.app;
 
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
+import nextapp.echo2.app.Extent;
 
 /**
  * A visual hue/saturation/value-based color selection component to select 
@@ -39,6 +40,11 @@ import nextapp.echo2.app.Component;
 public class ColorSelect extends Component {
 
     public static final String COLOR_CHANGED_PROPERTY = "color";
+    
+    public static final String PROPERTY_HUE_WIDTH = "hueWidth";
+    public static final String PROPERTY_SATURATION_HEIGHT = "saturationHeight";
+    public static final String PROPERTY_VALUE_WIDTH = "valueWidth";
+    public static final String PROPERTY_DISPLAY_VALUE = "displayValue";
     
     private Color color;
     
@@ -71,6 +77,54 @@ public class ColorSelect extends Component {
     }
     
     /**
+     * Retrieves the width of the hue selector (the spectrum gradient drawn 
+     * on the right side of the ColorSelector).  Note that the height of the 
+     * hue selector is determined by the height of the value selector.
+     * Values may only be specified in pixels.
+     * The default value is 20 pixels. 
+     * 
+     * @return the width
+     */
+    public Extent getHueWidth() {
+        return (Extent) getProperty(PROPERTY_HUE_WIDTH);
+    }
+    
+    /**
+     * Retrieves the height of the saturation/value selector
+     * (the saturation axis is vertical).
+     * Values may only be specified in pixels.
+     * The default value is 150 pixels. 
+     * 
+     * @return the height
+     */
+    public Extent getSaturationHeight() {
+        return (Extent) getProperty(PROPERTY_SATURATION_HEIGHT);
+    }
+    
+    /**
+     * Retrieves the width of the saturation/value selector
+     * (the value axis is horizontal).
+     * Values may only be specified in pixels.
+     * The default value is 150 pixels.
+     * 
+     * @return the width
+     */
+    public Extent getValueWidth() {
+        return (Extent) getProperty(PROPERTY_VALUE_WIDTH);
+    }
+    
+    /**
+     * Sets whether the hex-triplet value, e.g., '#123abc' is displayed at
+     * the bottom of the ColorSelect.  Default value is true.
+     * 
+     *   @return true if the hex-triplet value should be displayed
+     */
+    public boolean isDisplayValue() {
+        Boolean value = (Boolean) getProperty(PROPERTY_DISPLAY_VALUE);
+        return value == null ? true : value.booleanValue();
+    }
+    
+    /**
      * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
      */
     public void processInput(String inputName, Object inputValue) {
@@ -91,5 +145,52 @@ public class ColorSelect extends Component {
         Color oldValue = color;
         color = newValue;
         firePropertyChange(COLOR_CHANGED_PROPERTY, oldValue, newValue);
+    }
+    
+    /**
+     * Sets whether the hex-triplet value, e.g., '#123abc' is displayed at
+     * the bottom of the ColorSelect.  Default value is true.  
+     * 
+     * @param true if the hex-triplet value should be displayed
+     */
+    public void setDisplayValue(boolean newValue) {
+        setProperty(PROPERTY_DISPLAY_VALUE, new Boolean(newValue));
+    }
+    
+    /**
+     * Sets the width of the hue selector (the spectrum gradient drawn on the 
+     * right side of the ColorSelector).  Note that the height of the hue
+     * selector is determined by the height of the value selector.
+     * Values may only be specified in pixels.
+     * The default value is 20 pixels. 
+     * 
+     * @param newValue the new width
+     */
+    public void setHueWidth(Extent newValue) {
+        setProperty(PROPERTY_HUE_WIDTH, newValue);
+    }
+    
+    /**
+     * Sets the height of the saturation/value selector
+     * (the saturation axis is vertical).
+     * Values may only be specified in pixels.
+     * The default value is 150 pixels. 
+     * 
+     * @param newValue the new height
+     */
+    public void setSaturationHeight(Extent newValue) {
+        setProperty(PROPERTY_SATURATION_HEIGHT, newValue);
+    }
+    
+    /**
+     * Sets the width of the saturation/value selector
+     * (the value axis is horizontal).
+     * Values may only be specified in pixels.
+     * The default value is 150 pixels. 
+     * 
+     * @param newValue the new width
+     */
+    public void setValueWidth(Extent newValue) {
+        setProperty(PROPERTY_VALUE_WIDTH, newValue);
     }
 }

@@ -45,6 +45,9 @@ import nextapp.echo2.extras.testapp.TestControlsPane;
  * Interactive test module for <code>ColorSelect</code>s.
  */
 public class ColorSelectTest extends AbstractTest {
+    
+    private static final Extent[] EXTENT_VALUES = new Extent[]{null, new Extent(16), new Extent(32), new Extent(64), 
+            new Extent(128), new Extent(256), new Extent(512)};
 
     public ColorSelectTest() {
         
@@ -67,6 +70,11 @@ public class ColorSelectTest extends AbstractTest {
                 colorSelect.setColor(StyleUtil.randomColor());
             }
         });
+        
+        addExtentPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "hueWidth", EXTENT_VALUES);
+        addExtentPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "saturationHeight", EXTENT_VALUES);
+        addExtentPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "valueWidth", EXTENT_VALUES);
+        addBooleanPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "displayValue");
         
         testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Add ColorSelect WindowPane", new ActionListener() {
             public void actionPerformed(ActionEvent e) {

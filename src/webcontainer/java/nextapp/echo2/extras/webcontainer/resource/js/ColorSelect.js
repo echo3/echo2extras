@@ -30,15 +30,24 @@
 ExtrasColorSelect = function(elementId, containerElementId) {
     this.elementId = elementId;
     this.containerElementId = containerElementId;
+
+    // Note: Default image values are provided here for stand-alone testing outside of the Echo2 framework.
     this.svGradientImageSrc = "SVTransparentGradient.png";
     this.hGradientImageSrc = "HGradient.png";
-    this.vLineImageSrc = "VLine.gif";
-    this.sLineImageSrc = "SLine.gif";
-    this.hLineImageSrc = "HLine.gif";
+    this.arrowDownImageSrc = "ArrowDown.gif";
+    this.arrowLeftImageSrc = "ArrowLeft.gif";
+    this.arrowRightImageSrc = "ArrowRight.gif";
+    this.arrowUpImageSrc = "ArrowUp.gif";
+    
+    this.displayValue = true;
+    
     this.transparentImageSrc = "Transparent.gif"
     this.h = 0;
     this.s = 1;
     this.v = 1;
+    this.valueWidth = 150;
+    this.saturationHeight = 150;
+    this.hueWidth = 20;
     this.enableInternetExplorerPngWorkaround = false;
     
     this.hActive = false;
@@ -53,8 +62,8 @@ ExtrasColorSelect.prototype.create = function() {
     colorSelectDivElement.style.position = "relative";
     colorSelectDivElement.style.left = "0px";
     colorSelectDivElement.style.top = "0px";
-    colorSelectDivElement.style.width = "199px";
-    colorSelectDivElement.style.height = "186px";
+    colorSelectDivElement.style.width = (this.valueWidth + this.hueWidth + 29) + "px";
+    colorSelectDivElement.style.height = (this.saturationHeight + 36) +"px";
     colorSelectDivElement.style.overflow = "hidden";
     
     var svDivElement = document.createElement("div");
@@ -62,8 +71,8 @@ ExtrasColorSelect.prototype.create = function() {
     svDivElement.style.position = "absolute";
     svDivElement.style.left = "7px";
     svDivElement.style.top = "7px";
-    svDivElement.style.width = "150px";
-    svDivElement.style.height = "150px";
+    svDivElement.style.width = this.valueWidth + "px";
+    svDivElement.style.height = this.saturationHeight + "px";
     svDivElement.style.backgroundColor = "#ff0000";
     colorSelectDivElement.appendChild(svDivElement);
 
@@ -73,6 +82,8 @@ ExtrasColorSelect.prototype.create = function() {
     } else {
         var svGradientImgElement = document.createElement("img");
         svGradientImgElement.src = this.svGradientImageSrc;
+        svGradientImgElement.style.width = this.valueWidth + "px";
+        svGradientImgElement.style.height = this.saturationHeight + "px";
         svDivElement.appendChild(svGradientImgElement);
     }
     
@@ -82,41 +93,76 @@ ExtrasColorSelect.prototype.create = function() {
     vLineDivElement.style.left = "2px";
     vLineDivElement.style.top = "0px";
     vLineDivElement.style.width = "11px";
-    vLineDivElement.style.height = "164px";
+    vLineDivElement.style.height = (this.saturationHeight + 14) + "px";
     vLineDivElement.style.overflow = "hidden";
     colorSelectDivElement.appendChild(vLineDivElement);
 
-    var vLineImgElement = document.createElement("img");
-    vLineImgElement.src = this.vLineImageSrc;
-    vLineImgElement.style.position = "absolute";
-    vLineImgElement.style.left = "0px";
-    vLineImgElement.style.top = "0px";
-    vLineDivElement.appendChild(vLineImgElement);
+    var vLineTopImgElement = document.createElement("img");
+    vLineTopImgElement.src = this.arrowDownImageSrc;
+    vLineTopImgElement.style.position = "absolute";
+    vLineTopImgElement.style.left = "0px";
+    vLineTopImgElement.style.top = "0px";
+    vLineDivElement.appendChild(vLineTopImgElement);
+    
+    var vLineBarDivElement = document.createElement("div");
+    vLineBarDivElement.style.position = "absolute";
+    vLineBarDivElement.style.top = "7px";
+    vLineBarDivElement.style.left = "5px";
+    vLineBarDivElement.style.height = this.saturationHeight + "px";
+    vLineBarDivElement.style.width = "1px";
+    vLineBarDivElement.style.backgroundColor = "#000000";
+    vLineDivElement.appendChild(vLineBarDivElement);
+
+    var vLineBottomImgElement = document.createElement("img");
+    vLineBottomImgElement.src = this.arrowUpImageSrc;
+    vLineBottomImgElement.style.position = "absolute";
+    vLineBottomImgElement.style.left = "0px";
+    vLineBottomImgElement.style.top = (this.saturationHeight + 7) + "px";
+    vLineDivElement.appendChild(vLineBottomImgElement);
 
     var sLineDivElement = document.createElement("div");
     sLineDivElement.id = this.elementId + "_sline";
     sLineDivElement.style.position = "absolute";
     sLineDivElement.style.left = "0px";
-    sLineDivElement.style.top = "152px";
+    sLineDivElement.style.top = (this.saturationHeight + 2) + "px";
     sLineDivElement.style.height = "11px";
-    sLineDivElement.style.width = "164px";
+    sLineDivElement.style.width = (this.valueWidth + 14) + "px";
     sLineDivElement.style.overflow = "hidden";
     colorSelectDivElement.appendChild(sLineDivElement);
     
-    var sLineImgElement = document.createElement("img");
-    sLineImgElement.src = this.sLineImageSrc;
-    sLineImgElement.style.position = "absolute";
-    sLineImgElement.style.left = "0px";
-    sLineImgElement.style.top = "0px";
-    sLineDivElement.appendChild(sLineImgElement);
+    var sLineLeftImgElement = document.createElement("img");
+    sLineLeftImgElement.src = this.arrowRightImageSrc;
+    sLineLeftImgElement.style.position = "absolute";
+    sLineLeftImgElement.style.left = "0px";
+    sLineLeftImgElement.style.top = "0px";
+    sLineDivElement.appendChild(sLineLeftImgElement);
+    
+    var sLineRightImgElement = document.createElement("img");
+    sLineRightImgElement.src = this.arrowLeftImageSrc;
+    sLineRightImgElement.style.position = "absolute";
+    sLineRightImgElement.style.left = this.valueWidth + 7 + "px";
+    sLineRightImgElement.style.top = "0px";
+    sLineDivElement.appendChild(sLineRightImgElement);
+
+    var sLineBarDivElement = document.createElement("div");
+    sLineBarDivElement.style.position = "absolute";
+    sLineBarDivElement.style.left = "0px";
+    sLineBarDivElement.style.left = "7px";
+    sLineBarDivElement.style.top = "5px";
+    sLineBarDivElement.style.width = this.valueWidth + "px";
+    sLineBarDivElement.style.height = "1px";
+    sLineBarDivElement.style.fontSize = "1px";
+    sLineBarDivElement.style.borderTop = "1px #000000 solid";
+    sLineBarDivElement.style.lineHeight = "0";
+    sLineDivElement.appendChild(sLineBarDivElement);
 
     var hDivElement = document.createElement("div");
     hDivElement.id = this.elementId + "_h";
     hDivElement.style.position = "absolute";
-    hDivElement.style.left = "172px";
+    hDivElement.style.left = (this.valueWidth + 22) + "px";
     hDivElement.style.top = "7px";
-    hDivElement.style.width = "20px";
-    hDivElement.style.height = "150px";
+    hDivElement.style.width = this.hueWidth + "px";
+    hDivElement.style.height = this.saturationHeight + "px";
     colorSelectDivElement.appendChild(hDivElement);
     
     var hGradientImgElement = document.createElement("img");
@@ -124,31 +170,52 @@ ExtrasColorSelect.prototype.create = function() {
     hGradientImgElement.style.position = "absolute";
     hGradientImgElement.style.left = "0px";
     hGradientImgElement.style.top = "0px";
+    hGradientImgElement.style.width = this.hueWidth + "px";
+    hGradientImgElement.style.height = this.saturationHeight + "px";
     hDivElement.appendChild(hGradientImgElement);
     
     var hLineDivElement = document.createElement("div");
     hLineDivElement.id = this.elementId + "_hline";
     hLineDivElement.style.position = "absolute";
-    hLineDivElement.style.left = "165px";
-    hLineDivElement.style.top = "152px";
+    hLineDivElement.style.left = (this.valueWidth + 15) + "px";
+    hLineDivElement.style.top = (this.saturationHeight + 2) + "2px";
     hLineDivElement.style.height = "11px";
-    hLineDivElement.style.width = "34px";
+    hLineDivElement.style.width = (this.hueWidth + 14) + "px";
     hLineDivElement.style.overflow = "hidden";
     colorSelectDivElement.appendChild(hLineDivElement);
     
-    var hLineImgElement = document.createElement("img");
-    hLineImgElement.src = this.hLineImageSrc;
-    hLineImgElement.style.position = "absolute";
-    hLineImgElement.style.left = "0px";
-    hLineImgElement.style.top = "0px";
-    hLineDivElement.appendChild(hLineImgElement);
+    var hLineLeftImgElement = document.createElement("img");
+    hLineLeftImgElement.src = this.arrowRightImageSrc;
+    hLineLeftImgElement.style.position = "absolute";
+    hLineLeftImgElement.style.left = "0px";
+    hLineLeftImgElement.style.top = "0px";
+    hLineDivElement.appendChild(hLineLeftImgElement);
+    
+    var hLineRightImgElement = document.createElement("img");
+    hLineRightImgElement.src = this.arrowLeftImageSrc;
+    hLineRightImgElement.style.position = "absolute";
+    hLineRightImgElement.style.left = (this.hueWidth + 7) + "px";
+    hLineRightImgElement.style.top = "0px";
+    hLineDivElement.appendChild(hLineRightImgElement);
+
+    var hLineBarDivElement = document.createElement("div");
+    hLineBarDivElement.style.position = "absolute";
+    hLineBarDivElement.style.left = "0px";
+    hLineBarDivElement.style.left = "7px";
+    hLineBarDivElement.style.top = "5px";
+    hLineBarDivElement.style.width = this.hueWidth + "px";
+    hLineBarDivElement.style.height = "1px";
+    hLineBarDivElement.style.fontSize = "1px";
+    hLineBarDivElement.style.borderTop = "1px #000000 solid";
+    hLineBarDivElement.style.lineHeight = "0";
+    hLineDivElement.appendChild(hLineBarDivElement);
 
     var colorDivElement = document.createElement("div");
     colorDivElement.id = this.elementId + "_color";
     colorDivElement.style.position = "absolute";
     colorDivElement.style.left = "7px";
-    colorDivElement.style.top = "166px";
-    colorDivElement.style.width = "183px";
+    colorDivElement.style.top = (this.saturationHeight + 16) + "px";
+    colorDivElement.style.width = (this.valueWidth + this.hueWidth + 13) + "px";
     colorDivElement.style.height = "18px";
     colorDivElement.style.color = "#ffffff";
     colorDivElement.style.backgroundColor = "#000000";
@@ -157,7 +224,9 @@ ExtrasColorSelect.prototype.create = function() {
     colorDivElement.style.borderWidth = "1px";
     colorDivElement.style.fontFamily = "monospace";
     colorDivElement.style.textAlign = "center";
-    colorDivElement.appendChild(document.createTextNode("#000000"));
+    if (this.displayValue) {
+        colorDivElement.appendChild(document.createTextNode("#000000"));
+    }
     colorSelectDivElement.appendChild(colorDivElement);
 
     var svListenerDivElement = document.createElement("div");
@@ -166,8 +235,8 @@ ExtrasColorSelect.prototype.create = function() {
     svListenerDivElement.style.zIndex = "1";
     svListenerDivElement.style.left = "0px";
     svListenerDivElement.style.top = "0px";
-    svListenerDivElement.style.width = "164px";
-    svListenerDivElement.style.height = "164px";
+    svListenerDivElement.style.width = (this.valueWidth + 14) + "px";
+    svListenerDivElement.style.height = (this.saturationHeight + 14) + "px";
     svListenerDivElement.style.cursor = "crosshair";
     svListenerDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
     colorSelectDivElement.appendChild(svListenerDivElement);
@@ -176,10 +245,10 @@ ExtrasColorSelect.prototype.create = function() {
     hListenerDivElement.id = this.elementId + "_hlistener";
     hListenerDivElement.style.position = "absolute";
     hListenerDivElement.style.zIndex = "1";
-    hListenerDivElement.style.left = "165px";
+    hListenerDivElement.style.left = (this.valueWidth + 15) + "px";
     hListenerDivElement.style.top = "0px";
-    hListenerDivElement.style.width = "34px";
-    hListenerDivElement.style.height = "164px";
+    hListenerDivElement.style.width = (this.hueWidth + 14) + "px";
+    hListenerDivElement.style.height = (this.saturationHeight + 16) + "px";
     hListenerDivElement.style.cursor = "crosshair";
     hListenerDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
     colorSelectDivElement.appendChild(hListenerDivElement);
@@ -260,38 +329,40 @@ ExtrasColorSelect.prototype.updateColor = function() {
     }
     svDivElement.style.backgroundColor = baseColor.toHexTriplet();
    
-    var colorDivElement = document.getElementById(this.elementId + "_color");
     var renderColor = ExtrasColorSelect.hsvToRgb(this.h, this.s, this.v);
+    var colorDivElement = document.getElementById(this.elementId + "_color");
     var renderHexTriplet = renderColor.toHexTriplet();
     colorDivElement.style.backgroundColor = renderHexTriplet;
     colorDivElement.style.borderColor = renderHexTriplet;
     colorDivElement.style.color = this.v < 0.67 ? "#ffffff" : "#000000";
-    colorDivElement.childNodes[0].nodeValue = renderHexTriplet;
+    if (this.displayValue) {
+        colorDivElement.childNodes[0].nodeValue = renderHexTriplet;
+    }
    
     var sLineElement = document.getElementById(this.elementId + "_sline");
-    var sLineTop = parseInt((1 - this.s) * 150) + 2;
+    var sLineTop = parseInt((1 - this.s) * this.saturationHeight) + 2;
     if (sLineTop < 2) {
          sLineTop = 2;
-    } else if (sLineTop > 152) {
-        sLineTop = 152;
+    } else if (sLineTop > this.saturationHeight + 2) {
+        sLineTop = this.saturationHeight + 2;
     }
     sLineElement.style.top = sLineTop + "px";
 
     var vLineElement = document.getElementById(this.elementId + "_vline");
-    var vLineLeft = parseInt(this.v * 150) + 2;
+    var vLineLeft = parseInt(this.v * this.valueWidth) + 2;
     if (vLineLeft < 2) {
         vLineLeft = 2;
-    } else if (vLineLeft > 152) {
-        vLineLeft = 152;
+    } else if (vLineLeft > this.valueWidth + 2) {
+        vLineLeft = this.valueWidth + 2;
     }
     vLineElement.style.left = vLineLeft + "px";
    
     var hLineElement = document.getElementById(this.elementId + "_hline");
-    var hLineTop = parseInt((360 - this.h) / 360 * 150) + 2;
+    var hLineTop = parseInt((360 - this.h) / 360 * this.saturationHeight) + 2;
     if (hLineTop < 2) {
         hLineTop = 2;
-    } else if (hLineTop > 152) {
-        hLineTop = 152;
+    } else if (hLineTop > this.saturationHeight + 2) {
+        hLineTop = this.saturationHeight + 2;
     }
     hLineElement.style.top = hLineTop + "px";
    
@@ -318,15 +389,15 @@ ExtrasColorSelect.prototype.updateClientMessage = function(color) {
 ExtrasColorSelect.prototype.processHUpdate = function(echoEvent) {
     var hContainerDivElement = document.getElementById(this.elementId + "_hlistener");
     var bounds = new ExtrasUtil.Bounds(hContainerDivElement);
-    this.h = (150 - (echoEvent.clientY - bounds.top - 7)) * 360 / 150;
+    this.h = (this.saturationHeight - (echoEvent.clientY - bounds.top - 7)) * 360 / this.saturationHeight;
     this.updateColor();
 };
 
 ExtrasColorSelect.prototype.processSVUpdate = function(echoEvent) {
     var svContainerDivElement = document.getElementById(this.elementId + "_svlistener");
     var bounds = new ExtrasUtil.Bounds(svContainerDivElement);
-    this.v = (echoEvent.clientX - bounds.left - 7) / 150;
-    this.s = 1 - ((echoEvent.clientY - bounds.top - 7) / 150);
+    this.v = (echoEvent.clientX - bounds.left - 7) / this.valueWidth;
+    this.s = 1 - ((echoEvent.clientY - bounds.top - 7) / this.saturationHeight);
     this.updateColor();
 };
 
@@ -530,12 +601,24 @@ ExtrasColorSelect.MessageProcessor.processInit = function(initMessageElement) {
     var containerElementId = initMessageElement.getAttribute("container-eid");
     var colorSelect = new ExtrasColorSelect(elementId, containerElementId);
     colorSelect.enabled = initMessageElement.getAttribute("enabled") != "false";
+    colorSelect.displayValue = initMessageElement.getAttribute("display-value") != "false";
+    if (initMessageElement.getAttribute("hue-width")) {
+        colorSelect.hueWidth = parseInt(initMessageElement.getAttribute("hue-width"));
+    }
+    if (initMessageElement.getAttribute("value-width")) {
+        colorSelect.valueWidth = parseInt(initMessageElement.getAttribute("value-width"));
+    }
+    if (initMessageElement.getAttribute("saturation-height")) {
+        colorSelect.saturationHeight = parseInt(initMessageElement.getAttribute("saturation-height"));
+    }
+    
     colorSelect.transparentImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ExtrasUtil.Transparent";
     colorSelect.hGradientImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ColorSelect.HGradient";
     colorSelect.svGradientImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ColorSelect.SVGradient";
-    colorSelect.hLineImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ColorSelect.HLine";
-    colorSelect.sLineImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ColorSelect.SLine";
-    colorSelect.vLineImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ColorSelect.VLine";
+    colorSelect.arrowUpImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ColorSelect.ArrowUp";
+    colorSelect.arrowDownImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ColorSelect.ArrowDown";
+    colorSelect.arrowLeftImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ColorSelect.ArrowLeft";
+    colorSelect.arrowRightImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ColorSelect.ArrowRight";
     colorSelect.enableInternetExplorerPngWorkaround = 
             EchoClientProperties.get("proprietaryIEPngAlphaFilterRequired") ? true : false;
     colorSelect.create();

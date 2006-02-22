@@ -112,6 +112,18 @@ public class AbstractTest extends SplitPane {
         });
     }
     
+    protected void addExtentPropertyTests(String category, final String propertyName, final Extent[] extentValues) {
+        for (int i = 0; i < extentValues.length; ++i) {
+            String extentString = extentValues[i] == null ? "null" : extentValues[i].toString();
+            final int index = i;
+            testControlsPane.addButton(category, propertyName + ": " + extentString, new ActionListener(){
+                public void actionPerformed(ActionEvent e) {
+                    setTestComponentProperty(propertyName, Extent.class, extentValues[index]);
+                }
+            });
+        }
+    }
+    
     protected void addColorPropertyTests(String category, final String propertyName) {
         testControlsPane.addButton(category, propertyName + ": Randomize", new ActionListener(){
             public void actionPerformed(ActionEvent e) {
