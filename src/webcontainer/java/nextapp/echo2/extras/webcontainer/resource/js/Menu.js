@@ -39,7 +39,7 @@ ExtrasMenu = function(elementId, containerElementId) {
     this.foreground = "#000000";
     this.background = "#cfcfcf";
     this.backgroundImage = null;
-    this.menuBarItemInsets = "3px 12px";
+    this.menuBarItemInsets = "0px 12px";
     
     this.menuInsetsTop = 2;
     this.menuInsetsBottom = 2;
