@@ -37,6 +37,8 @@ import org.w3c.dom.Element;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
+import nextapp.echo2.app.FillImage;
+import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.extras.app.MenuBarPane;
 import nextapp.echo2.extras.app.menu.ItemModel;
@@ -48,11 +50,14 @@ import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.RenderContext;
+import nextapp.echo2.webcontainer.image.ImageRenderSupport;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
+import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
+import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
 import nextapp.echo2.webrender.service.JavaScriptService;
 
@@ -61,7 +66,7 @@ import nextapp.echo2.webrender.service.JavaScriptService;
  * <code>MenuBarPane</code> components.
  */
 public class MenuBarPanePeer 
-implements ActionProcessor, ComponentSynchronizePeer {
+implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
 
     /**
      * Service to provide supporting JavaScript library.
@@ -73,6 +78,10 @@ implements ActionProcessor, ComponentSynchronizePeer {
         WebRenderServlet.getServiceRegistry().add(MENU_SERVICE);
     }
     
+    private static final String IMAGE_ID_BACKGROUND = "background";
+    private static final String IMAGE_ID_MENU_BACKGROUND = "menuBackground";
+    private static final String IMAGE_ID_SELECTION_BACKGROUND = "selectionBackground";
+
     /**
      * The <code>PartialUpdateManager</code> for this synchronization peer.
      */
@@ -90,6 +99,21 @@ implements ActionProcessor, ComponentSynchronizePeer {
      */
     public String getContainerId(Component component) {
         throw new UnsupportedOperationException("Component does not support children.");
+    }
+
+    /**
+     * @see nextapp.echo2.webcontainer.image.ImageRenderSupport#getImage(nextapp.echo2.app.Component, java.lang.String)
+     */
+    public ImageReference getImage(Component component, String imageId) {
+        FillImage fillImage = null;
+        if (IMAGE_ID_BACKGROUND.equals(imageId)) {
+            fillImage = (FillImage) component.getRenderProperty(MenuBarPane.PROPERTY_BACKGROUND_IMAGE);
+        } else if (IMAGE_ID_MENU_BACKGROUND.equals(imageId)) {
+            fillImage = (FillImage) component.getRenderProperty(MenuBarPane.PROPERTY_MENU_BACKGROUND_IMAGE);
+        } else if (IMAGE_ID_SELECTION_BACKGROUND.equals(imageId)) {
+            fillImage = (FillImage) component.getRenderProperty(MenuBarPane.PROPERTY_SELECTION_BACKGROUND_IMAGE);
+        }
+        return fillImage == null ? null : fillImage.getImage();
     }
 
     /**
@@ -178,6 +202,12 @@ implements ActionProcessor, ComponentSynchronizePeer {
         if (background != null) {
             initElement.setAttribute("background", ColorRender.renderCssAttributeValue(background));
         }
+        FillImage backgroundImage = (FillImage) menu.getRenderProperty(MenuBarPane.PROPERTY_BACKGROUND_IMAGE);
+        if (backgroundImage != null) {
+            CssStyle cssStyle = new CssStyle();
+            FillImageRender.renderToStyle(cssStyle, rc, this, menu, IMAGE_ID_BACKGROUND, backgroundImage, 0);
+            initElement.setAttribute("background-image", cssStyle.renderInline());
+        }
         Border border = (Border) menu.getRenderProperty(MenuBarPane.PROPERTY_BORDER);
         if (border != null) {
             initElement.setAttribute("border", BorderRender.renderCssAttributeValue(border));
@@ -190,6 +220,12 @@ implements ActionProcessor, ComponentSynchronizePeer {
         if (menuBackground != null) {
             initElement.setAttribute("menu-background", ColorRender.renderCssAttributeValue(menuBackground));
         }
+        FillImage menuBackgroundImage = (FillImage) menu.getRenderProperty(MenuBarPane.PROPERTY_MENU_BACKGROUND_IMAGE);
+        if (menuBackgroundImage != null) {
+            CssStyle cssStyle = new CssStyle();
+            FillImageRender.renderToStyle(cssStyle, rc, this, menu, IMAGE_ID_MENU_BACKGROUND, menuBackgroundImage, 0);
+            initElement.setAttribute("menu-background-image", cssStyle.renderInline());
+        }
         Border menuBorder = (Border) menu.getRenderProperty(MenuBarPane.PROPERTY_MENU_BORDER);
         if (menuBorder != null) {
             initElement.setAttribute("menu-border", BorderRender.renderCssAttributeValue(menuBorder));
@@ -201,6 +237,12 @@ implements ActionProcessor, ComponentSynchronizePeer {
         Color selectionBackground = (Color) menu.getRenderProperty(MenuBarPane.PROPERTY_SELECTION_BACKGROUND);
         if (selectionBackground != null) {
             initElement.setAttribute("selection-background", ColorRender.renderCssAttributeValue(selectionBackground));
+        }
+        FillImage selectionBackgroundImage = (FillImage) menu.getRenderProperty(MenuBarPane.PROPERTY_SELECTION_BACKGROUND_IMAGE);
+        if (selectionBackgroundImage != null) {
+            CssStyle cssStyle = new CssStyle();
+            FillImageRender.renderToStyle(cssStyle, rc, this, menu, IMAGE_ID_SELECTION_BACKGROUND, selectionBackgroundImage, 0);
+            initElement.setAttribute("selection-background-image", cssStyle.renderInline());
         }
         Color selectionForeground = (Color) menu.getRenderProperty(MenuBarPane.PROPERTY_SELECTION_FOREGROUND);
         if (selectionForeground != null) {

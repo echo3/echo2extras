@@ -36,6 +36,7 @@ import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.SplitPane;
@@ -108,6 +109,18 @@ public class AbstractTest extends SplitPane {
                 setTestComponentProperty(propertyName, Border.class, null);
             }
         });
+    }
+    
+    protected void addFillImagePropertyTests(String category, final String propertyName, final FillImage[] fillImageValues) {
+        for (int i = 0; i < fillImageValues.length; ++i) {
+            final int index = i;
+            String name = fillImageValues[i] == null ? "null" : Integer.toString(i);
+            testControlsPane.addButton(category, propertyName + ": " + name, new ActionListener(){
+                public void actionPerformed(ActionEvent e) {
+                    setTestComponentProperty(propertyName, FillImage.class, fillImageValues[index]);
+                }
+            });
+        }
     }
     
     protected void addExtentPropertyTests(String category, final String propertyName, final Extent[] extentValues) {

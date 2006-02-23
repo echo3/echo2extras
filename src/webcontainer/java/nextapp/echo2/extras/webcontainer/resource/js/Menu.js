@@ -38,6 +38,7 @@ ExtrasMenu = function(elementId, containerElementId) {
     this.border = "1px outset #cfcfcf";
     this.foreground = "#000000";
     this.background = "#cfcfcf";
+    this.backgroundImage = null;
     this.menuBarItemInsets = "3px 12px";
     
     this.menuInsetsTop = 2;
@@ -48,7 +49,9 @@ ExtrasMenu = function(elementId, containerElementId) {
     this.menuBorder = null;
     this.menuForeground = null;
     this.menuBackground = null;
+    this.menuBackgroundImage = null;
     this.selectionBackground = "#3f3f3f";
+    this.selectionBackgroundImage = null;
     this.selectionForeground = "#ffffff";
     
     this.transparentImageSrc = null;
@@ -180,6 +183,12 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
     menuDivElement.style.border = this.menuBorder == null ? this.border : this.menuBorder;
     menuDivElement.style.backgroundColor = this.menuBackground == null ? this.background : this.menuBackground;
     menuDivElement.style.color = this.menuForeground == null ? this.foreground : this.menuForeground;
+    if (this.menuBackgroundImage != null || (this.menuBackground == null && this.backgroundImage != null)) {
+        // Apply menu background image if it is set, or apply default background 
+        // image if it is set and the menu background is NOT set.
+        EchoCssUtil.applyStyle(menuDivElement, 
+              this.menuBackgroundImage == null ? this.backgroundImage : this.menuBackgroundImage);
+    }
     menuDivElement.style.position = "absolute";
     menuDivElement.style.top = yPosition + "px";
     menuDivElement.style.left = xPosition + "px";
@@ -260,6 +269,9 @@ ExtrasMenu.prototype.renderMenuBarAdd = function() {
     menuBarDivElement.style.color = this.foreground;
     menuBarDivElement.style.borderTop = this.border;
     menuBarDivElement.style.borderBottom = this.border;
+    if (this.backgroundImage != null) {
+        EchoCssUtil.applyStyle(menuBarDivElement, this.backgroundImage);
+    }
     
     var menuBarTableElement = document.createElement("table");
     menuBarTableElement.style.height = "100%";
@@ -406,9 +418,13 @@ ExtrasMenu.prototype.setHighlight = function(itemModel, state) {
         return;
     }
     if (state) {
+        if (this.selectionBackgroundImage != null) {
+            EchoCssUtil.applyStyle(itemElement, this.selectionBackgroundImage);
+        }
         itemElement.style.backgroundColor = this.selectionBackground;
         itemElement.style.color = this.selectionForeground;
     } else {
+        itemElement.style.backgroundImage = "";
         itemElement.style.backgroundColor = "";
         itemElement.style.color = "";
     }
@@ -667,6 +683,9 @@ ExtrasMenu.MessageProcessor.processInit = function(initMessageElement) {
     if (initMessageElement.getAttribute("background")) {
         menu.background = initMessageElement.getAttribute("background");
     }
+    if (initMessageElement.getAttribute("background-image")) {
+        menu.backgroundImage = initMessageElement.getAttribute("background-image");
+    }
     if (initMessageElement.getAttribute("border")) {
         menu.border = initMessageElement.getAttribute("border");
     }
@@ -676,6 +695,9 @@ ExtrasMenu.MessageProcessor.processInit = function(initMessageElement) {
     if (initMessageElement.getAttribute("menu-background")) {
         menu.menuBackground = initMessageElement.getAttribute("menu-background");
     }
+    if (initMessageElement.getAttribute("menu-background-image")) {
+        menu.menuBackgroundImage = initMessageElement.getAttribute("menu-background-image");
+    }
     if (initMessageElement.getAttribute("menu-border")) {
         menu.menuBorder = initMessageElement.getAttribute("menu-border");
     }
@@ -684,6 +706,9 @@ ExtrasMenu.MessageProcessor.processInit = function(initMessageElement) {
     }
     if (initMessageElement.getAttribute("selection-background")) {
         menu.selectionBackground = initMessageElement.getAttribute("selection-background");
+    }
+    if (initMessageElement.getAttribute("selection-background-image")) {
+        menu.selectionBackgroundImage = initMessageElement.getAttribute("selection-background-image");
     }
     if (initMessageElement.getAttribute("selection-foreground")) {
         menu.selectionForeground = initMessageElement.getAttribute("selection-foreground");

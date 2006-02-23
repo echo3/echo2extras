@@ -34,6 +34,7 @@ import java.util.EventListener;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Pane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
@@ -53,11 +54,14 @@ implements Pane {
     public static final String INPUT_SELECT = "select";
     public static final String MODEL_CHANGED_PROPERTY = "model";
 
+    public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_MENU_BACKGROUND = "menuBackground";
+    public static final String PROPERTY_MENU_BACKGROUND_IMAGE = "menuBackgroundImage";
     public static final String PROPERTY_MENU_BORDER = "menuBorder";
     public static final String PROPERTY_MENU_FOREGROUND = "menuForeground";
     public static final String PROPERTY_SELECTION_BACKGROUND = "selectionBackground";
+    public static final String PROPERTY_SELECTION_BACKGROUND_IMAGE = "selectionBackgroundImage";
     public static final String PROPERTY_SELECTION_FOREGROUND = "selectionForeground";
     
     private MenuModel model;
@@ -108,6 +112,18 @@ implements Pane {
     }
     
     /**
+     * Returns the background image that will be displayed in the 
+     * <code>MenuBarPane</code>.  This background image will also be 
+     * used around pull-down menus in the event that a menu 
+     * background image is not specified.
+     * 
+     * @return the default background image
+     */
+    public FillImage getBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_BACKGROUND_IMAGE);
+    }
+    
+    /**
      * Returns the border that will be displayed around the 
      * <code>MenuBarPane</code>.  This border will also be used around
      * pull-down menus in the event that a menu border is not specified.
@@ -122,12 +138,24 @@ implements Pane {
      * Returns the background color that will be displayed in pull-down
      * menus.  Use this property only if a color different from
      * the one used for the menu bar is desired for pull-down menus
-     * (otherwise use only the "brackground" property").
+     * (otherwise use only the "background" property").
      * 
      * @return the menu background
      */
     public Color getMenuBackground() {
         return (Color) getProperty(PROPERTY_MENU_BACKGROUND);
+    }
+    
+    /**
+     * Returns the background image that will be displayed in pull-down
+     * menus.  Use this property only if an image different from
+     * the one used for the menu bar is desired for pull-down menus
+     * (otherwise use only the "backgroundImage" property").
+     * 
+     * @return the menu background image
+     */
+    public FillImage getMenuBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_MENU_BACKGROUND_IMAGE);
     }
     
     /**
@@ -174,6 +202,16 @@ implements Pane {
     }
     
     /**
+     * Returns the background image used to highlight the currently 
+     * selected menu item.
+     * 
+     * @return the selection background image
+     */
+    public FillImage getSelectionBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_SELECTION_BACKGROUND_IMAGE);
+    }
+    
+    /**
      * Returns the foreground color used to highlight the currently 
      * selected menu item.
      * 
@@ -204,6 +242,18 @@ implements Pane {
     }
     
     /**
+     * Sets the background image that will be displayed in the 
+     * <code>MenuBarPane</code>.  This background image will also be 
+     * used around pull-down menus in the event that a menu 
+     * background image is not specified.
+     * 
+     * @param newValue the new default background image
+     */
+    public void setBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_BACKGROUND_IMAGE, newValue);
+    }
+    
+    /**
      * Sets the border that will be displayed around the 
      * <code>MenuBarPane</code>.  This border will also be used around
      * pull-down menus in the event that a menu border is not specified.
@@ -218,12 +268,24 @@ implements Pane {
      * Sets the background color that will be displayed in pull-down
      * menus.  Use this property only if a color different from
      * the one used for the menu bar is desired for pull-down menus
-     * (otherwise use only the "brackground" property").
+     * (otherwise use only the "background" property").
      * 
      * @param newValue the new menu background
      */
     public void setMenuBackground(Color newValue) {
         setProperty(PROPERTY_MENU_BACKGROUND, newValue);
+    }
+    
+    /**
+     * Sets the background image that will be displayed in pull-down
+     * menus.  Use this property only if an image different from
+     * the one used for the menu bar is desired for pull-down menus
+     * (otherwise use only the "backgroundImage" property").
+     * 
+     * @param newValue the new menu background image
+     */
+    public void setMenuBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_MENU_BACKGROUND_IMAGE, newValue);
     }
     
     /**
@@ -269,6 +331,16 @@ implements Pane {
      */
     public void setSelectionBackground(Color newValue) {
         setProperty(PROPERTY_SELECTION_BACKGROUND, newValue);
+    }
+    
+    /**
+     * Sets the background image used to highlight the currently 
+     * selected menu item.
+     * 
+     * @param newValue the new selection background image
+     */
+    public void setSelectionBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_SELECTION_BACKGROUND_IMAGE, newValue);
     }
     
     /**

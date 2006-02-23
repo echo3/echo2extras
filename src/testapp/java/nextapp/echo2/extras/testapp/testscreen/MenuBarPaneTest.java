@@ -31,6 +31,7 @@ package nextapp.echo2.extras.testapp.testscreen;
 
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.WindowPane;
@@ -52,6 +53,10 @@ import nextapp.echo2.extras.testapp.TestControlsPane;
 public class MenuBarPaneTest extends AbstractTest {
     
     private static final Extent DEFAULT_MENU_HEIGHT = new Extent(26);
+    private static final FillImage[] TEST_FILL_IMAGES = new FillImage[] { null, 
+            StyleUtil.FILL_IMAGE_SHADOW_BACKGROUND_DARK_BLUE, StyleUtil.FILL_IMAGE_SHADOW_BACKGROUND_LIGHT_BLUE,
+            StyleUtil.FILL_IMAGE_TITLE_BACKGROUND_2, StyleUtil.FILL_IMAGE_TAB_BACKGROUND,
+            StyleUtil.FILL_IMAGE_TAB_ROLLOVER_BACKGROUND};
 
     public MenuBarPaneTest() {
         super("MenuBarPane");
@@ -74,14 +79,17 @@ public class MenuBarPaneTest extends AbstractTest {
         addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "foreground");
         addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "background");
         addBorderPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "border");
+        addFillImagePropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "backgroundImage", TEST_FILL_IMAGES);
         addFontPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "font");
         
         addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "menuForeground");
         addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "menuBackground");
+        addFillImagePropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "menuBackgroundImage", TEST_FILL_IMAGES);
         addBorderPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "menuBorder");
         
         addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "selectionForeground");
         addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "selectionBackground");
+        addFillImagePropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "selectionBackgroundImage", TEST_FILL_IMAGES);
         
         testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Add Test WindowPane", new ActionListener(){
         
