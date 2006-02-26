@@ -105,6 +105,20 @@ public class TabPaneTest extends AbstractTest {
             }
         });
 
+        testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Add-Remove-Add Label", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Label label = new Label("Tab Pane Child " + tabNumber);
+                label.setBackground(StyleUtil.randomBrightColor());
+                TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                layoutData.setTitle("Label #" + tabNumber);
+                label.setLayoutData(layoutData);
+                tabPane.add(label);
+                tabPane.remove(label);
+                tabPane.add(label);
+                ++tabNumber;
+            }
+        });
+
         testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Add Label (index 0)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Label label = new Label("Tab Pane Child " + tabNumber);

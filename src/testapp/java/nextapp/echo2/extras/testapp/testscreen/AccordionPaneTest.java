@@ -67,7 +67,7 @@ public class AccordionPaneTest extends AbstractTest {
 
         testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Add Label", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Label label = new Label("Tab Pane Child " + tabNumber);
+                Label label = new Label("Accordion Pane Child " + tabNumber);
                 label.setBackground(StyleUtil.randomBrightColor());
                 AccordionPaneLayoutData layoutData = new AccordionPaneLayoutData();
                 layoutData.setTitle("Label #" + tabNumber);
@@ -77,9 +77,23 @@ public class AccordionPaneTest extends AbstractTest {
             }
         });
 
+        testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Add-Remove-Add Label", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Label label = new Label("Accordion Pane Child " + tabNumber);
+                label.setBackground(StyleUtil.randomBrightColor());
+                AccordionPaneLayoutData layoutData = new AccordionPaneLayoutData();
+                layoutData.setTitle("Label #" + tabNumber);
+                label.setLayoutData(layoutData);
+                accordionPane.add(label);
+                accordionPane.remove(label);
+                accordionPane.add(label);
+                ++tabNumber;
+            }
+        });
+
         testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Add and Select Label", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Label label = new Label("Tab Pane Child " + tabNumber);
+                Label label = new Label("Accordion Pane Child " + tabNumber);
                 label.setBackground(StyleUtil.randomBrightColor());
                 AccordionPaneLayoutData layoutData = new AccordionPaneLayoutData();
                 layoutData.setTitle("Label #" + tabNumber);
@@ -92,7 +106,7 @@ public class AccordionPaneTest extends AbstractTest {
 
         testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Add Label (index 0)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Label label = new Label("Tab Pane Child " + tabNumber);
+                Label label = new Label("Accordion Pane Child " + tabNumber);
                 label.setBackground(StyleUtil.randomBrightColor());
                 AccordionPaneLayoutData layoutData = new AccordionPaneLayoutData();
                 layoutData.setTitle("Inserted Label #" + tabNumber);
@@ -108,7 +122,7 @@ public class AccordionPaneTest extends AbstractTest {
                     // Do nothing
                     return;
                 }
-                Label label = new Label("Tab Pane Child " + tabNumber);
+                Label label = new Label("Accordion Pane Child " + tabNumber);
                 label.setBackground(StyleUtil.randomBrightColor());
                 AccordionPaneLayoutData layoutData = new AccordionPaneLayoutData();
                 layoutData.setTitle("Inserted Label #" + tabNumber);

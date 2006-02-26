@@ -224,6 +224,11 @@ ExtrasAccordionPane.prototype.removeTab = function(tabId) {
     var tabDivElement = this.getTabElement(tabId);
     var tabContentDivElement = this.getTabContentElement(tabId);
 
+    if (!this.tabIdToTabMap.get(tabId)) {
+        // Do nothing: request to remove non-existent tab.
+        return;
+    }
+
     this.disposeTab(tabId);
     
     ExtrasUtil.Arrays.removeElement(this.tabIds, tabId);

@@ -317,6 +317,11 @@ ExtrasTabPane.prototype.getTabContentInsets = function(tabId) {
 };
 
 ExtrasTabPane.prototype.removeTab = function(tabId) {
+    if (!this.tabIdToTabMap.get(tabId)) {
+        // Do nothing: request to remove non-existent tab.
+        return;
+    }
+
     ExtrasUtil.Arrays.removeElement(this.tabIds, tabId);
     this.tabIdToTabMap.remove(tabId);
 
