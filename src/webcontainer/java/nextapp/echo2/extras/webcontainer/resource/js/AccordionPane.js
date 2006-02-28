@@ -41,6 +41,7 @@ ExtrasAccordionPane = function(elementId, containerElementId, activeTabId) {
     this.elementId = elementId;
     this.containerElementId = containerElementId;
     this.activeTabId = activeTabId;
+    this.lastKnownActiveTabIndex = -1;
 
     this.defaultContentInsets = ExtrasAccordionPane.PANE_INSETS;
     this.tabHeight = 20;
@@ -81,10 +82,6 @@ ExtrasAccordionPane.prototype.addTab = function(tab, tabIndex) {
     ExtrasUtil.Arrays.insertElement(this.tabIds, tab.tabId, tabIndex);
     this.tabIdToTabMap.put(tab.tabId, tab);
     
-    if (this.activeTabId == null) {
-        this.activeTabId = tab.tabId;
-    }
-
     var accordionPaneDivElement = document.getElementById(this.elementId);
 
     var tabDivElement = document.createElement("div");
@@ -228,6 +225,10 @@ ExtrasAccordionPane.prototype.removeTab = function(tabId) {
         // Do nothing: request to remove non-existent tab.
         return;
     }
+    
+    if (this.activeTabId == tabId) {
+        this.lastKnownActiveTabIndex = ExtrasUtil.Arrays.indexOf(this.tabIds, tabId);
+    }
 
     this.disposeTab(tabId);
     
@@ -236,12 +237,6 @@ ExtrasAccordionPane.prototype.removeTab = function(tabId) {
 
     tabDivElement.parentNode.removeChild(tabDivElement);
     tabContentDivElement.parentNode.removeChild(tabContentDivElement);
-    
-    if (this.activeTabId == tabId) {
-        if (this.tabIds.length > 0) {
-            this.selectTab(this.tabIds[this.tabIds.length - 1]);
-        }
-    }
 };
 
 /**
@@ -251,6 +246,23 @@ ExtrasAccordionPane.prototype.removeTab = function(tabId) {
 ExtrasAccordionPane.prototype.redrawTabs = function() {
     if (this.rotation) {
         this.rotation.cancel();
+    }
+    
+    if (this.activeTabId == null || !this.tabIdToTabMap.get(this.activeTabId)) {
+        if (this.tabIds.length > 0) {
+            if (this.lastKnownActiveTabIndex >= 0) {
+                if (this.lastKnownActiveTabIndex < this.tabIds.length) {
+                    this.activeTabId = this.tabIds[this.lastKnownActiveTabIndex];
+                } else {
+                    this.activeTabId = this.tabIds[this.tabIds.length - 1];
+                }
+            } else {
+                this.activeTabId = this.tabIds[0];
+            }
+            this.lastKnownActiveTabIndex = -1;
+        } else {
+            this.activeTabId = null;
+        }
     }
 
     var selectionPassed = false;

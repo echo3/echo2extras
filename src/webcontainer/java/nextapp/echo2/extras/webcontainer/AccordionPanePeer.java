@@ -188,8 +188,6 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
         for (int i = 0; i < addedChildren.length; ++i) {
             renderChild(rc, update, accordionPane, addedChildren[i]);
         }
-
-        renderRedrawDirective(rc, accordionPane);
     }
 
     private void renderAddTabDirective(RenderContext rc, ServerComponentUpdate update, AccordionPane accordionPane, 
@@ -367,7 +365,6 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
         for (int i = 0; i < removedChildren.length; ++i) {
             renderRemoveTabDirective(rc, update, accordionPane, removedChildren[i]);
         }
-        renderRedrawDirective(rc, accordionPane);
     }
     
     private void renderRemoveTabDirective(RenderContext rc, ServerComponentUpdate update, AccordionPane accordionPane, 
@@ -398,6 +395,8 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
      *      nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
+        AccordionPane accordionPane = (AccordionPane) update.getParent();
+        
         // Determine if fully replacing the component is required.
         boolean fullReplace = false;
         if (update.hasUpdatedLayoutDataChildren()) {
@@ -411,19 +410,25 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
         
         if (fullReplace) {
             // Perform full update.
-            renderDisposeDirective(rc, (AccordionPane) update.getParent());
-            DomUpdate.renderElementRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
-            renderAdd(rc, update, targetId, update.getParent());
+            renderDisposeDirective(rc, accordionPane);
+            DomUpdate.renderElementRemove(rc.getServerMessage(), ContainerInstance.getElementId(accordionPane));
+            renderAdd(rc, update, targetId, accordionPane);
         } else {
+            boolean hasChildUpdates = false;
             // Perform incremental updates.
             if (update.hasRemovedChildren()) {
                 renderRemoveChildren(rc, update);
+                hasChildUpdates = true;
             }
             if (update.hasAddedChildren()) {
                 renderAddChildren(rc, update);
+                hasChildUpdates = true;
             }
             if (update.hasUpdatedProperties()) {
                 partialUpdateManager.process(rc, update);
+            }
+            if (hasChildUpdates) {
+                renderRedrawDirective(rc, accordionPane);
             }
         }
         
