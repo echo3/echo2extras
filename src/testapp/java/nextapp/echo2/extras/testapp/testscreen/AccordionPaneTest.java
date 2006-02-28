@@ -30,6 +30,7 @@
 package nextapp.echo2.extras.testapp.testscreen;
 
 import nextapp.echo2.app.Color;
+import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
@@ -210,6 +211,28 @@ public class AccordionPaneTest extends AbstractTest {
             }
         });
 
+        testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Remove-Add Index 0", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (accordionPane.getComponentCount() < 0) {
+                    return;
+                }
+                Component component = accordionPane.getComponent(0);
+                accordionPane.remove(component);
+                accordionPane.add(component, 0);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Remove-Add Index 2", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (accordionPane.getComponentCount() < 2) {
+                    return;
+                }
+                Component component = accordionPane.getComponent(2);
+                accordionPane.remove(component);
+                accordionPane.add(component, 2);
+            }
+        });
+        
         testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Remove Last Tab", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (accordionPane.getComponentCount() > 0) {
