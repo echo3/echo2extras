@@ -117,9 +117,9 @@ ExtrasAccordionPane.prototype.addTab = function(tab, tabIndex) {
     EchoVirtualPosition.register(tabDivElement.id);
     EchoVirtualPosition.register(tabContentDivElement.id);
     
-    EchoEventProcessor.addHandler(tabDivElement.id, "click", "ExtrasAccordionPane.processTabClick");
-    EchoEventProcessor.addHandler(tabDivElement.id, "mouseover", "ExtrasAccordionPane.processTabRolloverEnter");
-    EchoEventProcessor.addHandler(tabDivElement.id, "mouseout", "ExtrasAccordionPane.processTabRolloverExit");
+    EchoEventProcessor.addHandler(tabDivElement, "click", "ExtrasAccordionPane.processTabClick");
+    EchoEventProcessor.addHandler(tabDivElement, "mouseover", "ExtrasAccordionPane.processTabRolloverEnter");
+    EchoEventProcessor.addHandler(tabDivElement, "mouseout", "ExtrasAccordionPane.processTabRolloverExit");
 };
 
 ExtrasAccordionPane.prototype.calculateTabHeight = function() {
@@ -150,7 +150,7 @@ ExtrasAccordionPane.prototype.create = function() {
     
     containerElement.appendChild(accordionPaneDivElement);
     
-    EchoDomPropertyStore.setPropertyValue(this.elementId, "component", this);
+    EchoDomPropertyStore.setPropertyValue(accordionPaneDivElement, "component", this);
 };
 
 /**
@@ -171,9 +171,9 @@ ExtrasAccordionPane.prototype.dispose = function() {
  */
 ExtrasAccordionPane.prototype.disposeTab = function(tabId) {
     var tabDivElement = this.getTabElement(tabId);
-    EchoEventProcessor.removeHandler(tabDivElement.id, "click");
-    EchoEventProcessor.removeHandler(tabDivElement.id, "mouseover");
-    EchoEventProcessor.removeHandler(tabDivElement.id, "mouseout");
+    EchoEventProcessor.removeHandler(tabDivElement, "click");
+    EchoEventProcessor.removeHandler(tabDivElement, "mouseover");
+    EchoEventProcessor.removeHandler(tabDivElement, "mouseout");
 };
 
 /**
