@@ -29,6 +29,7 @@
 
 package nextapp.echo2.extras.testapp;
 
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.ResourceImageReference;
 import nextapp.echo2.app.StyleSheet;
@@ -55,6 +56,18 @@ public class Styles {
             = new ResourceImageReference(IMAGE_PATH + "MenuBarPaneIcon16.gif"); 
     public static final ImageReference ICON_16_TAB_PANE 
             = new ResourceImageReference(IMAGE_PATH + "TabPaneIcon16.gif"); 
+
+    public static final FillImage FILL_IMAGE_SHADOW_BACKGROUND_DARK_BLUE = new FillImage(
+            new ResourceImageReference(IMAGE_PATH + "ShadowBackgroundDarkBlue.png"));
+    public static final FillImage FILL_IMAGE_SHADOW_BACKGROUND_LIGHT_BLUE = new FillImage(
+            new ResourceImageReference(IMAGE_PATH + "ShadowBackgroundLightBlue.png"));
+    public static final FillImage FILL_IMAGE_TITLE_BACKGROUND_2 = new FillImage(
+            new ResourceImageReference(IMAGE_PATH + "PewterLineBackground.png"));
+    public static final FillImage FILL_IMAGE_TAB_BACKGROUND = new FillImage(
+            new ResourceImageReference(IMAGE_PATH + "TabBackground.png"));
+    public static final FillImage FILL_IMAGE_TAB_ROLLOVER_BACKGROUND = new FillImage(
+            new ResourceImageReference(IMAGE_PATH + "TabRolloverBackground.png"));
+    
     
     public static final ImageReference ICON_24_NO = new ResourceImageReference(IMAGE_PATH + "Icon24No.gif"); 
     public static final ImageReference ICON_24_YES = new ResourceImageReference(IMAGE_PATH + "Icon24Yes.gif");

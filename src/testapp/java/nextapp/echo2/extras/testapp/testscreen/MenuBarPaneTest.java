@@ -55,9 +55,9 @@ public class MenuBarPaneTest extends AbstractTest {
     
     private static final Extent DEFAULT_MENU_HEIGHT = new Extent(26);
     private static final FillImage[] TEST_FILL_IMAGES = new FillImage[] { null, 
-            StyleUtil.FILL_IMAGE_SHADOW_BACKGROUND_DARK_BLUE, StyleUtil.FILL_IMAGE_SHADOW_BACKGROUND_LIGHT_BLUE,
-            StyleUtil.FILL_IMAGE_TITLE_BACKGROUND_2, StyleUtil.FILL_IMAGE_TAB_BACKGROUND,
-            StyleUtil.FILL_IMAGE_TAB_ROLLOVER_BACKGROUND};
+            Styles.FILL_IMAGE_SHADOW_BACKGROUND_DARK_BLUE, Styles.FILL_IMAGE_SHADOW_BACKGROUND_LIGHT_BLUE,
+            Styles.FILL_IMAGE_TITLE_BACKGROUND_2, Styles.FILL_IMAGE_TAB_BACKGROUND,
+            Styles.FILL_IMAGE_TAB_ROLLOVER_BACKGROUND};
 
     public MenuBarPaneTest() {
         super("MenuBarPane", Styles.ICON_16_MENU_BAR_PANE);

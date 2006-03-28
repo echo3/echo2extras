@@ -33,9 +33,7 @@ import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Extent;
-import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Font;
-import nextapp.echo2.app.ResourceImageReference;
 
 /**
  * 
@@ -74,8 +72,6 @@ public class StyleUtil {
     private static int nextBorderStyle = 0;
     private static int nextBorderSize = 0;
     
-    private static final String IMAGE_PATH = "/nextapp/echo2/extras/testapp/resource/image/";
-    
     private static Font.Typeface[] TYPEFACES = new Font.Typeface[]{Font.COURIER_NEW, Font.VERDANA, Font.TIMES_NEW_ROMAN}; 
     
     private static int[] BORDER_SIZES = new int[]{0, 1, 2, 3, 4, 5, 10, 15, 20, 40, 80};
@@ -99,17 +95,6 @@ public class StyleUtil {
      */
     private static final int[] VERTICAL_ALIGNMENT_VALUES = new int[] { Alignment.DEFAULT, Alignment.DEFAULT, Alignment.TOP,
             Alignment.CENTER, Alignment.BOTTOM };
-    
-    public static final FillImage FILL_IMAGE_SHADOW_BACKGROUND_DARK_BLUE = new FillImage(
-            new ResourceImageReference(IMAGE_PATH + "ShadowBackgroundDarkBlue.png"));
-    public static final FillImage FILL_IMAGE_SHADOW_BACKGROUND_LIGHT_BLUE = new FillImage(
-            new ResourceImageReference(IMAGE_PATH + "ShadowBackgroundLightBlue.png"));
-    public static final FillImage FILL_IMAGE_TITLE_BACKGROUND_2 = new FillImage(
-            new ResourceImageReference(IMAGE_PATH + "TitleBackground2.png"));
-    public static final FillImage FILL_IMAGE_TAB_BACKGROUND = new FillImage(
-            new ResourceImageReference(IMAGE_PATH + "TabBackground.png"));
-    public static final FillImage FILL_IMAGE_TAB_ROLLOVER_BACKGROUND = new FillImage(
-            new ResourceImageReference(IMAGE_PATH + "TabRolloverBackground.png"));
     
     public static Alignment randomAlignmentHV() {
         return new Alignment(HORIZONTAL_ALIGNMENT_VALUES[(int) (Math.random() * HORIZONTAL_ALIGNMENT_VALUES.length)],

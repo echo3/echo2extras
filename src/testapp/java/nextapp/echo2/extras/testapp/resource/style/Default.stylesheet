@@ -135,7 +135,7 @@
       <property name="backgroundImage">
        <fill-image repeat="none" vertical="100%">
         <image type="nextapp.echo2.app.ResourceImageReference">
-         <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/TitleBackground2.png"/>
+         <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/PewterLineBackground.png"/>
         </image>
        </fill-image>
       </property>
@@ -143,6 +143,24 @@
       <property name="overflow" value="OVERFLOW_HIDDEN"/>
      </properties>
     </layout-data>
+   </property>
+  </properties>
+ </style>
+ <style name="Default" type="nextapp.echo2.extras.app.MenuBarPane">
+  <properties>
+   <property name="backgroundImage">
+    <fill-image repeat="vertical">
+     <image type="nextapp.echo2.app.ResourceImageReference">
+      <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/PewterLineBackground.png"/>
+     </image>
+    </fill-image>
+   </property>
+   <property name="menuBackgroundImage">
+    <fill-image repeat="vertical">
+     <image type="nextapp.echo2.app.ResourceImageReference">
+      <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/LightBlueLineBackground.png"/>
+     </image>
+    </fill-image>
    </property>
   </properties>
  </style>
@@ -317,14 +335,14 @@
    <property name="tabBackgroundImage">
     <fill-image repeat="none">
      <image type="nextapp.echo2.app.ResourceImageReference">
-      <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/TabBackground.png"/>
+      <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/SilverLineBackground.png"/>
      </image>
     </fill-image>
    </property>
    <property name="tabRolloverBackgroundImage">
     <fill-image repeat="none">
      <image type="nextapp.echo2.app.ResourceImageReference">
-      <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/TabRolloverBackground.png"/>
+      <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/LightBlueLineBackground.png"/>
      </image>
     </fill-image>
    </property>

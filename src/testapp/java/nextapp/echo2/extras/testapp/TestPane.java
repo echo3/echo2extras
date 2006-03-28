@@ -94,7 +94,7 @@ public class TestPane extends ContentPane {
         super();
         
         DefaultMenuModel menuBarMenu = new DefaultMenuModel();
-
+        
         DefaultMenuModel testsMenu = new DefaultMenuModel("Test");
         testsMenu.addItem(new DefaultOptionModel(
                 "Accordion Pane", Styles.ICON_16_ACCORDION_PANE, "Launch_AccordionPaneTest"));
@@ -129,6 +129,7 @@ public class TestPane extends ContentPane {
         titleVerticalPane.add(menuVerticalPane);
         
         MenuBarPane menu = new MenuBarPane(menuBarMenu);
+        menu.setStyleName("Default");
         menu.addActionListener(commandActionListener);
         menuVerticalPane.add(menu);
     }
