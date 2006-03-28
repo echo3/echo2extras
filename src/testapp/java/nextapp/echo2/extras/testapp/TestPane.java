@@ -96,13 +96,18 @@ public class TestPane extends ContentPane {
         DefaultMenuModel menuBarMenu = new DefaultMenuModel();
 
         DefaultMenuModel testsMenu = new DefaultMenuModel("Test");
-        testsMenu.addItem(new DefaultOptionModel("Accordion Pane", Styles.ICON_16_ACCORDION_PANE, 
-                "Launch_AccordionPaneTest"));
-        testsMenu.addItem(new DefaultOptionModel("Border Pane", null, "Launch_BorderPaneTest"));
-        testsMenu.addItem(new DefaultOptionModel("Calendar Select", null, "Launch_CalendarSelectTest"));
-        testsMenu.addItem(new DefaultOptionModel("Color Select", null, "Launch_ColorSelectTest"));
-        testsMenu.addItem(new DefaultOptionModel("Menu Bar Pane", null, "Launch_MenuBarPaneTest"));
-        testsMenu.addItem(new DefaultOptionModel("Tab Pane", null, "Launch_TabPaneTest"));
+        testsMenu.addItem(new DefaultOptionModel(
+                "Accordion Pane", Styles.ICON_16_ACCORDION_PANE, "Launch_AccordionPaneTest"));
+        testsMenu.addItem(new DefaultOptionModel(
+                "Border Pane", Styles.ICON_16_BORDER_PANE, "Launch_BorderPaneTest"));
+        testsMenu.addItem(new DefaultOptionModel(
+                "Calendar Select", Styles.ICON_16_CALENDAR_SELECT, "Launch_CalendarSelectTest"));
+        testsMenu.addItem(new DefaultOptionModel(
+                "Color Select", Styles.ICON_16_COLOR_SELECT, "Launch_ColorSelectTest"));
+        testsMenu.addItem(new DefaultOptionModel(
+                "Menu Bar Pane", Styles.ICON_16_MENU_BAR_PANE, "Launch_MenuBarPaneTest"));
+        testsMenu.addItem(new DefaultOptionModel(
+                "Tab Pane", Styles.ICON_16_TAB_PANE, "Launch_TabPaneTest"));
         testsMenu.addItem(new SeparatorModel());
         testsMenu.addItem(new DefaultOptionModel("Exit", null, null));
         menuBarMenu.addItem(testsMenu);

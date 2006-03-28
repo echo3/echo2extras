@@ -45,7 +45,11 @@ ExtrasMenu = function(elementId, containerElementId) {
     this.menuInsetsBottom = 2;
     this.menuInsetsLeft = 2;
     this.menuInsetsRight = 2;
-    this.menuItemInsets = "1px 12px";
+    this.menuItemInsetsTop = 1;
+    this.menuItemInsetsLeft = 12;
+    this.menuItemInsetsRight = 12;
+    this.menuItemInsetsBottom = 1;
+    this.menuItemIconTextMargin = 5;
     this.menuBorder = null;
     this.menuForeground = null;
     this.menuBackground = null;
@@ -199,6 +203,24 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
     
     var menuTbodyElement = document.createElement("tbody");
     menuTableElement.appendChild(menuTbodyElement);
+
+    // Determine if any icons are present.
+    var hasIcons = false;
+    for (var i = 0; i < menuModel.items.length; ++i) {
+        if (menuModel.items[i].icon) {
+            hasIcons = true;
+            break;
+        }
+    }
+    var textPadding, iconPadding;
+    if (hasIcons) {
+        iconPadding = "0 0 0 " + this.menuItemInsetsLeft + "px";
+        textPadding = this.menuItemInsetsTop + "px " + this.menuItemInsetsRight + "px " 
+                + this.menuItemInsetsBottom + "px " + this.menuItemIconTextMargin + "px";
+    } else {
+        textPadding = this.menuItemInsetsTop + "px " + this.menuItemInsetsRight + "px " 
+                + this.menuItemInsetsBottom + "px " + this.menuItemInsetsLeft + "px";
+    }
     
     for (var i = 0; i < menuModel.items.length; ++i) {
         if (menuModel.items[i] instanceof ExtrasMenu.OptionModel
@@ -207,9 +229,21 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
             menuItemTrElement.id = this.elementId + "_tr_item_" + menuModel.items[i].id;
             menuItemTrElement.style.cursor = "pointer";
             menuTbodyElement.appendChild(menuItemTrElement);
+
+            if (hasIcons) {
+                var menuItemIconTdElement = document.createElement("td");
+                menuItemIconTdElement.style.padding = iconPadding;
+                if (menuModel.items[i].icon) {
+                    var imgElement = document.createElement("img");
+                    imgElement.setAttribute("src", menuModel.items[i].icon);
+                    imgElement.setAttribute("alt", "");
+                    menuItemIconTdElement.appendChild(imgElement);
+                }
+                menuItemTrElement.appendChild(menuItemIconTdElement);
+            }
             
             var menuItemContentTdElement = document.createElement("td");
-            menuItemContentTdElement.style.padding = this.menuItemInsets;
+            menuItemContentTdElement.style.padding = textPadding;
             menuItemContentTdElement.appendChild(document.createTextNode(menuModel.items[i].text));
             menuItemTrElement.appendChild(menuItemContentTdElement);
             
@@ -736,12 +770,12 @@ ExtrasMenu.MessageProcessor.processInit = function(initMessageElement) {
  * @return the created ExtrasMenu.MenuModel instance
  */
 ExtrasMenu.MessageProcessor.processMenuModel = function(menuElement) {
-    var menuModel = new ExtrasMenu.MenuModel(menuElement.getAttribute("text"));
+    var menuModel = new ExtrasMenu.MenuModel(menuElement.getAttribute("text"), menuElement.getAttribute("icon"));
     for (var i = 0; i < menuElement.childNodes.length; ++i) {
         var node = menuElement.childNodes[i];
         if (node.nodeType == 1) { // Element
             if (node.nodeName == "option") {
-                var optionModel = new ExtrasMenu.OptionModel(node.getAttribute("text"));
+                var optionModel = new ExtrasMenu.OptionModel(node.getAttribute("text"), node.getAttribute("icon"));
                 menuModel.addItem(optionModel);
             } else if (node.nodeName == "menu") {
                 var childMenuModel = ExtrasMenu.MessageProcessor.processMenuModel(node);

@@ -44,6 +44,7 @@ import nextapp.echo2.extras.app.layout.AccordionPaneLayoutData;
 import nextapp.echo2.extras.testapp.AbstractTest;
 import nextapp.echo2.extras.testapp.ButtonColumn;
 import nextapp.echo2.extras.testapp.StyleUtil;
+import nextapp.echo2.extras.testapp.Styles;
 import nextapp.echo2.extras.testapp.TestControlsPane;
 
 /**
@@ -54,7 +55,7 @@ public class AccordionPaneTest extends AbstractTest {
     private int tabNumber;
 
     public AccordionPaneTest() {
-        super("AccordionPane");
+        super("AccordionPane", Styles.ICON_16_ACCORDION_PANE);
         
         final AccordionPane accordionPane = new AccordionPane();
         add(accordionPane);

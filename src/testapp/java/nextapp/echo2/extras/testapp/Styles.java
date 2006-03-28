@@ -45,6 +45,16 @@ public class Styles {
  
     public static final ImageReference ICON_16_ACCORDION_PANE 
             = new ResourceImageReference(IMAGE_PATH + "AccordionPaneIcon16.gif"); 
+    public static final ImageReference ICON_16_BORDER_PANE 
+            = new ResourceImageReference(IMAGE_PATH + "BorderPaneIcon16.gif"); 
+    public static final ImageReference ICON_16_CALENDAR_SELECT 
+            = new ResourceImageReference(IMAGE_PATH + "CalendarSelectIcon16.gif"); 
+    public static final ImageReference ICON_16_COLOR_SELECT
+            = new ResourceImageReference(IMAGE_PATH + "ColorSelectIcon16.gif"); 
+    public static final ImageReference ICON_16_MENU_BAR_PANE 
+            = new ResourceImageReference(IMAGE_PATH + "MenuBarPaneIcon16.gif"); 
+    public static final ImageReference ICON_16_TAB_PANE 
+            = new ResourceImageReference(IMAGE_PATH + "TabPaneIcon16.gif"); 
     
     public static final ImageReference ICON_24_NO = new ResourceImageReference(IMAGE_PATH + "Icon24No.gif"); 
     public static final ImageReference ICON_24_YES = new ResourceImageReference(IMAGE_PATH + "Icon24Yes.gif");

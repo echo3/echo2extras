@@ -33,6 +33,7 @@ import nextapp.echo2.app.Button;
 import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
@@ -49,10 +50,10 @@ public class TestControlsPane extends SplitPane {
     
     private AccordionPane controlGroupsAccordion;
     
-    public TestControlsPane(String testTitle) {
+    public TestControlsPane(String testTitle, ImageReference testIcon) {
         super(SplitPane.ORIENTATION_VERTICAL, new Extent(40));
 
-        Label titleLabel = new Label(testTitle);
+        Label titleLabel = new Label(testTitle, testIcon);
         titleLabel.setStyleName("TitleLabel2");
         add(titleLabel);
         
@@ -60,6 +61,8 @@ public class TestControlsPane extends SplitPane {
         controlGroupsAccordion.setStyleName("TestControlsAccordion");
         add(controlGroupsAccordion);
     }
+    
+    
     
     public void addControl(String category, Component control) {
         Column controlsColumn = (Column) getComponent(category);

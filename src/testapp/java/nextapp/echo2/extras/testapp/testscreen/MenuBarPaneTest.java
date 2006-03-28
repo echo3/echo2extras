@@ -45,6 +45,7 @@ import nextapp.echo2.extras.app.menu.SeparatorModel;
 import nextapp.echo2.extras.testapp.AbstractTest;
 import nextapp.echo2.extras.testapp.InteractiveApp;
 import nextapp.echo2.extras.testapp.StyleUtil;
+import nextapp.echo2.extras.testapp.Styles;
 import nextapp.echo2.extras.testapp.TestControlsPane;
 
 /**
@@ -59,7 +60,7 @@ public class MenuBarPaneTest extends AbstractTest {
             StyleUtil.FILL_IMAGE_TAB_ROLLOVER_BACKGROUND};
 
     public MenuBarPaneTest() {
-        super("MenuBarPane");
+        super("MenuBarPane", Styles.ICON_16_MENU_BAR_PANE);
         
         SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, DEFAULT_MENU_HEIGHT);
         splitPane.setStyleName("DefaultResizable");

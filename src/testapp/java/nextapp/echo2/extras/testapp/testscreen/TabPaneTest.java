@@ -43,6 +43,7 @@ import nextapp.echo2.extras.app.layout.TabPaneLayoutData;
 import nextapp.echo2.extras.testapp.AbstractTest;
 import nextapp.echo2.extras.testapp.ButtonColumn;
 import nextapp.echo2.extras.testapp.StyleUtil;
+import nextapp.echo2.extras.testapp.Styles;
 import nextapp.echo2.extras.testapp.TestControlsPane;
 
 /**
@@ -54,7 +55,7 @@ public class TabPaneTest extends AbstractTest {
 
     public TabPaneTest() {
         
-        super("TabPane");
+        super("TabPane", Styles.ICON_16_TAB_PANE);
         
         final TabPane tabPane = new TabPane();
         add(tabPane);

@@ -38,6 +38,7 @@ import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.BorderPane;
 import nextapp.echo2.extras.testapp.AbstractTest;
 import nextapp.echo2.extras.testapp.StyleUtil;
+import nextapp.echo2.extras.testapp.Styles;
 import nextapp.echo2.extras.testapp.TestControlsPane;
 
 /**
@@ -46,7 +47,7 @@ import nextapp.echo2.extras.testapp.TestControlsPane;
 public class BorderPaneTest extends AbstractTest {
 
     public BorderPaneTest() {
-        super("BorderPane");
+        super("BorderPane", Styles.ICON_16_BORDER_PANE);
         final BorderPane borderPane = new BorderPane();
         borderPane.setStyleName("Shadow");
         add(borderPane);

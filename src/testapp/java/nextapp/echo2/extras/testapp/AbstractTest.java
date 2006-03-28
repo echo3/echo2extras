@@ -38,6 +38,7 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Font;
+import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
@@ -50,11 +51,14 @@ public class AbstractTest extends SplitPane {
     protected TestControlsPane testControlsPane;
     
     public AbstractTest(String testName) {
-        
+        this(testName, null);
+    }
+    
+    public AbstractTest(String testName, ImageReference icon) {
         super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
         setStyleName("DefaultResizable");
         
-        testControlsPane = new TestControlsPane(testName);
+        testControlsPane = new TestControlsPane(testName, icon);
         add(testControlsPane);
     }
     

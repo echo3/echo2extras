@@ -39,6 +39,7 @@ import nextapp.echo2.extras.app.ColorSelect;
 import nextapp.echo2.extras.testapp.AbstractTest;
 import nextapp.echo2.extras.testapp.InteractiveApp;
 import nextapp.echo2.extras.testapp.StyleUtil;
+import nextapp.echo2.extras.testapp.Styles;
 import nextapp.echo2.extras.testapp.TestControlsPane;
 
 /**
@@ -50,7 +51,7 @@ public class ColorSelectTest extends AbstractTest {
             new Extent(128), new Extent(256), new Extent(512)};
 
     public ColorSelectTest() {
-        super("ColorSelect");
+        super("ColorSelect", Styles.ICON_16_COLOR_SELECT);
         
         final ColorSelect colorSelect = new ColorSelect();
         add(colorSelect);

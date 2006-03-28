@@ -41,6 +41,7 @@ import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.CalendarSelect;
 import nextapp.echo2.extras.testapp.AbstractTest;
 import nextapp.echo2.extras.testapp.InteractiveApp;
+import nextapp.echo2.extras.testapp.Styles;
 import nextapp.echo2.extras.testapp.TestControlsPane;
 
 /**
@@ -49,7 +50,7 @@ import nextapp.echo2.extras.testapp.TestControlsPane;
 public class CalendarSelectTest extends AbstractTest {
 
     public CalendarSelectTest() {
-        super("CalendarSelect");
+        super("CalendarSelect", Styles.ICON_16_CALENDAR_SELECT);
         setStyleName("DefaultResizable");
         
         final CalendarSelect calendarSelect = new CalendarSelect();
