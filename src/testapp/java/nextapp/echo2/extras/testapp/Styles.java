@@ -43,6 +43,9 @@ public class Styles {
     public static final String IMAGE_PATH = "/nextapp/echo2/extras/testapp/resource/image/";
     public static final String STYLE_PATH = "/nextapp/echo2/extras/testapp/resource/style/";
  
+    public static final ImageReference ICON_16_ACCORDION_PANE 
+            = new ResourceImageReference(IMAGE_PATH + "AccordionPaneIcon16.gif"); 
+    
     public static final ImageReference ICON_24_NO = new ResourceImageReference(IMAGE_PATH + "Icon24No.gif"); 
     public static final ImageReference ICON_24_YES = new ResourceImageReference(IMAGE_PATH + "Icon24Yes.gif");
     public static final ImageReference ECHO2_IMAGE = new ResourceImageReference(IMAGE_PATH + "Echo2.png");

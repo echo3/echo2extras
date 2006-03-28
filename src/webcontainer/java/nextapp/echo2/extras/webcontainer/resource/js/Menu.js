@@ -115,7 +115,7 @@ ExtrasMenu.prototype.isMenuBarItemElement = function(itemElement) {
 
 ExtrasMenu.prototype.notifyServer = function(menuModel) {
     var path = ExtrasMenu.getItemPath(menuModel);
-    EchoClientMessage.setActionValue(this.elementId, "select", path.join());
+    EchoClientMessage.setActionValue(this.elementId, "select", path.join("."));
     EchoServerTransaction.connect();
 };
 

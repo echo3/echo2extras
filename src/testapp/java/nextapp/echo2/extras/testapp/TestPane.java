@@ -96,7 +96,8 @@ public class TestPane extends ContentPane {
         DefaultMenuModel menuBarMenu = new DefaultMenuModel();
 
         DefaultMenuModel testsMenu = new DefaultMenuModel("Test");
-        testsMenu.addItem(new DefaultOptionModel("Accordion Pane", null, "Launch_AccordionPaneTest"));
+        testsMenu.addItem(new DefaultOptionModel("Accordion Pane", Styles.ICON_16_ACCORDION_PANE, 
+                "Launch_AccordionPaneTest"));
         testsMenu.addItem(new DefaultOptionModel("Border Pane", null, "Launch_BorderPaneTest"));
         testsMenu.addItem(new DefaultOptionModel("Calendar Select", null, "Launch_CalendarSelectTest"));
         testsMenu.addItem(new DefaultOptionModel("Color Select", null, "Launch_ColorSelectTest"));

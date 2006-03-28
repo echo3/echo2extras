@@ -51,6 +51,7 @@ import nextapp.echo2.webcontainer.ContainerInstance;
 import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.image.ImageRenderSupport;
+import nextapp.echo2.webcontainer.image.ImageTools;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
@@ -81,6 +82,7 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
     private static final String IMAGE_ID_BACKGROUND = "background";
     private static final String IMAGE_ID_MENU_BACKGROUND = "menuBackground";
     private static final String IMAGE_ID_SELECTION_BACKGROUND = "selectionBackground";
+    private static final String IMAGE_ID_MENU_ITEM_PREFIX = "menuItem.";
 
     /**
      * The <code>PartialUpdateManager</code> for this synchronization peer.
@@ -108,12 +110,60 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
         FillImage fillImage = null;
         if (IMAGE_ID_BACKGROUND.equals(imageId)) {
             fillImage = (FillImage) component.getRenderProperty(MenuBarPane.PROPERTY_BACKGROUND_IMAGE);
+            return fillImage == null ? null : fillImage.getImage();
         } else if (IMAGE_ID_MENU_BACKGROUND.equals(imageId)) {
             fillImage = (FillImage) component.getRenderProperty(MenuBarPane.PROPERTY_MENU_BACKGROUND_IMAGE);
+            return fillImage == null ? null : fillImage.getImage();
         } else if (IMAGE_ID_SELECTION_BACKGROUND.equals(imageId)) {
             fillImage = (FillImage) component.getRenderProperty(MenuBarPane.PROPERTY_SELECTION_BACKGROUND_IMAGE);
+            return fillImage == null ? null : fillImage.getImage();
+        } else if (imageId.startsWith(IMAGE_ID_MENU_ITEM_PREFIX)) {
+            String itemPath = imageId.substring(IMAGE_ID_MENU_ITEM_PREFIX.length());
+            ItemModel itemModel = getItemModel((MenuBarPane) component, itemPath);
+            if (itemModel instanceof MenuModel) {
+                return ((MenuModel) itemModel).getIcon();
+            } else if (itemModel instanceof OptionModel) {
+                return ((OptionModel) itemModel).getIcon();
+            } else {
+                return null;
+            }
+        } else {
+            return null;
         }
-        return fillImage == null ? null : fillImage.getImage();
+    }
+    
+    private String getItemPath(MenuModel menuModel, ItemModel targetItemModel) {
+        StringBuffer out = new StringBuffer();
+        getItemPath(menuModel, targetItemModel, out);
+        return out.length() == 0 ? null : out.toString();
+    }
+    
+    private void getItemPath(MenuModel menuModel, ItemModel targetItemModel, StringBuffer out) {
+        int itemCount = menuModel.getItemCount();
+        for (int i = 0; i < itemCount; ++i) {
+            ItemModel currentItemModel = menuModel.getItem(i);
+            if (targetItemModel.equals(currentItemModel)) {
+                out.append(i);
+                return;
+            }
+            if (currentItemModel instanceof MenuModel) {
+                getItemPath((MenuModel) currentItemModel, targetItemModel, out); 
+            }
+            if (out.length() != 0) {
+                out.insert(0, i + ".");
+                return;
+            }
+        }
+    }
+    
+    private ItemModel getItemModel(MenuBarPane menu, String itemPath) {
+        ItemModel itemModel = menu.getModel();
+        StringTokenizer st = new StringTokenizer(itemPath, ".");
+        while (st.hasMoreTokens()) {
+            int index = Integer.parseInt(st.nextToken());
+            itemModel = ((MenuModel) itemModel).getItem(index);
+        }
+        return itemModel;
     }
 
     /**
@@ -125,22 +175,12 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
         String actionName = element.getAttribute(ActionProcessor.ACTION_NAME);
         String actionValue = element.getAttribute(ActionProcessor.ACTION_VALUE);
         if ("select".equals(actionName)) {
-            OptionModel optionModel = null;
-            MenuModel menuModel = menu.getModel();
-            StringTokenizer st = new StringTokenizer(actionValue, ",");
-            while (st.hasMoreTokens()) {
-                int index = Integer.parseInt(st.nextToken());
-                if (st.hasMoreTokens()) {
-                    menuModel = (MenuModel) menuModel.getItem(index);
-                } else {
-                    optionModel = (OptionModel) menuModel.getItem(index);
-                }
-            }
-            if (optionModel == null) {
+            ItemModel itemModel = getItemModel((MenuBarPane) component, actionValue);
+            if (!(itemModel instanceof MenuModel || itemModel instanceof OptionModel)) {
                 // Should not occur unless client input tampered with.
                 return;
             }
-            ci.getUpdateManager().getClientUpdateManager().setComponentAction(menu, MenuBarPane.INPUT_SELECT, optionModel);
+            ci.getUpdateManager().getClientUpdateManager().setComponentAction(menu, MenuBarPane.INPUT_SELECT, itemModel);
         }
     }
 
@@ -249,7 +289,7 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
             initElement.setAttribute("selection-foreground", ColorRender.renderCssAttributeValue(selectionForeground));
         }
         
-        renderModel(rc, menu.getModel(), initElement);
+        renderModel(rc, menu, menu.getModel(), initElement);
         
         partElement.appendChild(initElement);
     }
@@ -264,22 +304,31 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
      * @param parentElement the parent <code>Element</code>, either the 'init'
      *        element or the containing 'menu' element
      */
-    private void renderModel(RenderContext rc, MenuModel menuModel, Element parentElement) {
+    private void renderModel(RenderContext rc, MenuBarPane menu, MenuModel menuModel, Element parentElement) {
         Document document = rc.getServerMessage().getDocument();
         Element menuModelElement = document.createElement("menu");
         if (menuModel.getText() != null) {
             menuModelElement.setAttribute("text", menuModel.getText());
         }
+        if (menuModel.getIcon() != null) {
+            String itemPath = getItemPath(menu.getModel(), menuModel);
+            menuModelElement.setAttribute("icon", ImageTools.getUri(rc, this, menu, IMAGE_ID_MENU_ITEM_PREFIX + itemPath));
+        }
         int length = menuModel.getItemCount();
         for (int i = 0; i < length; ++i) {
             ItemModel itemModel = menuModel.getItem(i);
             if (itemModel instanceof MenuModel) {
-                renderModel(rc, (MenuModel) itemModel, menuModelElement); 
+                renderModel(rc, menu, (MenuModel) itemModel, menuModelElement); 
             } else if (itemModel instanceof OptionModel) {
                 Element optionModelElement = document.createElement("option");
                 OptionModel optionModel = (OptionModel) itemModel;
                 if (optionModel.getText() != null) {
                     optionModelElement.setAttribute("text", optionModel.getText());
+                }
+                if (optionModel.getIcon() != null) {
+                    String itemPath = getItemPath(menu.getModel(), optionModel);
+                    optionModelElement.setAttribute("icon", ImageTools.getUri(rc, this, menu, 
+                            IMAGE_ID_MENU_ITEM_PREFIX + itemPath));
                 }
                 menuModelElement.appendChild(optionModelElement);
             } else if (itemModel instanceof SeparatorModel) {
