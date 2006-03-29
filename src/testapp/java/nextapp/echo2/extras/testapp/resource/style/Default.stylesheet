@@ -151,7 +151,7 @@
    <property name="backgroundImage">
     <fill-image repeat="vertical">
      <image type="nextapp.echo2.app.ResourceImageReference">
-      <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/PewterLineBackground.png"/>
+      <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/BlueLineBackground.png"/>
      </image>
     </fill-image>
    </property>
