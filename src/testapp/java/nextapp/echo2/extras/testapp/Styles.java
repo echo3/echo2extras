@@ -64,9 +64,9 @@ public class Styles {
     public static final FillImage FILL_IMAGE_TITLE_BACKGROUND_2 = new FillImage(
             new ResourceImageReference(IMAGE_PATH + "PewterLineBackground.png"));
     public static final FillImage FILL_IMAGE_TAB_BACKGROUND = new FillImage(
-            new ResourceImageReference(IMAGE_PATH + "TabBackground.png"));
+            new ResourceImageReference(IMAGE_PATH + "SilverLineBackground.png"));
     public static final FillImage FILL_IMAGE_TAB_ROLLOVER_BACKGROUND = new FillImage(
-            new ResourceImageReference(IMAGE_PATH + "TabRolloverBackground.png"));
+            new ResourceImageReference(IMAGE_PATH + "LightBlueLineBackground.png"));
     
     
     public static final ImageReference ICON_24_NO = new ResourceImageReference(IMAGE_PATH + "Icon24No.gif"); 

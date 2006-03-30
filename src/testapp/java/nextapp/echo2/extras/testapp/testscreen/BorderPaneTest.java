@@ -39,7 +39,7 @@ import nextapp.echo2.extras.app.BorderPane;
 import nextapp.echo2.extras.testapp.AbstractTest;
 import nextapp.echo2.extras.testapp.StyleUtil;
 import nextapp.echo2.extras.testapp.Styles;
-import nextapp.echo2.extras.testapp.TestControlsPane;
+import nextapp.echo2.extras.testapp.TestControlPane;
 
 /**
  * Interactive test module for <code>BorderPane</code>s.
@@ -53,55 +53,55 @@ public class BorderPaneTest extends AbstractTest {
         add(borderPane);
         setTestComponent(this, borderPane);
         
-        testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Small Label", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Small Label", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 borderPane.removeAll();
                 borderPane.add(new Label("Child Component"));
             }
         });
         
-        testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Large Label", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Large Label", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 borderPane.removeAll();
                 borderPane.add(new Label(StyleUtil.QUASI_LATIN_TEXT_1));
             }
         });
         
-        testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "BorderPaneTest", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "BorderPaneTest", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 borderPane.removeAll();
                 borderPane.add(new BorderPaneTest());
             }
         });
         
-        testControlsPane.addButton(TestControlsPane.CATEGORY_CONTENT, "Clear Content", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Clear Content", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 borderPane.removeAll();
             }
         });
         
-        addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "foreground");
-        addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "background");
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "foreground");
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "background");
         
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Border = Null", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Border = Null", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 borderPane.setBorder(null);
             }
         });
         
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Border = 20px/10px Red", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Border = 20px/10px Red", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 borderPane.setBorder(new FillImageBorder(Color.RED, new Insets(20), new Insets(10)));
             }
         });
         
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Style = Null", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Style = Null", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 borderPane.setStyleName(null);
             }
         });
         
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Style = Shadow", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Style = Shadow", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 borderPane.setStyleName("Shadow");
             }

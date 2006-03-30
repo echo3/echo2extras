@@ -46,7 +46,7 @@ import nextapp.echo2.extras.testapp.AbstractTest;
 import nextapp.echo2.extras.testapp.InteractiveApp;
 import nextapp.echo2.extras.testapp.StyleUtil;
 import nextapp.echo2.extras.testapp.Styles;
-import nextapp.echo2.extras.testapp.TestControlsPane;
+import nextapp.echo2.extras.testapp.TestControlPane;
 
 /**
  * Interactive test module for <code>MenuBarPane</code>s.
@@ -77,22 +77,22 @@ public class MenuBarPaneTest extends AbstractTest {
         
         setTestComponent(splitPane, menu);
 
-        addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "foreground");
-        addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "background");
-        addBorderPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "border");
-        addFillImagePropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "backgroundImage", TEST_FILL_IMAGES);
-        addFontPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "font");
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "foreground");
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "background");
+        addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "border");
+        addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, "backgroundImage", TEST_FILL_IMAGES);
+        addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "font");
         
-        addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "menuForeground");
-        addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "menuBackground");
-        addFillImagePropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "menuBackgroundImage", TEST_FILL_IMAGES);
-        addBorderPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "menuBorder");
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "menuForeground");
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "menuBackground");
+        addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, "menuBackgroundImage", TEST_FILL_IMAGES);
+        addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "menuBorder");
         
-        addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "selectionForeground");
-        addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "selectionBackground");
-        addFillImagePropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "selectionBackgroundImage", TEST_FILL_IMAGES);
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "selectionForeground");
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "selectionBackground");
+        addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, "selectionBackgroundImage", TEST_FILL_IMAGES);
         
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Add Test WindowPane", new ActionListener(){
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Add Test WindowPane", new ActionListener(){
         
             public void actionPerformed(ActionEvent e) {
                 ContentPane rootContent = getApplicationInstance().getDefaultWindow().getContent();

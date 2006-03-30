@@ -48,17 +48,17 @@ public class AbstractTest extends SplitPane {
 
     private Component testComponentParent;
     private Component testComponent;
-    protected TestControlsPane testControlsPane;
+    protected TestControlPane testControlsPane;
     
     public AbstractTest(String testName) {
         this(testName, null);
     }
     
     public AbstractTest(String testName, ImageReference icon) {
-        super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(250, Extent.PX));
+        super(SplitPane.ORIENTATION_HORIZONTAL, new Extent(300, Extent.PX));
         setStyleName("DefaultResizable");
         
-        testControlsPane = new TestControlsPane(testName, icon);
+        testControlsPane = new TestControlPane(testName, icon);
         add(testControlsPane);
     }
     
@@ -202,7 +202,7 @@ public class AbstractTest extends SplitPane {
     
     protected void addStandardIntegrationTests() {
 
-        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Add Component", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Add Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (testComponentParent.indexOf(testComponent) == -1) {
                     testComponentParent.add(testComponent);
@@ -210,19 +210,19 @@ public class AbstractTest extends SplitPane {
             }
         });
 
-        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Remove Component", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Remove Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testComponentParent.remove(testComponent);
             }
         });
         
-        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Enable Component", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Enable Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testComponent.setEnabled(true);
             }
         });
 
-        testControlsPane.addButton(TestControlsPane.CATEGORY_INTEGRATION, "Disable Component", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Disable Component", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 testComponent.setEnabled(false);
             }

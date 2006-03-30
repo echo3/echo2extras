@@ -40,7 +40,7 @@ import nextapp.echo2.extras.testapp.AbstractTest;
 import nextapp.echo2.extras.testapp.InteractiveApp;
 import nextapp.echo2.extras.testapp.StyleUtil;
 import nextapp.echo2.extras.testapp.Styles;
-import nextapp.echo2.extras.testapp.TestControlsPane;
+import nextapp.echo2.extras.testapp.TestControlPane;
 
 /**
  * Interactive test module for <code>ColorSelect</code>s.
@@ -59,25 +59,25 @@ public class ColorSelectTest extends AbstractTest {
         
         // Properties
 
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Query Color", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Query Color", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Color color = colorSelect.getColor();
                 InteractiveApp.getApp().consoleWrite("Color: " + color == null ? "null" : color.toString());
             }
         });
         
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Color", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Color", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 colorSelect.setColor(StyleUtil.randomColor());
             }
         });
         
-        addExtentPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "hueWidth", EXTENT_VALUES);
-        addExtentPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "saturationHeight", EXTENT_VALUES);
-        addExtentPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "valueWidth", EXTENT_VALUES);
-        addBooleanPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "displayValue");
+        addExtentPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "hueWidth", EXTENT_VALUES);
+        addExtentPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "saturationHeight", EXTENT_VALUES);
+        addExtentPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "valueWidth", EXTENT_VALUES);
+        addBooleanPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "displayValue");
         
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Add ColorSelect WindowPane", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Add ColorSelect WindowPane", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 WindowPane windowPane = new WindowPane("Color Select Test", new Extent(250), new Extent(270));
                 windowPane.setPositionX(new Extent((int) (Math.random() * 500)));

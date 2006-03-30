@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <stylesheet>
+ <style name="Default" type="nextapp.echo2.app.button.AbstractButton">
+  <properties>
+   <property name="background" value="#4f4f5f"/>
+   <property name="foreground" value="#efefff"/>
+   <property name="border">
+    <border size="1px" style="outset" color="#6f6f8f"/>
+   </property>
+   <property name="rolloverEnabled" value="true"/>
+   <property name="rolloverBackground" value="#6f6f87"/>
+   <property name="rolloverForeground" value="#ffffaf"/>
+   <property name="rolloverBorder">
+    <border size="1px" style="outset" color="#8f8faf"/>
+   </property>
+   <property name="pressedEnabled" value="true"/>
+   <property name="pressedBackground" value="#2f2f3f"/>
+   <property name="pressedForeground" value="#ffafaf"/>
+   <property name="pressedBorder">
+    <border size="1px" style="inset" color="#4f4f6f"/>
+   </property>
+   <property name="insets" value="20px 3px"/>
+  </properties>
+ </style>
  <style name="TestPane" type="nextapp.echo2.app.SplitPane">
   <properties>
    <property name="separatorPosition" value="40px"/>
@@ -35,28 +57,6 @@
      </properties>
     </layout-data>
    </property>
-  </properties>
- </style>
- <style name="Default" type="nextapp.echo2.app.button.AbstractButton">
-  <properties>
-   <property name="background" value="#4f4f5f"/>
-   <property name="foreground" value="#efefff"/>
-   <property name="border">
-    <border size="1px" style="outset" color="#6f6f8f"/>
-   </property>
-   <property name="rolloverEnabled" value="true"/>
-   <property name="rolloverBackground" value="#6f6f87"/>
-   <property name="rolloverForeground" value="#ffffaf"/>
-   <property name="rolloverBorder">
-    <border size="1px" style="outset" color="#8f8faf"/>
-   </property>
-   <property name="pressedEnabled" value="true"/>
-   <property name="pressedBackground" value="#2f2f3f"/>
-   <property name="pressedForeground" value="#ffafaf"/>
-   <property name="pressedBorder">
-    <border size="1px" style="inset" color="#4f4f6f"/>
-   </property>
-   <property name="insets" value="20px 3px"/>
   </properties>
  </style>
  <style name="Selected" base-name="Default" type="nextapp.echo2.app.Button">
@@ -271,49 +271,38 @@
    </property>
   </properties>
  </style>
- <style name="ApplicationControlsColumn" type="nextapp.echo2.app.Column">
+ <style name="TestControlButton" type="nextapp.echo2.app.button.AbstractButton">
   <properties>
-   <property name="layoutData">
-    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
-     <properties>
-      <property name="background" value="#4f4f6f"/>
-      <property name="backgroundImage">
-       <fill-image repeat="none">
-        <image type="nextapp.echo2.app.ResourceImageReference">
-         <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/ShadowBackgroundDarkBlue.png"/>
-        </image>
-       </fill-image>
-      </property>
-      <property name="insets" value="10px 7px"/>
-      <property name="minimumSize" value="200px"/>
-      <property name="maximumSize" value="300px"/>
-     </properties>
-    </layout-data>
+   <property name="font">
+    <font size="10px" italic="true"/>
    </property>
+   <property name="background" value="#3f3f4f"/>
+   <property name="foreground" value="#ffffff"/>
+   <property name="border">
+    <border size="1px" style="outset" color="#3f3f4f"/>
+   </property>
+   <property name="rolloverEnabled" value="true"/>
+   <property name="rolloverBackground" value="#8f8fa7"/>
+   <property name="rolloverForeground" value="#ffffaf"/>
+   <property name="rolloverBorder">
+    <border size="1px" style="outset" color="#8f8faf"/>
+   </property>
+   <property name="pressedEnabled" value="true"/>
+   <property name="pressedBackground" value="#2f2f3f"/>
+   <property name="pressedForeground" value="#ffafaf"/>
+   <property name="pressedBorder">
+    <border size="1px" style="inset" color="#4f4f6f"/>
+   </property>
+   <property name="insets" value="20px 3px"/>
   </properties>
  </style>
- <style name="TestControlsColumn" type="nextapp.echo2.app.Column">
+ <style name="TestControlColumn" type="nextapp.echo2.app.Column">
   <properties>
-   <property name="layoutData">
-    <layout-data type="nextapp.echo2.app.layout.SplitPaneLayoutData">
-     <properties>
-      <property name="background" value="#afafef"/>
-      <property name="backgroundImage">
-       <fill-image repeat="none">
-        <image type="nextapp.echo2.app.ResourceImageReference">
-         <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/ShadowBackgroundLightBlue.png"/>
-        </image>
-       </fill-image>
-      </property>
-      <property name="insets" value="10px 7px"/>
-      <property name="minimumSize" value="200px"/>
-      <property name="maximumSize" value="300px"/>
-     </properties>
-    </layout-data>
-   </property>
+   <property name="cellSpacing" value="1px"/>
+   <property name="insets" value="10px 5px"/>
   </properties>
  </style>
- <style name="TestControlsAccordion" type="nextapp.echo2.extras.app.AccordionPane">
+ <style name="TestControlAccordion" type="nextapp.echo2.extras.app.AccordionPane">
   <properties>
    <property name="defaultContentInsets" value="10px 7px"/>
    <property name="layoutData">
@@ -321,9 +310,9 @@
      <properties>
       <property name="background" value="#afafef"/>
       <property name="backgroundImage">
-       <fill-image repeat="none">
+       <fill-image repeat="vertical" horizontal="100%">
         <image type="nextapp.echo2.app.ResourceImageReference">
-         <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/ShadowBackgroundLightBlue.png"/>
+         <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/BlueSteelBackground.jpg"/>
         </image>
        </fill-image>
       </property>

@@ -42,7 +42,7 @@ import nextapp.echo2.extras.app.CalendarSelect;
 import nextapp.echo2.extras.testapp.AbstractTest;
 import nextapp.echo2.extras.testapp.InteractiveApp;
 import nextapp.echo2.extras.testapp.Styles;
-import nextapp.echo2.extras.testapp.TestControlsPane;
+import nextapp.echo2.extras.testapp.TestControlPane;
 
 /**
  * Interactive test module for <code>CalendarSelect</code>s.
@@ -57,25 +57,25 @@ public class CalendarSelectTest extends AbstractTest {
         setTestComponent(this, calendarSelect);
         add(calendarSelect);
         
-        addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "foreground");
-        addColorPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "background");
-        addFontPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "font");
-        addBorderPropertyTests(TestControlsPane.CATEGORY_PROPERTIES, "border");
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "foreground");
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "background");
+        addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "font");
+        addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "border");
 
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Query Date", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Query Date", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Date date = calendarSelect.getDate();
                 InteractiveApp.getApp().consoleWrite(date == null ? "No Date" : date.toString());
             }
         });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Set Date", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Date", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Calendar calendar = new GregorianCalendar();
                 calendar.add(Calendar.DAY_OF_MONTH, ((int) (Math.random() * 10000)) - 5000);
                 calendarSelect.setDate(calendar.getTime());
             }
         });
-        testControlsPane.addButton(TestControlsPane.CATEGORY_PROPERTIES, "Add CalendarSelect WindowPane", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Add CalendarSelect WindowPane", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 WindowPane windowPane = new WindowPane("Calendar Select Test", new Extent(240), new Extent(225));
                 windowPane.setPositionX(new Extent((int) (Math.random() * 500)));

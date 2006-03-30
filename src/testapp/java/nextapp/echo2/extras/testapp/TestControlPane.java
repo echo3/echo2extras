@@ -34,14 +34,13 @@ import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.ImageReference;
-import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.AccordionPane;
 import nextapp.echo2.extras.app.layout.AccordionPaneLayoutData;
 
-public class TestControlsPane extends SplitPane {
+public class TestControlPane extends SplitPane {
 
     public static final String CATEGORY_CONTENT = "Add / Remove Content";
     public static final String CATEGORY_PROPERTIES = "Properties";
@@ -50,7 +49,7 @@ public class TestControlsPane extends SplitPane {
     
     private AccordionPane controlGroupsAccordion;
     
-    public TestControlsPane(String testTitle, ImageReference testIcon) {
+    public TestControlPane(String testTitle, ImageReference testIcon) {
         super(SplitPane.ORIENTATION_VERTICAL, new Extent(40));
 
         Label titleLabel = new Label(testTitle, testIcon);
@@ -58,7 +57,7 @@ public class TestControlsPane extends SplitPane {
         add(titleLabel);
         
         controlGroupsAccordion = new AccordionPane();
-        controlGroupsAccordion.setStyleName("TestControlsAccordion");
+        controlGroupsAccordion.setStyleName("TestControlAccordion");
         add(controlGroupsAccordion);
     }
     
@@ -68,8 +67,8 @@ public class TestControlsPane extends SplitPane {
         Column controlsColumn = (Column) getComponent(category);
         if (controlsColumn == null) {
             controlsColumn = new Column();
+            controlsColumn.setStyleName("TestControlColumn");
             controlsColumn.setId(category);
-            controlsColumn.setInsets(new Insets(10, 5));
             AccordionPaneLayoutData layoutData = new AccordionPaneLayoutData();
             layoutData.setTitle(category);
             controlsColumn.setLayoutData(layoutData);
@@ -80,7 +79,7 @@ public class TestControlsPane extends SplitPane {
     
     public void addButton(String category, String label, ActionListener listener) {
         Button button = new Button(label);
-        button.setStyleName("Default");
+        button.setStyleName("TestControlButton");
         button.addActionListener(listener);
         addControl(category, button);
     }
