@@ -165,7 +165,7 @@
    <property name="selectionBackgroundImage">
     <fill-image>
      <image type="nextapp.echo2.app.ResourceImageReference">
-      <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/ShadowBackgroundDarkBlue.png"/>
+      <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/ShadowBackgroundDarkBlue2.png"/>
      </image>
     </fill-image>
    </property>
