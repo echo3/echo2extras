@@ -62,12 +62,13 @@ ExtrasAccordionPane = function(elementId, containerElementId, activeTabId) {
     // By default, disable animation on IE due to performance and rendering issues.
     // It works, but it can be a bit slower than desired and uncovers some of IE's
     // repainting issues.
-    this.animationEnabled = !EchoClientProperties.get("browserInternetExplorer");
+    this.animationEnabled = true; // !EchoClientProperties.get("browserInternetExplorer");
     this.animationStepCount = 20;
     this.animationStepInterval = 5;
 
-    this.tabIds = new Array();
-    this.tabIdToTabMap = new EchoCollectionsMap();
+    this.tabs = new Array();
+    
+    this.accordionPaneDivElement = null;
 };
 
 ExtrasAccordionPane.PANE_INSETS = new EchoCoreProperties.Insets(0);
@@ -79,47 +80,44 @@ ExtrasAccordionPane.PANE_INSETS = new EchoCoreProperties.Insets(0);
  * @param tabIndex the index at which the tab should be inserted
  */
 ExtrasAccordionPane.prototype.addTab = function(tab, tabIndex) {
-    ExtrasUtil.Arrays.insertElement(this.tabIds, tab.tabId, tabIndex);
-    this.tabIdToTabMap.put(tab.tabId, tab);
+    ExtrasUtil.Arrays.insertElement(this.tabs, tab, tabIndex);
     
-    var accordionPaneDivElement = document.getElementById(this.elementId);
-
-    var tabDivElement = document.createElement("div");
-    tabDivElement.id = this.elementId + "_tab_" + tab.tabId;
-    tabDivElement.style.cursor = "pointer";
-    tabDivElement.style.height = this.tabHeight + "px";
-    tabDivElement.style.borderTop = this.tabBorderSize + "px " + this.tabBorderStyle + " " + this.tabBorderColor;
-    tabDivElement.style.borderBottom = this.tabBorderSize + "px " + this.tabBorderStyle + " " + this.tabBorderColor;
-    tabDivElement.style.padding = this.tabInsets.toString();
-    tabDivElement.style.backgroundColor = this.tabBackground;
+    tab.tabDivElement = document.createElement("div");
+    tab.tabDivElement.id = this.elementId + "_tab_" + tab.tabId;
+    tab.tabDivElement.style.cursor = "pointer";
+    tab.tabDivElement.style.height = this.tabHeight + "px";
+    tab.tabDivElement.style.borderTop = this.tabBorderSize + "px " + this.tabBorderStyle + " " + this.tabBorderColor;
+    tab.tabDivElement.style.borderBottom = this.tabBorderSize + "px " + this.tabBorderStyle + " " + this.tabBorderColor;
+    tab.tabDivElement.style.padding = this.tabInsets.toString();
+    tab.tabDivElement.style.backgroundColor = this.tabBackground;
     if (this.tabBackgroundImage) {
-        EchoCssUtil.applyStyle(tabDivElement, this.tabBackgroundImage);
+        EchoCssUtil.applyStyle(tab.tabDivElement, this.tabBackgroundImage);
     }
-    tabDivElement.style.color = this.tabForeground;
-    tabDivElement.style.position = "absolute";
-    tabDivElement.style.left = "0px";
-    tabDivElement.style.right = "0px";
-    tabDivElement.style.overflow = "hidden";
-    tabDivElement.appendChild(document.createTextNode(tab.title));
-    accordionPaneDivElement.appendChild(tabDivElement);
+    tab.tabDivElement.style.color = this.tabForeground;
+    tab.tabDivElement.style.position = "absolute";
+    tab.tabDivElement.style.left = "0px";
+    tab.tabDivElement.style.right = "0px";
+    tab.tabDivElement.style.overflow = "hidden";
+    tab.tabDivElement.appendChild(document.createTextNode(tab.title));
+    this.accordionPaneDivElement.appendChild(tab.tabDivElement);
 
-    var tabContentDivElement = document.createElement("div");
-    var tabContentInsets = this.getTabContentInsets(tab.tabId);
-    tabContentDivElement.id = this.elementId + "_content_" + tab.tabId;
-    tabContentDivElement.style.display = "none";
-    tabContentDivElement.style.position = "absolute";
-    tabContentDivElement.style.left = "0px";
-    tabContentDivElement.style.right = "0px";
-    tabContentDivElement.style.padding = tabContentInsets.toString();
-    tabContentDivElement.style.overflow = "auto";
-    accordionPaneDivElement.appendChild(tabContentDivElement);
+    tab.contentDivElement = document.createElement("div");
+    var tabContentInsets = this.getTabContentInsets(tab);
+    tab.contentDivElement.id = this.elementId + "_content_" + tab.tabId;
+    tab.contentDivElement.style.display = "none";
+    tab.contentDivElement.style.position = "absolute";
+    tab.contentDivElement.style.left = "0px";
+    tab.contentDivElement.style.right = "0px";
+    tab.contentDivElement.style.padding = tabContentInsets.toString();
+    tab.contentDivElement.style.overflow = "auto";
+    this.accordionPaneDivElement.appendChild(tab.contentDivElement);
 
-    EchoVirtualPosition.register(tabDivElement.id);
-    EchoVirtualPosition.register(tabContentDivElement.id);
+    EchoVirtualPosition.register(tab.tabDivElement.id);
+    EchoVirtualPosition.register(tab.contentDivElement.id);
     
-    EchoEventProcessor.addHandler(tabDivElement, "click", "ExtrasAccordionPane.processTabClick");
-    EchoEventProcessor.addHandler(tabDivElement, "mouseover", "ExtrasAccordionPane.processTabRolloverEnter");
-    EchoEventProcessor.addHandler(tabDivElement, "mouseout", "ExtrasAccordionPane.processTabRolloverExit");
+    EchoEventProcessor.addHandler(tab.tabDivElement, "click", "ExtrasAccordionPane.processTabClick");
+    EchoEventProcessor.addHandler(tab.tabDivElement, "mouseover", "ExtrasAccordionPane.processTabRolloverEnter");
+    EchoEventProcessor.addHandler(tab.tabDivElement, "mouseout", "ExtrasAccordionPane.processTabRolloverExit");
 };
 
 ExtrasAccordionPane.prototype.calculateTabHeight = function() {
@@ -135,31 +133,33 @@ ExtrasAccordionPane.prototype.calculateTabHeight = function() {
  */
 ExtrasAccordionPane.prototype.create = function() {
     var containerElement = document.getElementById(this.containerElementId);
-    var accordionPaneDivElement = document.createElement("div");
-    accordionPaneDivElement.id = this.elementId;
-    accordionPaneDivElement.style.position = "absolute";
-    accordionPaneDivElement.style.overflow = "hidden";
-    accordionPaneDivElement.style.width = "100%";
-    accordionPaneDivElement.style.height = "100%";
+    this.accordionPaneDivElement = document.createElement("div");
+    this.accordionPaneDivElement.id = this.elementId;
+    this.accordionPaneDivElement.style.position = "absolute";
+    this.accordionPaneDivElement.style.overflow = "hidden";
+    this.accordionPaneDivElement.style.width = "100%";
+    this.accordionPaneDivElement.style.height = "100%";
     if (this.background != null) {
-        accordionPaneDivElement.style.background = this.background;
+        this.accordionPaneDivElement.style.background = this.background;
     }
     if (this.foreground != null) {
-        accordionPaneDivElement.style.foreground = this.foreground;
+        this.accordionPaneDivElement.style.foreground = this.foreground;
     }
     
-    containerElement.appendChild(accordionPaneDivElement);
+    containerElement.appendChild(this.accordionPaneDivElement);
     
-    EchoDomPropertyStore.setPropertyValue(accordionPaneDivElement, "component", this);
+    EchoDomPropertyStore.setPropertyValue(this.accordionPaneDivElement, "component", this);
 };
 
 /**
  * Releases resources held by the AccordionPane.
  */
 ExtrasAccordionPane.prototype.dispose = function() {
-    for (var i = 0; i < this.tabIds.length; ++i) {
-        this.disposeTab(this.tabIds[i]);
+    for (var i = 0; i < this.tabs.length; ++i) {
+        this.disposeTab(this.tabs[i]);
     }
+    EchoDomPropertyStore.dispose(this.accordionPaneDivElement);
+    this.accordionPaneDivElement = null;
 };
 
 /**
@@ -167,33 +167,22 @@ ExtrasAccordionPane.prototype.dispose = function() {
  * Invoked prior to removing tab or in process of disposing entire
  * AccordionPane.
  *
- * @param tabId the id of the tab to dispose
+ * @param tab the tab to dispose
  */
-ExtrasAccordionPane.prototype.disposeTab = function(tabId) {
-    var tabDivElement = this.getTabElement(tabId);
-    EchoEventProcessor.removeHandler(tabDivElement, "click");
-    EchoEventProcessor.removeHandler(tabDivElement, "mouseover");
-    EchoEventProcessor.removeHandler(tabDivElement, "mouseout");
+ExtrasAccordionPane.prototype.disposeTab = function(tab) {
+    EchoEventProcessor.removeHandler(tab.tabDivElement, "click");
+    EchoEventProcessor.removeHandler(tab.tabDivElement, "mouseover");
+    EchoEventProcessor.removeHandler(tab.tabDivElement, "mouseout");
+    tab.dispose();
 };
 
-/**
- * Retrieves the DOM element that will contain a specific tab's content.
- *
- * @param tabId the id of the tab
- * @return the tab content DIV element
- */
-ExtrasAccordionPane.prototype.getTabContentElement = function(tabId) {
-    return document.getElementById(this.elementId + "_content_" + tabId);
-};
-
-/**
- * Retrieves the DOM element that represents a tab header.
- *
- * @param tabId the id of the tab
- * @return the tab header DIV element
- */
-ExtrasAccordionPane.prototype.getTabElement = function(tabId) {
-    return document.getElementById(this.elementId + "_tab_" + tabId);
+ExtrasAccordionPane.prototype.getTabById = function(tabId) {
+    for (var i = 0; i < this.tabs.length; ++i) {
+        if (this.tabs[i].tabId == tabId) {
+            return this.tabs[i];
+        }
+    }
+    return null;
 };
 
 /**
@@ -203,8 +192,7 @@ ExtrasAccordionPane.prototype.getTabElement = function(tabId) {
  * @param tabId the id of the tab
  * @return the insets
  */
-ExtrasAccordionPane.prototype.getTabContentInsets = function(tabId) {
-    var tab = this.tabIdToTabMap.get(tabId);
+ExtrasAccordionPane.prototype.getTabContentInsets = function(tab) {
     if (tab.pane) {
         return ExtrasAccordionPane.PANE_INSETS;
     } else {
@@ -217,26 +205,17 @@ ExtrasAccordionPane.prototype.getTabContentInsets = function(tabId) {
  *
  * @param tabId the id of the tab to remove
  */
-ExtrasAccordionPane.prototype.removeTab = function(tabId) {
-    var tabDivElement = this.getTabElement(tabId);
-    var tabContentDivElement = this.getTabContentElement(tabId);
-
-    if (!this.tabIdToTabMap.get(tabId)) {
-        // Do nothing: request to remove non-existent tab.
-        return;
+ExtrasAccordionPane.prototype.removeTab = function(tab) {
+    var tabIndex = ExtrasUtil.Arrays.indexOf(this.tabs, tab);
+    if (this.activeTabId == tab.tabId) {
+        this.lastKnownActiveTabIndex = tabIndex;
     }
-    
-    if (this.activeTabId == tabId) {
-        this.lastKnownActiveTabIndex = ExtrasUtil.Arrays.indexOf(this.tabIds, tabId);
-    }
+    ExtrasUtil.Arrays.removeIndex(this.tabs, tabIndex);
 
-    this.disposeTab(tabId);
-    
-    ExtrasUtil.Arrays.removeElement(this.tabIds, tabId);
-    this.tabIdToTabMap.remove(tabId);
+    tab.tabDivElement.parentNode.removeChild(tab.tabDivElement);
+    tab.contentDivElement.parentNode.removeChild(tab.contentDivElement);
 
-    tabDivElement.parentNode.removeChild(tabDivElement);
-    tabContentDivElement.parentNode.removeChild(tabContentDivElement);
+    this.disposeTab(tab);
 };
 
 /**
@@ -248,16 +227,16 @@ ExtrasAccordionPane.prototype.redrawTabs = function() {
         this.rotation.cancel();
     }
     
-    if (this.activeTabId == null || !this.tabIdToTabMap.get(this.activeTabId)) {
-        if (this.tabIds.length > 0) {
+    if (this.activeTabId == null || !this.getTabById(this.activeTabId)) {
+        if (this.tabs.length > 0) {
             if (this.lastKnownActiveTabIndex >= 0) {
-                if (this.lastKnownActiveTabIndex < this.tabIds.length) {
-                    this.activeTabId = this.tabIds[this.lastKnownActiveTabIndex];
+                if (this.lastKnownActiveTabIndex < this.tabs.length) {
+                    this.activeTabId = this.tabs[this.lastKnownActiveTabIndex].tabId;
                 } else {
-                    this.activeTabId = this.tabIds[this.tabIds.length - 1];
+                    this.activeTabId = this.tabs[this.tabs.length - 1].tabId;
                 }
             } else {
-                this.activeTabId = this.tabIds[0];
+                this.activeTabId = this.tabs[0].tabId;
             }
             this.lastKnownActiveTabIndex = -1;
         } else {
@@ -267,30 +246,25 @@ ExtrasAccordionPane.prototype.redrawTabs = function() {
 
     var selectionPassed = false;
     var tabHeight = this.calculateTabHeight();
-    for (var i = 0; i < this.tabIds.length; ++i) {
-        var tabDivElement = this.getTabElement(this.tabIds[i]);
-        var tabContentDivElement = this.getTabContentElement(this.tabIds[i]);
+    for (var i = 0; i < this.tabs.length; ++i) {
         if (selectionPassed) {
-            tabDivElement.style.top = "";
-            tabDivElement.style.bottom = (tabHeight * (this.tabIds.length - i - 1)) + "px";
+            this.tabs[i].tabDivElement.style.top = "";
+            this.tabs[i].tabDivElement.style.bottom = (tabHeight * (this.tabs.length - i - 1)) + "px";
         } else {
-            tabDivElement.style.bottom = "";
-            tabDivElement.style.top = (tabHeight * i) + "px";
+            this.tabs[i].tabDivElement.style.bottom = "";
+            this.tabs[i].tabDivElement.style.top = (tabHeight * i) + "px";
         }
 
-        if (tabContentDivElement.style.removeExpression) {
-            tabContentDivElement.style.removeExpression("height");
-        }
-        tabContentDivElement.style.height = "";
+        this.tabs[i].contentDivElement.style.height = "";
         
-        if (this.activeTabId == this.tabIds[i]) {
+        if (this.activeTabId == this.tabs[i].tabId) {
             selectionPassed = true;
-            tabContentDivElement.style.display = "block";
-            tabContentDivElement.style.top = (tabHeight * (i + 1)) + "px";
-            var bottomPx = tabHeight * (this.tabIds.length - i - 1);
-            tabContentDivElement.style.bottom = bottomPx + "px";
+            this.tabs[i].contentDivElement.style.display = "block";
+            this.tabs[i].contentDivElement.style.top = (tabHeight * (i + 1)) + "px";
+            var bottomPx = tabHeight * (this.tabs.length - i - 1);
+            this.tabs[i].contentDivElement.style.bottom = bottomPx + "px";
         } else {
-            tabContentDivElement.style.display = "none";
+            this.tabs[i].contentDivElement.style.display = "none";
         }
     }
     
@@ -308,7 +282,7 @@ ExtrasAccordionPane.prototype.rotateTabs = function(oldTabId, newTabId) {
         // Do nothing.
         return;
     }
-    if (this.tabIdToTabMap.get(oldTabId) == null) {
+    if (this.getTabById(oldTabId) == null) {
         // Old tab has been removed.
         this.redrawTabs();
         return;
@@ -347,49 +321,48 @@ ExtrasAccordionPane.prototype.selectTab = function(newTabId) {
  *        false indicating it should not)
  */
 ExtrasAccordionPane.prototype.setTabHighlight = function(tabId, state) {
-
-    var tabDivElement = this.getTabElement(tabId);
+    var tab = this.getTabById(tabId);
     if (state) {
         if (this.tabRolloverBackground) {
-            tabDivElement.style.backgroundColor = this.tabRolloverBackground;
+            tab.tabDivElement.style.backgroundColor = this.tabRolloverBackground;
         } else {
-            tabDivElement.style.backgroundColor = ExtrasUtil.Color.adjustIntensity(this.tabBackground, 1.4);
+            tab.tabDivElement.style.backgroundColor = ExtrasUtil.Color.adjustIntensity(this.tabBackground, 1.4);
         }
         if (this.tabRolloverBackgroundImage) {
 		    if (this.tabBackgroundImage) {
-		        tabDivElement.style.backgroundImage = "";
-		        tabDivElement.style.backgroundPosition = "";
-		        tabDivElement.style.backgroundRepeat = "";
+		        tab.tabDivElement.style.backgroundImage = "";
+		        tab.tabDivElement.style.backgroundPosition = "";
+		        tab.tabDivElement.style.backgroundRepeat = "";
 		    }
-		    EchoCssUtil.applyStyle(tabDivElement, this.tabRolloverBackgroundImage);
+		    EchoCssUtil.applyStyle(tab.tabDivElement, this.tabRolloverBackgroundImage);
         }
         if (this.tabRolloverBorderColor) {
-            tabDivElement.style.borderTopColor = this.tabRolloverBorderColor;
-            tabDivElement.style.borderBottomColor = this.tabRolloverBorderColor;
+            tab.tabDivElement.style.borderTopColor = this.tabRolloverBorderColor;
+            tab.tabDivElement.style.borderBottomColor = this.tabRolloverBorderColor;
         } else {
-            tabDivElement.style.borderTopColor = ExtrasUtil.Color.adjustIntensity(this.tabBorderColor, 1.4);
-            tabDivElement.style.borderBottomColor = ExtrasUtil.Color.adjustIntensity(this.tabBorderColor, 1.4);
+            tab.tabDivElement.style.borderTopColor = ExtrasUtil.Color.adjustIntensity(this.tabBorderColor, 1.4);
+            tab.tabDivElement.style.borderBottomColor = ExtrasUtil.Color.adjustIntensity(this.tabBorderColor, 1.4);
         }
         if (this.tabRolloverForeground) {
-            tabDivElement.style.color = this.tabRolloverForeground;
+            tab.tabDivElement.style.color = this.tabRolloverForeground;
         }
         if (this.tabRolloverBorderStyle) {
-            tabDivElement.style.borderTopStyle = this.tabRolloverBorderStyle;
-            tabDivElement.style.borderBottomStyle = this.tabRolloverBorderStyle;
+            tab.tabDivElement.style.borderTopStyle = this.tabRolloverBorderStyle;
+            tab.tabDivElement.style.borderBottomStyle = this.tabRolloverBorderStyle;
         }
     } else {
-        tabDivElement.style.backgroundColor = this.tabBackground;
-        tabDivElement.style.color = this.tabForeground;
-        tabDivElement.style.borderTopColor = this.tabBorderColor;
-        tabDivElement.style.borderBottomColor = this.tabBorderColor;
-        tabDivElement.style.borderTopStyle = this.tabBorderStyle;
-        tabDivElement.style.borderBottomStyle = this.tabBorderStyle;
+        tab.tabDivElement.style.backgroundColor = this.tabBackground;
+        tab.tabDivElement.style.color = this.tabForeground;
+        tab.tabDivElement.style.borderTopColor = this.tabBorderColor;
+        tab.tabDivElement.style.borderBottomColor = this.tabBorderColor;
+        tab.tabDivElement.style.borderTopStyle = this.tabBorderStyle;
+        tab.tabDivElement.style.borderBottomStyle = this.tabBorderStyle;
         if (this.tabBackgroundImage) {
 		    if (this.tabRolloverBackgroundImage) {
-		        tabDivElement.style.backgroundImage = "";
-		        tabDivElement.style.backgroundPosition = "";
-		        tabDivElement.style.backgroundRepeat = "";
-			    EchoCssUtil.applyStyle(tabDivElement, this.tabBackgroundImage);
+		        tab.tabDivElement.style.backgroundImage = "";
+		        tab.tabDivElement.style.backgroundPosition = "";
+		        tab.tabDivElement.style.backgroundRepeat = "";
+			    EchoCssUtil.applyStyle(tab.tabDivElement, this.tabBackgroundImage);
 		    }
         }
     }
@@ -486,38 +459,71 @@ ExtrasAccordionPane.processTabRolloverExit = function(echoEvent) {
  */
 ExtrasAccordionPane.Rotation = function(accordionPane, oldTabId, newTabId) {
     this.accordionPane = accordionPane;
-    this.oldTabId = oldTabId;
-    this.newTabId = newTabId;
-    this.accordionPane.rotation = this;
+    this.oldTab = accordionPane.getTabById(oldTabId);
+    this.newTab = accordionPane.getTabById(newTabId);
     
-    this.rotatingTabIds = new Array();
+    this.oldTabContentInsets = this.accordionPane.getTabContentInsets(this.oldTab);
+    this.newTabContentInsets = this.accordionPane.getTabContentInsets(this.newTab);
+    
+    this.accordionPane.rotation = this;
+    this.tabHeight = this.accordionPane.calculateTabHeight();
+    
+    this.rotatingTabs = new Array();
     
     this.animationStepIndex = 0;
     
-    this.oldTabIndex = ExtrasUtil.Arrays.indexOf(this.accordionPane.tabIds, oldTabId);
-    this.newTabIndex = ExtrasUtil.Arrays.indexOf(this.accordionPane.tabIds, newTabId);
+    this.oldTabIndex = ExtrasUtil.Arrays.indexOf(this.accordionPane.tabs, this.oldTab);
+    this.newTabIndex = ExtrasUtil.Arrays.indexOf(this.accordionPane.tabs, this.newTab);
     this.directionDown = this.newTabIndex < this.oldTabIndex;
     
     if (this.directionDown) {
         // Tabs are sliding down (a tab on the top has been selected).
         for (var i = this.oldTabIndex; i > this.newTabIndex; --i) {
-            this.rotatingTabIds.push(this.accordionPane.tabIds[i]);
+            this.rotatingTabs.push(this.accordionPane.tabs[i]);
         }
     } else {
         // Tabs are sliding up (a tab on the bottom has been selected).
         for (var i = this.oldTabIndex + 1; i <= this.newTabIndex; ++i) {
-            this.rotatingTabIds.push(this.accordionPane.tabIds[i]);
+            this.rotatingTabs.push(this.accordionPane.tabs[i]);
         }
     }
     
-    this.animationStep();
-};
+    this.regionHeight = this.accordionPane.accordionPaneDivElement.offsetHeight;
+    
+    if (this.directionDown) {
+        // Numbers of tabs above that will not be moving.
+        this.numberOfTabsAbove = this.newTabIndex + 1;
+        
+        // Number of tabs below that will not be moving.
+        this.numberOfTabsBelow = this.accordionPane.tabs.length - 1 - this.newTabIndex
+        
+        // Initial top position of topmost moving tab.
+        this.startTopPosition = this.tabHeight * this.numberOfTabsAbove;
+        
+        // Final top position of topmost moving tab.
+        this.endTopPosition = this.regionHeight - this.tabHeight * (this.numberOfTabsBelow);
+        
+        // Number of pixels to step with each animation frame.
+        this.stepUnit = (this.endTopPosition - this.startTopPosition) / this.accordionPane.animationStepCount;
+    
+    } else {
+        // Numbers of tabs above that will not be moving.
+        this.numberOfTabsAbove = this.newTabIndex;
+    
+        // Numbers of tabs below that will not be moving.
+        this.numberOfTabsBelow = this.accordionPane.tabs.length - 1 - this.newTabIndex
 
-/**
- * Cancels the rotation.
- */
-ExtrasAccordionPane.Rotation.prototype.cancel = function() {
-    this.accordionPane.rotation = null;
+        // Initial bottom position of bottommost moving tab.
+        this.startBottomPosition = this.tabHeight * this.numberOfTabsBelow;
+
+        // Final bottom position of bottommost moving tab.
+        this.endBottomPosition = this.regionHeight - this.tabHeight * (this.numberOfTabsAbove + 1);
+        
+        // Number of pixels to step with each animation frame.
+        this.stepUnit = (this.endBottomPosition - this.startBottomPosition) / this.accordionPane.animationStepCount;
+    }
+    
+    this.animationStep();
 };
 
 /**
@@ -526,116 +532,73 @@ ExtrasAccordionPane.Rotation.prototype.cancel = function() {
  */
 ExtrasAccordionPane.Rotation.prototype.animationStep = function() {
     if (this.animationStepIndex < this.accordionPane.animationStepCount) {
-        var accordionPaneDivElement = document.getElementById(this.accordionPane.elementId);
-        var regionHeight = accordionPaneDivElement.offsetHeight;
-        var tabHeight = this.accordionPane.calculateTabHeight();
-        var oldTabContentElement = this.accordionPane.getTabContentElement(this.oldTabId);
-        var oldTabContentInsets = this.accordionPane.getTabContentInsets(this.oldTabId);
-        var newTabContentElement = this.accordionPane.getTabContentElement(this.newTabId);
-        var newTabContentInsets = this.accordionPane.getTabContentInsets(this.newTabId);
-        
+        // Number of pixels (from 0) to step current current frame.
+        var stepPosition = Math.round(this.stepUnit * this.animationStepIndex);
+
         if (this.directionDown) {
-            // Numbers of tabs above that will not be moving.
-            var numberOfTabsAbove = this.newTabIndex + 1;
-            
-            // Number of tabs below that will not be moving.
-            var numberOfTabsBelow = this.accordionPane.tabIds.length - 1 - this.newTabIndex
-            
-            // Initial top position of topmost moving tab.
-            var startTopPosition = tabHeight * numberOfTabsAbove;
-            
-            // Final top position of topmost moving tab.
-            var endTopPosition = regionHeight - tabHeight * (numberOfTabsBelow);
-            
-            // Number of pixels to step with each animation frame.
-            var stepUnit = (endTopPosition - startTopPosition) / this.accordionPane.animationStepCount;
-            
-            // Number of pixels (from 0) to step current current frame.
-            var stepPosition = Math.round(stepUnit * this.animationStepIndex);
-            
+
             // Move each moving tab to next step position.
-            for (var i = 0; i < this.rotatingTabIds.length; ++i) {
-                var tabElement = this.accordionPane.getTabElement(this.rotatingTabIds[i]);
-                var newPosition = stepPosition + startTopPosition + (tabHeight * (this.rotatingTabIds.length - i - 1));
-                tabElement.style.top = newPosition + "px";
+            for (var i = 0; i < this.rotatingTabs.length; ++i) {
+                var newPosition = stepPosition + this.startTopPosition + (this.tabHeight * (this.rotatingTabs.length - i - 1));
+                this.rotatingTabs[i].tabDivElement.style.top = newPosition + "px";
             }
             
             // Adjust height of expanding new tab content to fill expanding space.
-            var newContentHeight = stepPosition - oldTabContentInsets.top - oldTabContentInsets.bottom;
+            var newContentHeight = stepPosition - this.oldTabContentInsets.top - this.oldTabContentInsets.bottom;
             if (newContentHeight < 0) {
                 newContentHeight = 0;
             }
-            newTabContentElement.style.height = newContentHeight + "px";
+            this.newTab.contentDivElement.style.height = newContentHeight + "px";
             
             // On first frame, display new tab content.
             if (this.animationStepIndex == 0) {
-                oldTabContentElement.style.bottom = "";
-                newTabContentElement.style.display = "block";
-                newTabContentElement.style.top = (numberOfTabsAbove * tabHeight) + "px";
+                this.oldTab.contentDivElement.style.bottom = "";
+                this.newTab.contentDivElement.style.display = "block";
+                this.newTab.contentDivElement.style.top = (this.numberOfTabsAbove * this.tabHeight) + "px";
             }
             
             // Move top of old content downward.
-            var oldTop = stepPosition + startTopPosition + (this.rotatingTabIds.length * tabHeight);
-            oldTabContentElement.style.top = oldTop + "px";
+            var oldTop = stepPosition + this.startTopPosition + (this.rotatingTabs.length * this.tabHeight);
+            this.oldTab.contentDivElement.style.top = oldTop + "px";
             
             // Reduce height of contracting old tab content to fit within contracting space.
-            var oldContentHeight = regionHeight - oldTop - ((numberOfTabsBelow - 1) * tabHeight) 
-                    - oldTabContentInsets.top - oldTabContentInsets.bottom;
+            var oldContentHeight = this.regionHeight - oldTop - ((this.numberOfTabsBelow - 1) * this.tabHeight) 
+                    - this.oldTabContentInsets.top - this.oldTabContentInsets.bottom;
             if (oldContentHeight < 0) {
                 oldContentHeight = 0;
             }
-            oldTabContentElement.style.height = oldContentHeight + "px";
+            this.oldTab.contentDivElement.style.height = oldContentHeight + "px";
         } else {
-            // Numbers of tabs above that will not be moving.
-            var numberOfTabsAbove = this.newTabIndex;
-            
-            // Numbers of tabs below that will not be moving.
-            var numberOfTabsBelow = this.accordionPane.tabIds.length - 1 - this.newTabIndex
-
-            // Initial bottom position of bottommost moving tab.
-            var startBottomPosition = tabHeight * numberOfTabsBelow;
-
-            // Final bottom position of bottommost moving tab.
-            var endBottomPosition = regionHeight - tabHeight * (numberOfTabsAbove + 1);
-            
-            // Number of pixels to step with each animation frame.
-            var stepUnit = (endBottomPosition - startBottomPosition) / this.accordionPane.animationStepCount;
-            
-            // Number of pixels (from 0) to step current current frame.
-            var stepPosition = Math.round(stepUnit * this.animationStepIndex);
-            
             // Move each moving tab to next step position.
-            for (var i = 0; i < this.rotatingTabIds.length; ++i) {
-                var tabElement = this.accordionPane.getTabElement(this.rotatingTabIds[i]);
-                var newPosition = stepPosition + startBottomPosition + (tabHeight * (this.rotatingTabIds.length - i - 1));
-                tabElement.style.bottom = newPosition + "px";
+            for (var i = 0; i < this.rotatingTabs.length; ++i) {
+                var newPosition = stepPosition + this.startBottomPosition + (this.tabHeight * (this.rotatingTabs.length - i - 1));
+                this.rotatingTabs[i].tabDivElement.style.bottom = newPosition + "px";
             }
             
             // On first frame, display new tab content.
             if (this.animationStepIndex == 0) {
-                oldTabContentElement.style.bottom = "";
-
-                newTabContentElement.style.top = "";
-                newTabContentElement.style.bottom = (numberOfTabsBelow * tabHeight) + "px";
-                newTabContentElement.style.height = "0px";
-                newTabContentElement.style.display = "block";
+                this.oldTab.contentDivElement.style.bottom = "";
+                this.newTab.contentDivElement.style.top = "";
+                this.newTab.contentDivElement.style.bottom = (this.numberOfTabsBelow * this.tabHeight) + "px";
+                this.newTab.contentDivElement.style.height = "0px";
+                this.newTab.contentDivElement.style.display = "block";
             }
             
             // Reduce height of contracting old tab content to fit within contracting space.
-            var oldContentHeight = regionHeight - stepPosition 
-                    - ((numberOfTabsAbove + numberOfTabsBelow + 1) * tabHeight)
-                    - oldTabContentInsets.top - oldTabContentInsets.bottom;
+            var oldContentHeight = this.regionHeight - stepPosition 
+                    - ((this.numberOfTabsAbove + this.numberOfTabsBelow + 1) * this.tabHeight)
+                    - this.oldTabContentInsets.top - this.oldTabContentInsets.bottom;
             if (oldContentHeight < 0) {
                 oldContentHeight = 0;
             }
-            oldTabContentElement.style.height = oldContentHeight + "px";
+            this.oldTab.contentDivElement.style.height = oldContentHeight + "px";
             
             // Increase height of expanding tab content to fit within expanding space.
-            var newContentHeight = stepPosition - newTabContentInsets.top - newTabContentInsets.bottom;
+            var newContentHeight = stepPosition - this.newTabContentInsets.top - this.newTabContentInsets.bottom;
             if (newContentHeight < 0) {
                 newContentHeight = 0;
             };
-            newTabContentElement.style.height = newContentHeight + "px";
+            this.newTab.contentDivElement.style.height = newContentHeight + "px";
         }
         
         ++this.animationStepIndex;
@@ -647,9 +610,25 @@ ExtrasAccordionPane.Rotation.prototype.animationStep = function() {
         // Complete Rotation.
         
         this.accordionPane.redrawTabs();
-        
-        //this.accordionPane.rotation = null;
     }
+};
+
+/**
+ * Cancels the rotation.
+ */
+ExtrasAccordionPane.Rotation.prototype.cancel = function() {
+    this.accordionPane.rotation = null;
+};
+
+/**
+ * Disposes of the rotation.
+ */
+ExtrasAccordionPane.Rotation.prototype.dispose = function() {
+    this.oldTab = null;
+    this.oldTabContentInsets = null;
+    this.newTab = null;
+    this.newTabContentInsets = null;
+    this.rotatingTabs = null;
 };
 
 /**
@@ -679,6 +658,13 @@ ExtrasAccordionPane.Tab = function(tabId, title, pane) {
     this.tabId = tabId;
     this.title = title;
     this.pane = pane;
+    this.tabDivElement = null;
+    this.contentDivElement = null;
+};
+
+ExtrasAccordionPane.Tab.prototype.dispose = function() {
+    this.tabDivElement = null;
+    this.contentDivElement = null;
 };
 
 /**
@@ -852,7 +838,10 @@ ExtrasAccordionPane.MessageProcessor.processRemoveTab = function(removeTabMessag
     if (!accordionPane) {
         throw "AccordionPane not found with id: " + elementId;
     }
-    accordionPane.removeTab(tabId);
+    var tab = accordionPane.getTabById(tabId);
+    if (tab) {
+        accordionPane.removeTab(tab);
+    }
 };
 
 /**
