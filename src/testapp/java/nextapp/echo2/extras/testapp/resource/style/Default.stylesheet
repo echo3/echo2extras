@@ -162,6 +162,13 @@
      </image>
     </fill-image>
    </property>
+   <property name="selectionBackgroundImage">
+    <fill-image>
+     <image type="nextapp.echo2.app.ResourceImageReference">
+      <resource-image-reference resource="/nextapp/echo2/extras/testapp/resource/image/ShadowBackgroundDarkBlue.png"/>
+     </image>
+    </fill-image>
+   </property>
   </properties>
  </style>
  <style name="Default" type="nextapp.echo2.app.WindowPane">
