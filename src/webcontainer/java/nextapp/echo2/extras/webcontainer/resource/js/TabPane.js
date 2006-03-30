@@ -73,6 +73,10 @@ ExtrasTabPane = function(elementId, containerElementId, activeTabId) {
     
     this.tabIds = new Array();
     this.tabIdToTabMap = new EchoCollectionsMap();
+
+    this.tabPaneDivElement = null;
+    this.headerContainerDivElement = null;
+    this.headerTrElement = null
 };
 
 /**
@@ -114,12 +118,6 @@ ExtrasTabPane.prototype.addTab = function(tab, tabIndex) {
     ExtrasUtil.Arrays.insertElement(this.tabIds, tab.tabId, tabIndex);
     this.tabIdToTabMap.put(tab.tabId, tab);
 
-    tabPaneDivElement = document.getElementById(this.elementId);
-    if (!tabPaneDivElement) {
-        throw "TabPane DIV element not found: " + this.elementId;
-    }
-    
-    var headerTrElement = document.getElementById(this.elementId + "_header_tr");
     var headerTdElement = document.createElement("td");
     headerTdElement.style.borderWidth = "0px";
     headerTdElement.style.padding = "0px";
@@ -157,7 +155,6 @@ ExtrasTabPane.prototype.addTab = function(tab, tabIndex) {
     
     headerDivElement.appendChild(document.createTextNode(tab.title === null ? "*" : tab.title));
     
-    var contentContainerDivElement = document.getElementById(this.elementId + "_content");
     var contentDivElement = document.createElement("div");
     var contentInsets = this.getTabContentInsets(tab.tabId);
     contentDivElement.id = this.elementId + "_content_" + tab.tabId;
@@ -168,14 +165,14 @@ ExtrasTabPane.prototype.addTab = function(tab, tabIndex) {
     contentDivElement.style.bottom = "0px";
     contentDivElement.style.top = "0px";
     contentDivElement.style.padding = contentInsets.toString();
-    contentContainerDivElement.appendChild(contentDivElement);
+    this.contentContainerDivElement.appendChild(contentDivElement);
     
     EchoVirtualPosition.register(contentDivElement.id);
     
-    if (tabIndex < headerTrElement.childNodes.length) {
-        headerTrElement.insertBefore(headerTdElement, headerTrElement.childNodes[tabIndex]);
+    if (tabIndex < this.headerTrElement.childNodes.length) {
+        this.headerTrElement.insertBefore(headerTdElement, this.headerTrElement.childNodes[tabIndex]);
     } else {
-        headerTrElement.appendChild(headerTdElement);
+        this.headerTrElement.appendChild(headerTdElement);
     }
     
     if (this.activeTabId == null || this.activeTabId == tab.tabId) {
@@ -200,96 +197,100 @@ ExtrasTabPane.prototype.create = function() {
         throw "Container element not found: " + this.containerElementId;
     }
 
-    var tabPaneDivElement = document.createElement("div");
-    tabPaneDivElement.id = this.elementId;
-    tabPaneDivElement.style.position = "absolute";
-    tabPaneDivElement.style.overflow = "hidden";
-    tabPaneDivElement.style.top = "0px";
-    tabPaneDivElement.style.bottom = "0px";
-    tabPaneDivElement.style.left = "0px";
-    tabPaneDivElement.style.right = "0px";
-    EchoVirtualPosition.register(tabPaneDivElement.id);
-    containerElement.appendChild(tabPaneDivElement);
+    this.tabPaneDivElement = document.createElement("div");
+    this.tabPaneDivElement.id = this.elementId;
+    this.tabPaneDivElement.style.position = "absolute";
+    this.tabPaneDivElement.style.overflow = "hidden";
+    this.tabPaneDivElement.style.top = "0px";
+    this.tabPaneDivElement.style.bottom = "0px";
+    this.tabPaneDivElement.style.left = "0px";
+    this.tabPaneDivElement.style.right = "0px";
+    EchoVirtualPosition.register(this.tabPaneDivElement.id);
+    containerElement.appendChild(this.tabPaneDivElement);
     
-    var headerContainerDivElement = document.createElement("div");
-    headerContainerDivElement.id = this.elementId + "_header";
-    headerContainerDivElement.style.overflow = "hidden";
-    headerContainerDivElement.style.zIndex = 1;
-    headerContainerDivElement.style.position = "absolute";
+    this.headerContainerDivElement = document.createElement("div");
+    this.headerContainerDivElement.id = this.elementId + "_header";
+    this.headerContainerDivElement.style.overflow = "hidden";
+    this.headerContainerDivElement.style.zIndex = 1;
+    this.headerContainerDivElement.style.position = "absolute";
     switch (this.tabPosition) {
     case ExtrasTabPane.TAB_POSITION_BOTTOM:
-        headerContainerDivElement.style.bottom = "0px";
+        this.headerContainerDivElement.style.bottom = "0px";
         break;
     default:
-        headerContainerDivElement.style.top = "0px";
+        this.headerContainerDivElement.style.top = "0px";
     }
-    headerContainerDivElement.style.left = "0px";
-    headerContainerDivElement.style.width = "100%";
-    headerContainerDivElement.style.height = (this.headerHeight + this.activeBorderSize) + "px";
-    tabPaneDivElement.appendChild(headerContainerDivElement);
+    this.headerContainerDivElement.style.left = "0px";
+    this.headerContainerDivElement.style.width = "100%";
+    this.headerContainerDivElement.style.height = (this.headerHeight + this.activeBorderSize) + "px";
+    this.tabPaneDivElement.appendChild(this.headerContainerDivElement);
     
     var headerTableElement  = document.createElement("table");
     headerTableElement.style.borderWidth = "0px";
     headerTableElement.style.borderCollapse = "collapse";
     headerTableElement.style.padding = "0px";
-    headerContainerDivElement.appendChild(headerTableElement);
+    this.headerContainerDivElement.appendChild(headerTableElement);
     
     var headerTbodyElement = document.createElement("tbody");
     headerTableElement.appendChild(headerTbodyElement);
     
-    var headerTrElement = document.createElement("tr");
-    headerTrElement.id = this.elementId + "_header_tr";
-    headerTbodyElement.appendChild(headerTrElement);
+    this.headerTrElement = document.createElement("tr");
+    this.headerTrElement.id = this.elementId + "_header_tr";
+    headerTbodyElement.appendChild(this.headerTrElement);
     
-    var contentContainerDivElement = document.createElement("div");
-    contentContainerDivElement.id = this.elementId + "_content";
-    tabPaneDivElement.appendChild(contentContainerDivElement);
+    this.contentContainerDivElement = document.createElement("div");
+    this.contentContainerDivElement.id = this.elementId + "_content";
+    this.tabPaneDivElement.appendChild(this.contentContainerDivElement);
 
-    contentContainerDivElement.style.position = "absolute";
-    contentContainerDivElement.style.backgroundColor = this.defaultBackground;
-    contentContainerDivElement.style.color = this.defaultForeground;
+    this.contentContainerDivElement.style.position = "absolute";
+    this.contentContainerDivElement.style.backgroundColor = this.defaultBackground;
+    this.contentContainerDivElement.style.color = this.defaultForeground;
     if (this.tabPosition == ExtrasTabPane.TAB_POSITION_BOTTOM) {
-        contentContainerDivElement.style.top = "0px";
-        contentContainerDivElement.style.bottom = this.headerHeight + "px";
+        this.contentContainerDivElement.style.top = "0px";
+        this.contentContainerDivElement.style.bottom = this.headerHeight + "px";
     } else {
-        contentContainerDivElement.style.top = this.headerHeight + "px";
-        contentContainerDivElement.style.bottom = "0px";
+        this.contentContainerDivElement.style.top = this.headerHeight + "px";
+        this.contentContainerDivElement.style.bottom = "0px";
     }
-    contentContainerDivElement.style.left = "0px";
-    contentContainerDivElement.style.right = "0px";
-    EchoVirtualPosition.register(contentContainerDivElement.id);
+    this.contentContainerDivElement.style.left = "0px";
+    this.contentContainerDivElement.style.right = "0px";
+    EchoVirtualPosition.register(this.contentContainerDivElement.id);
 
     var activeBorder = this.getActiveBorder();
     switch (this.borderType) {
     case ExtrasTabPane.BORDER_TYPE_NONE:
-        contentContainerDivElement.style.border = "0px none";
+        this.contentContainerDivElement.style.border = "0px none";
         break;
     case ExtrasTabPane.BORDER_TYPE_SURROUND:
-        contentContainerDivElement.style.border = activeBorder;
+        this.contentContainerDivElement.style.border = activeBorder;
         break;
     case ExtrasTabPane.BORDER_TYPE_PARALLEL_TO_TABS:
-        contentContainerDivElement.style.borderTop = activeBorder;
-        contentContainerDivElement.style.borderBottom = activeBorder;
+        this.contentContainerDivElement.style.borderTop = activeBorder;
+        this.contentContainerDivElement.style.borderBottom = activeBorder;
         break;
     default:
         switch (this.tabPosition) {
         case ExtrasTabPane.TAB_POSITION_BOTTOM:
-            contentContainerDivElement.style.borderBottom = this.getActiveBorder();
+            this.contentContainerDivElement.style.borderBottom = this.getActiveBorder();
             break;
         default:
-            contentContainerDivElement.style.borderTop = this.getActiveBorder();
+            this.contentContainerDivElement.style.borderTop = this.getActiveBorder();
         }
         break;
     }
     
     EchoDomPropertyStore.setPropertyValue(this.elementId, "tabPane", this);
     
-    EchoEventProcessor.addHandler(headerContainerDivElement.id, "click", "ExtrasTabPane.processClick");
+    EchoEventProcessor.addHandler(this.headerContainerDivElement, "click", "ExtrasTabPane.processClick");
 };
 
 ExtrasTabPane.prototype.dispose = function() {
-    var headerContainerDivElemenId = this.elementId + "_header";
-    EchoEventProcessor.removeHandler(headerContainerDivElemenId, "click");
+    EchoEventProcessor.removeHandler(this.headerContainerDivElement, "click");
+    EchoDomPropertyStore.dispose(this.tabPaneDivElement);
+
+    this.tabPaneDivElement = null;
+    this.headerContainerDivElement = null;
+    this.headerTrElement = null
 };
 
 ExtrasTabPane.prototype.getActiveBorder = function() {

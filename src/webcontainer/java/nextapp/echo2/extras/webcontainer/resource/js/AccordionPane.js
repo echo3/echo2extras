@@ -66,8 +66,15 @@ ExtrasAccordionPane = function(elementId, containerElementId, activeTabId) {
     this.animationStepCount = 20;
     this.animationStepInterval = 5;
 
+    /**
+     * Array of ExtrasAccordionPane.Tab objects, representing displayed tabs, \
+     * in top-to-bottom sequence.
+     */
     this.tabs = new Array();
     
+    /**
+     * Root DIV element of rendered AccordionPane.
+     */
     this.accordionPaneDivElement = null;
 };
 
@@ -662,6 +669,9 @@ ExtrasAccordionPane.Tab = function(tabId, title, pane) {
     this.contentDivElement = null;
 };
 
+/**
+ * Disposes of a Tab object, releasing resources.
+ */
 ExtrasAccordionPane.Tab.prototype.dispose = function() {
     this.tabDivElement = null;
     this.contentDivElement = null;
