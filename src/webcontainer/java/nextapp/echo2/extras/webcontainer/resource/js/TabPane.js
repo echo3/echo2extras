@@ -71,8 +71,7 @@ ExtrasTabPane = function(elementId, containerElementId, activeTabId) {
     
     this.enabled = true;
     
-    this.tabIds = new Array();
-    this.tabIdToTabMap = new EchoCollectionsMap();
+    this.tabs = new Array();
 
     this.tabPaneDivElement = null;
     this.headerContainerDivElement = null;
@@ -115,14 +114,13 @@ ExtrasTabPane.TAB_POSITION_TOP = 0;
 ExtrasTabPane.TAB_POSITION_BOTTOM = 1;
 
 ExtrasTabPane.prototype.addTab = function(tab, tabIndex) {
-    ExtrasUtil.Arrays.insertElement(this.tabIds, tab.tabId, tabIndex);
-    this.tabIdToTabMap.put(tab.tabId, tab);
+    ExtrasUtil.Arrays.insertElement(this.tabs, tab, tabIndex);
 
-    var headerTdElement = document.createElement("td");
-    headerTdElement.style.borderWidth = "0px";
-    headerTdElement.style.padding = "0px";
-    headerTdElement.style.verticalAlign = "top";
-    headerTdElement.id = this.elementId + "_header_td_" + tab.tabId;
+    tab.headerTdElement = document.createElement("td");
+    tab.headerTdElement.style.borderWidth = "0px";
+    tab.headerTdElement.style.padding = "0px";
+    tab.headerTdElement.style.verticalAlign = "top";
+    tab.headerTdElement.id = this.elementId + "_header_td_" + tab.tabId;
     
     var inactiveBorder = this.getInactiveBorder();
     headerDivElement = document.createElement("div");
@@ -151,28 +149,28 @@ ExtrasTabPane.prototype.addTab = function(tab, tabIndex) {
     headerDivElement.style.paddingLeft = this.headerPaddingLeft + "px";
     headerDivElement.style.paddingRight = this.headerPaddingRight + "px";
     headerDivElement.style.cursor = "pointer";
-    headerTdElement.appendChild(headerDivElement);
+    tab.headerTdElement.appendChild(headerDivElement);
     
     headerDivElement.appendChild(document.createTextNode(tab.title === null ? "*" : tab.title));
     
-    var contentDivElement = document.createElement("div");
-    var contentInsets = this.getTabContentInsets(tab.tabId);
-    contentDivElement.id = this.elementId + "_content_" + tab.tabId;
-    contentDivElement.style.display = "none";
-    contentDivElement.style.position = "absolute";
-    contentDivElement.style.left = "0px";
-    contentDivElement.style.right = "0px";
-    contentDivElement.style.bottom = "0px";
-    contentDivElement.style.top = "0px";
-    contentDivElement.style.padding = contentInsets.toString();
-    this.contentContainerDivElement.appendChild(contentDivElement);
+    tab.contentDivElement = document.createElement("div");
+    var contentInsets = this.getTabContentInsets(tab);
+    tab.contentDivElement.id = this.elementId + "_content_" + tab.tabId;
+    tab.contentDivElement.style.display = "none";
+    tab.contentDivElement.style.position = "absolute";
+    tab.contentDivElement.style.left = "0px";
+    tab.contentDivElement.style.right = "0px";
+    tab.contentDivElement.style.bottom = "0px";
+    tab.contentDivElement.style.top = "0px";
+    tab.contentDivElement.style.padding = contentInsets.toString();
+    this.contentContainerDivElement.appendChild(tab.contentDivElement);
     
-    EchoVirtualPosition.register(contentDivElement.id);
+    EchoVirtualPosition.register(tab.contentDivElement.id);
     
     if (tabIndex < this.headerTrElement.childNodes.length) {
-        this.headerTrElement.insertBefore(headerTdElement, this.headerTrElement.childNodes[tabIndex]);
+        this.headerTrElement.insertBefore(tab.headerTdElement, this.headerTrElement.childNodes[tabIndex]);
     } else {
-        this.headerTrElement.appendChild(headerTdElement);
+        this.headerTrElement.appendChild(tab.headerTdElement);
     }
     
     if (this.activeTabId == null || this.activeTabId == tab.tabId) {
@@ -285,12 +283,32 @@ ExtrasTabPane.prototype.create = function() {
 };
 
 ExtrasTabPane.prototype.dispose = function() {
+    for (var i = 0; i < this.tabs.length; ++i) {
+        this.tabs[i].dispose();
+    }
+    this.tabs = null;
+
     EchoEventProcessor.removeHandler(this.headerContainerDivElement, "click");
     EchoDomPropertyStore.dispose(this.tabPaneDivElement);
 
     this.tabPaneDivElement = null;
     this.headerContainerDivElement = null;
     this.headerTrElement = null
+};
+
+/**
+ * Retrieves the ExtrasTabPane.Tab instance with the specified tab id.
+ * 
+ * @param tabId the tab id
+ * @return the Tab, or null if no tab is present with the specified id
+ */
+ExtrasTabPane.prototype.getTabById = function(tabId) {
+    for (var i = 0; i < this.tabs.length; ++i) {
+        if (this.tabs[i].tabId == tabId) {
+            return this.tabs[i];
+        }
+    }
+    return null;
 };
 
 ExtrasTabPane.prototype.getActiveBorder = function() {
@@ -308,8 +326,7 @@ ExtrasTabPane.prototype.getInactiveBorder = function() {
  * @param tabId the id of the tab
  * @return the insets
  */
-ExtrasTabPane.prototype.getTabContentInsets = function(tabId) {
-    var tab = this.tabIdToTabMap.get(tabId);
+ExtrasTabPane.prototype.getTabContentInsets = function(tab) {
     if (tab.pane) {
         return ExtrasTabPane.PANE_INSETS;
     } else {
@@ -317,54 +334,36 @@ ExtrasTabPane.prototype.getTabContentInsets = function(tabId) {
     }
 };
 
-ExtrasTabPane.prototype.removeTab = function(tabId) {
-    if (!this.tabIdToTabMap.get(tabId)) {
-        // Do nothing: request to remove non-existent tab.
-        return;
-    }
+ExtrasTabPane.prototype.removeTab = function(tab) {
+    ExtrasUtil.Arrays.removeElement(this.tabs, tab);
 
-    ExtrasUtil.Arrays.removeElement(this.tabIds, tabId);
-    this.tabIdToTabMap.remove(tabId);
-
-    var headerTdElementId = this.elementId + "_header_td_" + tabId;
-    var headerTdElement = document.getElementById(headerTdElementId);
-    if (!headerTdElement) {
-        throw "Tab header not found for id: " + headerTdElementId;
-    }
-    headerTdElement.parentNode.removeChild(headerTdElement);
-    
-    var contentDivElementId = this.elementId + "_content_" + tabId;
-    var contentDivElement = document.getElementById(contentDivElementId);
-    if (!contentDivElement) {
-        throw "Content not found for id: " + contentDivElementId;
-    }
-    contentDivElement.parentNode.removeChild(contentDivElement);
-
-    if (this.activeTabId == tabId) {
+    tab.headerTdElement.parentNode.removeChild(tab.headerTdElement);
+    tab.contentDivElement.parentNode.removeChild(tab.contentDivElement);
+    if (this.activeTabId == tab.tabId) {
         this.selectTab(null);
     }
 };
 
-ExtrasTabPane.prototype.selectTab = function(newValue) {
+ExtrasTabPane.prototype.selectTab = function(tabId) {
     if (this.activeTabId) {
         this.updateTabState(this.activeTabId, false);
     }
     
-    if (newValue == null) {
+    if (tabId == null) {
         // Select last tab if null is specified.
-        if (this.tabIds.length > 0) {
-	        newValue = this.tabIds[this.tabIds.length - 1];
+        if (this.tabs.length > 0) {
+	        tabId = this.tabs[this.tabs.length - 1].tabId;
         } else {
-	        newValue = null;
+	        tabId = null;
         }
     }
     
-    if (newValue != null) {
-        this.updateTabState(newValue, true);
+    if (tabId != null) {
+        this.updateTabState(tabId, true);
     }
     
     // Update state information.
-    this.activeTabId = newValue;
+    this.activeTabId = tabId;
     
     EchoVirtualPosition.redraw();
 };
@@ -441,6 +440,11 @@ ExtrasTabPane.Tab = function(tabId, title, pane) {
     this.tabId = tabId;
     this.title = title;
     this.pane = pane;
+};
+
+ExtrasTabPane.Tab.prototype.dispose = function() {
+    this.headerTdElement = null;
+    this.contentDivElement = null;
 };
 
 /**
@@ -596,7 +600,10 @@ ExtrasTabPane.MessageProcessor.processRemoveTab = function(removeTabMessageEleme
     var elementId = removeTabMessageElement.getAttribute("eid");
     var tabId = removeTabMessageElement.getAttribute("tab-id");
     var tabPane = ExtrasTabPane.getComponent(elementId);
-    tabPane.removeTab(tabId);
+    var tab = tabPane.getTabById(tabId);
+    if (tab) {
+        tabPane.removeTab(tab);
+    }
 };
 
 /**

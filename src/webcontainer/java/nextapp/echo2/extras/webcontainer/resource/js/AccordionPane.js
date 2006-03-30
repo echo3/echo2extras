@@ -183,6 +183,12 @@ ExtrasAccordionPane.prototype.disposeTab = function(tab) {
     tab.dispose();
 };
 
+/**
+ * Retrieves the ExtrasAccordionPane.Tab instance with the specified tab id.
+ * 
+ * @param tabId the tab id
+ * @return the Tab, or null if no tab is present with the specified id
+ */
 ExtrasAccordionPane.prototype.getTabById = function(tabId) {
     for (var i = 0; i < this.tabs.length; ++i) {
         if (this.tabs[i].tabId == tabId) {
