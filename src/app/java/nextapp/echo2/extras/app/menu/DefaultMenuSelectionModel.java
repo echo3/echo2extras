@@ -29,8 +29,13 @@
 
 package nextapp.echo2.extras.app.menu;
 
+import java.util.EventListener;
 import java.util.HashSet;
 import java.util.Set;
+
+import nextapp.echo2.app.event.ChangeEvent;
+import nextapp.echo2.app.event.ChangeListener;
+import nextapp.echo2.app.event.EventListenerList;
 
 /**
  * Default <code>MenuSelectionModel</code> implementation.
@@ -38,13 +43,39 @@ import java.util.Set;
 public class DefaultMenuSelectionModel 
 implements MenuSelectionModel {
 
+    private EventListenerList listenerList = new EventListenerList();
     private Set selection = new HashSet();
-    
+
+    /**
+     * @see nextapp.echo2.extras.app.menu.MenuSelectionModel#addChangeListener(nextapp.echo2.app.event.ChangeListener)
+     */
+    public void addChangeListener(ChangeListener l) {
+        listenerList.addListener(ChangeListener.class, l);
+    }
+
     /**
      * @see nextapp.echo2.extras.app.menu.MenuSelectionModel#isSelected(java.lang.Object)
      */
     public boolean isSelected(Object id) {
         return selection.contains(id);
+    }
+    
+    /**
+     * Notifies <code>ChangeListener</code>s of a selection state change.
+     */
+    protected void fireSelectionChanged() {
+        ChangeEvent e = new ChangeEvent(this);
+        EventListener[] listeners = listenerList.getListeners(ChangeListener.class);
+        for (int i = 0; i < listeners.length; ++i) {
+            ((ChangeListener) listeners[i]).stateChanged(e);
+        }
+    }
+
+    /**
+     * @see nextapp.echo2.extras.app.menu.MenuSelectionModel#removeChangeListener(nextapp.echo2.app.event.ChangeListener)
+     */
+    public void removeChangeListener(ChangeListener l) {
+        listenerList.removeListener(ChangeListener.class, l);
     }
 
     /**
@@ -56,5 +87,6 @@ implements MenuSelectionModel {
         } else {
             selection.remove(id);
         }
+        fireSelectionChanged();
     }
 }

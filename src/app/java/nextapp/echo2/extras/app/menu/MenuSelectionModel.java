@@ -29,11 +29,21 @@
 
 package nextapp.echo2.extras.app.menu;
 
+import nextapp.echo2.app.event.ChangeListener;
+
 /**
  * A selection model for <code>MenuModel</code>s.
  */
 public interface MenuSelectionModel {
 
+    /**
+     * Registers a <code>ChangeListener</code> to be notified when the selection
+     * state of menu items change.
+     * 
+     * @param l the listener to add
+     */
+    public void addChangeListener(ChangeListener l);
+    
     /**
      * Determines if a specific menu option is selected.
      * 
@@ -41,6 +51,14 @@ public interface MenuSelectionModel {
      * @return true if it is selected
      */
     public boolean isSelected(Object id);
+
+    /**
+     * Unregisters a <code>ChangeListener</code> from being notified when 
+     * the selection state of menu items change.
+     * 
+     * @param l the listener to remove
+     */
+    public void removeChangeListener(ChangeListener l);
     
     /**
      * Sets the selection state of a specific menu option.

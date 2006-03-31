@@ -39,6 +39,7 @@ import nextapp.echo2.app.Pane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.menu.DefaultMenuModel;
+import nextapp.echo2.extras.app.menu.DefaultMenuSelectionModel;
 import nextapp.echo2.extras.app.menu.ItemModel;
 import nextapp.echo2.extras.app.menu.MenuModel;
 import nextapp.echo2.extras.app.menu.MenuSelectionModel;
@@ -74,21 +75,37 @@ implements Pane {
     
     /**
      * Creates a new <code>MenuBarPane</code> with an empty
-     * <code>DefaultMenuModel</code> as its model.
+     * <code>DefaultMenuModel</code> as its model and a.
+     * <code>DefaultMenuSelectionModel</code> to provide state information.
      */
     public MenuBarPane() {
-        this(new DefaultMenuModel());
+        this(null, null);
     }
     
     /**
      * Creates a new <code>MenuBarPane</code> displaying the specified 
-     * <code>MenuModel</code>.
+     * <code>MenuModel</code> and using a 
+     * <code>DefaultMenuSelectionModel</code> to provide state information.
      * 
      * @param model the model
+     * @param selectionModel the selection model
      */
     public MenuBarPane(MenuModel model) {
+        this(model, null);
+    }
+    
+    /**
+     * Creates a new <code>MenuBarPane</code> displaying the specified 
+     * <code>MenuModel</code> and using the specified 
+     * <code>MenuSelectionModel</code> to provide state information.
+     * 
+     * @param model the model
+     * @param selectionModel the selection model
+     */
+    public MenuBarPane(MenuModel model, MenuSelectionModel selectionModel) {
         super();
-        setModel(model);
+        setModel(model == null ? new DefaultMenuModel() : model);
+        setSelectionModel(selectionModel == null ? new DefaultMenuSelectionModel() : selectionModel);
     }
     
     /**
@@ -101,12 +118,22 @@ implements Pane {
         getEventListenerList().addListener(ActionListener.class, l);
     }
     
-    private void deactivateGroup(MenuModel menuModel, Object groupId, Object newSelectionId) {
+    /**
+     * Deselects <code>RadioOptionModel</code> items in a group when a selection
+     * is made within that group.  Operates by recursively searching 
+     * <code>MenuModel</code>s for <code>RadioOptionModel</code>s with a specific
+     * group id. 
+     * 
+     * @param menuModel the <code>MenuModel</code> to search 
+     * @param groupId the id of the group to deselect
+     * @param newSelectionId the id of the new selection in the group
+     */
+    private void deselectGroup(MenuModel menuModel, Object groupId, Object newSelectionId) {
         int count = menuModel.getItemCount();
         for (int i = 0; i < count; ++i) {
             ItemModel itemModel = menuModel.getItem(i);
             if (itemModel instanceof MenuModel) {
-                deactivateGroup((MenuModel) itemModel, groupId, newSelectionId);
+                deselectGroup((MenuModel) itemModel, groupId, newSelectionId);
             } else if (itemModel instanceof RadioOptionModel) {
                 RadioOptionModel radioOptionModel = (RadioOptionModel) itemModel;
                 if (radioOptionModel.getGroupId() != null && radioOptionModel.getGroupId().equals(groupId)) {
@@ -116,11 +143,17 @@ implements Pane {
         }
     }
     
+    /**
+     * Programmatically performs a menu action.
+     * 
+     * @param optionModel the <code>OptionModel</code> whose action is to be 
+     *        invoked
+     */
     public void doAction(OptionModel optionModel) {
         if (selectionModel != null && optionModel instanceof ToggleOptionModel) {
             if (optionModel instanceof RadioOptionModel) {
                 RadioOptionModel radioOptionModel = (RadioOptionModel) optionModel;
-                deactivateGroup(model, radioOptionModel.getGroupId(), radioOptionModel.getId());
+                deselectGroup(model, radioOptionModel.getGroupId(), radioOptionModel.getId());
                 selectionModel.setSelected(radioOptionModel.getId(), true);
             } else {
                 ToggleOptionModel toggleOptionModel = (ToggleOptionModel) optionModel;
@@ -363,6 +396,9 @@ implements Pane {
      * @param newValue the new model
      */
     public void setModel(MenuModel newValue) {
+        if (newValue == null) {
+            throw new IllegalArgumentException("Model may not be null.");
+        }
         MenuModel oldValue = model;
         model = newValue;
         firePropertyChange(MODEL_CHANGED_PROPERTY, oldValue, newValue);
@@ -404,6 +440,9 @@ implements Pane {
      * @param newValue the new selection model
      */
     public void setSelectionModel(MenuSelectionModel newValue) {
+        if (newValue == null) {
+            throw new IllegalArgumentException("Selection model may not be null.");
+        }
         MenuSelectionModel oldValue = selectionModel;
         selectionModel = newValue;
         firePropertyChange(MODEL_CHANGED_PROPERTY, oldValue, newValue);
