@@ -42,5 +42,5 @@ public interface RadioOptionModel extends ToggleOptionModel {
      * 
      * @return the group identifier
      */
-    public Object getGroupId();
+    public String getGroupId();
 }

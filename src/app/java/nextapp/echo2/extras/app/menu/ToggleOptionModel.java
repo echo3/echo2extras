@@ -34,13 +34,4 @@ package nextapp.echo2.extras.app.menu;
  */
 public interface ToggleOptionModel extends OptionModel {
     
-    /**
-     * Returns a unique identifier assocciated with this
-     * <code>CheckBoxOptionModel</code>. This identifier is used in
-     * conjunction with the <code>MenuSelectionModel</code> to determine the
-     * state of this item.
-     * 
-     * @return the unique identifier
-     */
-    public Object getId();
 }

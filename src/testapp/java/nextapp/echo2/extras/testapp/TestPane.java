@@ -77,6 +77,10 @@ public class TestPane extends ContentPane {
                     InteractiveApp.getApp().getDefaultWindow().getContent().add(modalWindow);
                 } else if (e.getActionCommand().equals("OpenConsole")) {
                     InteractiveApp.getApp().consoleWrite(null);
+                } else if (e.getActionCommand().equals("Reset")) {
+                    InteractiveApp.getApp().displayTestPane();
+                } else if (e.getActionCommand().equals("Exit")) {
+                    InteractiveApp.getApp().displayWelcomePane();
                 }
             } catch (ClassNotFoundException ex) {
                 throw new RuntimeException(ex.toString());
@@ -97,24 +101,25 @@ public class TestPane extends ContentPane {
         
         DefaultMenuModel testsMenu = new DefaultMenuModel("Test");
         testsMenu.addItem(new DefaultOptionModel(
-                "Accordion Pane", Styles.ICON_16_ACCORDION_PANE, "Launch_AccordionPaneTest"));
+                "Launch_AccordionPaneTest", "Accordion Pane", Styles.ICON_16_ACCORDION_PANE));
+        testsMenu.addItem(new DefaultOptionModel( 
+                "Launch_BorderPaneTest", "Border Pane", Styles.ICON_16_BORDER_PANE));
         testsMenu.addItem(new DefaultOptionModel(
-                "Border Pane", Styles.ICON_16_BORDER_PANE, "Launch_BorderPaneTest"));
+                "Launch_CalendarSelectTest", "Calendar Select", Styles.ICON_16_CALENDAR_SELECT));
         testsMenu.addItem(new DefaultOptionModel(
-                "Calendar Select", Styles.ICON_16_CALENDAR_SELECT, "Launch_CalendarSelectTest"));
+                "Launch_ColorSelectTest", "Color Select", Styles.ICON_16_COLOR_SELECT));
         testsMenu.addItem(new DefaultOptionModel(
-                "Color Select", Styles.ICON_16_COLOR_SELECT, "Launch_ColorSelectTest"));
+                "Launch_MenuBarPaneTest", "Menu Bar Pane", Styles.ICON_16_MENU_BAR_PANE));
         testsMenu.addItem(new DefaultOptionModel(
-                "Menu Bar Pane", Styles.ICON_16_MENU_BAR_PANE, "Launch_MenuBarPaneTest"));
-        testsMenu.addItem(new DefaultOptionModel(
-                "Tab Pane", Styles.ICON_16_TAB_PANE, "Launch_TabPaneTest"));
+                "Launch_TabPaneTest", "Tab Pane", Styles.ICON_16_TAB_PANE));
         testsMenu.addItem(new SeparatorModel());
-        testsMenu.addItem(new DefaultOptionModel("Exit", null, null));
+        testsMenu.addItem(new DefaultOptionModel("Reset", "Reset", null));
+        testsMenu.addItem(new DefaultOptionModel("Exit", "Exit", null));
         menuBarMenu.addItem(testsMenu);
 
         DefaultMenuModel optionsMenu = new DefaultMenuModel("Options");
-        optionsMenu.addItem(new DefaultOptionModel("Open Console", null, "OpenConsole"));
-        optionsMenu.addItem(new DefaultOptionModel("Open Model Dialog", null, "OpenModalDialog"));
+        optionsMenu.addItem(new DefaultOptionModel("OpenConsole", "Open Console", null));
+        optionsMenu.addItem(new DefaultOptionModel("OpenModalDialog", "Open Model Dialog", null));
         menuBarMenu.addItem(optionsMenu);
 
         SplitPane titleVerticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL);

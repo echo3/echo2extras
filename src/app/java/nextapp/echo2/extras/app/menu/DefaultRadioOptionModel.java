@@ -35,25 +35,27 @@ package nextapp.echo2.extras.app.menu;
 public class DefaultRadioOptionModel extends DefaultToggleOptionModel 
 implements RadioOptionModel {
 
-    private Object groupId;
+    private String groupId;
     
     /**
      * Creates a  new <code>DefaultOptionModel</code>.
      * 
-     * @param text the item text
-     * @param id the unique toggle identifier
+     * @param id the id of the <code>OptionModel</code>;
+     *        the id will be used as the <code>actionCommand</code> of
+     *        <code>ActionEvent</code>s fired by a menu when the option
+     *        is selected
      * @param groupId the radio group identifier
-     * @param actionCommand the action command 
+     * @param text the item text
      */
-    public DefaultRadioOptionModel(String text, Object id, Object groupId, String actionCommand) {
-        super(text, id, actionCommand);
+    public DefaultRadioOptionModel(String id, String groupId, String text) {
+        super(id, text);
         this.groupId = groupId;
     }
 
     /**
      * @see nextapp.echo2.extras.app.menu.RadioOptionModel#getGroupId()
      */
-    public Object getGroupId() {
+    public String getGroupId() {
         return groupId;
     }
 }

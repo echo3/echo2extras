@@ -39,7 +39,7 @@ implements OptionModel {
 
     private String text;
     private ImageReference icon;
-    private String actionCommand;
+    private String id;
     
     /**
      * Creates a  new <code>DefaultOptionModel</code>.
@@ -48,17 +48,10 @@ implements OptionModel {
      * @param icon the item icon
      * @param actionCommand the action command 
      */
-    public DefaultOptionModel(String text, ImageReference icon, String actionCommand) {
+    public DefaultOptionModel(String id, String text, ImageReference icon) {
+        this.id = id;
         this.text = text;
         this.icon = icon;
-        this.actionCommand = actionCommand;
-    }
-    
-    /**
-     * @see nextapp.echo2.extras.app.menu.OptionModel#getActionCommand()
-     */
-    public String getActionCommand() {
-        return actionCommand;
     }
 
     /**
@@ -66,6 +59,13 @@ implements OptionModel {
      */
     public ImageReference getIcon() {
         return icon;
+    }
+    
+    /**
+     * @see nextapp.echo2.extras.app.menu.OptionModel#getId()
+     */
+    public String getId() {
+        return id;
     }
 
     /**

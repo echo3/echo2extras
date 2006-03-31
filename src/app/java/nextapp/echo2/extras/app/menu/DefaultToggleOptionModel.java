@@ -35,24 +35,16 @@ package nextapp.echo2.extras.app.menu;
 public class DefaultToggleOptionModel extends DefaultOptionModel  
 implements ToggleOptionModel {
 
-    private Object id;
-    
     /**
      * Creates a  new <code>DefaultOptionModel</code>.
      * 
+     * @param id the id of the <code>OptionModel</code>;
+     *        the id will be used as the <code>actionCommand</code> of
+     *        <code>ActionEvent</code>s fired by a menu when the option
+     *        is selected
      * @param text the item text
-     * @param id the unique toggle identifier
-     * @param actionCommand the action command 
      */
-    public DefaultToggleOptionModel(String text, Object id, String actionCommand) {
-        super(text, null, actionCommand);
-        this.id = id;
-    }
-    
-    /**
-     * @see nextapp.echo2.extras.app.menu.ToggleOptionModel#getId()
-     */
-    public Object getId() {
-        return id;
+    public DefaultToggleOptionModel(String id, String text) {
+        super(id, text, null);
     }
 }

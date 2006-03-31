@@ -173,7 +173,7 @@ implements Pane {
         if (!hasEventListenerList()) {
             return;
         }
-        ActionEvent e = new ActionEvent(this, optionModel.getActionCommand());
+        ActionEvent e = new ActionEvent(this, optionModel.getId());
         EventListener[] listeners = getEventListenerList().getListeners(ActionListener.class);
         for (int i = 0; i < listeners.length; ++i) {
             ((ActionListener) listeners[i]).actionPerformed(e);
