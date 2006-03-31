@@ -39,9 +39,12 @@ import nextapp.echo2.app.Pane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.menu.DefaultMenuModel;
+import nextapp.echo2.extras.app.menu.ItemModel;
 import nextapp.echo2.extras.app.menu.MenuModel;
 import nextapp.echo2.extras.app.menu.MenuSelectionModel;
 import nextapp.echo2.extras.app.menu.OptionModel;
+import nextapp.echo2.extras.app.menu.RadioOptionModel;
+import nextapp.echo2.extras.app.menu.ToggleOptionModel;
 
 /**
  * A pull-down menu pane.  This component should generally be used as a child 
@@ -96,6 +99,36 @@ implements Pane {
      */
     public void addActionListener(ActionListener l) {
         getEventListenerList().addListener(ActionListener.class, l);
+    }
+    
+    private void deactivateGroup(MenuModel menuModel, Object groupId, Object newSelectionId) {
+        int count = menuModel.getItemCount();
+        for (int i = 0; i < count; ++i) {
+            ItemModel itemModel = menuModel.getItem(i);
+            if (itemModel instanceof MenuModel) {
+                deactivateGroup((MenuModel) itemModel, groupId, newSelectionId);
+            } else if (itemModel instanceof RadioOptionModel) {
+                RadioOptionModel radioOptionModel = (RadioOptionModel) itemModel;
+                if (radioOptionModel.getGroupId() != null && radioOptionModel.getGroupId().equals(groupId)) {
+                    selectionModel.setSelected(radioOptionModel.getId(), false);
+                }
+            }
+        }
+    }
+    
+    public void doAction(OptionModel optionModel) {
+        if (selectionModel != null && optionModel instanceof ToggleOptionModel) {
+            if (optionModel instanceof RadioOptionModel) {
+                RadioOptionModel radioOptionModel = (RadioOptionModel) optionModel;
+                deactivateGroup(model, radioOptionModel.getGroupId(), radioOptionModel.getId());
+                selectionModel.setSelected(radioOptionModel.getId(), true);
+            } else {
+                ToggleOptionModel toggleOptionModel = (ToggleOptionModel) optionModel;
+                selectionModel.setSelected(toggleOptionModel.getId(), !selectionModel.isSelected(toggleOptionModel.getId()));
+            }
+            firePropertyChange(SELECTION_MODEL_CHANGED_PROPERTY, null, null);
+        }
+        fireActionPerformed(optionModel);
     }
     
     /**
@@ -239,7 +272,7 @@ implements Pane {
     public void processInput(String name, Object value) {
         if (INPUT_SELECT.equals(name)) {
             OptionModel optionModel = (OptionModel) value;
-            fireActionPerformed(optionModel);
+            doAction(optionModel);
         }
     }
     
