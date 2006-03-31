@@ -240,9 +240,9 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
                 if (menuModel.items[i] instanceof ExtrasMenu.ToggleOptionModel) {
                     var iconSrc;
                     if (menuModel.items[i] instanceof ExtrasMenu.RadioOptionModel) {
-                        iconSrc = menuModel.items[i].selected ? this.toggleOnIcon : this.toggleOffIcon;
-                    } else {
                         iconSrc = menuModel.items[i].selected ? this.radioOnIcon : this.radioOffIcon;
+                    } else {
+                        iconSrc = menuModel.items[i].selected ? this.toggleOnIcon : this.toggleOffIcon;
                     }
                     var imgElement = document.createElement("img");
                     imgElement.setAttribute("src", iconSrc);
@@ -675,19 +675,18 @@ ExtrasMenu.OptionModel.prototype.toString = function() {
     return "OptionModel \"" + this.text + "\"";
 };
 
-ExtrasMenu.ToggleOptionModel = function(text, state) {
+ExtrasMenu.ToggleOptionModel = function(text, selected) {
     this.id = ExtrasMenu.nextId++;
     this.text = text;
-    this.state = state;
+    this.selected = selected;
 };
 
 ExtrasMenu.ToggleOptionModel.prototype = new ExtrasMenu.OptionModel(null, null);
 
-ExtrasMenu.RadioOptionModel = function(text, state, groupId) {
+ExtrasMenu.RadioOptionModel = function(text, selected) {
     this.id = ExtrasMenu.nextId++;
     this.text = text;
-    this.state = state;
-    this.groupId = groupId;
+    this.selected = selected;
 };
 
 ExtrasMenu.RadioOptionModel.prototype = new ExtrasMenu.ToggleOptionModel(null, null);
@@ -834,8 +833,7 @@ ExtrasMenu.MessageProcessor.processMenuModel = function(menuElement) {
                 var selected = node.getAttribute("selected") == "true"; 
                 switch (node.getAttribute("type")) {
                 case "radio":
-                    var groupId = node.getAttribute("groupId");
-                    optionModel = new ExtrasMenu.RadioOptionModel(text, groupId, selected);
+                    optionModel = new ExtrasMenu.RadioOptionModel(text, selected);
                     break;
                 case "toggle":
                     optionModel = new ExtrasMenu.ToggleOptionModel(text, selected);

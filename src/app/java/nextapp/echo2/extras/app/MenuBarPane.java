@@ -370,7 +370,7 @@ implements Pane {
      * 
      * @param newValue the new selection model
      */
-    public void setModel(MenuSelectionModel newValue) {
+    public void setSelectionModel(MenuSelectionModel newValue) {
         MenuSelectionModel oldValue = selectionModel;
         selectionModel = newValue;
         firePropertyChange(MODEL_CHANGED_PROPERTY, oldValue, newValue);

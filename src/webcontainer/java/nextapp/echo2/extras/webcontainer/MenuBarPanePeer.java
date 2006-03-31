@@ -44,6 +44,7 @@ import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.extras.app.MenuBarPane;
 import nextapp.echo2.extras.app.menu.ItemModel;
 import nextapp.echo2.extras.app.menu.MenuModel;
+import nextapp.echo2.extras.app.menu.MenuSelectionModel;
 import nextapp.echo2.extras.app.menu.OptionModel;
 import nextapp.echo2.extras.app.menu.RadioOptionModel;
 import nextapp.echo2.extras.app.menu.SeparatorModel;
@@ -84,7 +85,7 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
     
     private static final String IMAGE_PREFIX = "/nextapp/echo2/extras/webcontainer/resource/image/";
     private static final ImageReference DEFAULT_ICON_TOGGLE_OFF = new ResourceImageReference(IMAGE_PREFIX + "ToggleOff.gif");
-    private static final ImageReference DEFAULT_ICON_TOGGLE_ON = new ResourceImageReference(IMAGE_PREFIX + "ToggleOb.gif");
+    private static final ImageReference DEFAULT_ICON_TOGGLE_ON = new ResourceImageReference(IMAGE_PREFIX + "ToggleOn.gif");
     private static final ImageReference DEFAULT_ICON_RADIO_OFF = new ResourceImageReference(IMAGE_PREFIX + "RadioOff.gif");
     private static final ImageReference DEFAULT_ICON_RADIO_ON = new ResourceImageReference(IMAGE_PREFIX + "RadioOn.gif");
     
@@ -343,6 +344,7 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
             menuModelElement.setAttribute("icon", ImageTools.getUri(rc, this, menu, IMAGE_ID_MENU_ITEM_PREFIX + itemPath));
         }
         int length = menuModel.getItemCount();
+        MenuSelectionModel selectionModel = menu.getSelectionModel();
         for (int i = 0; i < length; ++i) {
             ItemModel itemModel = menuModel.getItem(i);
             if (itemModel instanceof MenuModel) {
@@ -353,13 +355,12 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
                 if (optionModel instanceof ToggleOptionModel) {
                     if (optionModel instanceof RadioOptionModel) {
                         optionModelElement.setAttribute("type", "radio");
-                        //TODO. Use masked client identifier.
-                        optionModelElement.setAttribute("group-id", ((RadioOptionModel) optionModel).getGroupId().toString());
                     } else {
                         optionModelElement.setAttribute("type", "toggle");
                     }
-                    //TODO. Use masked client identifier.
-                    optionModelElement.setAttribute("id", ((ToggleOptionModel) optionModel).getId().toString());
+                    if (selectionModel != null && selectionModel.isSelected(((ToggleOptionModel) itemModel).getId())) {
+                        optionModelElement.setAttribute("selected", "true");
+                    }
                 } else {
                     optionModelElement.setAttribute("type", "default");
                 }

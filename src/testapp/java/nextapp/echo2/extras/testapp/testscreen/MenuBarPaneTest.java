@@ -38,11 +38,13 @@ import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.MenuBarPane;
+import nextapp.echo2.extras.app.menu.DefaultMenuSelectionModel;
 import nextapp.echo2.extras.app.menu.DefaultOptionModel;
 import nextapp.echo2.extras.app.menu.DefaultMenuModel;
 import nextapp.echo2.extras.app.menu.DefaultRadioOptionModel;
 import nextapp.echo2.extras.app.menu.DefaultToggleOptionModel;
 import nextapp.echo2.extras.app.menu.MenuModel;
+import nextapp.echo2.extras.app.menu.MenuSelectionModel;
 import nextapp.echo2.extras.app.menu.SeparatorModel;
 import nextapp.echo2.extras.testapp.AbstractTest;
 import nextapp.echo2.extras.testapp.InteractiveApp;
@@ -69,6 +71,9 @@ public class MenuBarPaneTest extends AbstractTest {
         add(splitPane);
         
         final MenuBarPane menu = new MenuBarPane(createMenuModel());
+        MenuSelectionModel selectionModel = new DefaultMenuSelectionModel();
+        selectionModel.setSelected("abc", true);
+        menu.setSelectionModel(selectionModel);
         menu.addActionListener(new ActionListener(){
         
             public void actionPerformed(ActionEvent e) {
@@ -161,7 +166,6 @@ public class MenuBarPaneTest extends AbstractTest {
         optionsMenuModel.addItem(new DefaultRadioOptionModel("Bar Mode 1", "bar1", "barmode", "bar1"));
         optionsMenuModel.addItem(new DefaultRadioOptionModel("Bar Mode 2", "bar2", "barmode", "bar2"));
         menuModel.addItem(optionsMenuModel);
-        
         return menuModel;
     }
 }
