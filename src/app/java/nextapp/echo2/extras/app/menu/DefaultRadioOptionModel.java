@@ -29,34 +29,31 @@
 
 package nextapp.echo2.extras.app.menu;
 
-import nextapp.echo2.app.ImageReference;
-
 /**
- * Representation of a menu option.
+ * Default <code>RadioOptionModel</code> implementation.
  */
-public interface OptionModel extends ItemModel {
+public class DefaultRadioOptionModel extends DefaultToggleOptionModel 
+implements RadioOptionModel {
+
+    private Object groupId;
     
     /**
-     * Returns the action command that will be provided in 
-     * <code>ActionEvent</code>s fired by the menu in the event this option 
-     * is selected.
+     * Creates a  new <code>DefaultOptionModel</code>.
      * 
-     * @return the action command
+     * @param text the item text
+     * @param id the unique toggle identifier
+     * @param groupId the radio group identifier
+     * @param actionCommand the action command 
      */
-    public String getActionCommand();
-    
+    public DefaultRadioOptionModel(String text, Object id, Object groupId, String actionCommand) {
+        super(text, id, actionCommand);
+        this.groupId = groupId;
+    }
+
     /**
-     * Returns the text of this menu option.
-     * 
-     * @return the text
+     * @see nextapp.echo2.extras.app.menu.RadioOptionModel#getGroupId()
      */
-    public String getText();
-    
-    /**
-     * Returns the icon of this menu option.
-     * Note that icons may not be displayed on <code>ToggleOptionModel</code>s.
-     * 
-     * @return the icon
-     */
-    public ImageReference getIcon();
+    public Object getGroupId() {
+        return groupId;
+    }
 }

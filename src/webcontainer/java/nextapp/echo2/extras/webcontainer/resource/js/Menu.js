@@ -58,7 +58,11 @@ ExtrasMenu = function(elementId, containerElementId) {
     this.selectionBackgroundImage = null;
     this.selectionForeground = "#ffffff";
     
-    this.transparentImageSrc = null;
+    this.transparentImage = null;
+    this.toggleOffIcon = "ToggleOff.gif";
+    this.toggleOnIcon = "ToggleOn.gif";
+    this.radioOffIcon = "RadioOff.gif";
+    this.radioOnIcon = "RadioOn.gif";
     
     /**
      * Array containing ids of open menus.
@@ -207,7 +211,7 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
     // Determine if any icons are present.
     var hasIcons = false;
     for (var i = 0; i < menuModel.items.length; ++i) {
-        if (menuModel.items[i].icon) {
+        if (menuModel.items[i].icon || menuModel.items[i] instanceof ExtrasMenu.ToggleOptionModel) {
             hasIcons = true;
             break;
         }
@@ -233,7 +237,18 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
             if (hasIcons) {
                 var menuItemIconTdElement = document.createElement("td");
                 menuItemIconTdElement.style.padding = iconPadding;
-                if (menuModel.items[i].icon) {
+                if (menuModel.items[i] instanceof ExtrasMenu.ToggleOptionModel) {
+                    var iconSrc;
+                    if (menuModel.items[i] instanceof ExtrasMenu.RadioOptionModel) {
+                        iconSrc = menuModel.items[i].selected ? this.toggleOnIcon : this.toggleOffIcon;
+                    } else {
+                        iconSrc = menuModel.items[i].selected ? this.radioOnIcon : this.radioOffIcon;
+                    }
+                    var imgElement = document.createElement("img");
+                    imgElement.setAttribute("src", iconSrc);
+                    imgElement.setAttribute("alt", "");
+                    menuItemIconTdElement.appendChild(imgElement);
+                } else if (menuModel.items[i].icon) {
                     var imgElement = document.createElement("img");
                     imgElement.setAttribute("src", menuModel.items[i].icon);
                     imgElement.setAttribute("alt", "");
@@ -260,9 +275,16 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
             var menuItemTrElement = document.createElement("tr");
             menuTbodyElement.appendChild(menuItemTrElement);
             var menuItemContentTdElement = document.createElement("td");
-            menuItemContentTdElement.colSpan = 2;
-            menuItemContentTdElement.style.padding = "0px";
-            menuItemContentTdElement.appendChild(document.createElement("hr"));
+            menuItemContentTdElement.colSpan = hasIcons ? 3 : 2;
+            menuItemContentTdElement.style.padding = "3px 0px";
+            var hrDivElement = document.createElement("div");
+            hrDivElement.style.borderTopWidth = "1px";
+            hrDivElement.style.borderTopStyle = "solid";
+            hrDivElement.style.borderTopColor = "#a7a7a7";
+            hrDivElement.style.height = "0px";
+            hrDivElement.style.fontSize = "1px";
+            hrDivElement.style.lineHeight = "0px";
+            menuItemContentTdElement.appendChild(hrDivElement);
             menuItemTrElement.appendChild(menuItemContentTdElement);
         }
     }
@@ -369,8 +391,8 @@ ExtrasMenu.prototype.renderMenuBarMaskAdd = function() {
     topBlockDivElement.style.left = "0px";
     topBlockDivElement.style.width = "100%";
     topBlockDivElement.style.height = bounds.top + "px";
-    if (this.transparentImageSrc) {
-        topBlockDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
+    if (this.transparentImage) {
+        topBlockDivElement.style.backgroundImage = "url(" + this.transparentImage + ")";
     }
     bodyElement.appendChild(topBlockDivElement);
     EchoEventProcessor.addHandler(topBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
@@ -384,8 +406,8 @@ ExtrasMenu.prototype.renderMenuBarMaskAdd = function() {
     bottomBlockDivElement.style.left = "0px";
     bottomBlockDivElement.style.width = "100%";
     bottomBlockDivElement.style.bottom = "0px";
-    if (this.transparentImageSrc) {
-        bottomBlockDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
+    if (this.transparentImage) {
+        bottomBlockDivElement.style.backgroundImage = "url(" + this.transparentImage + ")";
     }
     bodyElement.appendChild(bottomBlockDivElement);
     EchoEventProcessor.addHandler(bottomBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
@@ -397,8 +419,8 @@ ExtrasMenu.prototype.renderMenuBarMaskAdd = function() {
     leftBlockDivElement.style.left = "0px";
     leftBlockDivElement.style.width = bounds.left + "px";
     leftBlockDivElement.style.height = bounds.height + "px";
-    if (this.transparentImageSrc) {
-        leftBlockDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
+    if (this.transparentImage) {
+        leftBlockDivElement.style.backgroundImage = "url(" + this.transparentImage + ")";
     }
     bodyElement.appendChild(leftBlockDivElement);
     EchoEventProcessor.addHandler(leftBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
@@ -410,8 +432,8 @@ ExtrasMenu.prototype.renderMenuBarMaskAdd = function() {
     rightBlockDivElement.style.right = "0px";
     rightBlockDivElement.style.height = bounds.height + "px";
     rightBlockDivElement.style.width = (document.documentElement.clientWidth - (bounds.left + bounds.width)) + "px";
-    if (this.transparentImageSrc) {
-        rightBlockDivElement.style.backgroundImage = "url(" + this.transparentImageSrc + ")";
+    if (this.transparentImage) {
+        rightBlockDivElement.style.backgroundImage = "url(" + this.transparentImage + ")";
     }
     bodyElement.appendChild(rightBlockDivElement);
     EchoEventProcessor.addHandler(rightBlockDivElement.id, "click", "ExtrasMenu.processMenuCancel");
@@ -653,6 +675,23 @@ ExtrasMenu.OptionModel.prototype.toString = function() {
     return "OptionModel \"" + this.text + "\"";
 };
 
+ExtrasMenu.ToggleOptionModel = function(text, state) {
+    this.id = ExtrasMenu.nextId++;
+    this.text = text;
+    this.state = state;
+};
+
+ExtrasMenu.ToggleOptionModel.prototype = new ExtrasMenu.OptionModel(null, null);
+
+ExtrasMenu.RadioOptionModel = function(text, state, groupId) {
+    this.id = ExtrasMenu.nextId++;
+    this.text = text;
+    this.state = state;
+    this.groupId = groupId;
+};
+
+ExtrasMenu.RadioOptionModel.prototype = new ExtrasMenu.ToggleOptionModel(null, null);
+
 /**
  * A representation of a menu separator.
  */
@@ -711,7 +750,7 @@ ExtrasMenu.MessageProcessor.processInit = function(initMessageElement) {
     var elementId = initMessageElement.getAttribute("eid");
     var containerElementId = initMessageElement.getAttribute("container-eid");
     var menu = new ExtrasMenu(elementId, containerElementId);
-    menu.transparentImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ExtrasUtil.Transparent";
+    menu.transparentImage = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ExtrasUtil.Transparent";
     
     menu.enabled = initMessageElement.getAttribute("enabled") != "false";
     if (initMessageElement.getAttribute("background")) {
@@ -747,6 +786,21 @@ ExtrasMenu.MessageProcessor.processInit = function(initMessageElement) {
     if (initMessageElement.getAttribute("selection-foreground")) {
         menu.selectionForeground = initMessageElement.getAttribute("selection-foreground");
     }
+    if (initMessageElement.getAttribute("selection-foreground")) {
+        menu.selectionForeground = initMessageElement.getAttribute("selection-foreground");
+    }
+    if (initMessageElement.getAttribute("icon-toggle-off")) {
+        menu.toggleOffIcon = initMessageElement.getAttribute("icon-toggle-off");
+    }
+    if (initMessageElement.getAttribute("icon-toggle-on")) {
+        menu.toggleOnIcon = initMessageElement.getAttribute("icon-toggle-on");
+    }
+    if (initMessageElement.getAttribute("icon-radio-off")) {
+        menu.radioOffIcon = initMessageElement.getAttribute("icon-radio-off");
+    }
+    if (initMessageElement.getAttribute("icon-radio-on")) {
+        menu.radioOnIcon = initMessageElement.getAttribute("icon-radio-on");
+    }
 
     var menuBarModel;
     
@@ -775,7 +829,21 @@ ExtrasMenu.MessageProcessor.processMenuModel = function(menuElement) {
         var node = menuElement.childNodes[i];
         if (node.nodeType == 1) { // Element
             if (node.nodeName == "option") {
-                var optionModel = new ExtrasMenu.OptionModel(node.getAttribute("text"), node.getAttribute("icon"));
+                var optionModel;
+                var text = node.getAttribute("text");
+                var selected = node.getAttribute("selected") == "true"; 
+                switch (node.getAttribute("type")) {
+                case "radio":
+                    var groupId = node.getAttribute("groupId");
+                    optionModel = new ExtrasMenu.RadioOptionModel(text, groupId, selected);
+                    break;
+                case "toggle":
+                    optionModel = new ExtrasMenu.ToggleOptionModel(text, selected);
+                    break;
+                default:
+                    var icon = node.getAttribute("icon");
+                    optionModel = new ExtrasMenu.OptionModel(text, icon);
+                }
                 menuModel.addItem(optionModel);
             } else if (node.nodeName == "menu") {
                 var childMenuModel = ExtrasMenu.MessageProcessor.processMenuModel(node);

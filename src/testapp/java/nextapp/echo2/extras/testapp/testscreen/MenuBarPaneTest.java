@@ -40,6 +40,8 @@ import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.MenuBarPane;
 import nextapp.echo2.extras.app.menu.DefaultOptionModel;
 import nextapp.echo2.extras.app.menu.DefaultMenuModel;
+import nextapp.echo2.extras.app.menu.DefaultRadioOptionModel;
+import nextapp.echo2.extras.app.menu.DefaultToggleOptionModel;
 import nextapp.echo2.extras.app.menu.MenuModel;
 import nextapp.echo2.extras.app.menu.SeparatorModel;
 import nextapp.echo2.extras.testapp.AbstractTest;
@@ -146,6 +148,18 @@ public class MenuBarPaneTest extends AbstractTest {
         DefaultMenuModel optionsMenuModel = new DefaultMenuModel("Options");
         optionsMenuModel.addItem(new DefaultOptionModel("Load Preferences...", null, "load-preferences"));
         optionsMenuModel.addItem(new DefaultOptionModel("Save Preferences...", null, "save-preferences"));
+        optionsMenuModel.addItem(new SeparatorModel());
+        optionsMenuModel.addItem(new DefaultToggleOptionModel("Enable ABC", "abc", "enable"));
+        optionsMenuModel.addItem(new DefaultToggleOptionModel("Enable DEF", "def", "enable"));
+        optionsMenuModel.addItem(new DefaultToggleOptionModel("Enable GHI", "ghi", "enable"));
+        optionsMenuModel.addItem(new SeparatorModel());
+        optionsMenuModel.addItem(new DefaultRadioOptionModel("Foo Mode 1", "foo1", "foomode", "foo1"));
+        optionsMenuModel.addItem(new DefaultRadioOptionModel("Foo Mode 2", "foo2", "foomode", "foo2"));
+        optionsMenuModel.addItem(new DefaultRadioOptionModel("Foo Mode 3", "foo3", "foomode", "foo3"));
+        optionsMenuModel.addItem(new DefaultRadioOptionModel("Foo Mode 4", "foo4", "foomode", "foo4"));
+        optionsMenuModel.addItem(new SeparatorModel());
+        optionsMenuModel.addItem(new DefaultRadioOptionModel("Bar Mode 1", "bar1", "barmode", "bar1"));
+        optionsMenuModel.addItem(new DefaultRadioOptionModel("Bar Mode 2", "bar2", "barmode", "bar2"));
         menuModel.addItem(optionsMenuModel);
         
         return menuModel;

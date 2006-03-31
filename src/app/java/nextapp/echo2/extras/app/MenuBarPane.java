@@ -40,6 +40,7 @@ import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.menu.DefaultMenuModel;
 import nextapp.echo2.extras.app.menu.MenuModel;
+import nextapp.echo2.extras.app.menu.MenuSelectionModel;
 import nextapp.echo2.extras.app.menu.OptionModel;
 
 /**
@@ -53,6 +54,7 @@ implements Pane {
     
     public static final String INPUT_SELECT = "select";
     public static final String MODEL_CHANGED_PROPERTY = "model";
+    public static final String SELECTION_MODEL_CHANGED_PROPERTY = "selectionModel";
 
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     public static final String PROPERTY_BORDER = "border";
@@ -65,6 +67,7 @@ implements Pane {
     public static final String PROPERTY_SELECTION_FOREGROUND = "selectionForeground";
     
     private MenuModel model;
+    private MenuSelectionModel selectionModel;
     
     /**
      * Creates a new <code>MenuBarPane</code> with an empty
@@ -222,6 +225,15 @@ implements Pane {
     }
 
     /**
+     * Returns the selection model
+     * 
+     * @return the selection model
+     */
+    public MenuSelectionModel getSelectionModel() {
+        return selectionModel;
+    }
+    
+    /**
      * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
      */
     public void processInput(String name, Object value) {
@@ -351,5 +363,16 @@ implements Pane {
      */
     public void setSelectionForeground(Color newValue) {
         setProperty(PROPERTY_SELECTION_FOREGROUND, newValue);
+    }
+    
+    /**
+     * Sets the selection model.
+     * 
+     * @param newValue the new selection model
+     */
+    public void setModel(MenuSelectionModel newValue) {
+        MenuSelectionModel oldValue = selectionModel;
+        selectionModel = newValue;
+        firePropertyChange(MODEL_CHANGED_PROPERTY, oldValue, newValue);
     }
 }

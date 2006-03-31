@@ -39,12 +39,15 @@ import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.ImageReference;
+import nextapp.echo2.app.ResourceImageReference;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.extras.app.MenuBarPane;
 import nextapp.echo2.extras.app.menu.ItemModel;
 import nextapp.echo2.extras.app.menu.MenuModel;
 import nextapp.echo2.extras.app.menu.OptionModel;
+import nextapp.echo2.extras.app.menu.RadioOptionModel;
 import nextapp.echo2.extras.app.menu.SeparatorModel;
+import nextapp.echo2.extras.app.menu.ToggleOptionModel;
 import nextapp.echo2.webcontainer.ActionProcessor;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.ContainerInstance;
@@ -79,10 +82,22 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
         WebRenderServlet.getServiceRegistry().add(MENU_SERVICE);
     }
     
+    private static final String IMAGE_PREFIX = "/nextapp/echo2/extras/webcontainer/resource/image/";
+    private static final ImageReference DEFAULT_ICON_TOGGLE_OFF = new ResourceImageReference(IMAGE_PREFIX + "ToggleOff.gif");
+    private static final ImageReference DEFAULT_ICON_TOGGLE_ON = new ResourceImageReference(IMAGE_PREFIX + "ToggleOb.gif");
+    private static final ImageReference DEFAULT_ICON_RADIO_OFF = new ResourceImageReference(IMAGE_PREFIX + "RadioOff.gif");
+    private static final ImageReference DEFAULT_ICON_RADIO_ON = new ResourceImageReference(IMAGE_PREFIX + "RadioOn.gif");
+    
     private static final String IMAGE_ID_BACKGROUND = "background";
     private static final String IMAGE_ID_MENU_BACKGROUND = "menuBackground";
     private static final String IMAGE_ID_SELECTION_BACKGROUND = "selectionBackground";
     private static final String IMAGE_ID_MENU_ITEM_PREFIX = "menuItem.";
+    
+    private static final String IMAGE_ID_TOGGLE_OFF = "toggleOff";
+    private static final String IMAGE_ID_TOGGLE_ON = "toggleOn";
+    private static final String IMAGE_ID_RADIO_OFF = "radioOff";
+    private static final String IMAGE_ID_RADIO_ON = "radioOn";
+    
 
     /**
      * The <code>PartialUpdateManager</code> for this synchronization peer.
@@ -117,6 +132,14 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
         } else if (IMAGE_ID_SELECTION_BACKGROUND.equals(imageId)) {
             fillImage = (FillImage) component.getRenderProperty(MenuBarPane.PROPERTY_SELECTION_BACKGROUND_IMAGE);
             return fillImage == null ? null : fillImage.getImage();
+        } else if (IMAGE_ID_TOGGLE_OFF.equals(imageId)) {
+            return DEFAULT_ICON_TOGGLE_OFF;
+        } else if (IMAGE_ID_TOGGLE_ON.equals(imageId)) {
+            return DEFAULT_ICON_TOGGLE_ON;
+        } else if (IMAGE_ID_RADIO_OFF.equals(imageId)) {
+            return DEFAULT_ICON_RADIO_OFF;
+        } else if (IMAGE_ID_RADIO_ON.equals(imageId)) {
+            return DEFAULT_ICON_RADIO_ON;
         } else if (imageId.startsWith(IMAGE_ID_MENU_ITEM_PREFIX)) {
             String itemPath = imageId.substring(IMAGE_ID_MENU_ITEM_PREFIX.length());
             ItemModel itemModel = getItemModel((MenuBarPane) component, itemPath);
@@ -289,6 +312,11 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
             initElement.setAttribute("selection-foreground", ColorRender.renderCssAttributeValue(selectionForeground));
         }
         
+        initElement.setAttribute("icon-toggle-off", ImageTools.getUri(rc, this, menu, IMAGE_ID_TOGGLE_OFF));
+        initElement.setAttribute("icon-toggle-on", ImageTools.getUri(rc, this, menu, IMAGE_ID_TOGGLE_ON));
+        initElement.setAttribute("icon-radio-off", ImageTools.getUri(rc, this, menu, IMAGE_ID_RADIO_OFF));
+        initElement.setAttribute("icon-radio-on", ImageTools.getUri(rc, this, menu, IMAGE_ID_RADIO_ON));
+        
         renderModel(rc, menu, menu.getModel(), initElement);
         
         partElement.appendChild(initElement);
@@ -322,6 +350,19 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
             } else if (itemModel instanceof OptionModel) {
                 Element optionModelElement = document.createElement("option");
                 OptionModel optionModel = (OptionModel) itemModel;
+                if (optionModel instanceof ToggleOptionModel) {
+                    if (optionModel instanceof RadioOptionModel) {
+                        optionModelElement.setAttribute("type", "radio");
+                        //TODO. Use masked client identifier.
+                        optionModelElement.setAttribute("group-id", ((RadioOptionModel) optionModel).getGroupId().toString());
+                    } else {
+                        optionModelElement.setAttribute("type", "toggle");
+                    }
+                    //TODO. Use masked client identifier.
+                    optionModelElement.setAttribute("id", ((ToggleOptionModel) optionModel).getId().toString());
+                } else {
+                    optionModelElement.setAttribute("type", "default");
+                }
                 if (optionModel.getText() != null) {
                     optionModelElement.setAttribute("text", optionModel.getText());
                 }

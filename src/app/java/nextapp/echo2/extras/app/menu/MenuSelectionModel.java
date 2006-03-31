@@ -29,34 +29,24 @@
 
 package nextapp.echo2.extras.app.menu;
 
-import nextapp.echo2.app.ImageReference;
-
 /**
- * Representation of a menu option.
+ * A selection model for <code>MenuModel</code>s.
  */
-public interface OptionModel extends ItemModel {
+public interface MenuSelectionModel {
+
+    /**
+     * Determines if a specific menu option is selected.
+     * 
+     * @param id the id of the menu option
+     * @return true if it is selected
+     */
+    public boolean isSelected(Object id);
     
     /**
-     * Returns the action command that will be provided in 
-     * <code>ActionEvent</code>s fired by the menu in the event this option 
-     * is selected.
+     * Sets the selection state of a specific menu option.
      * 
-     * @return the action command
+     * @param id the id of the menu option
+     * @param selected the new selection state
      */
-    public String getActionCommand();
-    
-    /**
-     * Returns the text of this menu option.
-     * 
-     * @return the text
-     */
-    public String getText();
-    
-    /**
-     * Returns the icon of this menu option.
-     * Note that icons may not be displayed on <code>ToggleOptionModel</code>s.
-     * 
-     * @return the icon
-     */
-    public ImageReference getIcon();
+    public void setSelected(Object id, boolean selected);
 }

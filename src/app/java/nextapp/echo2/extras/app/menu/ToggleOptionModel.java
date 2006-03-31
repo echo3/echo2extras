@@ -29,34 +29,18 @@
 
 package nextapp.echo2.extras.app.menu;
 
-import nextapp.echo2.app.ImageReference;
-
 /**
- * Representation of a menu option.
+ * Representation of a on/off toggle menu option.
  */
-public interface OptionModel extends ItemModel {
+public interface ToggleOptionModel extends OptionModel {
     
     /**
-     * Returns the action command that will be provided in 
-     * <code>ActionEvent</code>s fired by the menu in the event this option 
-     * is selected.
+     * Returns a unique identifier assocciated with this
+     * <code>CheckBoxOptionModel</code>. This identifier is used in
+     * conjunction with the <code>MenuSelectionModel</code> to determine the
+     * state of this item.
      * 
-     * @return the action command
+     * @return the unique identifier
      */
-    public String getActionCommand();
-    
-    /**
-     * Returns the text of this menu option.
-     * 
-     * @return the text
-     */
-    public String getText();
-    
-    /**
-     * Returns the icon of this menu option.
-     * Note that icons may not be displayed on <code>ToggleOptionModel</code>s.
-     * 
-     * @return the icon
-     */
-    public ImageReference getIcon();
+    public Object getId();
 }

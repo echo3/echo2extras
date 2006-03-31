@@ -29,34 +29,32 @@
 
 package nextapp.echo2.extras.app.menu;
 
-import nextapp.echo2.app.ImageReference;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Representation of a menu option.
+ * Default <code>MenuSelectionModel</code> implementation.
  */
-public interface OptionModel extends ItemModel {
+public class DefaultMenuSelectionModel 
+implements MenuSelectionModel {
+
+    private Set selection = new HashSet();
     
     /**
-     * Returns the action command that will be provided in 
-     * <code>ActionEvent</code>s fired by the menu in the event this option 
-     * is selected.
-     * 
-     * @return the action command
+     * @see nextapp.echo2.extras.app.menu.MenuSelectionModel#isSelected(java.lang.Object)
      */
-    public String getActionCommand();
-    
+    public boolean isSelected(Object id) {
+        return selection.contains(id);
+    }
+
     /**
-     * Returns the text of this menu option.
-     * 
-     * @return the text
+     * @see nextapp.echo2.extras.app.menu.MenuSelectionModel#setSelected(java.lang.Object, boolean)
      */
-    public String getText();
-    
-    /**
-     * Returns the icon of this menu option.
-     * Note that icons may not be displayed on <code>ToggleOptionModel</code>s.
-     * 
-     * @return the icon
-     */
-    public ImageReference getIcon();
+    public void setSelected(Object id, boolean selected) {
+        if (selected) {
+            selection.add(id);
+        } else {
+            selection.remove(id);
+        }
+    }
 }
