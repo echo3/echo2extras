@@ -32,6 +32,7 @@ package nextapp.echo2.extras.testapp;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
@@ -39,8 +40,12 @@ import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.MenuBarPane;
+import nextapp.echo2.extras.app.menu.AbstractMenuStateModel;
 import nextapp.echo2.extras.app.menu.DefaultMenuModel;
 import nextapp.echo2.extras.app.menu.DefaultOptionModel;
+import nextapp.echo2.extras.app.menu.DefaultRadioOptionModel;
+import nextapp.echo2.extras.app.menu.DefaultToggleOptionModel;
+import nextapp.echo2.extras.app.menu.MenuStateModel;
 import nextapp.echo2.extras.app.menu.SeparatorModel;
 
 /**
@@ -97,9 +102,11 @@ public class TestPane extends ContentPane {
     public TestPane() {
         super();
         
+        setBackgroundImage(Styles.FILL_IMAGE_EXTRAS_BACKGROUND);
+        
         DefaultMenuModel menuBarMenu = new DefaultMenuModel();
         
-        DefaultMenuModel testsMenu = new DefaultMenuModel("Test");
+        DefaultMenuModel testsMenu = new DefaultMenuModel(null, "Test");
         testsMenu.addItem(new DefaultOptionModel(
                 "Launch_AccordionPaneTest", "Accordion Pane", Styles.ICON_16_ACCORDION_PANE));
         testsMenu.addItem(new DefaultOptionModel( 
@@ -117,9 +124,18 @@ public class TestPane extends ContentPane {
         testsMenu.addItem(new DefaultOptionModel("Exit", "Exit", null));
         menuBarMenu.addItem(testsMenu);
 
-        DefaultMenuModel optionsMenu = new DefaultMenuModel("Options");
+        DefaultMenuModel backgroundsMenu = new DefaultMenuModel("Backgrounds", "Backgrounds");
+        backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundDefault", "Backgrounds", "Default")); 
+        backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundPewter", "Backgrounds", "Pewter")); 
+        backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundSilver", "Backgrounds", "Silver")); 
+        backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundBlue", "Backgrounds", "Blue")); 
+        
+        DefaultMenuModel optionsMenu = new DefaultMenuModel(null, "Options");
         optionsMenu.addItem(new DefaultOptionModel("OpenConsole", "Open Console", null));
         optionsMenu.addItem(new DefaultOptionModel("OpenModalDialog", "Open Model Dialog", null));
+        optionsMenu.addItem(new SeparatorModel());
+        optionsMenu.addItem(new DefaultToggleOptionModel("ShowBackground", "Show Background"));
+        optionsMenu.addItem(backgroundsMenu);
         menuBarMenu.addItem(optionsMenu);
 
         SplitPane titleVerticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL);
@@ -133,7 +149,67 @@ public class TestPane extends ContentPane {
         menuVerticalPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL, new Extent(26));
         titleVerticalPane.add(menuVerticalPane);
         
-        MenuBarPane menu = new MenuBarPane(menuBarMenu);
+        MenuStateModel stateModel = new AbstractMenuStateModel() {
+        
+            boolean showBackground = true;
+            FillImage background = Styles.FILL_IMAGE_EXTRAS_BACKGROUND;
+            
+            public void setSelected(String id, boolean selected) {
+                if ("ShowBackground".equals(id)) {
+                    showBackground = selected;
+                    setBackgroundImage(showBackground ? background : null);
+                } else if (selected && "BackgroundDefault".equals(id)) {
+                    background = Styles.FILL_IMAGE_EXTRAS_BACKGROUND;
+                    if (showBackground) {
+                        setBackgroundImage(background);
+                    }
+                } else if (selected && "BackgroundPewter".equals(id)) {
+                    background = Styles.FILL_IMAGE_PEWTER_LINE;
+                    if (showBackground) {
+                        setBackgroundImage(background);
+                    }
+                } else if (selected && "BackgroundSilver".equals(id)) {
+                    background = Styles.FILL_IMAGE_SILVER_LINE;
+                    if (showBackground) {
+                        setBackgroundImage(background);
+                    }
+                } else if (selected && "BackgroundBlue".equals(id)) {
+                    background = Styles.FILL_IMAGE_LIGHT_BLUE_LINE;
+                    if (showBackground) {
+                        setBackgroundImage(background);
+                    }
+                }
+                fireStateChanged();
+            }
+        
+            public void setEnabled(String id, boolean enabled) { }
+        
+            public boolean isSelected(String id) {
+                if ("ShowBackground".equals(id)) {
+                    return showBackground;
+                } else if ("BackgroundDefault".equals(id)) {
+                    return Styles.FILL_IMAGE_EXTRAS_BACKGROUND.equals(background);
+                } else if ("BackgroundPewter".equals(id)) {
+                    return Styles.FILL_IMAGE_PEWTER_LINE.equals(background);
+                } else if ("BackgroundSilver".equals(id)) {
+                    return Styles.FILL_IMAGE_SILVER_LINE.equals(background);
+                } else if ("BackgroundBlue".equals(id)) {
+                    return Styles.FILL_IMAGE_LIGHT_BLUE_LINE.equals(background);
+                } else {
+                    return false;
+                }
+            }
+        
+            public boolean isEnabled(String id) {
+                if ("Backgrounds".equals(id)) {
+                    return showBackground;
+                } else {
+                    return true;
+                }
+            }
+        };
+        
+        MenuBarPane menu = new MenuBarPane(menuBarMenu, stateModel);
         menu.setStyleName("Default");
         menu.addActionListener(commandActionListener);
         menuVerticalPane.add(menu);

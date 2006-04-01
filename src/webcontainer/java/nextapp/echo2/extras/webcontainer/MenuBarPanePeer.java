@@ -44,7 +44,7 @@ import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.extras.app.MenuBarPane;
 import nextapp.echo2.extras.app.menu.ItemModel;
 import nextapp.echo2.extras.app.menu.MenuModel;
-import nextapp.echo2.extras.app.menu.MenuSelectionModel;
+import nextapp.echo2.extras.app.menu.MenuStateModel;
 import nextapp.echo2.extras.app.menu.OptionModel;
 import nextapp.echo2.extras.app.menu.RadioOptionModel;
 import nextapp.echo2.extras.app.menu.SeparatorModel;
@@ -90,9 +90,10 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
     private static final ImageReference DEFAULT_ICON_RADIO_ON = new ResourceImageReference(IMAGE_PREFIX + "RadioOn.gif");
     
     private static final String IMAGE_ID_BACKGROUND = "background";
+    private static final String IMAGE_ID_DISABLED_BACKGROUND = "disabledBackground";
     private static final String IMAGE_ID_MENU_BACKGROUND = "menuBackground";
-    private static final String IMAGE_ID_SELECTION_BACKGROUND = "selectionBackground";
     private static final String IMAGE_ID_MENU_ITEM_PREFIX = "menuItem.";
+    private static final String IMAGE_ID_SELECTION_BACKGROUND = "selectionBackground";
     
     private static final String IMAGE_ID_TOGGLE_OFF = "toggleOff";
     private static final String IMAGE_ID_TOGGLE_ON = "toggleOn";
@@ -312,6 +313,20 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
         if (selectionForeground != null) {
             initElement.setAttribute("selection-foreground", ColorRender.renderCssAttributeValue(selectionForeground));
         }
+        Color disabledBackground = (Color) menu.getRenderProperty(MenuBarPane.PROPERTY_DISABLED_BACKGROUND);
+        if (disabledBackground != null) {
+            initElement.setAttribute("disabled-background", ColorRender.renderCssAttributeValue(disabledBackground));
+        }
+        FillImage disabledBackgroundImage = (FillImage) menu.getRenderProperty(MenuBarPane.PROPERTY_DISABLED_BACKGROUND_IMAGE);
+        if (disabledBackgroundImage != null) {
+            CssStyle cssStyle = new CssStyle();
+            FillImageRender.renderToStyle(cssStyle, rc, this, menu, IMAGE_ID_DISABLED_BACKGROUND, disabledBackgroundImage, 0);
+            initElement.setAttribute("disabled-background-image", cssStyle.renderInline());
+        }
+        Color disabledForeground = (Color) menu.getRenderProperty(MenuBarPane.PROPERTY_DISABLED_FOREGROUND);
+        if (disabledForeground != null) {
+            initElement.setAttribute("disabled-foreground", ColorRender.renderCssAttributeValue(disabledForeground));
+        }
         
         initElement.setAttribute("icon-toggle-off", ImageTools.getUri(rc, this, menu, IMAGE_ID_TOGGLE_OFF));
         initElement.setAttribute("icon-toggle-on", ImageTools.getUri(rc, this, menu, IMAGE_ID_TOGGLE_ON));
@@ -336,6 +351,9 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
     private void renderModel(RenderContext rc, MenuBarPane menu, MenuModel menuModel, Element parentElement) {
         Document document = rc.getServerMessage().getDocument();
         Element menuModelElement = document.createElement("menu");
+
+        MenuStateModel stateModel = menu.getStateModel();
+        
         if (menuModel.getText() != null) {
             menuModelElement.setAttribute("text", menuModel.getText());
         }
@@ -343,8 +361,11 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
             String itemPath = getItemPath(menu.getModel(), menuModel);
             menuModelElement.setAttribute("icon", ImageTools.getUri(rc, this, menu, IMAGE_ID_MENU_ITEM_PREFIX + itemPath));
         }
+        if (menuModel.getId() != null && !stateModel.isEnabled(menuModel.getId())) {
+            menuModelElement.setAttribute("enabled", "false");
+        }
+
         int length = menuModel.getItemCount();
-        MenuSelectionModel selectionModel = menu.getSelectionModel();
         for (int i = 0; i < length; ++i) {
             ItemModel itemModel = menuModel.getItem(i);
             if (itemModel instanceof MenuModel) {
@@ -352,13 +373,16 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
             } else if (itemModel instanceof OptionModel) {
                 Element optionModelElement = document.createElement("option");
                 OptionModel optionModel = (OptionModel) itemModel;
+                if (optionModel.getId() != null && !stateModel.isEnabled(optionModel.getId())) {
+                    optionModelElement.setAttribute("enabled", "false");
+                }
                 if (optionModel instanceof ToggleOptionModel) {
                     if (optionModel instanceof RadioOptionModel) {
                         optionModelElement.setAttribute("type", "radio");
                     } else {
                         optionModelElement.setAttribute("type", "toggle");
                     }
-                    if (selectionModel != null && selectionModel.isSelected(((ToggleOptionModel) itemModel).getId())) {
+                    if (stateModel != null && stateModel.isSelected(((ToggleOptionModel) optionModel).getId())) {
                         optionModelElement.setAttribute("selected", "true");
                     }
                 } else {

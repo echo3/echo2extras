@@ -41,6 +41,9 @@ ExtrasMenu = function(elementId, containerElementId) {
     this.backgroundImage = null;
     this.menuBarItemInsets = "0px 12px";
     
+    this.disabledBackground = null;
+    this.disabledBackgroundImage = null;
+    this.disabledForeground = "#7f7f7f";
     this.menuInsetsTop = 2;
     this.menuInsetsBottom = 2;
     this.menuInsetsLeft = 2;
@@ -169,6 +172,9 @@ ExtrasMenu.prototype.processCancel = function() {
 };
 
 ExtrasMenu.prototype.processItemActivate = function(itemModel) {
+    if (!itemModel.enabled) {
+        return;
+    }
     if (itemModel instanceof ExtrasMenu.OptionModel) {
         this.renderMenuBarMaskRemove();
         this.closeDescendantMenus(null);
@@ -259,6 +265,9 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
             
             var menuItemContentTdElement = document.createElement("td");
             menuItemContentTdElement.style.padding = textPadding;
+            if (!menuModel.items[i].enabled) {
+                menuItemContentTdElement.style.color = this.disabledForeground;
+            }
             menuItemContentTdElement.appendChild(document.createTextNode(menuModel.items[i].text));
             menuItemTrElement.appendChild(menuItemContentTdElement);
             
@@ -469,6 +478,9 @@ ExtrasMenu.prototype.renderMenuBarMaskRemove = function() {
 }
 
 ExtrasMenu.prototype.setHighlight = function(itemModel, state) {
+    if (!itemModel.enabled) {
+        return;
+    }
     var itemElement = this.getItemElement(itemModel);
     if (!itemElement) {
         return;
@@ -611,6 +623,7 @@ ExtrasMenu.processMenuCancel = function(echoEvent) {
  */
 ExtrasMenu.MenuModel = function(text, icon) {
     this.id = ExtrasMenu.nextId++;
+    this.enabled = true;
     this.parent = null;
     this.text = text;
     this.icon = icon;
@@ -666,6 +679,7 @@ ExtrasMenu.OptionModel = function(text, icon) {
     this.parent = null;
     this.text = text;
     this.icon = icon;
+    this.enabled = true;
 };
 
 /**
@@ -761,6 +775,15 @@ ExtrasMenu.MessageProcessor.processInit = function(initMessageElement) {
     if (initMessageElement.getAttribute("border")) {
         menu.border = initMessageElement.getAttribute("border");
     }
+    if (initMessageElement.getAttribute("disabled-background")) {
+        menu.disabledBackground = initMessageElement.getAttribute("disabled-background");
+    }
+    if (initMessageElement.getAttribute("disabled-background-image")) {
+        menu.disabledBackgroundImage = initMessageElement.getAttribute("disabled-background-image");
+    }
+    if (initMessageElement.getAttribute("disabled-foreground")) {
+        menu.disabledForeground = initMessageElement.getAttribute("disabled-foreground");
+    }
     if (initMessageElement.getAttribute("foreground")) {
         menu.foreground = initMessageElement.getAttribute("foreground");
     }
@@ -781,9 +804,6 @@ ExtrasMenu.MessageProcessor.processInit = function(initMessageElement) {
     }
     if (initMessageElement.getAttribute("selection-background-image")) {
         menu.selectionBackgroundImage = initMessageElement.getAttribute("selection-background-image");
-    }
-    if (initMessageElement.getAttribute("selection-foreground")) {
-        menu.selectionForeground = initMessageElement.getAttribute("selection-foreground");
     }
     if (initMessageElement.getAttribute("selection-foreground")) {
         menu.selectionForeground = initMessageElement.getAttribute("selection-foreground");
@@ -824,6 +844,8 @@ ExtrasMenu.MessageProcessor.processInit = function(initMessageElement) {
  */
 ExtrasMenu.MessageProcessor.processMenuModel = function(menuElement) {
     var menuModel = new ExtrasMenu.MenuModel(menuElement.getAttribute("text"), menuElement.getAttribute("icon"));
+    menuModel.enabled = menuElement.getAttribute("enabled") != "false"; 
+
     for (var i = 0; i < menuElement.childNodes.length; ++i) {
         var node = menuElement.childNodes[i];
         if (node.nodeType == 1) { // Element
@@ -842,6 +864,7 @@ ExtrasMenu.MessageProcessor.processMenuModel = function(menuElement) {
                     var icon = node.getAttribute("icon");
                     optionModel = new ExtrasMenu.OptionModel(text, icon);
                 }
+                optionModel.enabled = node.getAttribute("enabled") != "false"; 
                 menuModel.addItem(optionModel);
             } else if (node.nodeName == "menu") {
                 var childMenuModel = ExtrasMenu.MessageProcessor.processMenuModel(node);

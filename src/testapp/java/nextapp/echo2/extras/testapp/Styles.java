@@ -61,13 +61,15 @@ public class Styles {
             new ResourceImageReference(IMAGE_PATH + "ShadowBackgroundDarkBlue.png"));
     public static final FillImage FILL_IMAGE_SHADOW_BACKGROUND_LIGHT_BLUE = new FillImage(
             new ResourceImageReference(IMAGE_PATH + "ShadowBackgroundLightBlue.png"));
-    public static final FillImage FILL_IMAGE_TITLE_BACKGROUND_2 = new FillImage(
+    public static final FillImage FILL_IMAGE_PEWTER_LINE = new FillImage(
             new ResourceImageReference(IMAGE_PATH + "PewterLineBackground.png"));
-    public static final FillImage FILL_IMAGE_TAB_BACKGROUND = new FillImage(
+    public static final FillImage FILL_IMAGE_SILVER_LINE = new FillImage(
             new ResourceImageReference(IMAGE_PATH + "SilverLineBackground.png"));
-    public static final FillImage FILL_IMAGE_TAB_ROLLOVER_BACKGROUND = new FillImage(
+    public static final FillImage FILL_IMAGE_LIGHT_BLUE_LINE = new FillImage(
             new ResourceImageReference(IMAGE_PATH + "LightBlueLineBackground.png"));
-    
+
+    public static final FillImage FILL_IMAGE_EXTRAS_BACKGROUND = new FillImage(
+            new ResourceImageReference(IMAGE_PATH + "ExtrasBackground.jpg"));
     
     public static final ImageReference ICON_24_NO = new ResourceImageReference(IMAGE_PATH + "Icon24No.gif"); 
     public static final ImageReference ICON_24_YES = new ResourceImageReference(IMAGE_PATH + "Icon24Yes.gif");

@@ -32,8 +32,16 @@ package nextapp.echo2.extras.app.menu;
 /**
  * Representation of an item contained in a menu.
  * All menu item interfaces are derived from this interface. 
- * This is an empty marker interface.
  */
 public interface ItemModel {
-
+    
+    /**
+     * Returns the id of the <code>OptionModel</code>.
+     * The id will be used as the <code>actionCommand</code> of
+     * <code>ActionEvent</code>s fired by a menu when the option
+     * is selected.
+     * 
+     * @return the id
+     */
+    public String getId();
 }

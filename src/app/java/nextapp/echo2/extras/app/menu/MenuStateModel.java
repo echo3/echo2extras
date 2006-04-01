@@ -32,17 +32,26 @@ package nextapp.echo2.extras.app.menu;
 import nextapp.echo2.app.event.ChangeListener;
 
 /**
- * A selection model for <code>MenuModel</code>s.
+ * Representation of the state of a <code>MenuModel</code>s, describing the
+ * selected and enabled states of all options.
  */
-public interface MenuSelectionModel {
+public interface MenuStateModel {
 
     /**
      * Registers a <code>ChangeListener</code> to be notified when the selection
-     * state of menu items change.
+     * or enabled state of menu items change.
      * 
      * @param l the listener to add
      */
     public void addChangeListener(ChangeListener l);
+    
+    /**
+     * Determines if a specific menu option is enabled.
+     * 
+     * @param id the id of the menu option
+     * @return true if it is enabled
+     */
+    public boolean isEnabled(String id);
     
     /**
      * Determines if a specific menu option is selected.
@@ -50,15 +59,23 @@ public interface MenuSelectionModel {
      * @param id the id of the menu option
      * @return true if it is selected
      */
-    public boolean isSelected(Object id);
+    public boolean isSelected(String id);
 
     /**
      * Unregisters a <code>ChangeListener</code> from being notified when 
-     * the selection state of menu items change.
+     * the selection or enabled state of menu items change.
      * 
      * @param l the listener to remove
      */
     public void removeChangeListener(ChangeListener l);
+    
+    /**
+     * Sets the enabled state of a specific menu option.
+     * 
+     * @param id the id of the menu option
+     * @param enabled the new enabled state
+     */
+    public void setEnabled(String id, boolean enabled);
     
     /**
      * Sets the selection state of a specific menu option.
@@ -66,5 +83,5 @@ public interface MenuSelectionModel {
      * @param id the id of the menu option
      * @param selected the new selection state
      */
-    public void setSelected(Object id, boolean selected);
+    public void setSelected(String id, boolean selected);
 }

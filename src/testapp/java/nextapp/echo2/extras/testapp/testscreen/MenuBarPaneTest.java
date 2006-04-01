@@ -38,13 +38,13 @@ import nextapp.echo2.app.WindowPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.MenuBarPane;
-import nextapp.echo2.extras.app.menu.DefaultMenuSelectionModel;
+import nextapp.echo2.extras.app.menu.DefaultMenuStateModel;
 import nextapp.echo2.extras.app.menu.DefaultOptionModel;
 import nextapp.echo2.extras.app.menu.DefaultMenuModel;
 import nextapp.echo2.extras.app.menu.DefaultRadioOptionModel;
 import nextapp.echo2.extras.app.menu.DefaultToggleOptionModel;
 import nextapp.echo2.extras.app.menu.MenuModel;
-import nextapp.echo2.extras.app.menu.MenuSelectionModel;
+import nextapp.echo2.extras.app.menu.MenuStateModel;
 import nextapp.echo2.extras.app.menu.SeparatorModel;
 import nextapp.echo2.extras.testapp.AbstractTest;
 import nextapp.echo2.extras.testapp.InteractiveApp;
@@ -60,8 +60,8 @@ public class MenuBarPaneTest extends AbstractTest {
     private static final Extent DEFAULT_MENU_HEIGHT = new Extent(26);
     private static final FillImage[] TEST_FILL_IMAGES = new FillImage[] { null, 
             Styles.FILL_IMAGE_SHADOW_BACKGROUND_DARK_BLUE, Styles.FILL_IMAGE_SHADOW_BACKGROUND_LIGHT_BLUE,
-            Styles.FILL_IMAGE_TITLE_BACKGROUND_2, Styles.FILL_IMAGE_TAB_BACKGROUND,
-            Styles.FILL_IMAGE_TAB_ROLLOVER_BACKGROUND};
+            Styles.FILL_IMAGE_PEWTER_LINE, Styles.FILL_IMAGE_LIGHT_BLUE_LINE,
+            Styles.FILL_IMAGE_SILVER_LINE};
 
     public MenuBarPaneTest() {
         super("MenuBarPane", Styles.ICON_16_MENU_BAR_PANE);
@@ -71,9 +71,11 @@ public class MenuBarPaneTest extends AbstractTest {
         add(splitPane);
         
         final MenuBarPane menu = new MenuBarPane(createMenuModel());
-        MenuSelectionModel selectionModel = new DefaultMenuSelectionModel();
-        selectionModel.setSelected("abc", true);
-        menu.setSelectionModel(selectionModel);
+        MenuStateModel stateModel = new DefaultMenuStateModel();
+        stateModel.setSelected("abc", true);
+        stateModel.setEnabled("disabled1", false);
+        stateModel.setEnabled("disabled2", false);
+        menu.setStateModel(stateModel);
         menu.addActionListener(new ActionListener(){
         
             public void actionPerformed(ActionEvent e) {
@@ -128,10 +130,10 @@ public class MenuBarPaneTest extends AbstractTest {
     private MenuModel createMenuModel() {
         DefaultMenuModel menuModel = new DefaultMenuModel();
         
-        DefaultMenuModel fileMenuModel = new DefaultMenuModel("File");
+        DefaultMenuModel fileMenuModel = new DefaultMenuModel(null, "File");
         fileMenuModel.addItem(new DefaultOptionModel("new", "New", null));
         fileMenuModel.addItem(new DefaultOptionModel("open", "Open", null));
-        DefaultMenuModel openRecentMenuModel = new DefaultMenuModel("Open Recent");
+        DefaultMenuModel openRecentMenuModel = new DefaultMenuModel(null, "Open Recent");
         openRecentMenuModel.addItem(new DefaultOptionModel("open-recent-1", "Hotel.pdf", null));
         openRecentMenuModel.addItem(new DefaultOptionModel("open-recent-2", "Alpha.txt", null));
         openRecentMenuModel.addItem(new DefaultOptionModel("open-recent-3", "q4-earnings.txt", null));
@@ -150,13 +152,17 @@ public class MenuBarPaneTest extends AbstractTest {
         fileMenuModel.addItem(new DefaultOptionModel("save-as", "Save as...", null));
         menuModel.addItem(fileMenuModel);
         
-        DefaultMenuModel optionsMenuModel = new DefaultMenuModel("Options");
+        DefaultMenuModel optionsMenuModel = new DefaultMenuModel(null, "Options");
         optionsMenuModel.addItem(new DefaultOptionModel("load-preferences", "Load Preferences...", null));
         optionsMenuModel.addItem(new DefaultOptionModel("save-preferences", "Save Preferences...", null));
         optionsMenuModel.addItem(new SeparatorModel());
         optionsMenuModel.addItem(new DefaultToggleOptionModel("abc", "Enable ABC"));
         optionsMenuModel.addItem(new DefaultToggleOptionModel("def", "Enable DEF"));
         optionsMenuModel.addItem(new DefaultToggleOptionModel("ghi", "Enable GHI"));
+        optionsMenuModel.addItem(new SeparatorModel());
+        optionsMenuModel.addItem(new DefaultOptionModel("disabled1", "Disabled Option", null));
+        optionsMenuModel.addItem(new DefaultToggleOptionModel("disabled2", "Disabled Toggle"));
+        optionsMenuModel.addItem(new DefaultToggleOptionModel("def", "Enable DEF"));
         optionsMenuModel.addItem(new SeparatorModel());
         optionsMenuModel.addItem(new DefaultRadioOptionModel("foo1", "foomode", "Foo Mode 1"));
         optionsMenuModel.addItem(new DefaultRadioOptionModel("foo2", "foomode", "Foo Mode 2"));

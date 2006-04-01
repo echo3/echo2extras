@@ -39,10 +39,10 @@ import nextapp.echo2.app.Pane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.menu.DefaultMenuModel;
-import nextapp.echo2.extras.app.menu.DefaultMenuSelectionModel;
+import nextapp.echo2.extras.app.menu.DefaultMenuStateModel;
 import nextapp.echo2.extras.app.menu.ItemModel;
 import nextapp.echo2.extras.app.menu.MenuModel;
-import nextapp.echo2.extras.app.menu.MenuSelectionModel;
+import nextapp.echo2.extras.app.menu.MenuStateModel;
 import nextapp.echo2.extras.app.menu.OptionModel;
 import nextapp.echo2.extras.app.menu.RadioOptionModel;
 import nextapp.echo2.extras.app.menu.ToggleOptionModel;
@@ -58,10 +58,13 @@ implements Pane {
     
     public static final String INPUT_SELECT = "select";
     public static final String MODEL_CHANGED_PROPERTY = "model";
-    public static final String SELECTION_MODEL_CHANGED_PROPERTY = "selectionModel";
+    public static final String STATE_MODEL_CHANGED_PROPERTY = "stateModel";
 
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     public static final String PROPERTY_BORDER = "border";
+    public static final String PROPERTY_DISABLED_BACKGROUND = "disabledBackground";
+    public static final String PROPERTY_DISABLED_BACKGROUND_IMAGE = "disabledBackgroundImage";
+    public static final String PROPERTY_DISABLED_FOREGROUND = "disabledForeground";
     public static final String PROPERTY_MENU_BACKGROUND = "menuBackground";
     public static final String PROPERTY_MENU_BACKGROUND_IMAGE = "menuBackgroundImage";
     public static final String PROPERTY_MENU_BORDER = "menuBorder";
@@ -71,12 +74,12 @@ implements Pane {
     public static final String PROPERTY_SELECTION_FOREGROUND = "selectionForeground";
     
     private MenuModel model;
-    private MenuSelectionModel selectionModel;
+    private MenuStateModel stateModel;
     
     /**
      * Creates a new <code>MenuBarPane</code> with an empty
      * <code>DefaultMenuModel</code> as its model and a.
-     * <code>DefaultMenuSelectionModel</code> to provide state information.
+     * <code>DefaultMenuStateModel</code> to provide state information.
      */
     public MenuBarPane() {
         this(null, null);
@@ -85,10 +88,10 @@ implements Pane {
     /**
      * Creates a new <code>MenuBarPane</code> displaying the specified 
      * <code>MenuModel</code> and using a 
-     * <code>DefaultMenuSelectionModel</code> to provide state information.
+     * <code>DefaultMenuStateModel</code> to provide state information.
      * 
      * @param model the model
-     * @param selectionModel the selection model
+     * @param stateModel the selection model
      */
     public MenuBarPane(MenuModel model) {
         this(model, null);
@@ -97,15 +100,15 @@ implements Pane {
     /**
      * Creates a new <code>MenuBarPane</code> displaying the specified 
      * <code>MenuModel</code> and using the specified 
-     * <code>MenuSelectionModel</code> to provide state information.
+     * <code>MenuStateModel</code> to provide state information.
      * 
      * @param model the model
-     * @param selectionModel the selection model
+     * @param stateModel the selection model
      */
-    public MenuBarPane(MenuModel model, MenuSelectionModel selectionModel) {
+    public MenuBarPane(MenuModel model, MenuStateModel stateModel) {
         super();
         setModel(model == null ? new DefaultMenuModel() : model);
-        setSelectionModel(selectionModel == null ? new DefaultMenuSelectionModel() : selectionModel);
+        setStateModel(stateModel == null ? new DefaultMenuStateModel() : stateModel);
     }
     
     /**
@@ -137,7 +140,7 @@ implements Pane {
             } else if (itemModel instanceof RadioOptionModel) {
                 RadioOptionModel radioOptionModel = (RadioOptionModel) itemModel;
                 if (radioOptionModel.getGroupId() != null && radioOptionModel.getGroupId().equals(groupId)) {
-                    selectionModel.setSelected(radioOptionModel.getId(), false);
+                    stateModel.setSelected(radioOptionModel.getId(), false);
                 }
             }
         }
@@ -150,16 +153,20 @@ implements Pane {
      *        invoked
      */
     public void doAction(OptionModel optionModel) {
-        if (selectionModel != null && optionModel instanceof ToggleOptionModel) {
+        if (stateModel != null && !stateModel.isEnabled(optionModel.getId())) {
+            // Do nothing, item is disabled.
+            return;
+        }
+        if (stateModel != null && optionModel instanceof ToggleOptionModel) {
             if (optionModel instanceof RadioOptionModel) {
                 RadioOptionModel radioOptionModel = (RadioOptionModel) optionModel;
                 deselectGroup(model, radioOptionModel.getGroupId(), radioOptionModel.getId());
-                selectionModel.setSelected(radioOptionModel.getId(), true);
+                stateModel.setSelected(radioOptionModel.getId(), true);
             } else {
                 ToggleOptionModel toggleOptionModel = (ToggleOptionModel) optionModel;
-                selectionModel.setSelected(toggleOptionModel.getId(), !selectionModel.isSelected(toggleOptionModel.getId()));
+                stateModel.setSelected(toggleOptionModel.getId(), !stateModel.isSelected(toggleOptionModel.getId()));
             }
-            firePropertyChange(SELECTION_MODEL_CHANGED_PROPERTY, null, null);
+            firePropertyChange(STATE_MODEL_CHANGED_PROPERTY, null, null);
         }
         fireActionPerformed(optionModel);
     }
@@ -201,6 +208,33 @@ implements Pane {
      */
     public Border getBorder() {
         return (Border) getProperty(PROPERTY_BORDER);
+    }
+
+    /**
+     * Returns the background color used to render disabled menu items.
+     * 
+     * @return the disabled background
+     */
+    public Color getDisabledBackground() {
+        return (Color) getProperty(PROPERTY_DISABLED_BACKGROUND);
+    }
+    
+    /**
+     * Returns the background image used to render disabled menu items.
+     * 
+     * @return the disabled background image
+     */
+    public FillImage getDisabledBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_DISABLED_BACKGROUND_IMAGE);
+    }
+    
+    /**
+     * Returns the foreground color used to render disabled menu items.
+     * 
+     * @return the disabled foreground
+     */
+    public Color getDisabledForeground() {
+        return (Color) getProperty(PROPERTY_DISABLED_FOREGROUND);
     }
     
     /**
@@ -295,8 +329,8 @@ implements Pane {
      * 
      * @return the selection model
      */
-    public MenuSelectionModel getSelectionModel() {
-        return selectionModel;
+    public MenuStateModel getStateModel() {
+        return stateModel;
     }
     
     /**
@@ -340,6 +374,33 @@ implements Pane {
      */
     public void setBorder(Border newValue) {
         setProperty(PROPERTY_BORDER, newValue);
+    }
+    
+    /**
+     * Sets the background color used to render disabled menu items.
+     * 
+     * @param newValue the new disabled background
+     */
+    public void setDisabledBackground(Color newValue) {
+        setProperty(PROPERTY_DISABLED_BACKGROUND, newValue);
+    }
+    
+    /**
+     * Sets the background image used to render disabled menu items.
+     * 
+     * @param newValue the new disabled background image
+     */
+    public void setDisabledBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_DISABLED_BACKGROUND_IMAGE, newValue);
+    }
+    
+    /**
+     * Sets the foreground color used to render disabled menu items.
+     * 
+     * @param newValue the new disabled foreground
+     */
+    public void setDisabledForeground(Color newValue) {
+        setProperty(PROPERTY_DISABLED_FOREGROUND, newValue);
     }
     
     /**
@@ -439,12 +500,12 @@ implements Pane {
      * 
      * @param newValue the new selection model
      */
-    public void setSelectionModel(MenuSelectionModel newValue) {
+    public void setStateModel(MenuStateModel newValue) {
         if (newValue == null) {
             throw new IllegalArgumentException("Selection model may not be null.");
         }
-        MenuSelectionModel oldValue = selectionModel;
-        selectionModel = newValue;
+        MenuStateModel oldValue = stateModel;
+        stateModel = newValue;
         firePropertyChange(MODEL_CHANGED_PROPERTY, oldValue, newValue);
     }
 }

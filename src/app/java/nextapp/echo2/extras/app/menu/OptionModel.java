@@ -37,16 +37,6 @@ import nextapp.echo2.app.ImageReference;
 public interface OptionModel extends ItemModel {
     
     /**
-     * Returns the id of the <code>OptionModel</code>.
-     * The id will be used as the <code>actionCommand</code> of
-     * <code>ActionEvent</code>s fired by a menu when the option
-     * is selected.
-     * 
-     * @return the id
-     */
-    public String getId();
-    
-    /**
      * Returns the text of this menu option.
      * 
      * @return the text

@@ -29,64 +29,60 @@
 
 package nextapp.echo2.extras.app.menu;
 
-import java.util.EventListener;
 import java.util.HashSet;
 import java.util.Set;
 
-import nextapp.echo2.app.event.ChangeEvent;
-import nextapp.echo2.app.event.ChangeListener;
-import nextapp.echo2.app.event.EventListenerList;
-
 /**
- * Default <code>MenuSelectionModel</code> implementation.
+ * Default <code>MenuStateModel</code> implementation.
  */
-public class DefaultMenuSelectionModel 
-implements MenuSelectionModel {
+public class DefaultMenuStateModel extends AbstractMenuStateModel {
 
-    private EventListenerList listenerList = new EventListenerList();
-    private Set selection = new HashSet();
+    private Set selectedIdSet = null;
+    private Set disabledIdSet = null;
 
     /**
-     * @see nextapp.echo2.extras.app.menu.MenuSelectionModel#addChangeListener(nextapp.echo2.app.event.ChangeListener)
+     * @see nextapp.echo2.extras.app.menu.MenuStateModel#isEnabled(java.lang.String)
      */
-    public void addChangeListener(ChangeListener l) {
-        listenerList.addListener(ChangeListener.class, l);
+    public boolean isEnabled(String id) {
+        return disabledIdSet == null || !disabledIdSet.contains(id);
     }
 
     /**
-     * @see nextapp.echo2.extras.app.menu.MenuSelectionModel#isSelected(java.lang.Object)
+     * @see nextapp.echo2.extras.app.menu.MenuStateModel#isSelected(java.lang.String)
      */
-    public boolean isSelected(Object id) {
-        return selection.contains(id);
+    public boolean isSelected(String id) {
+        return selectedIdSet != null && selectedIdSet.contains(id);
     }
     
     /**
-     * Notifies <code>ChangeListener</code>s of a selection state change.
+     * @see nextapp.echo2.extras.app.menu.MenuStateModel#setEnabled(java.lang.String, boolean)
      */
-    protected void fireSelectionChanged() {
-        ChangeEvent e = new ChangeEvent(this);
-        EventListener[] listeners = listenerList.getListeners(ChangeListener.class);
-        for (int i = 0; i < listeners.length; ++i) {
-            ((ChangeListener) listeners[i]).stateChanged(e);
+    public void setEnabled(String id, boolean enabled) {
+        if (disabledIdSet == null) {
+            disabledIdSet = new HashSet();
+        }
+        if (enabled) {
+            disabledIdSet.remove(id);
+        } else { 
+            disabledIdSet.add(id);
         }
     }
-
+    
     /**
-     * @see nextapp.echo2.extras.app.menu.MenuSelectionModel#removeChangeListener(nextapp.echo2.app.event.ChangeListener)
+     * @see nextapp.echo2.extras.app.menu.MenuStateModel#setSelected(java.lang.String, boolean)
      */
-    public void removeChangeListener(ChangeListener l) {
-        listenerList.removeListener(ChangeListener.class, l);
-    }
-
-    /**
-     * @see nextapp.echo2.extras.app.menu.MenuSelectionModel#setSelected(java.lang.Object, boolean)
-     */
-    public void setSelected(Object id, boolean selected) {
+    public void setSelected(String id, boolean selected) {
+        if (selected == isSelected(id)) {
+            return;
+        }
+        if (selectedIdSet == null) {
+            selectedIdSet = new HashSet();
+        }
         if (selected) {
-            selection.add(id);
+            selectedIdSet.add(id);
         } else {
-            selection.remove(id);
+            selectedIdSet.remove(id);
         }
-        fireSelectionChanged();
+        fireStateChanged();
     }
 }

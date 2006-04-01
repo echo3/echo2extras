@@ -44,34 +44,37 @@ implements MenuModel {
     private List items = null;
     private String text;
     private ImageReference icon;
+    private String id;
     
     /**
      * Creates a new <code>DefaultMenuModel</code>.
      */
     public DefaultMenuModel() {
-        super();
+        this(null, null, null);
     }
     
     /**
      * Creates a new <code>DefaultMenuModel</code> with the specified title 
      * text.
      * 
+     * @param id the menu identifier
      * @param text the title text
      */
-    public DefaultMenuModel(String text) {
-        super();
-        this.text = text;
+    public DefaultMenuModel(String id, String text) {
+        this(id, text, null);
     }
     
     /**
      * Creates a new <code>DefaultMenuModel</code> with the specified title 
      * text and icon
      * 
+     * @param id the menu identifier
      * @param text the title text
      * @param icon the title icon
      */
-    public DefaultMenuModel(String text, ImageReference icon) {
+    public DefaultMenuModel(String id, String text, ImageReference icon) {
         super();
+        this.id = id;
         this.text = text;
         this.icon = icon;
     }
@@ -107,6 +110,13 @@ implements MenuModel {
      */
     public ImageReference getIcon() {
         return icon;
+    }
+
+    /**
+     * @see nextapp.echo2.extras.app.menu.ItemModel#getId()
+     */
+    public String getId() {
+        return id;
     }
 
     /**
