@@ -70,29 +70,6 @@ ExtrasUtil.Arrays.removeIndex = function(array, index) {
     array.length = array.length - 1;
 };
 
-ExtrasUtil.Bounds = function(element) {
-    this.left = 0;
-    this.top = 0;
-    this.width = element.offsetWidth;
-    this.height = element.offsetHeight;
-    while (element != null) {
-        if (element.scrollTop) {
-            this.top -= element.scrollTop;
-        }
-        if (element.scrollLeft) {
-            this.left -= element.scrollLeft;
-        }
-    
-        this.left += element.offsetLeft;
-        this.top += element.offsetTop;
-        element = element.offsetParent;
-    }
-};
-
-ExtrasUtil.Bounds.prototype.toString = function() {
-    return "(" + this.left + ", " + this.top + ") [" + this.width + "x" + this.height + "]";
-};
-
 ExtrasUtil.Color = function() { };
 
 ExtrasUtil.Color.adjustIntensity = function(colorString, factor) {

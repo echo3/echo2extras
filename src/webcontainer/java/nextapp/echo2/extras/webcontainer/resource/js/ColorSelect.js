@@ -388,14 +388,14 @@ ExtrasColorSelect.prototype.updateClientMessage = function(color) {
 
 ExtrasColorSelect.prototype.processHUpdate = function(echoEvent) {
     var hContainerDivElement = document.getElementById(this.elementId + "_hlistener");
-    var bounds = new ExtrasUtil.Bounds(hContainerDivElement);
+    var bounds = new EchoCssUtil.Bounds(hContainerDivElement);
     this.h = (this.saturationHeight - (echoEvent.clientY - bounds.top - 7)) * 360 / this.saturationHeight;
     this.updateColor();
 };
 
 ExtrasColorSelect.prototype.processSVUpdate = function(echoEvent) {
     var svContainerDivElement = document.getElementById(this.elementId + "_svlistener");
-    var bounds = new ExtrasUtil.Bounds(svContainerDivElement);
+    var bounds = new EchoCssUtil.Bounds(svContainerDivElement);
     this.v = (echoEvent.clientX - bounds.left - 7) / this.valueWidth;
     this.s = 1 - ((echoEvent.clientY - bounds.top - 7) / this.saturationHeight);
     this.updateColor();

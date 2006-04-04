@@ -145,7 +145,7 @@ ExtrasMenu.prototype.openMenu = function(menuModel) {
     this.openMenuPath.push(menuModel);
 
     var itemElement = this.getItemElement(menuModel);
-    var bounds = new ExtrasUtil.Bounds(itemElement);
+    var bounds = new EchoCssUtil.Bounds(itemElement);
     var menuDivElement;
     if (this.isMenuBarItemElement(itemElement)) {
         var offsetTop = this.getMenuBarHeight() + bounds.top;
@@ -389,7 +389,7 @@ ExtrasMenu.prototype.renderMenuBarMaskAdd = function() {
     this.maskDeployed = true;
     
     var menuDivElement = document.getElementById(this.elementId);
-    var bounds = new ExtrasUtil.Bounds(menuDivElement);
+    var bounds = new EchoCssUtil.Bounds(menuDivElement);
     var bodyElement = document.getElementsByTagName("body")[0];    
     bounds.height = this.getMenuBarHeight();
     
