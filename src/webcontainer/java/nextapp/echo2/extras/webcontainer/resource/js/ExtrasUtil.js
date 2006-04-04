@@ -76,6 +76,13 @@ ExtrasUtil.Bounds = function(element) {
     this.width = element.offsetWidth;
     this.height = element.offsetHeight;
     while (element != null) {
+        if (element.scrollTop) {
+            this.top -= element.scrollTop;
+        }
+        if (element.scrollLeft) {
+            this.left -= element.scrollLeft;
+        }
+    
         this.left += element.offsetLeft;
         this.top += element.offsetTop;
         element = element.offsetParent;
