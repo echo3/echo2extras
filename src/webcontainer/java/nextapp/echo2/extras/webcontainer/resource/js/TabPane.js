@@ -66,8 +66,8 @@ ExtrasTabPane = function(elementId, containerElementId, activeTabId) {
     
     this.insets = new EchoCoreProperties.Insets(2);
     
-    this.tabSpacing = 1;
-    this.tabInset = 5;
+    this.tabSpacing = 0;
+    this.tabInset = 10;
     
     this.headerHeight = 32;
     this.activeHeaderHeightIncrease = 2;
@@ -585,6 +585,12 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     if (initMessageElement.getAttribute("default-content-insets")) {
         tabPane.defaultContentInsets = new EchoCoreProperties.Insets(
                 initMessageElement.getAttribute("default-content-insets"));
+    }
+    if (initMessageElement.getAttribute("tab-inset")) {
+        tabPane.tabInset = parseInt(initMessageElement.getAttribute("tab-inset"));
+    }
+    if (initMessageElement.getAttribute("tab-spacing")) {
+        tabPane.tabSpacing = parseInt(initMessageElement.getAttribute("tab-spacing"));
     }
     
     switch (initMessageElement.getAttribute("border-type")) {

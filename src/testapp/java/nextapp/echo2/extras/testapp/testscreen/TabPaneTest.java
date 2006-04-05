@@ -31,6 +31,7 @@ package nextapp.echo2.extras.testapp.testscreen;
 
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.ContentPane;
+import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.WindowPane;
@@ -277,6 +278,10 @@ public class TabPaneTest extends AbstractTest {
         
         addInsetsPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "insets");
         addInsetsPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "defaultContentInsets");
+        addExtentPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "tabInset", 
+                new Extent[]{null, new Extent(0), new Extent(1), new Extent(2), new Extent(5), new Extent(10), new Extent(20)});
+        addExtentPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "tabSpacing", 
+                new Extent[]{null, new Extent(0), new Extent(1), new Extent(2), new Extent(5), new Extent(10), new Extent(20)});
         
         // Selection Properties
 
