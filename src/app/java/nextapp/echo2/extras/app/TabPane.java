@@ -52,6 +52,8 @@ implements Pane, PaneContainer {
     public static final String PROPERTY_TAB_HEIGHT = "tabHeight";
     public static final String PROPERTY_TAB_POSITION = "tabPosition";
     public static final String PROPERTY_TAB_WIDTH = "tabWidth";
+    public static final String PROPERTY_TAB_INSET = "tabInset";
+    public static final String PROPERTY_TAB_SPACING = "tabSpacing";
     
     /**
      * Constant for the <code>borderType</code> property indicating that no 
@@ -184,6 +186,16 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Returns the horizontal distance from which all tabs are inset from 
+     * the edge of the <code>TabPane</code>.
+     * 
+     * @return the tab inset
+     */
+    public Extent getTabInset() {
+        return (Extent) getProperty(PROPERTY_TAB_INSET);
+    }
+    
+    /**
      * Returns the position where the tabs are located relative to the pane 
      * content.
      * 
@@ -196,6 +208,15 @@ implements Pane, PaneContainer {
     public int getTabPosition() {
         Integer tabPosition = (Integer) getProperty(PROPERTY_TAB_POSITION);
         return tabPosition == null ? TAB_POSITION_TOP : tabPosition.intValue();
+    }
+    
+    /**
+     * Returns the horizontal space between individual tabs.
+     * 
+     * @return the tab spacing
+     */
+    public Extent getTabSpacing() {
+        return (Extent) getProperty(PROPERTY_TAB_SPACING);
     }
     
     /**
@@ -299,6 +320,16 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Sets the horizontal distance from which all tabs are inset from 
+     * the edge of the <code>TabPane</code>.
+     * 
+     * @param newValue the new tab inset
+     */
+    public void setTabInset(Extent newValue) {
+        setProperty(PROPERTY_TAB_INSET, newValue);
+    }
+    
+    /**
      * Sets the position where the tabs are located relative to the pane 
      * content.
      * 
@@ -311,7 +342,16 @@ implements Pane, PaneContainer {
     public void setTabPosition(int newValue) {
         setProperty(PROPERTY_TAB_POSITION, new Integer(newValue));
     }
-
+    
+    /**
+     * Sets the horizontal space between individual tabs.
+     * 
+     * @param newValue the new tab spacing
+     */
+    public void setTabSpacing(Extent newValue) {
+        setProperty(PROPERTY_TAB_SPACING, newValue);
+    }
+    
     /**
      * Sets the width of an individual tab.
      * 

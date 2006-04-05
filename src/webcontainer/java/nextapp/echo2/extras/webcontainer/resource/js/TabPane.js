@@ -66,6 +66,9 @@ ExtrasTabPane = function(elementId, containerElementId, activeTabId) {
     
     this.insets = new EchoCoreProperties.Insets(2);
     
+    this.tabSpacing = 1;
+    this.tabInset = 5;
+    
     this.headerHeight = 32;
     this.activeHeaderHeightIncrease = 2;
     
@@ -141,6 +144,10 @@ ExtrasTabPane.prototype.addTab = function(tab, tabIndex) {
         headerDivElement.style.borderRight = inactiveBorder;
         headerDivElement.style.borderBottom = "0px none";
     }
+    if (this.tabSpacing) {
+        headerDivElement.style.marginRight = this.tabSpacing + "px";
+    }
+
     headerDivElement.style.height = this.calculateHeaderHeight(false) + "px";
     headerDivElement.style.backgroundColor = this.inactiveHeaderBackground;
     headerDivElement.style.color = this.inactiveHeaderForeground;
@@ -238,8 +245,8 @@ ExtrasTabPane.prototype.create = function() {
     default:
         this.headerContainerDivElement.style.top = "0px";
     }
-    this.headerContainerDivElement.style.left = "0px";
-    this.headerContainerDivElement.style.width = "100%";
+    this.headerContainerDivElement.style.left = this.tabInset + "px";
+    this.headerContainerDivElement.style.right = this.tabInset + "px";
     this.headerContainerDivElement.style.height = (this.headerHeight + this.activeBorderSize) + "px";
     this.tabPaneDivElement.appendChild(this.headerContainerDivElement);
     
@@ -386,6 +393,10 @@ ExtrasTabPane.prototype.selectTab = function(tabId) {
     this.activeTabId = tabId;
     
     EchoVirtualPosition.redraw();
+};
+
+ExtrasTabPane.prototype.updateTabBorders = function() {
+    
 };
 
 ExtrasTabPane.prototype.updateTabState = function(tabId, selected) {
