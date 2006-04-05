@@ -199,10 +199,30 @@ ExtrasTabPane.prototype.create = function() {
     this.tabPaneDivElement.id = this.elementId;
     this.tabPaneDivElement.style.position = "absolute";
     this.tabPaneDivElement.style.overflow = "hidden";
-    this.tabPaneDivElement.style.top = "0px";
-    this.tabPaneDivElement.style.bottom = "0px";
-    this.tabPaneDivElement.style.left = "0px";
-    this.tabPaneDivElement.style.right = "0px";
+    
+    var renderedInsets = new EchoCoreProperties.Insets();
+    if (this.insets) {
+        if (this.borderType == ExtrasTabPane.BORDER_TYPE_SURROUND) {
+            renderedInsets.top = this.insets.top;
+            renderedInsets.bottom = this.insets.bottom;
+            renderedInsets.left = this.insets.left;
+            renderedInsets.right = this.insets.right;
+        } else if (this.borderType == ExtrasTabPane.BORDER_TYPE_PARALLEL) {
+            renderedInsets.top = this.insets.top;
+            renderedInsets.bottom = this.insets.bottom;
+        } else {
+            if (this.tabPosition == ExtrasTabPane.TAB_POSITION_BOTTOM) {
+                renderedInsets.bottom = this.insets.bottom;
+            } else {
+                renderedInsets.top = this.insets.top;
+            }
+        }
+    }
+    this.tabPaneDivElement.style.top = renderedInsets.top + "px";
+    this.tabPaneDivElement.style.bottom = renderedInsets.bottom + "px";
+    this.tabPaneDivElement.style.left = renderedInsets.left + "px";
+    this.tabPaneDivElement.style.right = renderedInsets.right + "px";
+    
     EchoVirtualPosition.register(this.tabPaneDivElement.id);
     containerElement.appendChild(this.tabPaneDivElement);
     
