@@ -97,27 +97,17 @@ public class TabPaneTest extends AbstractTest {
 
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Label label = new Label("Tab Pane Child " + tabNumber);
-                label.setBackground(StyleUtil.randomBrightColor());
-                TabPaneLayoutData layoutData = new TabPaneLayoutData();
-                layoutData.setTitle("Label #" + tabNumber);
-                label.setLayoutData(layoutData);
+                Label label = createTestTab();
                 tabPane.add(label);
-                ++tabNumber;
             }
         });
 
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add-Remove-Add Label", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Label label = new Label("Tab Pane Child " + tabNumber);
-                label.setBackground(StyleUtil.randomBrightColor());
-                TabPaneLayoutData layoutData = new TabPaneLayoutData();
-                layoutData.setTitle("Label #" + tabNumber);
-                label.setLayoutData(layoutData);
+                Label label = createTestTab();
                 tabPane.add(label);
                 tabPane.remove(label);
                 tabPane.add(label);
-                ++tabNumber;
             }
         });
 
@@ -127,26 +117,16 @@ public class TabPaneTest extends AbstractTest {
                     // Do nothing
                     return;
                 }
-                Label label = new Label("Tab Pane Child " + tabNumber);
-                label.setBackground(StyleUtil.randomBrightColor());
-                TabPaneLayoutData layoutData = new TabPaneLayoutData();
-                layoutData.setTitle("Inserted Label #" + tabNumber);
-                label.setLayoutData(layoutData);
+                Label label = createTestTab();
                 tabPane.add(label, 2);
-                ++tabNumber;
             }
         });
         
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Three Labels (Index 0)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 for (int i = 0; i < 3; ++i) {
-                    Label label = new Label("Tab Pane Child " + tabNumber);
-                    label.setBackground(StyleUtil.randomBrightColor());
-                    TabPaneLayoutData layoutData = new TabPaneLayoutData();
-                    layoutData.setTitle("Label #" + tabNumber);
-                    label.setLayoutData(layoutData);
+                    Label label = createTestTab();
                     tabPane.add(label, i);
-                    ++tabNumber;
                 }
             }
         });
@@ -154,26 +134,16 @@ public class TabPaneTest extends AbstractTest {
             public void actionPerformed(ActionEvent e) {
                 int startIndex = tabPane.getComponentCount() < 3 ? tabPane.getComponentCount() : 3; 
                 for (int i = 0; i < 3; ++i) {
-                    Label label = new Label("Tab Pane Child " + tabNumber);
-                    label.setBackground(StyleUtil.randomBrightColor());
-                    TabPaneLayoutData layoutData = new TabPaneLayoutData();
-                    layoutData.setTitle("Label #" + tabNumber);
-                    label.setLayoutData(layoutData);
+                    Label label = createTestTab();
                     tabPane.add(label, i + startIndex);
-                    ++tabNumber;
                 }
             }
         });
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Three Labels (Append)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 for (int i = 0; i < 3; ++i) {
-                    Label label = new Label("Tab Pane Child " + tabNumber);
-                    label.setBackground(StyleUtil.randomBrightColor());
-                    TabPaneLayoutData layoutData = new TabPaneLayoutData();
-                    layoutData.setTitle("Label #" + tabNumber);
-                    label.setLayoutData(layoutData);
+                    Label label = createTestTab();
                     tabPane.add(label);
-                    ++tabNumber;
                 }
             }
         });
@@ -378,15 +348,20 @@ public class TabPaneTest extends AbstractTest {
     }
     
     private void addLabelRandomly(TabPane tabPane) {
+        Label label = createTestTab();
+        int position = ((int) (Math.random() * (tabPane.getComponentCount() + 1)));
+        tabPane.add(label, position);
+        ++tabNumber;
+    }
+    
+    private Label createTestTab() {
         Label label = new Label("Tab Pane Child " + tabNumber);
         label.setBackground(StyleUtil.randomBrightColor());
         TabPaneLayoutData layoutData = new TabPaneLayoutData();
         layoutData.setTitle("Label #" + tabNumber);
         label.setLayoutData(layoutData);
-
-        int position = ((int) (Math.random() * (tabPane.getComponentCount() + 1)));
-        tabPane.add(label, position);
         ++tabNumber;
+        return label;
     }
 
     private void removeLabelRandomly(TabPane tabPane) {
