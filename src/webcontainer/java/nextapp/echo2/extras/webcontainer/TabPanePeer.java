@@ -159,11 +159,17 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
     private void renderAddChildren(RenderContext rc, ServerComponentUpdate update) {
         TabPane tabPane = (TabPane) update.getParent();
         Component[] addedChildren = update.getAddedChildren();
+        Component[] children = tabPane.getVisibleComponents();
         
-        // Create tab containers for children (performed in distinct loop from adding 
-        // children in order to minimize ServerMessage length).
-        for (int i = 0; i < addedChildren.length; ++i) {
-            renderAddTabDirective(rc, update, tabPane, addedChildren[i]);
+        // Iterating through arrays and checking for reference equality is used here (versus loading daddedChildren
+        // into a hashtable) because we'll be dealing with very small array lengths, typically less than 10.
+        for (int i = 0; i < children.length; ++i) {
+            for (int j = 0; j < addedChildren.length; ++j) {
+                if (children[i] == addedChildren[j]) {
+                    renderAddTabDirective(rc, update, tabPane, children[i]);
+                    break;
+                }
+            }
         }
         
         // Add children.

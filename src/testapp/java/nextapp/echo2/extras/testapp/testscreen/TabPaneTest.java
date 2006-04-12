@@ -121,18 +121,6 @@ public class TabPaneTest extends AbstractTest {
             }
         });
 
-        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label (index 0)", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Label label = new Label("Tab Pane Child " + tabNumber);
-                label.setBackground(StyleUtil.randomBrightColor());
-                TabPaneLayoutData layoutData = new TabPaneLayoutData();
-                layoutData.setTitle("Inserted Label #" + tabNumber);
-                label.setLayoutData(layoutData);
-                tabPane.add(label, 0);
-                ++tabNumber;
-            }
-        });
-        
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label (index 2)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (tabPane.getComponentCount() < 2) {
@@ -145,6 +133,59 @@ public class TabPaneTest extends AbstractTest {
                 layoutData.setTitle("Inserted Label #" + tabNumber);
                 label.setLayoutData(layoutData);
                 tabPane.add(label, 2);
+                ++tabNumber;
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Three Labels (Index 0)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                for (int i = 0; i < 3; ++i) {
+                    Label label = new Label("Tab Pane Child " + tabNumber);
+                    label.setBackground(StyleUtil.randomBrightColor());
+                    TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                    layoutData.setTitle("Label #" + tabNumber);
+                    label.setLayoutData(layoutData);
+                    tabPane.add(label, i);
+                    ++tabNumber;
+                }
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Three Labels (Index 3)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int startIndex = tabPane.getComponentCount() < 3 ? tabPane.getComponentCount() : 3; 
+                for (int i = 0; i < 3; ++i) {
+                    Label label = new Label("Tab Pane Child " + tabNumber);
+                    label.setBackground(StyleUtil.randomBrightColor());
+                    TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                    layoutData.setTitle("Label #" + tabNumber);
+                    label.setLayoutData(layoutData);
+                    tabPane.add(label, i + startIndex);
+                    ++tabNumber;
+                }
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Three Labels (Append)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                for (int i = 0; i < 3; ++i) {
+                    Label label = new Label("Tab Pane Child " + tabNumber);
+                    label.setBackground(StyleUtil.randomBrightColor());
+                    TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                    layoutData.setTitle("Label #" + tabNumber);
+                    label.setLayoutData(layoutData);
+                    tabPane.add(label);
+                    ++tabNumber;
+                }
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label (index 0)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Label label = new Label("Tab Pane Child " + tabNumber);
+                label.setBackground(StyleUtil.randomBrightColor());
+                TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                layoutData.setTitle("Inserted Label #" + tabNumber);
+                label.setLayoutData(layoutData);
+                tabPane.add(label, 0);
                 ++tabNumber;
             }
         });
