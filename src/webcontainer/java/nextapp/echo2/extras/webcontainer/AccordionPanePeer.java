@@ -177,11 +177,17 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
     private void renderAddChildren(RenderContext rc, ServerComponentUpdate update) {
         AccordionPane accordionPane = (AccordionPane) update.getParent();
         Component[] addedChildren = update.getAddedChildren();
+        Component[] children = accordionPane.getVisibleComponents();
         
-        // Create tab containers for children (performed in distinct loop from adding 
-        // children in order to minimize ServerMessage length).
-        for (int i = 0; i < addedChildren.length; ++i) {
-            renderAddTabDirective(rc, update, accordionPane, addedChildren[i]);
+        // Iterating through arrays and checking for reference equality is used here (versus loading daddedChildren
+        // into a hashtable) because we'll be dealing with very small array lengths, typically less than 10.
+        for (int i = 0; i < children.length; ++i) {
+            for (int j = 0; j < addedChildren.length; ++j) {
+                if (children[i] == addedChildren[j]) {
+                    renderAddTabDirective(rc, update, accordionPane, children[i]);
+                    break;
+                }
+            }
         }
         
         // Add children.

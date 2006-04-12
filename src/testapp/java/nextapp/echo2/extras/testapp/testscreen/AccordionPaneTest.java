@@ -134,6 +134,67 @@ public class AccordionPaneTest extends AbstractTest {
             }
         });
         
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Three Labels (Index 0)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                for (int i = 0; i < 3; ++i) {
+                    Label label = createTestTab();
+                    accordionPane.add(label, i);
+                }
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Three Labels (Index 3)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int startIndex = accordionPane.getComponentCount() < 3 ? accordionPane.getComponentCount() : 3; 
+                for (int i = 0; i < 3; ++i) {
+                    Label label = createTestTab();
+                    accordionPane.add(label, i + startIndex);
+                }
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Three Labels (Append)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                for (int i = 0; i < 3; ++i) {
+                    Label label = createTestTab();
+                    accordionPane.add(label);
+                }
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add 1-6 labels randomly", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int count = 1 + ((int) (Math.random() * 5));
+                for (int i = 0; i < count; ++i) {
+                    addLabelRandomly(accordionPane);
+                }
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Remove 1-6 labels randomly", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int count = 1 + ((int) (Math.random() * 5));
+                for (int i = 0; i < count; ++i) {
+                    removeLabelRandomly(accordionPane);
+                }
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add or Remove 1-6x randomly", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int count = 1 + ((int) (Math.random() * 5));
+                for (int i = 0; i < count; ++i) {
+                    boolean add = Math.random() < 0.5;
+                    if (add) {
+                        addLabelRandomly(accordionPane);
+                    } else {
+                        removeLabelRandomly(accordionPane);
+                    }
+                }
+            }
+        });
+
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add CalendarSelect", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 CalendarSelect calendarSelect = new CalendarSelect();
@@ -276,5 +337,30 @@ public class AccordionPaneTest extends AbstractTest {
         // Integration Tests
         
         addStandardIntegrationTests();
+    }
+
+    private void addLabelRandomly(AccordionPane accordionPane) {
+        Label label = createTestTab();
+        int position = ((int) (Math.random() * (accordionPane.getComponentCount() + 1)));
+        accordionPane.add(label, position);
+        ++tabNumber;
+    }
+    
+    private Label createTestTab() {
+        Label label = new Label("Tab Pane Child " + tabNumber);
+        label.setBackground(StyleUtil.randomBrightColor());
+        AccordionPaneLayoutData layoutData = new AccordionPaneLayoutData();
+        layoutData.setTitle("Label #" + tabNumber);
+        label.setLayoutData(layoutData);
+        ++tabNumber;
+        return label;
+    }
+
+    private void removeLabelRandomly(AccordionPane accordionPane) {
+        if (accordionPane.getComponentCount() == 0) {
+            return;
+        }
+        int position = ((int) (Math.random() * (accordionPane.getComponentCount())));
+        accordionPane.remove(position);
     }
 }

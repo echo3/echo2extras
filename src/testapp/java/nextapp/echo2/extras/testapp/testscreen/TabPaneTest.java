@@ -111,6 +111,18 @@ public class TabPaneTest extends AbstractTest {
             }
         });
 
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label (index 0)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Label label = new Label("Tab Pane Child " + tabNumber);
+                label.setBackground(StyleUtil.randomBrightColor());
+                TabPaneLayoutData layoutData = new TabPaneLayoutData();
+                layoutData.setTitle("Inserted Label #" + tabNumber);
+                label.setLayoutData(layoutData);
+                tabPane.add(label, 0);
+                ++tabNumber;
+            }
+        });
+        
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label (index 2)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (tabPane.getComponentCount() < 2) {
@@ -183,18 +195,6 @@ public class TabPaneTest extends AbstractTest {
             }
         });
 
-        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label (index 0)", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Label label = new Label("Tab Pane Child " + tabNumber);
-                label.setBackground(StyleUtil.randomBrightColor());
-                TabPaneLayoutData layoutData = new TabPaneLayoutData();
-                layoutData.setTitle("Inserted Label #" + tabNumber);
-                label.setLayoutData(layoutData);
-                tabPane.add(label, 0);
-                ++tabNumber;
-            }
-        });
-        
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add CalendarSelect", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 CalendarSelect calendarSelect = new CalendarSelect();
