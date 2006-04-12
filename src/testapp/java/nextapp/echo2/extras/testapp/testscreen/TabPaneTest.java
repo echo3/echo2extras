@@ -178,6 +178,41 @@ public class TabPaneTest extends AbstractTest {
             }
         });
 
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add 1-6 labels randomly", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int count = 1 + ((int) (Math.random() * 5));
+                for (int i = 0; i < count; ++i) {
+                    addLabelRandomly(tabPane);
+                }
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Remove 1-6 labels randomly", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int count = 1 + ((int) (Math.random() * 5));
+                for (int i = 0; i < count; ++i) {
+                    removeLabelRandomly(tabPane);
+                }
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add or Remove 1-6x randomly", 
+                new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int count = 1 + ((int) (Math.random() * 5));
+                for (int i = 0; i < count; ++i) {
+                    boolean add = Math.random() < 0.5;
+                    if (add) {
+                        addLabelRandomly(tabPane);
+                    } else {
+                        removeLabelRandomly(tabPane);
+                    }
+                }
+            }
+        });
+
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Label (index 0)", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Label label = new Label("Tab Pane Child " + tabNumber);
@@ -340,5 +375,25 @@ public class TabPaneTest extends AbstractTest {
         });
         
         addStandardIntegrationTests();
+    }
+    
+    private void addLabelRandomly(TabPane tabPane) {
+        Label label = new Label("Tab Pane Child " + tabNumber);
+        label.setBackground(StyleUtil.randomBrightColor());
+        TabPaneLayoutData layoutData = new TabPaneLayoutData();
+        layoutData.setTitle("Label #" + tabNumber);
+        label.setLayoutData(layoutData);
+
+        int position = ((int) (Math.random() * (tabPane.getComponentCount() + 1)));
+        tabPane.add(label, position);
+        ++tabNumber;
+    }
+
+    private void removeLabelRandomly(TabPane tabPane) {
+        if (tabPane.getComponentCount() == 0) {
+            return;
+        }
+        int position = ((int) (Math.random() * (tabPane.getComponentCount())));
+        tabPane.remove(position);
     }
 }
