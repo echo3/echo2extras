@@ -395,10 +395,6 @@ ExtrasTabPane.prototype.selectTab = function(tabId) {
     EchoVirtualPosition.redraw();
 };
 
-ExtrasTabPane.prototype.updateTabBorders = function() {
-    
-};
-
 ExtrasTabPane.prototype.updateTabState = function(tabId, selected) {
     var headerDivElement = document.getElementById(this.elementId + "_header_div_" + tabId);
     if (!headerDivElement) {

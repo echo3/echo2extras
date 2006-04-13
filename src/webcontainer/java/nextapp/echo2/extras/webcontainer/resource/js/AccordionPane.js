@@ -59,12 +59,9 @@ ExtrasAccordionPane = function(elementId, containerElementId, activeTabId) {
     this.tabRolloverBorderStyle = null;
     this.tabInsets = new EchoCoreProperties.Insets(2, 5);
 
-    // By default, disable animation on IE due to performance and rendering issues.
-    // It works, but it can be a bit slower than desired and uncovers some of IE's
-    // repainting issues.
-    this.animationEnabled = true; // !EchoClientProperties.get("browserInternetExplorer");
-    this.animationStepCount = 20;
-    this.animationStepInterval = 5;
+    this.animationEnabled = true;
+    this.animationTime = 350;
+    this.animationSleepInterval = 1;
 
     /**
      * Array of ExtrasAccordionPane.Tab objects, representing displayed tabs, \
@@ -478,6 +475,9 @@ ExtrasAccordionPane.Rotation = function(accordionPane, oldTabId, newTabId) {
     this.oldTabContentInsets = this.accordionPane.getTabContentInsets(this.oldTab);
     this.newTabContentInsets = this.accordionPane.getTabContentInsets(this.newTab);
     
+    this.animationStartTime = new Date().getTime();
+    this.animationEndTime = this.animationStartTime + this.accordionPane.animationTime;
+    
     this.accordionPane.rotation = this;
     this.tabHeight = this.accordionPane.calculateTabHeight();
     
@@ -516,8 +516,8 @@ ExtrasAccordionPane.Rotation = function(accordionPane, oldTabId, newTabId) {
         // Final top position of topmost moving tab.
         this.endTopPosition = this.regionHeight - this.tabHeight * (this.numberOfTabsBelow);
         
-        // Number of pixels to step with each animation frame.
-        this.stepUnit = (this.endTopPosition - this.startTopPosition) / this.accordionPane.animationStepCount;
+        // Number of pixels across which animation will occur.
+        this.animationDistance = this.endTopPosition - this.startTopPosition;
     
     } else {
         // Numbers of tabs above that will not be moving.
@@ -532,8 +532,8 @@ ExtrasAccordionPane.Rotation = function(accordionPane, oldTabId, newTabId) {
         // Final bottom position of bottommost moving tab.
         this.endBottomPosition = this.regionHeight - this.tabHeight * (this.numberOfTabsAbove + 1);
         
-        // Number of pixels to step with each animation frame.
-        this.stepUnit = (this.endBottomPosition - this.startBottomPosition) / this.accordionPane.animationStepCount;
+        // Number of pixels across which animation will occur.
+        this.animationDistance = this.endBottomPosition - this.startBottomPosition;
     }
     
     this.animationStep();
@@ -544,9 +544,13 @@ ExtrasAccordionPane.Rotation = function(accordionPane, oldTabId, newTabId) {
  * Queues subsequent frame of animation via Window.setTimeout() call to self.
  */
 ExtrasAccordionPane.Rotation.prototype.animationStep = function() {
-    if (this.animationStepIndex < this.accordionPane.animationStepCount) {
+    var currentTime = new Date().getTime();
+    
+    if (currentTime < this.animationEndTime) {
         // Number of pixels (from 0) to step current current frame.
-        var stepPosition = Math.round(this.stepUnit * this.animationStepIndex);
+        
+        var stepFactor = (currentTime - this.animationStartTime) / this.accordionPane.animationTime;
+        var stepPosition = Math.round(stepFactor * this.animationDistance);
 
         if (this.directionDown) {
 
@@ -618,7 +622,7 @@ ExtrasAccordionPane.Rotation.prototype.animationStep = function() {
     
         // Continue Rotation.
         window.setTimeout("ExtrasAccordionPane.Rotation.animationStep(\"" + this.accordionPane.elementId + "\")", 
-                this.accordionPane.animationStepInterval);
+                this.accordionPane.animationSleepInterval);
     } else {
         // Complete Rotation.
         
