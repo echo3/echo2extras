@@ -122,6 +122,7 @@
         <javac srcdir="${dir.src.testapp}" destdir="${dir.build.testapp}/WEB-INF/classes" debug="${debug}" deprecation="yes">
             <classpath>
                 <pathelement path="${dir.dist.lib}/${jarfile.extras.app}"/>
+                <pathelement path="${dir.dist.lib}/${jarfile.extras.webcontainer}"/>
                 <pathelement path="${servlet.lib.jar}"/>
                 <pathelement path="${echo2.app.lib.jar}"/>
                 <pathelement path="${echo2.webcontainer.lib.jar}"/>

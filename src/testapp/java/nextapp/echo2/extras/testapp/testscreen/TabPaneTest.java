@@ -46,6 +46,7 @@ import nextapp.echo2.extras.testapp.ButtonColumn;
 import nextapp.echo2.extras.testapp.StyleUtil;
 import nextapp.echo2.extras.testapp.Styles;
 import nextapp.echo2.extras.testapp.TestControlPane;
+import nextapp.echo2.extras.webcontainer.TabPanePeer;
 
 /**
  * Interactive test module for <code>TabPane</code>s.
@@ -331,20 +332,36 @@ public class TabPaneTest extends AbstractTest {
         
         // Selection Properties
 
-        testControlsPane.addButton(TestControlPane.CATEGORY_SELECTION, "Select TabIndex 0", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                tabPane.setActiveTabIndex(0);
-            }
-        });
-        testControlsPane.addButton(TestControlPane.CATEGORY_SELECTION, "Select TabIndex 2", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (tabPane.getComponentCount() > 0) {
-                    tabPane.setActiveTabIndex(2);
+        for (int i = 0; i < 10; ++i) {
+            final int tabIndex = i;
+            testControlsPane.addButton(TestControlPane.CATEGORY_SELECTION, "Select TabIndex " + i, new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    tabPane.setActiveTabIndex(tabIndex);
                 }
+            });
+        }
+        
+        addStandardIntegrationTests();
+
+        // Lazy Rendering Properties
+        
+        testControlsPane.addButton("Lazy Render Tests", "LazyRenderEnabled = false", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setProperty(TabPanePeer.PROPERTY_LAZY_RENDER_ENABLED, Boolean.FALSE);
             }
         });
         
-        addStandardIntegrationTests();
+        testControlsPane.addButton("Lazy Render Tests", "LazyRenderEnabled = true", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setProperty(TabPanePeer.PROPERTY_LAZY_RENDER_ENABLED, Boolean.TRUE);
+            }
+        });
+        
+        testControlsPane.addButton("Lazy Render Tests", "LazyRenderEnabled = default (true)", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                tabPane.setProperty(TabPanePeer.PROPERTY_LAZY_RENDER_ENABLED, null);
+            }
+        });
     }
     
     private void addLabelRandomly(TabPane tabPane) {

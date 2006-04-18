@@ -72,6 +72,12 @@ implements ComponentSynchronizePeer, LazyRenderContainer, PropertyUpdateProcesso
     private static final String PROPERTY_ACTIVE_TAB = "activeTab";
     
     /**
+     * Component property to enabled/disable lazy rendering of child tabs.
+     * Default value is interpreted to be true.
+     */
+    public static final String PROPERTY_LAZY_RENDER_ENABLED = "nextapp.echo2.extras.webcontainer.TabPanePeer.lazyRenderEnabled";
+    
+    /**
      * Service to provide supporting JavaScript library.
      */
     public static final Service TAB_PANE_SERVICE = JavaScriptService.forResource("Echo2Extras.TabPane",
@@ -179,11 +185,15 @@ implements ComponentSynchronizePeer, LazyRenderContainer, PropertyUpdateProcesso
         // Store active tab in render state.
         renderState.activeTabId = activeTab.getRenderId();
         
-        // Determine if active tab is rendered or not.  If it is not rendered, mark its state rendered and
-        // return true to indicate that it should be rendered.
-        if (!isRendered(ci, tabPane, activeTab)) {
-            setRendered(ci, tabPane, activeTab);
-            return true;
+        if (isLazyRenderEnabled(tabPane)) {
+            // Determine if active tab is rendered or not.  If it is not rendered, mark its state rendered and
+            // return true to indicate that it should be rendered.
+            if (!isRendered(ci, tabPane, activeTab)) {
+                setRendered(ci, tabPane, activeTab);
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -212,6 +222,17 @@ implements ComponentSynchronizePeer, LazyRenderContainer, PropertyUpdateProcesso
             }
         }
         return null;
+    }
+    
+    /**
+     * Determines if a <code>TabPane</code> should be lazy-rendered.
+     * 
+     * @param tabPane the <code>TabPane</code> to query
+     * @return true if lazy-rendering should be enabled
+     */
+    private boolean isLazyRenderEnabled(TabPane tabPane) {
+        Boolean lazyRenderEnabled = (Boolean) tabPane.getRenderProperty(PROPERTY_LAZY_RENDER_ENABLED);
+        return lazyRenderEnabled == null ? true : lazyRenderEnabled.booleanValue();
     }
     
     /**
@@ -267,8 +288,9 @@ implements ComponentSynchronizePeer, LazyRenderContainer, PropertyUpdateProcesso
         for (int i = 0; i < children.length; ++i) {
             renderAddTabDirective(rc, update, tabPane, children[i]);
         }
+        boolean lazyRenderEnabled = isLazyRenderEnabled(tabPane);
         for (int i = 0; i < children.length; ++i) {
-            if (isRendered(ci, tabPane, children[i])) {
+            if (!lazyRenderEnabled || isRendered(ci, tabPane, children[i])) {
                 renderChild(rc, update, tabPane, children[i]);
             }
         }
@@ -302,9 +324,11 @@ implements ComponentSynchronizePeer, LazyRenderContainer, PropertyUpdateProcesso
                 }
             }
             
+            boolean lazyRenderEnabled = isLazyRenderEnabled(tabPane);
+            
             // Add children.
             for (int i = 0; i < addedChildren.length; ++i) {
-                if (isRendered(ci, tabPane, addedChildren[i])) {
+                if (!lazyRenderEnabled || isRendered(ci, tabPane, addedChildren[i])) {
                     renderChild(rc, update, tabPane, addedChildren[i]);
                     if (addedChildren[i] == activeTab) {
                         activeTabRenderRequired = false;
@@ -320,7 +344,7 @@ implements ComponentSynchronizePeer, LazyRenderContainer, PropertyUpdateProcesso
     
     private void renderAddTabDirective(RenderContext rc, ServerComponentUpdate update, TabPane tabPane, Component child) {
         ContainerInstance ci = rc.getContainerInstance();
-        boolean rendered = isRendered(ci, tabPane, child);
+        boolean rendered = !isLazyRenderEnabled(tabPane) || isRendered(ci, tabPane, child);
         
         TabPaneLayoutData layoutData = (TabPaneLayoutData) child.getLayoutData();
         String elementId = ContainerInstance.getElementId(tabPane);
