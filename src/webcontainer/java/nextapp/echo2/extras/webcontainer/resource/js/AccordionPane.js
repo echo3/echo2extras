@@ -536,6 +536,7 @@ ExtrasAccordionPane.Rotation = function(accordionPane, oldTabId, newTabId) {
         this.animationDistance = this.endBottomPosition - this.startBottomPosition;
     }
     
+    this.overflowUpdate();
     this.animationStep();
 };
 
@@ -625,8 +626,10 @@ ExtrasAccordionPane.Rotation.prototype.animationStep = function() {
                 this.accordionPane.animationSleepInterval);
     } else {
         // Complete Rotation.
-        
-        this.accordionPane.redrawTabs();
+        this.overflowRestore();
+        var accordionPane = this.accordionPane;
+        this.dispose();
+        accordionPane.redrawTabs();
     }
 };
 
@@ -634,7 +637,8 @@ ExtrasAccordionPane.Rotation.prototype.animationStep = function() {
  * Cancels the rotation.
  */
 ExtrasAccordionPane.Rotation.prototype.cancel = function() {
-    this.accordionPane.rotation = null;
+    this.overflowRestore();
+    this.dispose();
 };
 
 /**
@@ -646,6 +650,26 @@ ExtrasAccordionPane.Rotation.prototype.dispose = function() {
     this.newTab = null;
     this.newTabContentInsets = null;
     this.rotatingTabs = null;
+    this.oldContentOverflow = null;
+    this.newContentOverflow = null;
+    this.accordionPane.rotation = null;
+};
+
+ExtrasAccordionPane.Rotation.prototype.overflowRestore = function() {
+    this.oldTab.contentDivElement.style.overflow = this.oldContentOverflow ? this.oldContentOverflow : ""; 
+    this.newTab.contentDivElement.style.overflow = this.newContentOverflow ? this.newContentOverflow : "";
+};
+
+ExtrasAccordionPane.Rotation.prototype.overflowUpdate = function() {
+    if (this.oldTab.contentDivElement.style.overflow) {
+        this.oldContentOverflow = this.oldTab.contentDivElement.style.overflow; 
+    }
+    if (this.newTab.contentDivElement.style.overflow) {
+        this.newContentOverflow = this.newTab.contentDivElement.style.overflow; 
+    }
+
+    this.oldTab.contentDivElement.style.overflow = "hidden";
+    this.newTab.contentDivElement.style.overflow = "hidden";
 };
 
 /**
