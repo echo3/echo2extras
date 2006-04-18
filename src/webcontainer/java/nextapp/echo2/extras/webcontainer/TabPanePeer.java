@@ -474,6 +474,13 @@ implements ComponentSynchronizePeer, LazyRenderContainer, PropertyUpdateProcesso
         partElement.appendChild(initElement);
     }
     
+    /**
+     * Renders directives to remove any children from the client that were
+     * removed in the specified <code>ServerComponentUpdate</code>.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param update the <code>ServerComponentUpdate</code> to process
+     */
     private void renderRemoveChildren(RenderContext rc, ServerComponentUpdate update) {
         TabPane tabPane = (TabPane) update.getParent();
         Component[] removedChildren = update.getRemovedChildren();
@@ -482,6 +489,17 @@ implements ComponentSynchronizePeer, LazyRenderContainer, PropertyUpdateProcesso
         }
     }
     
+    /**
+     * Renders a directive to the <code>ServerMessage</code> to remove a tab 
+     * from a <code>TabPane</code>.
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param update the <code>ServerComponentUpdate</code> describing the 
+     *        change
+     * @param tabPane the <code>TabPane</code> being updated
+     * @param child the child <code>Component</code> being removed form the
+     *        <code>TabPane</code>
+     */
     private void renderRemoveTabDirective(RenderContext rc, ServerComponentUpdate update, TabPane tabPane, Component child) {
         String elementId = ContainerInstance.getElementId(tabPane);
         Element removeTabElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_REMOVE, 
@@ -490,6 +508,17 @@ implements ComponentSynchronizePeer, LazyRenderContainer, PropertyUpdateProcesso
         removeTabElement.setAttribute("tab-id", child.getRenderId());
     }
 
+    /**
+     * Updates the active tab of a pre-existing <code>TabPane</code> on the
+     * client.  This method will render the tab's component hierarchy to the
+     * client if it has not yet been loaded, and then render a set-active-tab
+     * directive to select the tab. 
+     *
+     * @param rc the relevant <code>RenderContext</code>
+     * @param update the <code>ServerComponentUpdate</code> describing the 
+     *        change
+     * @param tabPane the <code>TabPane</code> being updated
+     */
     private void renderSetActiveTab(RenderContext rc, ServerComponentUpdate update, TabPane tabPane) {
         ContainerInstance ci = rc.getContainerInstance();
 
@@ -507,6 +536,15 @@ implements ComponentSynchronizePeer, LazyRenderContainer, PropertyUpdateProcesso
         renderSetActiveTabDirective(rc, update, tabPane);
     }
     
+    /**
+     * Renders a directive to the <code>ServerMessage</code> to set the
+     * active tab of a pre-exisiting <code>TabPane</code>
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param update the <code>ServerComponentUpdate</code> describing the 
+     *        change
+     * @param tabPane the <code>TabPane</code> being updated
+     */
     private void renderSetActiveTabDirective(RenderContext rc, ServerComponentUpdate update, TabPane tabPane) {
         Component activeTab = null;
         TabPaneRenderState renderState = (TabPaneRenderState) rc.getContainerInstance().getRenderState(tabPane);
@@ -522,6 +560,14 @@ implements ComponentSynchronizePeer, LazyRenderContainer, PropertyUpdateProcesso
         setActiveTabElement.setAttribute("active-tab", activeTab.getRenderId());
     }
     
+    /**
+     * Resets the <code>RenderState</code> of a <code>TabPane</code> in the
+     * <code>ContainerInstance</code>.  Invoked when a <code>TabPane</code> is
+     * initially rendered to the client.
+     * 
+     * @param ci the relevant <code>ContainerInstance</code>
+     * @param tabPane the <code>TabPane</code> being rendered
+     */
     public void resetRenderState(ContainerInstance ci, TabPane tabPane) {
         TabPaneRenderState renderState = new TabPaneRenderState();
         ci.setRenderState(tabPane, renderState);
@@ -574,11 +620,21 @@ implements ComponentSynchronizePeer, LazyRenderContainer, PropertyUpdateProcesso
         return fullReplace;
     }
     
-    private void setRendered(ContainerInstance ci, Component parent, Component child) {
-        TabPaneRenderState renderState = (TabPaneRenderState) ci.getRenderState(parent);
+    /**
+     * Sets a flag in the <code>RenderState</code> to indicate that a particular
+     * tab of a <code>TabPane</code> has been/is being rendered to the client.
+     * This method is used to facilitate lazy-rendering, ensuring each tab of
+     * a <code>TabPane</code> is rendered tot he client only once.
+     * 
+     * @param ci the relevant <code>ContainerInstance</code>
+     * @param tabPane the <code>TabPane</code> being rendered
+     * @param child the child tab component
+     */
+    private void setRendered(ContainerInstance ci, TabPane tabPane, Component child) {
+        TabPaneRenderState renderState = (TabPaneRenderState) ci.getRenderState(tabPane);
         if (renderState == null ) {
             renderState = new TabPaneRenderState();
-            ci.setRenderState(parent, renderState);
+            ci.setRenderState(tabPane, renderState);
         }
         renderState.renderedChildren.add(child);
     }
