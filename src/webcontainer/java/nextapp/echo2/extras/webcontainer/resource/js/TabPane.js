@@ -180,7 +180,7 @@ ExtrasTabPane.prototype.addTab = function(tab, tabIndex) {
         this.headerTrElement.appendChild(tab.headerTdElement);
     }
     
-    if (this.activeTabId == null || this.activeTabId == tab.tabId) {
+    if (this.activeTabId == tab.tabId) {
         this.selectTab(tab.tabId);
     }
 };
@@ -376,14 +376,14 @@ ExtrasTabPane.prototype.selectTab = function(tabId) {
         this.updateTabState(this.activeTabId, false);
     }
     
-    if (tabId == null) {
-        // Select last tab if null is specified.
-        if (this.tabs.length > 0) {
-	        tabId = this.tabs[this.tabs.length - 1].tabId;
-        } else {
-	        tabId = null;
-        }
-    }
+//    if (tabId == null) {
+//        // Select last tab if null is specified.
+//        if (this.tabs.length > 0) {
+//	        tabId = this.tabs[this.tabs.length - 1].tabId;
+//        } else {
+//	        tabId = null;
+//        }
+//    }
     
     if (tabId != null) {
         this.updateTabState(tabId, true);
@@ -392,7 +392,10 @@ ExtrasTabPane.prototype.selectTab = function(tabId) {
     // Update state information.
     this.activeTabId = tabId;
     
-    EchoVirtualPosition.redraw();
+    var activeTab = this.getTabById(tabId);
+    if (activeTab) {
+        EchoVirtualPosition.redraw();
+    }
 };
 
 ExtrasTabPane.prototype.updateTabState = function(tabId, selected) {
@@ -452,6 +455,11 @@ ExtrasTabPane.processClick = function(echoEvent) {
    
     EchoClientMessage.setPropertyValue(tabPaneId, "activeTab", tabId);
     tabPane.selectTab(tabId);
+    
+    if (!tabPane.getTabById(tabId).rendered) {
+        // Connect to server with updated tab state such that non-rendered tab will be rendered.
+        EchoServerTransaction.connect();
+    }
 };
 
 /**
@@ -463,10 +471,11 @@ ExtrasTabPane.processClick = function(echoEvent) {
  * @param pane a boolean flag indicating whether the tab's content is a pane
  *        component
  */
-ExtrasTabPane.Tab = function(tabId, title, pane) { 
+ExtrasTabPane.Tab = function(tabId, title, pane, rendered) { 
     this.tabId = tabId;
     this.title = title;
     this.pane = pane;
+    this.rendered = rendered;
 };
 
 ExtrasTabPane.Tab.prototype.dispose = function() {
@@ -526,8 +535,9 @@ ExtrasTabPane.MessageProcessor.processAddTab = function(addTabMessageElement) {
     var tabIndex = addTabMessageElement.getAttribute("tab-index");
     var title = addTabMessageElement.getAttribute("title");
     var pane = addTabMessageElement.getAttribute("pane") == "true";
+    var rendered = addTabMessageElement.getAttribute("rendered") == "true";
 
-    var tab = new ExtrasTabPane.Tab(tabId, title, pane);
+    var tab = new ExtrasTabPane.Tab(tabId, title, pane, rendered);
     
     tabPane.addTab(tab, tabIndex);
 };
@@ -648,5 +658,6 @@ ExtrasTabPane.MessageProcessor.processSetActiveTab = function(setActiveTabMessag
     var tabPaneId = setActiveTabMessageElement.getAttribute("eid");
     var tabId = setActiveTabMessageElement.getAttribute("active-tab");
     var tabPane = ExtrasTabPane.getComponent(tabPaneId);
+    tabPane.getTabById(tabId).rendered = true;
     tabPane.selectTab(tabId);
 };

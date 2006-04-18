@@ -29,6 +29,9 @@
 
 package nextapp.echo2.extras.webcontainer;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.w3c.dom.Element;
 
 import nextapp.echo2.app.Border;
@@ -42,10 +45,12 @@ import nextapp.echo2.extras.app.TabPane;
 import nextapp.echo2.extras.app.layout.TabPaneLayoutData;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.ContainerInstance;
+import nextapp.echo2.webcontainer.LazyRenderContainer;
 import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.PartialUpdateParticipant;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
+import nextapp.echo2.webcontainer.RenderState;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
@@ -62,7 +67,7 @@ import nextapp.echo2.webrender.service.JavaScriptService;
  * <code>TabPane</code> components.
  */
 public class TabPanePeer 
-implements ComponentSynchronizePeer, PropertyUpdateProcessor {
+implements ComponentSynchronizePeer, LazyRenderContainer, PropertyUpdateProcessor {
 
     private static final String PROPERTY_ACTIVE_TAB = "activeTab";
     
@@ -71,11 +76,28 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
      */
     public static final Service TAB_PANE_SERVICE = JavaScriptService.forResource("Echo2Extras.TabPane",
             "/nextapp/echo2/extras/webcontainer/resource/js/TabPane.js");
-
+    
     static {
         WebRenderServlet.getServiceRegistry().add(TAB_PANE_SERVICE);
     }
     
+    /**
+     * <code>RenderState</code> implementation to store data on whether child
+     * components have been lazily rendered to client.
+     */
+    private static class TabPaneRenderState implements RenderState {
+        
+        /**
+         * Render id of currently active tab.
+         */
+        private String activeTabId;
+        
+        /**
+         * Set of rendered child components.
+         */
+        private Set renderedChildren = new HashSet();
+    }
+
     /**
      * <code>PartialUpdateParticipant</code> to update active tab.
      */
@@ -86,7 +108,7 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
          *       nextapp.echo2.app.update.ServerComponentUpdate)
          */
         public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
-            renderSetActiveTabDirective(rc, update, (TabPane) update.getParent());
+            renderSetActiveTab(rc, update, (TabPane) update.getParent()); 
         }
     
         /**
@@ -110,12 +132,100 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         partialUpdateManager = new PartialUpdateManager();
         partialUpdateManager.add(TabPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY, activeTabUpdateParticipant);
     }
+    
+    private String getRenderedActiveTabId(ContainerInstance ci, TabPane tabPane) {
+        TabPaneRenderState renderState = (TabPaneRenderState) ci.getRenderState(tabPane);
+        return renderState.activeTabId;
+    }
+    
+    /**
+     * Performs configuration tasks related to the active tab of a <code>TabPane</code>.
+     * 
+     * @param ci the relevant <code>ContainerInstance</code>
+     * @param tabPane the rendering <code>TabPAne</code>
+     * @return true if the active tab requires rendering
+     */
+    private boolean configureActiveTab(ContainerInstance ci, TabPane tabPane) {
+        TabPaneRenderState renderState = (TabPaneRenderState) ci.getRenderState(tabPane);
+        
+        int componentCount = tabPane.getVisibleComponentCount();
+        int activeTabIndex = tabPane.getActiveTabIndex();
+        
+        // Retrieve currently active component according to TabPane.activeTabIndex.
+        Component activeTab = (activeTabIndex >= 0 && activeTabIndex < componentCount) 
+                ? tabPane.getComponent(activeTabIndex) : null;
+
+        // If TabPane component does not specify a valid active tab, query render state.
+        if (activeTab == null && renderState.activeTabId != null) {
+            activeTab = getChildByRenderId(tabPane, renderState.activeTabId);
+        }
+    
+        // If neither component nor render state have active tab information, pick a tab to be active.
+        if (activeTab == null) {
+            if (componentCount == 0) {
+                // No tabs available, return false indicating that active tab DOES not require rendering.
+                return false;
+            }
+            
+            if (tabPane.getActiveTabIndex() == -1) {
+                // TabPane component state indicates no tab selected: select first tab.
+                activeTab = tabPane.getVisibleComponent(0);
+            } else {
+                // TabPane component state indicates a now-defunct tab was selected: select last tab. 
+                activeTab = tabPane.getVisibleComponent(componentCount - 1);
+            }
+        }
+
+        // Store active tab in render state.
+        renderState.activeTabId = activeTab.getRenderId();
+        
+        // Determine if active tab is rendered or not.  If it is not rendered, mark its state rendered and
+        // return true to indicate that it should be rendered.
+        if (!isRendered(ci, tabPane, activeTab)) {
+            setRendered(ci, tabPane, activeTab);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
     /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
         return ContainerInstance.getElementId(child.getParent()) + "_content_" + child.getRenderId();
+    }
+    
+    /**
+     * Returns the child component with the specified render id.
+     * 
+     * @param tabPane the <code>TabPane</code>
+     * @param renderId the render identifier
+     * @return the child component, or null if no child exists with the
+     *         specified id.
+     */
+    private Component getChildByRenderId(TabPane tabPane, String renderId) {
+        Component[] children = tabPane.getVisibleComponents();
+        for (int i = 0; i < children.length; ++i) {
+            if (children[i].getRenderId().equals(renderId)) {
+                return children[i];
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * @see nextapp.echo2.webcontainer.LazyRenderContainer#isRendered(nextapp.echo2.webcontainer.ContainerInstance, 
+     *      nextapp.echo2.app.Component, nextapp.echo2.app.Component)
+     */
+    public boolean isRendered(ContainerInstance ci, Component parent, Component child) {
+        TabPaneRenderState renderState = (TabPaneRenderState) ci.getRenderState(parent);
+        if (renderState == null ) {
+            // Entire component has not been rendered, thus child has not been rendered.
+            return false;
+        }
+        
+        return renderState.renderedChildren.contains(child);
     }
 
     /**
@@ -130,7 +240,7 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
             for (int i = 0; i < children.length; ++i) {
                 if (children[i].getRenderId().equals(propertyValue)) {
                     ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, 
-                            TabPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY, new Integer(i));
+                            TabPane.INPUT_TAB_INDEX, new Integer(i));
                     return;
                 }
             }
@@ -146,39 +256,72 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         serverMessage.addLibrary(TAB_PANE_SERVICE.getId());
         serverMessage.addLibrary(ExtrasUtil.JS_EXTRAS_UTIL_SERVICE.getId());
         TabPane tabPane = (TabPane) component;
+        
+        ContainerInstance ci = rc.getContainerInstance();
+        resetRenderState(ci, tabPane);
+        
+        configureActiveTab(ci, tabPane);
+        
         renderInitDirective(rc, tabPane, targetId);
         Component[] children = tabPane.getVisibleComponents();
         for (int i = 0; i < children.length; ++i) {
             renderAddTabDirective(rc, update, tabPane, children[i]);
         }
         for (int i = 0; i < children.length; ++i) {
-            renderChild(rc, update, tabPane, children[i]);
+            if (isRendered(ci, tabPane, children[i])) {
+                renderChild(rc, update, tabPane, children[i]);
+            }
         }
     }
 
-    private void renderAddChildren(RenderContext rc, ServerComponentUpdate update) {
+    private void renderAddChildren(RenderContext rc, ServerComponentUpdate update, boolean activeTabRenderRequired) {
         TabPane tabPane = (TabPane) update.getParent();
-        Component[] addedChildren = update.getAddedChildren();
-        Component[] children = tabPane.getVisibleComponents();
+        ContainerInstance ci = rc.getContainerInstance();
+
+        Component activeTab = null;
+        if (activeTabRenderRequired) {
+            TabPaneRenderState renderState = (TabPaneRenderState) ci.getRenderState(tabPane);
+            activeTab = getChildByRenderId(tabPane, renderState.activeTabId);
+            if (activeTab == null) {
+                activeTabRenderRequired = false;
+            }
+        }
         
-        // Iterating through arrays and checking for reference equality is used here (versus loading daddedChildren
-        // into a hashtable) because we'll be dealing with very small array lengths, typically less than 10.
-        for (int i = 0; i < children.length; ++i) {
-            for (int j = 0; j < addedChildren.length; ++j) {
-                if (children[i] == addedChildren[j]) {
-                    renderAddTabDirective(rc, update, tabPane, children[i]);
-                    break;
+        if (update.hasAddedChildren()) {
+            Component[] addedChildren = update.getAddedChildren();
+            Component[] children = tabPane.getVisibleComponents();
+            
+            // Iterating through arrays and checking for reference equality is used here (versus loading daddedChildren
+            // into a hashtable) because we'll be dealing with very small array lengths, typically less than 10.
+            for (int i = 0; i < children.length; ++i) {
+                for (int j = 0; j < addedChildren.length; ++j) {
+                    if (children[i] == addedChildren[j]) {
+                        renderAddTabDirective(rc, update, tabPane, children[i]);
+                        break;
+                    }
+                }
+            }
+            
+            // Add children.
+            for (int i = 0; i < addedChildren.length; ++i) {
+                if (isRendered(ci, tabPane, addedChildren[i])) {
+                    renderChild(rc, update, tabPane, addedChildren[i]);
+                    if (addedChildren[i] == activeTab) {
+                        activeTabRenderRequired = false;
+                    }
                 }
             }
         }
         
-        // Add children.
-        for (int i = 0; i < addedChildren.length; ++i) {
-            renderChild(rc, update, tabPane, addedChildren[i]);
+        if (activeTabRenderRequired) {
+            renderChild(rc, update, tabPane, activeTab);
         }
     }
     
     private void renderAddTabDirective(RenderContext rc, ServerComponentUpdate update, TabPane tabPane, Component child) {
+        ContainerInstance ci = rc.getContainerInstance();
+        boolean rendered = isRendered(ci, tabPane, child);
+        
         TabPaneLayoutData layoutData = (TabPaneLayoutData) child.getLayoutData();
         String elementId = ContainerInstance.getElementId(tabPane);
         Element addPartElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
@@ -186,6 +329,9 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         addPartElement.setAttribute("eid", elementId);
         addPartElement.setAttribute("tab-id", child.getRenderId());
         addPartElement.setAttribute("tab-index", Integer.toString(tabPane.indexOf(child)));
+        if (rendered) {
+            addPartElement.setAttribute("rendered", "true");
+        }
         if  (child instanceof Pane) {
             addPartElement.setAttribute("pane", "true");
         }
@@ -320,11 +466,11 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
             initElement.setAttribute("active-border-style", BorderRender.getStyleValue(activeBorder.getStyle())); 
         }
         
-        int activeTabIndex = tabPane.getActiveTabIndex();
-        if (activeTabIndex != -1 && activeTabIndex < tabPane.getVisibleComponentCount()) {
-            initElement.setAttribute("active-tab", tabPane.getVisibleComponent(activeTabIndex).getRenderId());
+        String activeTabId = getRenderedActiveTabId(rc.getContainerInstance(), tabPane);
+        if (activeTabId != null) {
+            initElement.setAttribute("active-tab", activeTabId);
         }
-        
+
         partElement.appendChild(initElement);
     }
     
@@ -343,11 +489,29 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         removeTabElement.setAttribute("eid", elementId);
         removeTabElement.setAttribute("tab-id", child.getRenderId());
     }
+
+    private void renderSetActiveTab(RenderContext rc, ServerComponentUpdate update, TabPane tabPane) {
+        ContainerInstance ci = rc.getContainerInstance();
+
+        boolean activeTabRenderRequired = configureActiveTab(ci, tabPane);
+
+        Component activeTab = null;
+        if (activeTabRenderRequired) {
+            TabPaneRenderState renderState = (TabPaneRenderState) ci.getRenderState(tabPane);
+            activeTab = getChildByRenderId(tabPane, renderState.activeTabId);
+            if (activeTab != null) {
+                renderChild(rc, update, tabPane, activeTab);
+            }
+        }
+        
+        renderSetActiveTabDirective(rc, update, tabPane);
+    }
     
     private void renderSetActiveTabDirective(RenderContext rc, ServerComponentUpdate update, TabPane tabPane) {
-        int activeTabIndex = tabPane.getActiveTabIndex();
-        if (activeTabIndex == -1 || activeTabIndex >= tabPane.getVisibleComponentCount()) {
-            // Do nothing.
+        Component activeTab = null;
+        TabPaneRenderState renderState = (TabPaneRenderState) rc.getContainerInstance().getRenderState(tabPane);
+        activeTab = getChildByRenderId(tabPane, renderState.activeTabId);
+        if (activeTab == null) {
             return;
         }
         
@@ -355,7 +519,12 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
         Element setActiveTabElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
                 "ExtrasTabPane.MessageProcessor", "set-active-tab");
         setActiveTabElement.setAttribute("eid", elementId);
-        setActiveTabElement.setAttribute("active-tab", tabPane.getVisibleComponent(activeTabIndex).getRenderId());
+        setActiveTabElement.setAttribute("active-tab", activeTab.getRenderId());
+    }
+    
+    public void resetRenderState(ContainerInstance ci, TabPane tabPane) {
+        TabPaneRenderState renderState = new TabPaneRenderState();
+        ci.setRenderState(tabPane, renderState);
     }
     
     /**
@@ -363,6 +532,9 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
      *      nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
+        ContainerInstance ci = rc.getContainerInstance();
+        TabPane tabPane = (TabPane) update.getParent();
+        
         // Determine if fully replacing the component is required.
         boolean fullReplace = false;
         if (update.hasUpdatedLayoutDataChildren()) {
@@ -379,18 +551,35 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
             DomUpdate.renderElementRemove(rc.getServerMessage(), ContainerInstance.getElementId(update.getParent()));
             renderAdd(rc, update, targetId, update.getParent());
         } else {
+
             // Perform incremental updates.
-            if (update.hasRemovedChildren()) {
-                renderRemoveChildren(rc, update);
+            if (update.hasRemovedChildren() || update.hasAddedChildren()) {
+                
+                boolean activeTabRenderRequired = configureActiveTab(ci, tabPane);
+                if (update.hasRemovedChildren()) {
+                    renderRemoveChildren(rc, update);
+                }
+                if (update.hasAddedChildren() || activeTabRenderRequired) {
+                    renderAddChildren(rc, update, activeTabRenderRequired);
+                }
+                renderSetActiveTabDirective(rc, update, tabPane);
             }
-            if (update.hasAddedChildren()) {
-                renderAddChildren(rc, update);
-            }
+            
             if (update.hasUpdatedProperties()) {
                 partialUpdateManager.process(rc, update);
             }
+            
         }
         
         return fullReplace;
+    }
+    
+    private void setRendered(ContainerInstance ci, Component parent, Component child) {
+        TabPaneRenderState renderState = (TabPaneRenderState) ci.getRenderState(parent);
+        if (renderState == null ) {
+            renderState = new TabPaneRenderState();
+            ci.setRenderState(parent, renderState);
+        }
+        renderState.renderedChildren.add(child);
     }
 }
