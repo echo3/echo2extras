@@ -320,19 +320,14 @@ public class AccordionPaneTest extends AbstractTest {
         
         // Selection Properties
 
-        testControlsPane.addButton(TestControlPane.CATEGORY_SELECTION, "Select TabIndex 0", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                accordionPane.setActiveTabIndex(0);
-            }
-        });
-
-        testControlsPane.addButton(TestControlPane.CATEGORY_SELECTION, "Select TabIndex 2", new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (accordionPane.getComponentCount() > 0) {
-                    accordionPane.setActiveTabIndex(2);
+        for (int i = 0; i < 10; ++i) {
+            final int tabIndex = i;
+            testControlsPane.addButton(TestControlPane.CATEGORY_SELECTION, "Select TabIndex " + i, new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    accordionPane.setActiveTabIndex(tabIndex);
                 }
-            }
-        });
+            });
+        }
 
         // Integration Tests
         
