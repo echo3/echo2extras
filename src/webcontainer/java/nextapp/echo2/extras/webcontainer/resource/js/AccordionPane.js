@@ -41,7 +41,6 @@ ExtrasAccordionPane = function(elementId, containerElementId, activeTabId) {
     this.elementId = elementId;
     this.containerElementId = containerElementId;
     this.activeTabId = activeTabId;
-    this.lastKnownActiveTabIndex = -1;
 
     this.defaultContentInsets = ExtrasAccordionPane.PANE_INSETS;
     this.tabHeight = 20;
@@ -217,9 +216,6 @@ ExtrasAccordionPane.prototype.getTabContentInsets = function(tab) {
  */
 ExtrasAccordionPane.prototype.removeTab = function(tab) {
     var tabIndex = ExtrasUtil.Arrays.indexOf(this.tabs, tab);
-    if (this.activeTabId == tab.tabId) {
-        this.lastKnownActiveTabIndex = tabIndex;
-    }
     ExtrasUtil.Arrays.removeIndex(this.tabs, tabIndex);
 
     tab.tabDivElement.parentNode.removeChild(tab.tabDivElement);
@@ -239,16 +235,7 @@ ExtrasAccordionPane.prototype.redrawTabs = function() {
     
     if (this.activeTabId == null || !this.getTabById(this.activeTabId)) {
         if (this.tabs.length > 0) {
-            if (this.lastKnownActiveTabIndex >= 0) {
-                if (this.lastKnownActiveTabIndex < this.tabs.length) {
-                    this.activeTabId = this.tabs[this.lastKnownActiveTabIndex].tabId;
-                } else {
-                    this.activeTabId = this.tabs[this.tabs.length - 1].tabId;
-                }
-            } else {
-                this.activeTabId = this.tabs[0].tabId;
-            }
-            this.lastKnownActiveTabIndex = -1;
+            this.activeTabId = this.tabs[0].tabId;
         } else {
             this.activeTabId = null;
         }
@@ -312,11 +299,11 @@ ExtrasAccordionPane.prototype.rotateTabs = function(oldTabId, newTabId) {
  * 
  * @param tabId the id of the tab to select
  */
-ExtrasAccordionPane.prototype.selectTab = function(newTabId) {
+ExtrasAccordionPane.prototype.selectTab = function(newTabId, animate) {
     EchoClientMessage.setPropertyValue(this.elementId, "activeTab", newTabId);
     var oldTabId = this.activeTabId;
     this.activeTabId = newTabId;
-    if (oldTabId != null && this.animationEnabled) {
+    if (animate && oldTabId != null && this.animationEnabled) {
         this.rotateTabs(oldTabId, newTabId);
     } else {
         this.redrawTabs();
@@ -413,7 +400,16 @@ ExtrasAccordionPane.processTabClick = function(echoEvent) {
     }
     var accordion = ExtrasAccordionPane.getComponent(componentId);
     var tabId = ExtrasAccordionPane.getTabId(tabDivElement.id);
-    accordion.selectTab(tabId);
+
+    accordion.setTabHighlight(tabId, false);
+    
+    if (accordion.getTabById(tabId).rendered) {
+        accordion.selectTab(tabId, true);
+    } else {
+        // Connect to server with updated tab state such that non-rendered tab will be rendered.
+        accordion.selectTab(tabId, false);
+        EchoServerTransaction.connect();
+    }
 };
 
 /**
@@ -694,11 +690,15 @@ ExtrasAccordionPane.Rotation.animationStep = function(accordionPaneId) {
  * @param title the title text to display in the tab header
  * @param pane a boolean flag indicating whether the tab's content is a pane
  *        component
+ * @param rendered a boolean flag indicating whether the tab's content has
+ *        been rendered to the client (if it has not it must be fetched when
+ *        the tab is selected)
  */
-ExtrasAccordionPane.Tab = function(tabId, title, pane) { 
+ExtrasAccordionPane.Tab = function(tabId, title, pane, rendered) { 
     this.tabId = tabId;
     this.title = title;
     this.pane = pane;
+    this.rendered = rendered;
     this.tabDivElement = null;
     this.contentDivElement = null;
 };
@@ -766,8 +766,9 @@ ExtrasAccordionPane.MessageProcessor.processAddTab = function(addTabMessageEleme
     var tabIndex = addTabMessageElement.getAttribute("tab-index");
     var title = addTabMessageElement.getAttribute("title");
     var pane = addTabMessageElement.getAttribute("pane") == "true";
+    var rendered = addTabMessageElement.getAttribute("rendered") == "true";
     
-    var tab = new ExtrasAccordionPane.Tab(tabId, title, pane);
+    var tab = new ExtrasAccordionPane.Tab(tabId, title, pane, rendered);
     
     accordionPane.addTab(tab, tabIndex);
 };
@@ -897,5 +898,6 @@ ExtrasAccordionPane.MessageProcessor.processSetActiveTab = function(setActiveTab
     var elementId = setActiveTabMessageElement.getAttribute("eid");
     var tabId = setActiveTabMessageElement.getAttribute("active-tab");
     var accordionPane = ExtrasAccordionPane.getComponent(elementId);
-    accordionPane.selectTab(tabId);
+    accordionPane.getTabById(tabId).rendered = true;
+    accordionPane.selectTab(tabId, true);
 };

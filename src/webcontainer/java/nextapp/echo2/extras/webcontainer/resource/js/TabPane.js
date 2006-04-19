@@ -470,6 +470,9 @@ ExtrasTabPane.processClick = function(echoEvent) {
  * @param title the title text to display in the tab header
  * @param pane a boolean flag indicating whether the tab's content is a pane
  *        component
+ * @param rendered a boolean flag indicating whether the tab's content has
+ *        been rendered to the client (if it has not it must be fetched when
+ *        the tab is selected)
  */
 ExtrasTabPane.Tab = function(tabId, title, pane, rendered) { 
     this.tabId = tabId;

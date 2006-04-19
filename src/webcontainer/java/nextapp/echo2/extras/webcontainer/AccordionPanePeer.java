@@ -29,6 +29,9 @@
 
 package nextapp.echo2.extras.webcontainer;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.w3c.dom.Element;
 
 import nextapp.echo2.app.Border;
@@ -48,6 +51,7 @@ import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.PartialUpdateParticipant;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
+import nextapp.echo2.webcontainer.RenderState;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
 import nextapp.echo2.webcontainer.image.ImageRenderSupport;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
@@ -67,6 +71,13 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
     private static final String PROPERTY_ACTIVE_TAB = "activeTab";
     private static final String IMAGE_ID_TAB_BACKGROUND = "tabBackground";
     private static final String IMAGE_ID_TAB_ROLLOVER_BACKGROUND = "tabRolloverBackground";
+    
+    /**
+     * Component property to enabled/disable lazy rendering of child tabs.
+     * Default value is interpreted to be true.
+     */
+    public static final String PROPERTY_LAZY_RENDER_ENABLED 
+            = "nextapp.echo2.extras.webcontainer.AccordionPanePeer.lazyRenderEnabled";
 
     /**
      * Service to provide supporting JavaScript library.
@@ -79,6 +90,23 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
     }
     
     /**
+     * <code>RenderState</code> implementation to store data on whether child
+     * components have been lazily rendered to client.
+     */
+    private static class AccordionPaneRenderState implements RenderState {
+        
+        /**
+         * Render id of currently active tab.
+         */
+        private String activeTabId;
+        
+        /**
+         * Set of rendered child components.
+         */
+        private Set renderedChildren = new HashSet();
+    }
+
+    /**
      * <code>PartialUpdateParticipant</code> to update active tab.
      */
     private PartialUpdateParticipant activeTabUpdateParticipant = new PartialUpdateParticipant() {
@@ -88,7 +116,7 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
          *       nextapp.echo2.app.update.ServerComponentUpdate)
          */
         public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
-            renderSetActiveTabDirective(rc, update, (AccordionPane) update.getParent());
+            renderSetActiveTab(rc, update, (AccordionPane) update.getParent());
         }
     
         /**
@@ -114,12 +142,85 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
     }
 
     /**
+     * Performs configuration tasks related to the active tab of a <code>AccordionPane</code>.
+     * 
+     * @param ci the relevant <code>ContainerInstance</code>
+     * @param accordionPane the rendering <code>AccordionPane</code>
+     * @return true if the active tab requires rendering
+     */
+    private boolean configureActiveTab(ContainerInstance ci, AccordionPane accordionPane) {
+        AccordionPaneRenderState renderState = (AccordionPaneRenderState) ci.getRenderState(accordionPane);
+        
+        int componentCount = accordionPane.getVisibleComponentCount();
+        int activeTabIndex = accordionPane.getActiveTabIndex();
+        
+        // Retrieve currently active component according to AccordionPane.activeTabIndex.
+        Component activeTab = (activeTabIndex >= 0 && activeTabIndex < componentCount) 
+                ? accordionPane.getComponent(activeTabIndex) : null;
+
+        // If AccordionPane component does not specify a valid active tab, query render state.
+        if (activeTab == null && renderState.activeTabId != null) {
+            activeTab = getChildByRenderId(accordionPane, renderState.activeTabId);
+        }
+    
+        // If neither component nor render state have active tab information, pick a tab to be active.
+        if (activeTab == null) {
+            if (componentCount == 0) {
+                // No tabs available, return false indicating that active tab DOES not require rendering.
+                return false;
+            }
+            
+            if (accordionPane.getActiveTabIndex() == -1) {
+                // AccordionPane component state indicates no tab selected: select first tab.
+                activeTab = accordionPane.getVisibleComponent(0);
+            } else {
+                // AccordionPane component state indicates a now-defunct tab was selected: select last tab. 
+                activeTab = accordionPane.getVisibleComponent(componentCount - 1);
+            }
+        }
+
+        // Store active tab in render state.
+        renderState.activeTabId = activeTab.getRenderId();
+        
+        if (isLazyRenderEnabled(accordionPane)) {
+            // Determine if active tab is rendered or not.  If it is not rendered, mark its state rendered and
+            // return true to indicate that it should be rendered.
+            if (!isRendered(ci, accordionPane, activeTab)) {
+                setRendered(ci, accordionPane, activeTab);
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#getContainerId(nextapp.echo2.app.Component)
      */
     public String getContainerId(Component child) {
         return ContainerInstance.getElementId(child.getParent()) + "_content_" + child.getRenderId();
     }
 
+    /**
+     * Returns the child component with the specified render id.
+     * 
+     * @param accordionPane the <code>AccordionPane</code>
+     * @param renderId the render identifier
+     * @return the child component, or null if no child exists with the
+     *         specified id.
+     */
+    private Component getChildByRenderId(AccordionPane accordionPane, String renderId) {
+        Component[] children = accordionPane.getVisibleComponents();
+        for (int i = 0; i < children.length; ++i) {
+            if (children[i].getRenderId().equals(renderId)) {
+                return children[i];
+            }
+        }
+        return null;
+    }
+    
     /**
      * @see nextapp.echo2.webcontainer.image.ImageRenderSupport#getImage(nextapp.echo2.app.Component, java.lang.String)
      */
@@ -134,6 +235,31 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
             return null;
         }
     }
+    
+    /**
+     * Determines if a <code>AccordionPane</code> should be lazy-rendered.
+     * 
+     * @param accordionPane the <code>AccordionPane</code> to query
+     * @return true if lazy-rendering should be enabled
+     */
+    private boolean isLazyRenderEnabled(AccordionPane accordionPane) {
+        Boolean lazyRenderEnabled = (Boolean) accordionPane.getRenderProperty(PROPERTY_LAZY_RENDER_ENABLED);
+        return lazyRenderEnabled == null ? false : lazyRenderEnabled.booleanValue();
+    }
+    
+    /**
+     * @see nextapp.echo2.webcontainer.LazyRenderContainer#isRendered(nextapp.echo2.webcontainer.ContainerInstance, 
+     *      nextapp.echo2.app.Component, nextapp.echo2.app.Component)
+     */
+    public boolean isRendered(ContainerInstance ci, Component parent, Component child) {
+        AccordionPaneRenderState renderState = (AccordionPaneRenderState) ci.getRenderState(parent);
+        if (renderState == null ) {
+            // Entire component has not been rendered, thus child has not been rendered.
+            return false;
+        }
+        
+        return renderState.renderedChildren.contains(child);
+    }
 
     /**
      * @see nextapp.echo2.webcontainer.PropertyUpdateProcessor#processPropertyUpdate(nextapp.echo2.webcontainer.ContainerInstance, 
@@ -147,7 +273,7 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
             for (int i = 0; i < children.length; ++i) {
                 if (children[i].getRenderId().equals(propertyValue)) {
                     ci.getUpdateManager().getClientUpdateManager().setComponentProperty(component, 
-                            AccordionPane.ACTIVE_TAB_INDEX_CHANGED_PROPERTY, new Integer(i));
+                            AccordionPane.INPUT_TAB_INDEX, new Integer(i));
                     return;
                 }
             }
@@ -163,41 +289,77 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
         serverMessage.addLibrary(ExtrasUtil.JS_EXTRAS_UTIL_SERVICE.getId());
         serverMessage.addLibrary(ACCORDION_PANE_SERVICE.getId());
         AccordionPane accordionPane = (AccordionPane) component;
+        
+        ContainerInstance ci = rc.getContainerInstance();
+        resetRenderState(ci, accordionPane);
+
+        configureActiveTab(ci, accordionPane);
+        
         renderInitDirective(rc, accordionPane, targetId);
         Component[] children = accordionPane.getVisibleComponents();
         for (int i = 0; i < children.length; ++i) {
             renderAddTabDirective(rc, update, accordionPane, children[i]);
         }
+        boolean lazyRenderEnabled = isLazyRenderEnabled(accordionPane);
         for (int i = 0; i < children.length; ++i) {
-            renderChild(rc, update, accordionPane, children[i]);
+            if (!lazyRenderEnabled || isRendered(ci, accordionPane, children[i])) {
+                renderChild(rc, update, accordionPane, children[i]);
+            }
         }
         renderRedrawDirective(rc, accordionPane);
     }
 
-    private void renderAddChildren(RenderContext rc, ServerComponentUpdate update) {
+    private void renderAddChildren(RenderContext rc, ServerComponentUpdate update, boolean activeTabRenderRequired) {
         AccordionPane accordionPane = (AccordionPane) update.getParent();
-        Component[] addedChildren = update.getAddedChildren();
-        Component[] children = accordionPane.getVisibleComponents();
+        ContainerInstance ci = rc.getContainerInstance();
         
-        // Iterating through arrays and checking for reference equality is used here (versus loading daddedChildren
-        // into a hashtable) because we'll be dealing with very small array lengths, typically less than 10.
-        for (int i = 0; i < children.length; ++i) {
-            for (int j = 0; j < addedChildren.length; ++j) {
-                if (children[i] == addedChildren[j]) {
-                    renderAddTabDirective(rc, update, accordionPane, children[i]);
-                    break;
+        Component activeTab = null;
+        if (activeTabRenderRequired) {
+            AccordionPaneRenderState renderState = (AccordionPaneRenderState) ci.getRenderState(accordionPane);
+            activeTab = getChildByRenderId(accordionPane, renderState.activeTabId);
+            if (activeTab == null) {
+                activeTabRenderRequired = false;
+            }
+        }
+        
+        if (update.hasAddedChildren()) {
+            Component[] addedChildren = update.getAddedChildren();
+            Component[] children = accordionPane.getVisibleComponents();
+            
+            // Iterating through arrays and checking for reference equality is used here (versus loading daddedChildren
+            // into a hashtable) because we'll be dealing with very small array lengths, typically less than 10.
+            for (int i = 0; i < children.length; ++i) {
+                for (int j = 0; j < addedChildren.length; ++j) {
+                    if (children[i] == addedChildren[j]) {
+                        renderAddTabDirective(rc, update, accordionPane, children[i]);
+                        break;
+                    }
+                }
+            }
+
+            boolean lazyRenderEnabled = isLazyRenderEnabled(accordionPane);
+            
+            // Add children.
+            for (int i = 0; i < addedChildren.length; ++i) {
+                if (!lazyRenderEnabled || isRendered(ci, accordionPane, addedChildren[i])) {
+                    renderChild(rc, update, accordionPane, addedChildren[i]);
+                    if (addedChildren[i] == activeTab) {
+                        activeTabRenderRequired = false;
+                    }
                 }
             }
         }
         
-        // Add children.
-        for (int i = 0; i < addedChildren.length; ++i) {
-            renderChild(rc, update, accordionPane, addedChildren[i]);
+        if (activeTabRenderRequired) {
+            renderChild(rc, update, accordionPane, activeTab);
         }
     }
 
     private void renderAddTabDirective(RenderContext rc, ServerComponentUpdate update, AccordionPane accordionPane, 
             Component child) {
+        ContainerInstance ci = rc.getContainerInstance();
+        boolean rendered = !isLazyRenderEnabled(accordionPane) || isRendered(ci, accordionPane, child);
+
         AccordionPaneLayoutData layoutData = (AccordionPaneLayoutData) child.getLayoutData();
         String elementId = ContainerInstance.getElementId(accordionPane);
         Element addPartElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
@@ -205,6 +367,9 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
         addPartElement.setAttribute("eid", elementId);
         addPartElement.setAttribute("tab-id", child.getRenderId());
         addPartElement.setAttribute("tab-index", Integer.toString(accordionPane.indexOf(child)));
+        if (rendered) {
+            addPartElement.setAttribute("rendered", "true");
+        }
         if  (child instanceof Pane) {
             addPartElement.setAttribute("pane", "true");
         }
@@ -382,10 +547,48 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
         removePartElement.setAttribute("tab-id", child.getRenderId());
     }
     
+    /**
+     * Updates the active tab of a pre-existing <code>AccordionPane</code> on the
+     * client.  This method will render the tab's component hierarchy to the
+     * client if it has not yet been loaded, and then render a set-active-tab
+     * directive to select the tab. 
+     *
+     * @param rc the relevant <code>RenderContext</code>
+     * @param update the <code>ServerComponentUpdate</code> describing the 
+     *        change
+     * @param accordionPane the <code>AccordionPane</code> being updated
+     */
+    private void renderSetActiveTab(RenderContext rc, ServerComponentUpdate update, AccordionPane accordionPane) {
+        ContainerInstance ci = rc.getContainerInstance();
+
+        boolean activeTabRenderRequired = configureActiveTab(ci, accordionPane);
+
+        Component activeTab = null;
+        if (activeTabRenderRequired) {
+            AccordionPaneRenderState renderState = (AccordionPaneRenderState) ci.getRenderState(accordionPane);
+            activeTab = getChildByRenderId(accordionPane, renderState.activeTabId);
+            if (activeTab != null) {
+                renderChild(rc, update, accordionPane, activeTab);
+            }
+        }
+        
+        renderSetActiveTabDirective(rc, update, accordionPane);
+    }
+    
+    /**
+     * Renders a directive to the <code>ServerMessage</code> to set the
+     * active tab of a pre-exisiting <code>AccordionPane</code>
+     * 
+     * @param rc the relevant <code>RenderContext</code>
+     * @param update the <code>ServerComponentUpdate</code> describing the 
+     *        change
+     * @param accordionPane the <code>AccordionPane</code> being updated
+     */
     private void renderSetActiveTabDirective(RenderContext rc, ServerComponentUpdate update, AccordionPane accordionPane) {
-        int activeTabIndex = accordionPane.getActiveTabIndex();
-        if (activeTabIndex == -1 || activeTabIndex >= accordionPane.getVisibleComponentCount()) {
-            // Do nothing.
+        Component activeTab = null;
+        AccordionPaneRenderState renderState = (AccordionPaneRenderState) rc.getContainerInstance().getRenderState(accordionPane);
+        activeTab = getChildByRenderId(accordionPane, renderState.activeTabId);
+        if (activeTab == null) {
             return;
         }
         
@@ -393,7 +596,7 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
         Element setActiveTabElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
                 "ExtrasAccordionPane.MessageProcessor", "set-active-tab");
         setActiveTabElement.setAttribute("eid", elementId);
-        setActiveTabElement.setAttribute("active-tab", accordionPane.getVisibleComponent(activeTabIndex).getRenderId());
+        setActiveTabElement.setAttribute("active-tab", activeTab.getRenderId());
     }
     
     /**
@@ -401,6 +604,7 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
      *      nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
     public boolean renderUpdate(RenderContext rc, ServerComponentUpdate update, String targetId) {
+        ContainerInstance ci = rc.getContainerInstance();
         AccordionPane accordionPane = (AccordionPane) update.getParent();
         
         // Determine if fully replacing the component is required.
@@ -420,24 +624,60 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
             DomUpdate.renderElementRemove(rc.getServerMessage(), ContainerInstance.getElementId(accordionPane));
             renderAdd(rc, update, targetId, accordionPane);
         } else {
-            boolean hasChildUpdates = false;
             // Perform incremental updates.
-            if (update.hasRemovedChildren()) {
-                renderRemoveChildren(rc, update);
-                hasChildUpdates = true;
+            if (update.hasRemovedChildren() || update.hasAddedChildren()) {
+                
+                boolean activeTabRenderRequired = configureActiveTab(ci, accordionPane);
+                if (update.hasRemovedChildren()) {
+                    renderRemoveChildren(rc, update);
+                }
+                if (update.hasAddedChildren() || activeTabRenderRequired) {
+                    renderAddChildren(rc, update, activeTabRenderRequired);
+                    
+                }
+                renderSetActiveTabDirective(rc, update, accordionPane);
+                renderRedrawDirective(rc, accordionPane);
             }
-            if (update.hasAddedChildren()) {
-                renderAddChildren(rc, update);
-                hasChildUpdates = true;
-            }
+            
             if (update.hasUpdatedProperties()) {
                 partialUpdateManager.process(rc, update);
-            }
-            if (hasChildUpdates) {
-                renderRedrawDirective(rc, accordionPane);
             }
         }
         
         return fullReplace;
+    }
+
+    /**
+     * Resets the <code>RenderState</code> of an <code>AccordionPane</code>
+     * in the <code>ContainerInstance</code>. Invoked when an
+     * <code>AccordionPane</code> is initially rendered to the client.
+     * 
+     * @param ci
+     *            the relevant <code>ContainerInstance</code>
+     * @param accordionPane
+     *            the <code>AccordionPane</code> being rendered
+     */
+    private void resetRenderState(ContainerInstance ci, AccordionPane accordionPane) {
+        AccordionPaneRenderState renderState = new AccordionPaneRenderState();
+        ci.setRenderState(accordionPane, renderState);
+    }
+    
+    /**
+     * Sets a flag in the <code>RenderState</code> to indicate that a particular
+     * tab of an <code>AccordionPane</code> has been/is being rendered to the 
+     * client.  This method is used to facilitate lazy-rendering, ensuring each
+     * tab of a <code>AccordionPane</code> is rendered tot he client only once.
+     * 
+     * @param ci the relevant <code>ContainerInstance</code>
+     * @param accordionPane the <code>AccordionPane</code> being rendered
+     * @param child the child tab component
+     */
+    private void setRendered(ContainerInstance ci, AccordionPane accordionPane, Component child) {
+        AccordionPaneRenderState renderState = (AccordionPaneRenderState) ci.getRenderState(accordionPane);
+        if (renderState == null ) {
+            renderState = new AccordionPaneRenderState();
+            ci.setRenderState(accordionPane, renderState);
+        }
+        renderState.renderedChildren.add(child);
     }
 }

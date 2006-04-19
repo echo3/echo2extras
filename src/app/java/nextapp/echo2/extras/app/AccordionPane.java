@@ -45,6 +45,7 @@ import nextapp.echo2.app.PaneContainer;
 public class AccordionPane extends Component
 implements Pane, PaneContainer {
 
+    public static final String INPUT_TAB_INDEX = "inputTabIndex";
     public static final String ACTIVE_TAB_INDEX_CHANGED_PROPERTY = "activeTabIndex";
     
     public static final String PROPERTY_DEFAULT_CONTENT_INSETS = "defaultContentInsets";
@@ -188,7 +189,7 @@ implements Pane, PaneContainer {
      */
     public void processInput(String inputName, Object inputValue) {
         super.processInput(inputName, inputValue);
-        if (inputName.equals(ACTIVE_TAB_INDEX_CHANGED_PROPERTY)) {
+        if (inputName.equals(INPUT_TAB_INDEX)) {
             setActiveTabIndex(((Integer) inputValue).intValue());
         }
     }

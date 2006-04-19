@@ -148,7 +148,7 @@ implements ComponentSynchronizePeer, LazyRenderContainer, PropertyUpdateProcesso
      * Performs configuration tasks related to the active tab of a <code>TabPane</code>.
      * 
      * @param ci the relevant <code>ContainerInstance</code>
-     * @param tabPane the rendering <code>TabPAne</code>
+     * @param tabPane the rendering <code>TabPane</code>
      * @return true if the active tab requires rendering
      */
     private boolean configureActiveTab(ContainerInstance ci, TabPane tabPane) {
@@ -585,19 +585,6 @@ implements ComponentSynchronizePeer, LazyRenderContainer, PropertyUpdateProcesso
     }
     
     /**
-     * Resets the <code>RenderState</code> of a <code>TabPane</code> in the
-     * <code>ContainerInstance</code>.  Invoked when a <code>TabPane</code> is
-     * initially rendered to the client.
-     * 
-     * @param ci the relevant <code>ContainerInstance</code>
-     * @param tabPane the <code>TabPane</code> being rendered
-     */
-    public void resetRenderState(ContainerInstance ci, TabPane tabPane) {
-        TabPaneRenderState renderState = new TabPaneRenderState();
-        ci.setRenderState(tabPane, renderState);
-    }
-    
-    /**
      * @see nextapp.echo2.webcontainer.ComponentSynchronizePeer#renderUpdate(
      *      nextapp.echo2.webcontainer.RenderContext, nextapp.echo2.app.update.ServerComponentUpdate, java.lang.String)
      */
@@ -642,6 +629,19 @@ implements ComponentSynchronizePeer, LazyRenderContainer, PropertyUpdateProcesso
         }
         
         return fullReplace;
+    }
+    
+    /**
+     * Resets the <code>RenderState</code> of a <code>TabPane</code> in the
+     * <code>ContainerInstance</code>.  Invoked when a <code>TabPane</code> is
+     * initially rendered to the client.
+     * 
+     * @param ci the relevant <code>ContainerInstance</code>
+     * @param tabPane the <code>TabPane</code> being rendered
+     */
+    private void resetRenderState(ContainerInstance ci, TabPane tabPane) {
+        TabPaneRenderState renderState = new TabPaneRenderState();
+        ci.setRenderState(tabPane, renderState);
     }
     
     /**
