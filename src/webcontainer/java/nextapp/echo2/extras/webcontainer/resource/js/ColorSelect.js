@@ -284,6 +284,67 @@ ExtrasColorSelect.prototype.getColor = function() {
     return ExtrasColorSelect.hsvToRgb(this.h, this.s, this.v);
 };
 
+ExtrasColorSelect.prototype.processHMouseDown = function(echoEvent) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId, false)) {
+        return;
+    }
+    this.hActive = true;
+    this.svActive = false;
+    EchoDomUtil.preventEventDefault(echoEvent);
+};
+
+ExtrasColorSelect.prototype.processHMouseMove = function(e) {
+    if (this.hActive) {
+        this.processHUpdate(e);
+    }
+};
+
+ExtrasColorSelect.prototype.processHMouseUp = function(e) {
+    if (this.hActive) {
+        this.processHUpdate(e);
+    }
+    this.hActive = false;
+    this.svActive = false;
+};
+
+ExtrasColorSelect.prototype.processHUpdate = function(echoEvent) {
+    var hContainerDivElement = document.getElementById(this.elementId + "_hlistener");
+    var bounds = new EchoCssUtil.Bounds(hContainerDivElement);
+    this.h = (this.saturationHeight - (echoEvent.clientY - bounds.top - 7)) * 360 / this.saturationHeight;
+    this.updateColor();
+};
+
+ExtrasColorSelect.prototype.processSVMouseDown = function(echoEvent) {
+    if (!this.enabled || !EchoClientEngine.verifyInput(this.elementId, false)) {
+        return;
+    }
+    this.hActive = false;
+    this.svActive = true;
+    EchoDomUtil.preventEventDefault(echoEvent);
+};
+
+ExtrasColorSelect.prototype.processSVMouseMove = function(e) {
+    if (this.svActive) {
+        this.processSVUpdate(e);
+    }
+};
+
+ExtrasColorSelect.prototype.processSVMouseUp = function(e) {
+    if (this.svActive) {
+        this.processSVUpdate(e);
+    }
+    this.hActive = false;
+    this.svActive = false;
+};
+
+ExtrasColorSelect.prototype.processSVUpdate = function(echoEvent) {
+    var svContainerDivElement = document.getElementById(this.elementId + "_svlistener");
+    var bounds = new EchoCssUtil.Bounds(svContainerDivElement);
+    this.v = (echoEvent.clientX - bounds.left - 7) / this.valueWidth;
+    this.s = 1 - ((echoEvent.clientY - bounds.top - 7) / this.saturationHeight);
+    this.updateColor();
+};
+
 /**
  * Sets the selected color.
  *
@@ -317,6 +378,23 @@ ExtrasColorSelect.prototype.setColor = function(rgb) {
         }
     }
     this.updateColor();
+};
+
+/**
+ * Updates the component state in the outgoing <code>ClientMessage</code>.
+ *
+ * @param componentId the id of the Text Component
+ */
+ExtrasColorSelect.prototype.updateClientMessage = function(color) {
+    var colorPropertyElement = EchoClientMessage.createPropertyElement(this.elementId, "color");
+    var colorElement = colorPropertyElement.firstChild;
+    if (!colorElement) {
+        colorElement = EchoClientMessage.messageDocument.createElement("color");
+        colorPropertyElement.appendChild(colorElement);
+    }
+    colorElement.setAttribute("r", color.r);
+    colorElement.setAttribute("g", color.g);
+    colorElement.setAttribute("b", color.b);
 };
 
 ExtrasColorSelect.prototype.updateColor = function() {
@@ -367,38 +445,6 @@ ExtrasColorSelect.prototype.updateColor = function() {
     hLineElement.style.top = hLineTop + "px";
    
     this.updateClientMessage(renderColor);
-};
-
-/**
- * Updates the component state in the outgoing <code>ClientMessage</code>.
- *
- * @param componentId the id of the Text Component
- */
-ExtrasColorSelect.prototype.updateClientMessage = function(color) {
-    var colorPropertyElement = EchoClientMessage.createPropertyElement(this.elementId, "color");
-    var colorElement = colorPropertyElement.firstChild;
-    if (!colorElement) {
-        colorElement = EchoClientMessage.messageDocument.createElement("color");
-        colorPropertyElement.appendChild(colorElement);
-    }
-    colorElement.setAttribute("r", color.r);
-    colorElement.setAttribute("g", color.g);
-    colorElement.setAttribute("b", color.b);
-};
-
-ExtrasColorSelect.prototype.processHUpdate = function(echoEvent) {
-    var hContainerDivElement = document.getElementById(this.elementId + "_hlistener");
-    var bounds = new EchoCssUtil.Bounds(hContainerDivElement);
-    this.h = (this.saturationHeight - (echoEvent.clientY - bounds.top - 7)) * 360 / this.saturationHeight;
-    this.updateColor();
-};
-
-ExtrasColorSelect.prototype.processSVUpdate = function(echoEvent) {
-    var svContainerDivElement = document.getElementById(this.elementId + "_svlistener");
-    var bounds = new EchoCssUtil.Bounds(svContainerDivElement);
-    this.v = (echoEvent.clientX - bounds.left - 7) / this.valueWidth;
-    this.s = 1 - ((echoEvent.clientY - bounds.top - 7) / this.saturationHeight);
-    this.updateColor();
 };
 
 ExtrasColorSelect.getComponent = function(componentId) {
@@ -452,62 +498,40 @@ ExtrasColorSelect.hsvToRgb = function(h, s, v) {
     return new ExtrasColorSelect.RGB(Math.round(r * 255), Math.round(g * 255), Math.round(b * 255));
 };
 
-ExtrasColorSelect.processSVMouseDown = function(echoEvent) {
-    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
-    var colorSelect = ExtrasColorSelect.getComponent(componentId);
-    if (!colorSelect.enabled || !EchoClientEngine.verifyInput(componentId, false)) {
-        return;
-    }
-    colorSelect.hActive = false;
-    colorSelect.svActive = true;
-    EchoDomUtil.preventEventDefault(echoEvent);
-};
-
 ExtrasColorSelect.processHMouseDown = function(echoEvent) {
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
     var colorSelect = ExtrasColorSelect.getComponent(componentId);
-    if (!colorSelect.enabled || !EchoClientEngine.verifyInput(componentId, false)) {
-        return;
-    }
-    colorSelect.hActive = true;
-    colorSelect.svActive = false;
-    EchoDomUtil.preventEventDefault(echoEvent);
+    colorSelect.processHMouseDown(echoEvent);
 };
 
 ExtrasColorSelect.processHMouseMove = function(echoEvent) {
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
     var colorSelect = ExtrasColorSelect.getComponent(componentId);
-    if (colorSelect.hActive) {
-        colorSelect.processHUpdate(echoEvent);
-    }
-};
-
-ExtrasColorSelect.processSVMouseMove = function(echoEvent) {
-    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
-    var colorSelect = ExtrasColorSelect.getComponent(componentId);
-    if (colorSelect.svActive) {
-        colorSelect.processSVUpdate(echoEvent);
-    }
-};
-
-ExtrasColorSelect.processSVMouseUp = function(echoEvent) {
-    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
-    var colorSelect = ExtrasColorSelect.getComponent(componentId);
-    if (colorSelect.svActive) {
-        colorSelect.processSVUpdate(echoEvent);
-    }
-    colorSelect.hActive = false;
-    colorSelect.svActive = false;
+    colorSelect.processHMouseMove(echoEvent);
 };
 
 ExtrasColorSelect.processHMouseUp = function(echoEvent) {
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
     var colorSelect = ExtrasColorSelect.getComponent(componentId);
-    if (colorSelect.hActive) {
-        colorSelect.processHUpdate(echoEvent);
-    }
-    colorSelect.hActive = false;
-    colorSelect.svActive = false;
+    colorSelect.processHMouseUp(echoEvent);
+};
+
+ExtrasColorSelect.processSVMouseDown = function(echoEvent) {
+    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    var colorSelect = ExtrasColorSelect.getComponent(componentId);
+    colorSelect.processSVMouseDown(echoEvent);
+};
+
+ExtrasColorSelect.processSVMouseMove = function(echoEvent) {
+    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    var colorSelect = ExtrasColorSelect.getComponent(componentId);
+    colorSelect.processSVMouseMove(echoEvent);
+};
+
+ExtrasColorSelect.processSVMouseUp = function(echoEvent) {
+    var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
+    var colorSelect = ExtrasColorSelect.getComponent(componentId);
+    colorSelect.processSVMouseUp(echoEvent);
 };
 
 ExtrasColorSelect.RGB = function(r, g, b) {
