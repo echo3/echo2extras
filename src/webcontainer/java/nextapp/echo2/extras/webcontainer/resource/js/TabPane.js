@@ -384,15 +384,6 @@ ExtrasTabPane.prototype.selectTab = function(tabId) {
         this.updateTabState(this.activeTabId, false);
     }
     
-//    if (tabId == null) {
-//        // Select last tab if null is specified.
-//        if (this.tabs.length > 0) {
-//	        tabId = this.tabs[this.tabs.length - 1].tabId;
-//        } else {
-//	        tabId = null;
-//        }
-//    }
-    
     if (tabId != null) {
         this.updateTabState(tabId, true);
     }
@@ -462,9 +453,10 @@ ExtrasTabPane.processClick = function(echoEvent) {
     var tabId = elementId.substring(headerDivTextIndex + 12);
    
     EchoClientMessage.setPropertyValue(tabPaneId, "activeTab", tabId);
-    tabPane.selectTab(tabId);
     
-    if (!tabPane.getTabById(tabId).rendered) {
+    if (tabPane.getTabById(tabId).rendered) {
+        tabPane.selectTab(tabId);
+    } else {
         // Connect to server with updated tab state such that non-rendered tab will be rendered.
         EchoServerTransaction.connect();
     }
