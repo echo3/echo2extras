@@ -615,14 +615,12 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     default:
         tabPane.borderType = ExtrasTabPane.BORDER_TYPE_ADJACENT_TO_TABS;
     }
-    if (initMessageElement.getAttribute("tab-inactive-border-style")) {
-        tabPane.tabInactiveBorderStyle = initMessageElement.getAttribute("tab-inactive-border-style");
+    
+    if (initMessageElement.getAttribute("tab-active-background")) {
+        tabPane.tabActiveBackground = initMessageElement.getAttribute("tab-active-background");
     }
-    if (initMessageElement.getAttribute("tab-inactive-border-color")) {
-        tabPane.tabInactiveBorderColor = initMessageElement.getAttribute("tab-inactive-border-color");
-    }
-    if (initMessageElement.getAttribute("tab-inactive-border-size")) {
-        tabPane.tabInactiveBorderSize = parseInt(initMessageElement.getAttribute("tab-inactive-border-size"));
+    if (initMessageElement.getAttribute("tab-active-background-image")) {
+        tabPane.tabActiveBackgroundImage = initMessageElement.getAttribute("tab-active-background-image");
     }
     if (initMessageElement.getAttribute("tab-active-border-style")) {
         tabPane.tabActiveBorderStyle = initMessageElement.getAttribute("tab-active-border-style");
@@ -633,15 +631,30 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     if (initMessageElement.getAttribute("tab-active-border-size")) {
         tabPane.tabActiveBorderSize = parseInt(initMessageElement.getAttribute("tab-active-border-size"));
     }
-    
-    if (initMessageElement.getAttribute("tab-active-background")) {
-        tabPane.tabActiveBackground = initMessageElement.getAttribute("tab-active-background");
+    if (initMessageElement.getAttribute("tab-active-font")) {
+        tabPane.tabActiveFont = initMessageElement.getAttribute("tab-active-font");
     }
     if (initMessageElement.getAttribute("tab-active-foreground")) {
         tabPane.tabActiveForeground = initMessageElement.getAttribute("tab-active-foreground");
     }
+
     if (initMessageElement.getAttribute("tab-inactive-background")) {
         tabPane.tabInactiveBackground = initMessageElement.getAttribute("tab-inactive-background");
+    }
+    if (initMessageElement.getAttribute("tab-inactive-background-image")) {
+        tabPane.tabInactiveBackgroundImage = initMessageElement.getAttribute("tab-inactive-background-image");
+    }
+    if (initMessageElement.getAttribute("tab-inactive-border-style")) {
+        tabPane.tabInactiveBorderStyle = initMessageElement.getAttribute("tab-inactive-border-style");
+    }
+    if (initMessageElement.getAttribute("tab-inactive-border-color")) {
+        tabPane.tabInactiveBorderColor = initMessageElement.getAttribute("tab-inactive-border-color");
+    }
+    if (initMessageElement.getAttribute("tab-inactive-border-size")) {
+        tabPane.tabInactiveBorderSize = parseInt(initMessageElement.getAttribute("tab-inactive-border-size"));
+    }
+    if (initMessageElement.getAttribute("tab-inactive-font")) {
+        tabPane.tabInactiveFont = initMessageElement.getAttribute("tab-inactive-font");
     }
     if (initMessageElement.getAttribute("tab-inactive-foreground")) {
         tabPane.tabInactiveForeground = initMessageElement.getAttribute("tab-inactive-foreground");
