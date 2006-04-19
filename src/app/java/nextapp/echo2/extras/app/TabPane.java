@@ -30,8 +30,11 @@
 package nextapp.echo2.extras.app;
 
 import nextapp.echo2.app.Border;
+import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.FillImage;
+import nextapp.echo2.app.Font;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Pane;
 import nextapp.echo2.app.PaneContainer;
@@ -50,11 +53,19 @@ implements Pane, PaneContainer {
     public static final String PROPERTY_DEFAULT_CONTENT_INSETS = "defaultContentInsets";
     public static final String PROPERTY_INACTIVE_BORDER = "inactiveBorder";
     public static final String PROPERTY_INSETS = "insets";
+    public static final String PROPERTY_TAB_ACTIVE_BACKGROUND = "tabActiveBackground";
+    public static final String PROPERTY_TAB_ACTIVE_BACKGROUND_IMAGE = "tabActiveBackgroundImage";
+    public static final String PROPERTY_TAB_ACTIVE_FONT = "tabActiveFont";
+    public static final String PROPERTY_TAB_ACTIVE_FOREGROUND = "tabActiveForeground";
     public static final String PROPERTY_TAB_HEIGHT = "tabHeight";
-    public static final String PROPERTY_TAB_POSITION = "tabPosition";
-    public static final String PROPERTY_TAB_WIDTH = "tabWidth";
+    public static final String PROPERTY_TAB_INACTIVE_BACKGROUND = "tabInactiveBackground";
+    public static final String PROPERTY_TAB_INACTIVE_BACKGROUND_IMAGE = "tabInactiveBackgroundImage";
+    public static final String PROPERTY_TAB_INACTIVE_FONT = "tabInactiveFont";
+    public static final String PROPERTY_TAB_INACTIVE_FOREGROUND = "tabInactiveForeground";
     public static final String PROPERTY_TAB_INSET = "tabInset";
     public static final String PROPERTY_TAB_SPACING = "tabSpacing";
+    public static final String PROPERTY_TAB_POSITION = "tabPosition";
+    public static final String PROPERTY_TAB_WIDTH = "tabWidth";
     
     /**
      * Constant for the <code>borderType</code> property indicating that no 
@@ -177,6 +188,42 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Returns the background color used to render active tabs.
+     * 
+     * @return the active tab background
+     */
+    public Color getTabActiveBackground() {
+        return (Color) getProperty(PROPERTY_TAB_ACTIVE_BACKGROUND);
+    }
+    
+    /**
+     * Returns the background image used to render active tabs.
+     * 
+     * @return the active tab background image
+     */
+    public FillImage getTabActiveBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_TAB_ACTIVE_BACKGROUND_IMAGE);
+    }
+    
+    /**
+     * Returns the font used to render active tabs.
+     * 
+     * @return the active tab font
+     */
+    public Font getTabActiveFont() {
+        return (Font) getProperty(PROPERTY_TAB_ACTIVE_FONT);
+    }
+    
+    /**
+     * Returns the foreground color used to render active tabs.
+     * 
+     * @return the active tab foreground
+     */
+    public Color getTabActiveForeground() {
+        return (Color) getProperty(PROPERTY_TAB_ACTIVE_FOREGROUND);
+    }
+    
+    /**
      * Returns the height of an individual tab.
      * <code>Extent</code> values for this property must be in pixel units.
      * 
@@ -184,6 +231,42 @@ implements Pane, PaneContainer {
      */
     public Extent getTabHeight() {
         return (Extent) getProperty(PROPERTY_TAB_HEIGHT);
+    }
+    
+    /**
+     * Returns the background color used to render inactive tabs.
+     * 
+     * @return the inactive tab background
+     */
+    public Color getTabInactiveBackground() {
+        return (Color) getProperty(PROPERTY_TAB_INACTIVE_BACKGROUND);
+    }
+    
+    /**
+     * Returns the background image used to render inactive tabs.
+     * 
+     * @return the inactive tab background image
+     */
+    public FillImage getTabInactiveBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_TAB_INACTIVE_BACKGROUND_IMAGE);
+    }
+    
+    /**
+     * Returns the font used to render inactive tabs.
+     * 
+     * @return the inactive tab font
+     */
+    public Font getTabInactiveFont() {
+        return (Font) getProperty(PROPERTY_TAB_INACTIVE_FONT);
+    }
+    
+    /**
+     * Returns the foreground color used to render inactive tabs.
+     * 
+     * @return the inactive tab foreground
+     */
+    public Color getTabInactiveForeground() {
+        return (Color) getProperty(PROPERTY_TAB_INACTIVE_FOREGROUND);
     }
     
     /**
@@ -311,6 +394,42 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * Sets the background color used to render active tabs.
+     * 
+     * @param newValue the new active tab background
+     */
+    public void setTabActiveBackground(Color newValue) {
+        setProperty(PROPERTY_TAB_ACTIVE_BACKGROUND, newValue);
+    }
+    
+    /**
+     * Sets the background image used to render active tabs.
+     * 
+     * @param newValue the new active tab background image
+     */
+    public void setTabActiveBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_TAB_ACTIVE_BACKGROUND_IMAGE, newValue);
+    }
+    
+    /**
+     * Sets the font used to render active tabs.
+     * 
+     * @param newValue the new active tab font
+     */
+    public void setTabActiveFont(Font newValue) {
+        setProperty(PROPERTY_TAB_ACTIVE_FONT, newValue);
+    }
+    
+    /**
+     * Sets the foreground color used to render active tabs.
+     * 
+     * @param newValue the new active tab foreground
+     */
+    public void setTabActiveForeground(Color newValue) {
+        setProperty(PROPERTY_TAB_ACTIVE_FOREGROUND, newValue);
+    }
+    
+    /**
      * Sets the height of an individual tab.
      * <code>Extent</code> values for this property must be in pixel units.
      * 
@@ -318,6 +437,42 @@ implements Pane, PaneContainer {
      */
     public void setTabHeight(Extent newValue) {
         setProperty(PROPERTY_TAB_HEIGHT, newValue);
+    }
+    
+    /**
+     * Sets the background color used to render inactive tabs.
+     * 
+     * @param newValue the new inactive tab background
+     */
+    public void setTabInactiveBackground(Color newValue) {
+        setProperty(PROPERTY_TAB_INACTIVE_BACKGROUND, newValue);
+    }
+    
+    /**
+     * Sets the background image used to render inactive tabs.
+     * 
+     * @param newValue the new inactive tab background image
+     */
+    public void setTabInactiveBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_TAB_INACTIVE_BACKGROUND_IMAGE, newValue);
+    }
+    
+    /**
+     * Sets the font used to render inactive tabs.
+     * 
+     * @param newValue the new inactive tab font
+     */
+    public void setTabInactiveFont(Font newValue) {
+        setProperty(PROPERTY_TAB_INACTIVE_FONT, newValue);
+    }
+    
+    /**
+     * Sets the foreground color used to render inactive tabs.
+     * 
+     * @param newValue the new inactive tab foreground
+     */
+    public void setTabInactiveForeground(Color newValue) {
+        setProperty(PROPERTY_TAB_INACTIVE_FOREGROUND, newValue);
     }
     
     /**

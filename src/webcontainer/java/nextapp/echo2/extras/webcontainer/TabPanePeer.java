@@ -38,6 +38,9 @@ import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.FillImage;
+import nextapp.echo2.app.Font;
+import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Pane;
 import nextapp.echo2.app.update.ServerComponentUpdate;
@@ -52,13 +55,17 @@ import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.RenderState;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
+import nextapp.echo2.webcontainer.image.ImageRenderSupport;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
+import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
+import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webcontainer.propertyrender.InsetsRender;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
+import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
 import nextapp.echo2.webrender.service.JavaScriptService;
 
@@ -67,8 +74,11 @@ import nextapp.echo2.webrender.service.JavaScriptService;
  * <code>TabPane</code> components.
  */
 public class TabPanePeer 
-implements ComponentSynchronizePeer, LazyRenderContainer, PropertyUpdateProcessor {
+implements ComponentSynchronizePeer, ImageRenderSupport, LazyRenderContainer, PropertyUpdateProcessor {
 
+    private static final String IMAGE_ID_TAB_ACTIVE_BACKGROUND = "tabActiveBackground";
+    private static final String IMAGE_ID_TAB_INACTIVE_BACKGROUND = "tabInactiveBackground";
+    
     private static final String PROPERTY_ACTIVE_TAB = "activeTab";
     
     /**
@@ -224,6 +234,13 @@ implements ComponentSynchronizePeer, LazyRenderContainer, PropertyUpdateProcesso
         return null;
     }
     
+    /**
+     * @see nextapp.echo2.webcontainer.image.ImageRenderSupport#getImage(nextapp.echo2.app.Component, java.lang.String)
+     */
+    public ImageReference getImage(Component component, String id) {
+        return null;
+    }
+
     /**
      * Determines if a <code>TabPane</code> should be lazy-rendered.
      * 
@@ -466,6 +483,53 @@ implements ComponentSynchronizePeer, LazyRenderContainer, PropertyUpdateProcesso
                 initElement.setAttribute("border-type", "surround");
                 break;
             }
+        }
+        
+        // Render tab active properties.
+        Color tabActiveBackground = (Color) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_ACTIVE_BACKGROUND);
+        if (tabActiveBackground != null) {
+            initElement.setAttribute("tab-active-background", ColorRender.renderCssAttributeValue(tabActiveBackground));
+        }
+        FillImage tabActiveBackgroundImage = (FillImage) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_ACTIVE_BACKGROUND_IMAGE);
+        if (tabActiveBackgroundImage != null) {
+            CssStyle backgroundImageStyle = new CssStyle();
+            FillImageRender.renderToStyle(backgroundImageStyle, rc, this, tabPane, IMAGE_ID_TAB_ACTIVE_BACKGROUND, 
+                    tabActiveBackgroundImage, 0);
+            initElement.setAttribute("tab-active-background-image", backgroundImageStyle.renderInline());
+        }
+        Font tabActiveFont= (Font) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_ACTIVE_FONT);
+        if (tabActiveFont != null) {
+            CssStyle fontStyle = new CssStyle();
+            FontRender.renderToStyle(fontStyle, tabActiveFont);
+            initElement.setAttribute("tab-active-font", fontStyle.renderInline());
+        }
+        Color tabActiveForeground = (Color) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_ACTIVE_FOREGROUND);
+        if (tabActiveForeground != null) {
+            initElement.setAttribute("tab-active-foreground", ColorRender.renderCssAttributeValue(tabActiveForeground));
+        }
+        
+        // Render tab inactive properties.
+        Color tabInactiveBackground = (Color) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_INACTIVE_BACKGROUND);
+        if (tabInactiveBackground != null) {
+            initElement.setAttribute("tab-inactive-background", ColorRender.renderCssAttributeValue(tabInactiveBackground));
+        }
+        FillImage tabInactiveBackgroundImage = (FillImage) tabPane.getRenderProperty(
+                TabPane.PROPERTY_TAB_INACTIVE_BACKGROUND_IMAGE);
+        if (tabInactiveBackgroundImage != null) {
+            CssStyle backgroundImageStyle = new CssStyle();
+            FillImageRender.renderToStyle(backgroundImageStyle, rc, this, tabPane, IMAGE_ID_TAB_INACTIVE_BACKGROUND, 
+                    tabInactiveBackgroundImage, 0);
+            initElement.setAttribute("tab-inactive-background-image", backgroundImageStyle.renderInline());
+        }
+        Font tabInactiveFont= (Font) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_INACTIVE_FONT);
+        if (tabInactiveFont != null) {
+            CssStyle fontStyle = new CssStyle();
+            FontRender.renderToStyle(fontStyle, tabInactiveFont);
+            initElement.setAttribute("tab-inactive-font", fontStyle.renderInline());
+        }
+        Color tabInactiveForeground = (Color) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_INACTIVE_FOREGROUND);
+        if (tabInactiveForeground != null) {
+            initElement.setAttribute("tab-inactive-foreground", ColorRender.renderCssAttributeValue(tabInactiveForeground));
         }
         
         //BUGBUG. Just render the border CSS, have the client deal with it!

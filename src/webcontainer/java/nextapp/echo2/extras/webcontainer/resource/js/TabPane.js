@@ -45,22 +45,29 @@ ExtrasTabPane = function(elementId, containerElementId, activeTabId) {
     
     this.defaultBackground = "#ffffff";
     this.defaultForeground = "#000000";
-    this.inactiveHeaderBackground = "#afafcf";
-    this.inactiveHeaderForeground = "";
+
     this.inactiveBorderSize = 1;
     this.inactiveBorderStyle = "solid";
     this.inactiveBorderColor = "#7f7f7f";
-    
-    this.activeHeaderBackground = "#ffffff";
-    this.activeHeaderForeground = "";
     this.activeBorderSize = 1;
     this.activeBorderStyle = "solid";
     this.activeBorderColor = "#00004f";
+    
+    this.tabInactiveBackground = "#afafcf";
+    this.tabInactiveBackgroundImage = null;
+    this.tabInactiveFont = null;
+    this.tabInactiveForeground = "";
+
+    this.tabActiveBackground = "#ffffff";
+    this.tabActiveBackgroundImage = null;
+    this.tabActiveFont = null;
+    this.tabActiveForeground = "";
     
     this.headerPaddingTop = 3;
     this.headerPaddingLeft = 8;
     this.headerPaddingRight = 8;
     this.headerPaddingBottom = 3;
+    
     this.renderBox = false;
     this.tabPosition = ExtrasTabPane.TAB_POSITION_TOP;
     
@@ -149,8 +156,8 @@ ExtrasTabPane.prototype.addTab = function(tab, tabIndex) {
     }
 
     headerDivElement.style.height = this.calculateHeaderHeight(false) + "px";
-    headerDivElement.style.backgroundColor = this.inactiveHeaderBackground;
-    headerDivElement.style.color = this.inactiveHeaderForeground;
+    headerDivElement.style.backgroundColor = this.tabInactiveBackground;
+    headerDivElement.style.color = this.tabInactiveForeground;
     headerDivElement.style.paddingTop = this.headerPaddingTop + "px";
     headerDivElement.style.paddingBottom = this.headerPaddingBottom + "px";
     headerDivElement.style.paddingLeft = this.headerPaddingLeft + "px";
@@ -413,8 +420,8 @@ ExtrasTabPane.prototype.updateTabState = function(tabId, selected) {
     // End Mozilla workaround.
 
     var border = selected ? this.getActiveBorder() : this.getInactiveBorder();
-    headerDivElement.style.backgroundColor = selected ? this.activeHeaderBackground : this.inactiveHeaderBackground;
-    headerDivElement.style.color = selected ? this.activeHeaderForeground : this.inactiveHeaderForeground;
+    headerDivElement.style.backgroundColor = selected ? this.tabActiveBackground : this.tabInactiveBackground;
+    headerDivElement.style.color = selected ? this.tabActiveForeground : this.tabInactiveForeground;
     headerDivElement.style.cursor = selected ? "default" : "pointer";
     headerDivElement.style.borderLeft = border;
     headerDivElement.style.borderRight = border;
@@ -632,6 +639,19 @@ ExtrasTabPane.MessageProcessor.processInit = function(initMessageElement) {
     }
     if (initMessageElement.getAttribute("active-border-size")) {
         tabPane.activeBorderSize = parseInt(initMessageElement.getAttribute("active-border-size"));
+    }
+    
+    if (initMessageElement.getAttribute("tab-active-background")) {
+        tabPane.tabActiveBackground = initMessageElement.getAttribute("tab-active-background");
+    }
+    if (initMessageElement.getAttribute("tab-active-foreground")) {
+        tabPane.tabActiveForeground = initMessageElement.getAttribute("tab-active-foreground");
+    }
+    if (initMessageElement.getAttribute("tab-inactive-background")) {
+        tabPane.tabInactiveBackground = initMessageElement.getAttribute("tab-inactive-background");
+    }
+    if (initMessageElement.getAttribute("tab-inactive-foreground")) {
+        tabPane.tabInactiveForeground = initMessageElement.getAttribute("tab-inactive-foreground");
     }
 
     tabPane.create();
