@@ -497,6 +497,17 @@ implements ComponentSynchronizePeer, ImageRenderSupport, LazyRenderContainer, Pr
                     tabActiveBackgroundImage, 0);
             initElement.setAttribute("tab-active-background-image", backgroundImageStyle.renderInline());
         }
+        Border tabActiveBorder = (Border) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_ACTIVE_BORDER);
+        if (tabActiveBorder != null) {
+            if (tabActiveBorder.getColor() != null) {
+                initElement.setAttribute("tab-active-border-color", 
+                        ColorRender.renderCssAttributeValue(tabActiveBorder.getColor()));
+            }
+            if (tabActiveBorder.getSize() != null && tabActiveBorder.getSize().getUnits() == Extent.PX) {
+                initElement.setAttribute("tab-active-border-size", Integer.toString(tabActiveBorder.getSize().getValue()));
+            }
+            initElement.setAttribute("tab-active-border-style", BorderRender.getStyleValue(tabActiveBorder.getStyle())); 
+        }
         Font tabActiveFont= (Font) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_ACTIVE_FONT);
         if (tabActiveFont != null) {
             CssStyle fontStyle = new CssStyle();
@@ -521,6 +532,17 @@ implements ComponentSynchronizePeer, ImageRenderSupport, LazyRenderContainer, Pr
                     tabInactiveBackgroundImage, 0);
             initElement.setAttribute("tab-inactive-background-image", backgroundImageStyle.renderInline());
         }
+        Border tabInactiveBorder = (Border) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_INACTIVE_BORDER);
+        if (tabInactiveBorder != null) {
+            if (tabInactiveBorder.getColor() != null) {
+                initElement.setAttribute("tab-inactive-border-color", 
+                        ColorRender.renderCssAttributeValue(tabInactiveBorder.getColor()));
+            }
+            if (tabInactiveBorder.getSize() != null && tabInactiveBorder.getSize().getUnits() == Extent.PX) {
+                initElement.setAttribute("tab-inactive-border-size", Integer.toString(tabInactiveBorder.getSize().getValue()));
+            }
+            initElement.setAttribute("tab-inactive-border-style", BorderRender.getStyleValue(tabInactiveBorder.getStyle())); 
+        }
         Font tabInactiveFont= (Font) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_INACTIVE_FONT);
         if (tabInactiveFont != null) {
             CssStyle fontStyle = new CssStyle();
@@ -530,28 +552,6 @@ implements ComponentSynchronizePeer, ImageRenderSupport, LazyRenderContainer, Pr
         Color tabInactiveForeground = (Color) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_INACTIVE_FOREGROUND);
         if (tabInactiveForeground != null) {
             initElement.setAttribute("tab-inactive-foreground", ColorRender.renderCssAttributeValue(tabInactiveForeground));
-        }
-        
-        //BUGBUG. Just render the border CSS, have the client deal with it!
-        Border inactiveBorder = (Border) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_INACTIVE_BORDER);
-        if (inactiveBorder != null) {
-            if (inactiveBorder.getColor() != null) {
-                initElement.setAttribute("tab-inactive-border-color", ColorRender.renderCssAttributeValue(inactiveBorder.getColor()));
-            }
-            if (inactiveBorder.getSize() != null && inactiveBorder.getSize().getUnits() == Extent.PX) {
-                initElement.setAttribute("tab-inactive-border-size", Integer.toString(inactiveBorder.getSize().getValue()));
-            }
-            initElement.setAttribute("tab-inactive-border-style", BorderRender.getStyleValue(inactiveBorder.getStyle())); 
-        }
-        Border activeBorder = (Border) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_ACTIVE_BORDER);
-        if (activeBorder != null) {
-            if (activeBorder.getColor() != null) {
-                initElement.setAttribute("tab-active-border-color", ColorRender.renderCssAttributeValue(activeBorder.getColor()));
-            }
-            if (activeBorder.getSize() != null && activeBorder.getSize().getUnits() == Extent.PX) {
-                initElement.setAttribute("tab-active-border-size", Integer.toString(activeBorder.getSize().getValue()));
-            }
-            initElement.setAttribute("tab-active-border-style", BorderRender.getStyleValue(activeBorder.getStyle())); 
         }
         
         String activeTabId = getRenderedActiveTabId(rc.getContainerInstance(), tabPane);
