@@ -48,18 +48,18 @@ implements Pane, PaneContainer {
     public static final String INPUT_TAB_INDEX = "inputTabIndex";
     public static final String ACTIVE_TAB_INDEX_CHANGED_PROPERTY = "activeTabIndex";
     
-    public static final String PROPERTY_ACTIVE_BORDER = "activeBorder";
     public static final String PROPERTY_BORDER_TYPE = "borderType";
     public static final String PROPERTY_DEFAULT_CONTENT_INSETS = "defaultContentInsets";
-    public static final String PROPERTY_INACTIVE_BORDER = "inactiveBorder";
     public static final String PROPERTY_INSETS = "insets";
     public static final String PROPERTY_TAB_ACTIVE_BACKGROUND = "tabActiveBackground";
     public static final String PROPERTY_TAB_ACTIVE_BACKGROUND_IMAGE = "tabActiveBackgroundImage";
+    public static final String PROPERTY_TAB_ACTIVE_BORDER = "tabActiveBorder";
     public static final String PROPERTY_TAB_ACTIVE_FONT = "tabActiveFont";
     public static final String PROPERTY_TAB_ACTIVE_FOREGROUND = "tabActiveForeground";
     public static final String PROPERTY_TAB_HEIGHT = "tabHeight";
     public static final String PROPERTY_TAB_INACTIVE_BACKGROUND = "tabInactiveBackground";
     public static final String PROPERTY_TAB_INACTIVE_BACKGROUND_IMAGE = "tabInactiveBackgroundImage";
+    public static final String PROPERTY_TAB_INACTIVE_BORDER = "tabInactiveBorder";
     public static final String PROPERTY_TAB_INACTIVE_FONT = "tabInactiveFont";
     public static final String PROPERTY_TAB_INACTIVE_FOREGROUND = "tabInactiveForeground";
     public static final String PROPERTY_TAB_INSET = "tabInset";
@@ -116,16 +116,6 @@ implements Pane, PaneContainer {
     private int activeTabIndex = -1;
     
     /**
-     * Returns the <code>Border</code> used to draw the active tab and 
-     * surround the content of the <code>TabPane</code>.
-     * 
-     * @return the border
-     */
-    public Border getActiveBorder() {
-        return (Border) getProperty(PROPERTY_ACTIVE_BORDER);
-    }
-    
-    /**
      * Returns the index of the active tab.
      * 
      * @return the active tab index
@@ -166,15 +156,6 @@ implements Pane, PaneContainer {
     }
     
     /**
-     * Returns the <code>Border</code> used to draw inactive tabs.
-     * 
-     * @return the border
-     */
-    public Border getInactiveBorder() {
-        return (Border) getProperty(PROPERTY_INACTIVE_BORDER);
-    }
-    
-    /**
      * Returns the <code>Insets</code> around the entire <code>TabPane</code>.
      * Insets will only be drawn on sides of the <code>TabPane</code> which have
      * a border (i.e., based on the value of the <code>borderType</code> 
@@ -203,6 +184,16 @@ implements Pane, PaneContainer {
      */
     public FillImage getTabActiveBackgroundImage() {
         return (FillImage) getProperty(PROPERTY_TAB_ACTIVE_BACKGROUND_IMAGE);
+    }
+    
+    /**
+     * Returns the <code>Border</code> used to draw the active tab and 
+     * surround the content of the <code>TabPane</code>.
+     * 
+     * @return the border
+     */
+    public Border getTabActiveBorder() {
+        return (Border) getProperty(PROPERTY_TAB_ACTIVE_BORDER);
     }
     
     /**
@@ -249,6 +240,15 @@ implements Pane, PaneContainer {
      */
     public FillImage getTabInactiveBackgroundImage() {
         return (FillImage) getProperty(PROPERTY_TAB_INACTIVE_BACKGROUND_IMAGE);
+    }
+
+    /**
+     * Returns the <code>Border</code> used to draw inactive tabs.
+     * 
+     * @return the border
+     */
+    public Border getTabInactiveBorder() {
+        return (Border) getProperty(PROPERTY_TAB_INACTIVE_BORDER);
     }
     
     /**
@@ -323,16 +323,6 @@ implements Pane, PaneContainer {
     }
     
     /**
-     * Sets the <code>Border</code> used to draw the active tab and 
-     * surround the content of the <code>TabPane</code>.
-     * 
-     * @param newValue the new border
-     */
-    public void setActiveBorder(Border newValue) {
-        setProperty(PROPERTY_ACTIVE_BORDER, newValue);
-    }
-    
-    /**
      * Sets the active tab index.
      * 
      * @param newValue the index of the child <code>Component</code> whose tab
@@ -371,16 +361,6 @@ implements Pane, PaneContainer {
     }
 
     /**
-     * Sets the <code>Border</code> used to draw inactive tabs in the 
-     * <code>TabPane</code>.
-     * 
-     * @param newValue the new border
-     */
-    public void setInactiveBorder(Border newValue) {
-        setProperty(PROPERTY_INACTIVE_BORDER, newValue);
-    }
-    
-    /**
      * Sets the <code>Insets</code> around the entire <code>TabPane</code>.
      * Insets will only be drawn on sides of the <code>TabPane</code> which have
      * a border (i.e., based on the value of the <code>borderType</code> 
@@ -409,6 +389,16 @@ implements Pane, PaneContainer {
      */
     public void setTabActiveBackgroundImage(FillImage newValue) {
         setProperty(PROPERTY_TAB_ACTIVE_BACKGROUND_IMAGE, newValue);
+    }
+    
+    /**
+     * Sets the <code>Border</code> used to draw the active tab and 
+     * surround the content of the <code>TabPane</code>.
+     * 
+     * @param newValue the new border
+     */
+    public void setTabActiveBorder(Border newValue) {
+        setProperty(PROPERTY_TAB_ACTIVE_BORDER, newValue);
     }
     
     /**
@@ -455,6 +445,16 @@ implements Pane, PaneContainer {
      */
     public void setTabInactiveBackgroundImage(FillImage newValue) {
         setProperty(PROPERTY_TAB_INACTIVE_BACKGROUND_IMAGE, newValue);
+    }
+    
+    /**
+     * Sets the <code>Border</code> used to draw inactive tabs in the 
+     * <code>TabPane</code>.
+     * 
+     * @param newValue the new border
+     */
+    public void setTabInactiveBorder(Border newValue) {
+        setProperty(PROPERTY_TAB_INACTIVE_BORDER, newValue);
     }
     
     /**

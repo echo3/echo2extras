@@ -533,25 +533,25 @@ implements ComponentSynchronizePeer, ImageRenderSupport, LazyRenderContainer, Pr
         }
         
         //BUGBUG. Just render the border CSS, have the client deal with it!
-        Border inactiveBorder = (Border) tabPane.getRenderProperty(TabPane.PROPERTY_INACTIVE_BORDER);
+        Border inactiveBorder = (Border) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_INACTIVE_BORDER);
         if (inactiveBorder != null) {
             if (inactiveBorder.getColor() != null) {
-                initElement.setAttribute("inactive-border-color", ColorRender.renderCssAttributeValue(inactiveBorder.getColor()));
+                initElement.setAttribute("tab-inactive-border-color", ColorRender.renderCssAttributeValue(inactiveBorder.getColor()));
             }
             if (inactiveBorder.getSize() != null && inactiveBorder.getSize().getUnits() == Extent.PX) {
-                initElement.setAttribute("inactive-border-size", Integer.toString(inactiveBorder.getSize().getValue()));
+                initElement.setAttribute("tab-inactive-border-size", Integer.toString(inactiveBorder.getSize().getValue()));
             }
-            initElement.setAttribute("inactive-border-style", BorderRender.getStyleValue(inactiveBorder.getStyle())); 
+            initElement.setAttribute("tab-inactive-border-style", BorderRender.getStyleValue(inactiveBorder.getStyle())); 
         }
-        Border activeBorder = (Border) tabPane.getRenderProperty(TabPane.PROPERTY_ACTIVE_BORDER);
+        Border activeBorder = (Border) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_ACTIVE_BORDER);
         if (activeBorder != null) {
             if (activeBorder.getColor() != null) {
-                initElement.setAttribute("active-border-color", ColorRender.renderCssAttributeValue(activeBorder.getColor()));
+                initElement.setAttribute("tab-active-border-color", ColorRender.renderCssAttributeValue(activeBorder.getColor()));
             }
             if (activeBorder.getSize() != null && activeBorder.getSize().getUnits() == Extent.PX) {
-                initElement.setAttribute("active-border-size", Integer.toString(activeBorder.getSize().getValue()));
+                initElement.setAttribute("tab-active-border-size", Integer.toString(activeBorder.getSize().getValue()));
             }
-            initElement.setAttribute("active-border-style", BorderRender.getStyleValue(activeBorder.getStyle())); 
+            initElement.setAttribute("tab-active-border-style", BorderRender.getStyleValue(activeBorder.getStyle())); 
         }
         
         String activeTabId = getRenderedActiveTabId(rc.getContainerInstance(), tabPane);

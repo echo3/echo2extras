@@ -296,11 +296,9 @@ public class TabPaneTest extends AbstractTest {
             }
         });
         
-        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "foreground");
-        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "background");
-        addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "font");
-        addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "inactiveBorder");
-        addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "activeBorder");
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_FOREGROUND);
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_BACKGROUND);
+        addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_FONT);
         
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Set Border Type = None", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -325,8 +323,10 @@ public class TabPaneTest extends AbstractTest {
         
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ACTIVE_BACKGROUND);
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ACTIVE_FOREGROUND);
+        addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ACTIVE_BORDER);
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_INACTIVE_BACKGROUND);
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_INACTIVE_FOREGROUND);
+        addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_INACTIVE_BORDER);
         
         addInsetsPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "insets");
         addInsetsPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "defaultContentInsets");
