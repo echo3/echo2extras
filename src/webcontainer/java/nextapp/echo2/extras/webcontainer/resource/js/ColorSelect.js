@@ -258,11 +258,7 @@ ExtrasColorSelect.prototype.create = function() {
     EchoDomPropertyStore.setPropertyValue(this.elementId, "component", this);
     
     EchoEventProcessor.addHandler(svListenerDivElement.id, "mousedown", "ExtrasColorSelect.processSVMouseDown");
-    EchoEventProcessor.addHandler(svListenerDivElement.id, "mousemove", "ExtrasColorSelect.processSVMouseMove");
-    EchoEventProcessor.addHandler(svListenerDivElement.id, "mouseup", "ExtrasColorSelect.processSVMouseUp");
     EchoEventProcessor.addHandler(hListenerDivElement.id, "mousedown", "ExtrasColorSelect.processHMouseDown");
-    EchoEventProcessor.addHandler(hListenerDivElement.id, "mousemove", "ExtrasColorSelect.processHMouseMove");
-    EchoEventProcessor.addHandler(hListenerDivElement.id, "mouseup", "ExtrasColorSelect.processHMouseUp");
 };
 
 ExtrasColorSelect.prototype.dispose = function() {
@@ -291,6 +287,9 @@ ExtrasColorSelect.prototype.processHMouseDown = function(echoEvent) {
     this.hActive = true;
     this.svActive = false;
     EchoDomUtil.preventEventDefault(echoEvent);
+
+    EchoEventProcessor.addHandler(this.elementId + "_hlistener", "mousemove", "ExtrasColorSelect.processHMouseMove");
+    EchoEventProcessor.addHandler(this.elementId + "_hlistener", "mouseup", "ExtrasColorSelect.processHMouseUp");
 };
 
 ExtrasColorSelect.prototype.processHMouseMove = function(e) {
@@ -305,6 +304,7 @@ ExtrasColorSelect.prototype.processHMouseUp = function(e) {
     }
     this.hActive = false;
     this.svActive = false;
+    this.removeListeners();
 };
 
 ExtrasColorSelect.prototype.processHUpdate = function(echoEvent) {
@@ -321,6 +321,9 @@ ExtrasColorSelect.prototype.processSVMouseDown = function(echoEvent) {
     this.hActive = false;
     this.svActive = true;
     EchoDomUtil.preventEventDefault(echoEvent);
+    
+    EchoEventProcessor.addHandler(this.elementId + "_svlistener", "mousemove", "ExtrasColorSelect.processSVMouseMove");
+    EchoEventProcessor.addHandler(this.elementId + "_svlistener", "mouseup", "ExtrasColorSelect.processSVMouseUp");
 };
 
 ExtrasColorSelect.prototype.processSVMouseMove = function(e) {
@@ -335,6 +338,7 @@ ExtrasColorSelect.prototype.processSVMouseUp = function(e) {
     }
     this.hActive = false;
     this.svActive = false;
+    this.removeListeners();
 };
 
 ExtrasColorSelect.prototype.processSVUpdate = function(echoEvent) {
@@ -343,6 +347,13 @@ ExtrasColorSelect.prototype.processSVUpdate = function(echoEvent) {
     this.v = (echoEvent.clientX - bounds.left - 7) / this.valueWidth;
     this.s = 1 - ((echoEvent.clientY - bounds.top - 7) / this.saturationHeight);
     this.updateColor();
+};
+
+ExtrasColorSelect.prototype.removeListeners = function() {
+    EchoEventProcessor.removeHandler(this.elementId + "_svlistener", "mousemove");
+    EchoEventProcessor.removeHandler(this.elementId + "_svlistener", "mouseup");
+    EchoEventProcessor.removeHandler(this.elementId + "_hlistener", "mousemove");
+    EchoEventProcessor.removeHandler(this.elementId + "_hlistener", "mouseup");
 };
 
 /**
