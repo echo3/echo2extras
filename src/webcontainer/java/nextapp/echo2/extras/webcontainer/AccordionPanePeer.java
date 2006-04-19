@@ -47,6 +47,7 @@ import nextapp.echo2.extras.app.AccordionPane;
 import nextapp.echo2.extras.app.layout.AccordionPaneLayoutData;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
 import nextapp.echo2.webcontainer.ContainerInstance;
+import nextapp.echo2.webcontainer.LazyRenderContainer;
 import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.PartialUpdateParticipant;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
@@ -66,7 +67,7 @@ import nextapp.echo2.webrender.servermessage.DomUpdate;
 import nextapp.echo2.webrender.service.JavaScriptService;
 
 public class AccordionPanePeer 
-implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor {
+implements ComponentSynchronizePeer, ImageRenderSupport, LazyRenderContainer, PropertyUpdateProcessor {
 
     private static final String PROPERTY_ACTIVE_TAB = "activeTab";
     private static final String IMAGE_ID_TAB_BACKGROUND = "tabBackground";
