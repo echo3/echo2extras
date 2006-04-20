@@ -142,8 +142,14 @@ ExtrasCalendarSelect.prototype.create = function() {
     var tableElement = document.createElement("table");
     tableElement.id = this.elementId + "_table";
     
-    var dayTableStyle = "border: " + this.border + "; margin: 1px; border-collapse: collapse;"
-    EchoDomUtil.setCssText(tableElement, dayTableStyle);
+    tableElement.style.borderCollapse = "collapse";
+    tableElement.style.margin = "1px";
+    tableElement.style.border = this.border;
+    tableElement.style.backgroundColor = this.background;
+    tableElement.style.color = this.foreground;
+    if (this.backgroundImage) {
+        tableElement.style.backgroundImage = this.backgroundImage;
+    }
     
     var tbodyElement = document.createElement("tbody");
     
@@ -519,10 +525,25 @@ ExtrasCalendarSelect.MessageProcessor.processInit = function(initMessageElement)
 	    calendar.border = initMessageElement.getAttribute("border");
     }
     if (initMessageElement.getAttribute("foreground")) {
-	    calendar.foreground = initMessageElement.getAttribute("foreground");
+        calendar.foreground = initMessageElement.getAttribute("foreground");
     }
     if (initMessageElement.getAttribute("background")) {
-	    calendar.background = initMessageElement.getAttribute("background");
+        calendar.background = initMessageElement.getAttribute("background");
+    }
+    if (initMessageElement.getAttribute("background-image")) {
+        calendar.backgroundImage = initMessageElement.getAttribute("background-image");
+    }
+    if (initMessageElement.getAttribute("selected-date-foreground")) {
+        calendar.selectedDateForeground = initMessageElement.getAttribute("selected-date-foreground");
+    }
+    if (initMessageElement.getAttribute("selected-date-background")) {
+        calendar.selectedDateBackground = initMessageElement.getAttribute("selected-date-background");
+    }
+    if (initMessageElement.getAttribute("selected-date-background-image")) {
+        calendar.selectedDateBackgroundImage = initMessageElement.getAttribute("selected-date-background-image");
+    }
+    if (initMessageElement.getAttribute("adjacent-month-date-foreground")) {
+        calendar.adjacentMonthDateForeground = initMessageElement.getAttribute("adjacent-month-date-foreground");
     }
 
     calendar.create();
@@ -542,4 +563,3 @@ ExtrasCalendarSelect.MessageProcessor.processSetDate = function(setDateMessageEl
     var calendar = ExtrasCalendarSelect.getComponent(elementId);
     calendar.setDate(year, month, date, false);
 };
-
