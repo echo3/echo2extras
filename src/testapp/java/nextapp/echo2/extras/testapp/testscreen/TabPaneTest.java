@@ -327,6 +327,11 @@ public class TabPaneTest extends AbstractTest {
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_INACTIVE_BACKGROUND);
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_INACTIVE_FOREGROUND);
         addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_INACTIVE_BORDER);
+
+        addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_ACTIVE_BACKGROUND_IMAGE, 
+                StyleUtil.TEST_FILL_IMAGES);
+        addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, TabPane.PROPERTY_TAB_INACTIVE_BACKGROUND_IMAGE, 
+                StyleUtil.TEST_FILL_IMAGES);
         
         addInsetsPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "insets");
         addInsetsPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "defaultContentInsets");

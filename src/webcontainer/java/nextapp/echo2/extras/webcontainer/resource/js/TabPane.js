@@ -163,6 +163,10 @@ ExtrasTabPane.prototype.addTab = function(tab, tabIndex) {
     headerDivElement.style.paddingLeft = this.headerPaddingLeft + "px";
     headerDivElement.style.paddingRight = this.headerPaddingRight + "px";
     headerDivElement.style.cursor = "pointer";
+    if (this.tabInactiveBackgroundImage) {
+        EchoCssUtil.applyStyle(headerDivElement, this.tabInactiveBackgroundImage);
+    }
+    
     tab.headerTdElement.appendChild(headerDivElement);
     
     headerDivElement.appendChild(document.createTextNode(tab.title === null ? "*" : tab.title));
@@ -418,6 +422,21 @@ ExtrasTabPane.prototype.updateTabState = function(tabId, selected) {
     headerDivElement.style.borderLeft = border;
     headerDivElement.style.borderRight = border;
     headerDivElement.style.height = this.calculateHeaderHeight(selected) + "px";
+    
+    if (this.tabInactiveBackgroundImage || this.tabActiveBackgroundImage) {
+        headerDivElement.style.backgroundImage = "";
+        headerDivElement.style.backgroundPosition = "";
+        headerDivElement.style.backgroundRepeat = "";
+        if (selected) {
+            if (this.tabActiveBackgroundImage) {
+                EchoCssUtil.applyStyle(headerDivElement, this.tabActiveBackgroundImage);
+            }
+        } else {
+            if (this.tabInactiveBackgroundImage) {
+                EchoCssUtil.applyStyle(headerDivElement, this.tabInactiveBackgroundImage);
+            }
+        }
+    }
 
     switch (this.tabPosition) {
     case ExtrasTabPane.TAB_POSITION_BOTTOM:

@@ -237,8 +237,16 @@ implements ComponentSynchronizePeer, ImageRenderSupport, LazyRenderContainer, Pr
     /**
      * @see nextapp.echo2.webcontainer.image.ImageRenderSupport#getImage(nextapp.echo2.app.Component, java.lang.String)
      */
-    public ImageReference getImage(Component component, String id) {
-        return null;
+    public ImageReference getImage(Component component, String imageId) {
+        if (IMAGE_ID_TAB_ACTIVE_BACKGROUND.equals(imageId)) {
+            FillImage backgroundImage = (FillImage) component.getRenderProperty(TabPane.PROPERTY_TAB_ACTIVE_BACKGROUND_IMAGE);
+            return backgroundImage == null ? null : backgroundImage.getImage();
+        } else if (IMAGE_ID_TAB_INACTIVE_BACKGROUND.equals(imageId)) {
+            FillImage backgroundImage = (FillImage) component.getRenderProperty(TabPane.PROPERTY_TAB_INACTIVE_BACKGROUND_IMAGE);
+            return backgroundImage == null ? null : backgroundImage.getImage();
+        } else {
+            return null;
+        }
     }
 
     /**

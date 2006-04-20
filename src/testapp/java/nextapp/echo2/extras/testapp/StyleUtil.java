@@ -33,6 +33,7 @@ import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Extent;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Font;
 
 /**
@@ -77,6 +78,11 @@ public class StyleUtil {
     private static int[] BORDER_SIZES = new int[]{0, 1, 2, 3, 4, 5, 10, 15, 20, 40, 80};
     
     private static int[] FONT_SIZES = new int[]{6, 8, 10, 12, 16, 24, 48, 72};
+    
+    public static final FillImage[] TEST_FILL_IMAGES = new FillImage[] { null, 
+            Styles.FILL_IMAGE_SHADOW_BACKGROUND_DARK_BLUE, Styles.FILL_IMAGE_SHADOW_BACKGROUND_LIGHT_BLUE,
+            Styles.FILL_IMAGE_PEWTER_LINE, Styles.FILL_IMAGE_LIGHT_BLUE_LINE,
+            Styles.FILL_IMAGE_SILVER_LINE};
     
     private static final int[] BORDER_STYLES 
             = new int[]{Border.STYLE_NONE, Border.STYLE_INSET, Border.STYLE_OUTSET, Border.STYLE_SOLID,
