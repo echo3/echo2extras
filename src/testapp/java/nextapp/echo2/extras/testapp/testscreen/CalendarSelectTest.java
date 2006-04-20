@@ -41,6 +41,7 @@ import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.CalendarSelect;
 import nextapp.echo2.extras.testapp.AbstractTest;
 import nextapp.echo2.extras.testapp.InteractiveApp;
+import nextapp.echo2.extras.testapp.StyleUtil;
 import nextapp.echo2.extras.testapp.Styles;
 import nextapp.echo2.extras.testapp.TestControlPane;
 
@@ -57,10 +58,12 @@ public class CalendarSelectTest extends AbstractTest {
         setTestComponent(this, calendarSelect);
         add(calendarSelect);
         
-        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "foreground");
-        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "background");
-        addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "font");
-        addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "border");
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, CalendarSelect.PROPERTY_FOREGROUND);
+        addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, CalendarSelect.PROPERTY_BACKGROUND);
+        addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, CalendarSelect.PROPERTY_BACKGROUND_IMAGE, 
+                StyleUtil.TEST_FILL_IMAGES);
+        addFontPropertyTests(TestControlPane.CATEGORY_PROPERTIES, CalendarSelect.PROPERTY_FOREGROUND);
+        addBorderPropertyTests(TestControlPane.CATEGORY_PROPERTIES, CalendarSelect.PROPERTY_BORDER);
 
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Query Date", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -82,7 +85,9 @@ public class CalendarSelectTest extends AbstractTest {
                 windowPane.setPositionY(new Extent((int) (Math.random() * 300) + 140));
                 windowPane.setStyleName("Default");
                 windowPane.setInsets(new Insets(10, 5));
-                windowPane.add(new CalendarSelect());
+                CalendarSelect calendarSelect = new CalendarSelect();
+                calendarSelect.setBackgroundImage(Styles.FILL_IMAGE_LIGHT_BLUE_LINE);
+                windowPane.add(calendarSelect);
                 InteractiveApp.getApp().getDefaultWindow().getContent().add(windowPane);
             }
         });

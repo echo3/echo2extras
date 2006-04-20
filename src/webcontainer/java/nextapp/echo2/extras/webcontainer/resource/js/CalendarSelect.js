@@ -148,7 +148,7 @@ ExtrasCalendarSelect.prototype.create = function() {
     tableElement.style.backgroundColor = this.background;
     tableElement.style.color = this.foreground;
     if (this.backgroundImage) {
-        tableElement.style.backgroundImage = this.backgroundImage;
+        EchoCssUtil.applyStyle(tableElement, this.backgroundImage);
     }
     
     var tbodyElement = document.createElement("tbody");
