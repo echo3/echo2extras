@@ -37,7 +37,9 @@ import org.w3c.dom.Element;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
+import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Font;
+import nextapp.echo2.app.ImageReference;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.app.util.DomUtil;
 import nextapp.echo2.extras.app.CalendarSelect;
@@ -47,13 +49,16 @@ import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.PartialUpdateParticipant;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
+import nextapp.echo2.webcontainer.image.ImageRenderSupport;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
+import nextapp.echo2.webcontainer.propertyrender.FillImageRender;
 import nextapp.echo2.webcontainer.propertyrender.FontRender;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
+import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
 import nextapp.echo2.webrender.service.JavaScriptService;
 
@@ -62,7 +67,10 @@ import nextapp.echo2.webrender.service.JavaScriptService;
  * <code>CalendarSelect</code> component.
  */
 public class CalendarSelectPeer
-implements ComponentSynchronizePeer, PropertyUpdateProcessor {
+implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor {
+    
+    private static final String IMAGE_ID_BACKGROUND = "background";
+    private static final String IMAGE_ID_SELECTED_DATE_BACKGROUND = "selectedDateBackground";
     
     /**
      * Service to provide supporting JavaScript library.
@@ -114,6 +122,22 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
      */
     public String getContainerId(Component component) {
         throw new UnsupportedOperationException("Component does not support children.");
+    }
+
+    /**
+     * @see nextapp.echo2.webcontainer.image.ImageRenderSupport#getImage(nextapp.echo2.app.Component, java.lang.String)
+     */
+    public ImageReference getImage(Component component, String imageId) {
+        if (IMAGE_ID_BACKGROUND.equals(imageId)) {
+            FillImage backgroundImage = (FillImage) component.getRenderProperty(CalendarSelect.PROPERTY_BACKGROUND_IMAGE);
+            return backgroundImage == null ? null : backgroundImage.getImage();
+        } else if (IMAGE_ID_SELECTED_DATE_BACKGROUND.equals(imageId)) {
+            FillImage backgroundImage = (FillImage) component.getRenderProperty(
+                    CalendarSelect.PROPERTY_SELECTED_DATE_BACKGROUND_IMAGE);
+            return backgroundImage == null ? null : backgroundImage.getImage();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -196,6 +220,38 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
             initElement.setAttribute("font-weight", FontRender.renderFontWeightCssAttributeValue(font));
             initElement.setAttribute("text-decoration", FontRender.renderTextDecorationCssAttributeValue(font));
         }
+        FillImage backgroundImage = (FillImage) calendarSelect.getRenderProperty(CalendarSelect.PROPERTY_BACKGROUND_IMAGE);
+        if (backgroundImage != null) {
+            CssStyle backgroundImageStyle = new CssStyle();
+            FillImageRender.renderToStyle(backgroundImageStyle, rc, this, calendarSelect, IMAGE_ID_BACKGROUND, 
+                    backgroundImage, 0);
+            initElement.setAttribute("background-image", backgroundImageStyle.renderInline());
+        }
+        
+        Color selectedDateBackground = (Color) calendarSelect.getRenderProperty(CalendarSelect.PROPERTY_SELECTED_DATE_BACKGROUND);
+        if (selectedDateBackground != null) {
+            initElement.setAttribute("selected-date-background", ColorRender.renderCssAttributeValue(selectedDateBackground));
+        }
+        Color selectedDateForeground = (Color) calendarSelect.getRenderProperty(CalendarSelect.PROPERTY_SELECTED_DATE_FOREGROUND);
+        if (selectedDateForeground != null) {
+            initElement.setAttribute("selected-date-foreground", ColorRender.renderCssAttributeValue(selectedDateForeground));
+        }
+        FillImage selectedDateBackgroundImage = (FillImage) calendarSelect.getRenderProperty(
+                CalendarSelect.PROPERTY_SELECTED_DATE_BACKGROUND_IMAGE);
+        if (selectedDateBackgroundImage != null) {
+            CssStyle backgroundImageStyle = new CssStyle();
+            FillImageRender.renderToStyle(backgroundImageStyle, rc, this, calendarSelect, IMAGE_ID_SELECTED_DATE_BACKGROUND, 
+                    selectedDateBackgroundImage, 0);
+            initElement.setAttribute("selected-date-background-image", backgroundImageStyle.renderInline());
+        }
+
+        Color adjacentMonthDateForeground = (Color) calendarSelect.getRenderProperty(
+                CalendarSelect.PROPERTY_ADJACENT_MONTH_DATE_FOREGROUND);
+        if (adjacentMonthDateForeground != null) {
+            initElement.setAttribute("adjacent-month-date-foreground", 
+                    ColorRender.renderCssAttributeValue(adjacentMonthDateForeground));
+        }
+        
         Border border = (Border) calendarSelect.getRenderProperty(CalendarSelect.PROPERTY_BORDER);
         if (border != null) {
             initElement.setAttribute("border", BorderRender.renderCssAttributeValue(border));

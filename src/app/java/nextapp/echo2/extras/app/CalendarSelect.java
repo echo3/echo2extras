@@ -32,7 +32,9 @@ package nextapp.echo2.extras.app;
 import java.util.Date;
 
 import nextapp.echo2.app.Border;
+import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
+import nextapp.echo2.app.FillImage;
 
 /**
  * A user-input component which allows for the selection of a single date.
@@ -41,6 +43,12 @@ public class CalendarSelect extends Component {
 
     public static final String DATE_CHANGED_PROPERTY = "date";
     public static final String PROPERTY_BORDER = "border";
+    public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
+
+    public static final String PROPERTY_ADJACENT_MONTH_DATE_FOREGROUND = "adjacentMonthDateForeground";
+    public static final String PROPERTY_SELECTED_DATE_BACKGROUND = "selectedDateBackground";
+    public static final String PROPERTY_SELECTED_DATE_BACKGROUND_IMAGE = "selectedDateBackgroundImage";
+    public static final String PROPERTY_SELECTED_DATE_FOREGROUND = "selectedDateForeground";
     
     private Date date;
     
@@ -62,6 +70,24 @@ public class CalendarSelect extends Component {
     }
     
     /**
+     * Returns the foreground color of dates in adjacent (previous/next) months.
+     * 
+     * @return the foreground 
+     */
+    public Color getAdjacentMonthDateForeground() {
+        return (Color) getProperty(PROPERTY_ADJACENT_MONTH_DATE_FOREGROUND);
+    }
+    
+    /**
+     * Returns the background image of the displayed calendar month.
+     * 
+     * @return the background image
+     */
+    public FillImage getBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_BACKGROUND_IMAGE);
+    }
+    
+    /**
      * Returns the border surrounding the displayed calendar month.
      * 
      * @return the border
@@ -77,6 +103,51 @@ public class CalendarSelect extends Component {
      */
     public Date getDate() {
         return date;
+    }
+    
+    /**
+     * Returns the background color of the selected date
+     * 
+     * @return the background 
+     */
+    public Color getSelectedDateBackground() {
+        return (Color) getProperty(PROPERTY_SELECTED_DATE_BACKGROUND);
+    }
+    
+    /**
+     * Returns the background image of the selected date
+     * 
+     * @return the background image
+     */
+    public FillImage getSelectedDateBackgroundImage() {
+        return (FillImage) getProperty(PROPERTY_SELECTED_DATE_BACKGROUND_IMAGE);
+    }
+    
+    /**
+     * Returns the foreground color of the selected date
+     * 
+     * @return the foreground 
+     */
+    public Color getSelectedDateForeground() {
+        return (Color) getProperty(PROPERTY_SELECTED_DATE_FOREGROUND);
+    }
+    
+    /**
+     * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
+     */
+    public void processInput(String inputName, Object inputValue) {
+        if (DATE_CHANGED_PROPERTY.equals(inputName)) {
+            setDate((Date) inputValue);
+        }
+    }
+
+    /**
+     * Sets the background image of the displayed calendar month.
+     * 
+     * @param newValue the new background image
+     */
+    public void setBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_BACKGROUND_IMAGE, newValue);
     }
     
     /**
@@ -100,11 +171,39 @@ public class CalendarSelect extends Component {
     }
 
     /**
-     * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
+     * Sets the foreground color of dates in adjacent (previous/next) months.
+     * 
+     * @param newValue the new foreground
      */
-    public void processInput(String inputName, Object inputValue) {
-        if (DATE_CHANGED_PROPERTY.equals(inputName)) {
-            setDate((Date) inputValue);
-        }
+    public void setAdjacentMonthDateForeground(Color newValue) {
+        setProperty(PROPERTY_SELECTED_DATE_FOREGROUND, newValue);
     }
+
+    /**
+     * Sets the background color of the selected date
+     * 
+     * @param newValue the new background
+     */
+    public void setSelectedDateBackground(Color newValue) {
+        setProperty(PROPERTY_SELECTED_DATE_BACKGROUND, newValue);
+    }
+
+    /**
+     * Sets the background image of the selected date
+     * 
+     * @param newValue the new background image
+     */
+    public void setSelectedDateBackgroundImage(FillImage newValue) {
+        setProperty(PROPERTY_SELECTED_DATE_BACKGROUND_IMAGE, newValue);
+    }
+    
+    /**
+     * Sets the foreground color of the selected date
+     * 
+     * @param newValue the new foreground
+     */
+    public void setSelectedDateForeground(Color newValue) {
+        setProperty(PROPERTY_SELECTED_DATE_FOREGROUND, newValue);
+    }
+
 }
