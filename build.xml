@@ -143,7 +143,7 @@
     </target>
 	
 	<target name="doc.app"
-            description="Create public/protected JavaDoc Document for Echo Application Framework">
+            description="Create public/protected JavaDoc Document for Echo2Extras Library">
         <mkdir dir="${dir.javadoc.app.public}"/>
         <javadoc sourcepath="${dir.src.app}" packagenames="nextapp.echo2.extras.app*" 
                 stylesheetfile="${javadoc.cssfile}"
@@ -151,11 +151,15 @@
                 WindowTitle="${javadoc.windowtitle}"
                 DocTitle="${javadoc.doctitle.app}"
                 Overview="${dir.src.app}/overview.html"
-                Header="${javadoc.header}"/>
+                Header="${javadoc.header}">
+            <classpath>
+                <pathelement path="${echo2.app.lib.jar}"/>
+            </classpath>
+        </javadoc>
     </target>
     
     <target name="doc.app.private"
-            description="Create private JavaDoc Document for Echo Application Framework">
+            description="Create private JavaDoc Document for Echo2Extras Library">
         <mkdir dir="${dir.javadoc.app.private}"/>
         <javadoc sourcepath="${dir.src.app}" packagenames="nextapp.echo2.extras.app*" 
                 stylesheetfile="${javadoc.cssfile}"
@@ -164,14 +168,17 @@
                 DocTitle="${javadoc.doctitle.app}"
                 Overview="${dir.src.app}/overview.html"
                 Header="${javadoc.header}"
-                Private="true"/>
+                Private="true">
+            <classpath>
+                <pathelement path="${echo2.app.lib.jar}"/>
+            </classpath>
+        </javadoc>
     </target>
-    
    
     <target name="doc.webcontainer"
             description="Create public/protected JavaDoc Document for Echo File Transfer Web Container">
         <mkdir dir="${dir.javadoc.webcontainer.public}"/>
-        <javadoc sourcepath="${dir.src.app};${dir.src.webcontainer}" packagenames="nextapp.echo2.filetransfer.webcontainer.*" 
+        <javadoc sourcepath="${dir.src.app};${dir.src.webcontainer}" packagenames="nextapp.echo2.extras.webcontainer.*" 
                 stylesheetfile="${javadoc.cssfile}"
                 destdir="${dir.javadoc.webcontainer.public}" 
                 WindowTitle="${javadoc.windowtitle}"
@@ -179,6 +186,9 @@
                 Overview="${dir.src.webcontainer}/overview.html"
                 Header="${javadoc.header}">
             <classpath>
+                <pathelement path="${echo2.app.lib.jar}"/>
+                <pathelement path="${echo2.webcontainer.lib.jar}"/>
+                <pathelement path="${echo2.webrender.lib.jar}"/>
                 <pathelement path="${servlet.lib.jar}"/>
             </classpath>
         </javadoc>
@@ -187,7 +197,7 @@
     <target name="doc.webcontainer.private"
             description="Create private JavaDoc Document for Echo Web Application Container">
         <mkdir dir="${dir.javadoc.webcontainer.private}"/>
-        <javadoc sourcepath="${dir.src.app};${dir.src.webcontainer}" packagenames="nextapp.echo2.webcontainer.*" 
+        <javadoc sourcepath="${dir.src.app};${dir.src.webcontainer}" packagenames="nextapp.echo2.extras.webcontainer.*" 
                 stylesheetfile="${javadoc.cssfile}"
                 destdir="${dir.javadoc.webcontainer.private}" 
                 WindowTitle="${javadoc.windowtitle}"
@@ -196,6 +206,9 @@
                 Header="${javadoc.header}"
                 Private="true">
             <classpath>
+                <pathelement path="${echo2.app.lib.jar}"/>
+                <pathelement path="${echo2.webcontainer.lib.jar}"/>
+                <pathelement path="${echo2.webrender.lib.jar}"/>
                 <pathelement path="${servlet.lib.jar}"/>
             </classpath>
         </javadoc>
