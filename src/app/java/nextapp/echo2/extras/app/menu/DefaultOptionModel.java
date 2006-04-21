@@ -44,9 +44,9 @@ implements OptionModel {
     /**
      * Creates a  new <code>DefaultOptionModel</code>.
      * 
+     * @param id the item id
      * @param text the item text
      * @param icon the item icon
-     * @param actionCommand the action command 
      */
     public DefaultOptionModel(String id, String text, ImageReference icon) {
         this.id = id;
