@@ -234,18 +234,16 @@
         <copy todir="${dir.build.release.root}" file="${dir.resource}/readme.txt"/>
         
         <!-- Source Code -->
-   		<copy todir="${dir.build.release.root}/SourceCode/src">
-            <fileset dir="${dir.src.app}">
-                <exclude name=".svn/**"/>
-            </fileset>
-        </copy>
-
         <copy todir="${dir.build.release.root}/SourceCode/src">
-            <fileset dir="${dir.src.webcontainer}">
+            <fileset dir="${dir.src}">
                 <exclude name=".svn/**"/>
             </fileset>
         </copy>
-
+        <copy todir="${dir.build.release.root}/SourceCode/resource">
+            <fileset dir="${dir.resource}">
+                <exclude name=".svn/**"/>
+            </fileset>
+        </copy>
         <copy todir="${dir.build.release.root}/SourceCode">
             <fileset file="build.xml"/>
             <fileset file="ant.properties"/>
