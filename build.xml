@@ -145,7 +145,7 @@
 	<target name="doc.app"
             description="Create public/protected JavaDoc Document for Echo2Extras Library">
         <mkdir dir="${dir.javadoc.app.public}"/>
-        <javadoc sourcepath="${dir.src.app}" packagenames="nextapp.echo2.extras.app*" 
+        <javadoc sourcepath="${dir.src.app}" packagenames="nextapp.echo2.extras.app.*" 
                 stylesheetfile="${javadoc.cssfile}"
                 destdir="${dir.javadoc.app.public}" 
                 WindowTitle="${javadoc.windowtitle}"
@@ -161,7 +161,7 @@
     <target name="doc.app.private"
             description="Create private JavaDoc Document for Echo2Extras Library">
         <mkdir dir="${dir.javadoc.app.private}"/>
-        <javadoc sourcepath="${dir.src.app}" packagenames="nextapp.echo2.extras.app*" 
+        <javadoc sourcepath="${dir.src.app}" packagenames="nextapp.echo2.extras.app.*" 
                 stylesheetfile="${javadoc.cssfile}"
                 destdir="${dir.javadoc.app.private}" 
                 WindowTitle="${javadoc.windowtitle}"
@@ -223,7 +223,7 @@
     <target name="doc" 
             depends="doc.app, doc.app.private, doc.webcontainer, doc.webcontainer.private"/>
 	
-    <target name="release" depends="clean, dist, doc.public">
+    <target name="release" depends="clean, dist, dist.testapp, doc.public">
         <mkdir dir="${dir.build.release.root}"/>
         <mkdir dir="${dir.build.release.root}/SourceCode"/>
    		<mkdir dir="${dir.build.release.root}/SourceCode/src"/>
@@ -256,6 +256,11 @@
             <fileset dir="${dir.dist.lib}"/>
         </copy>
         
+        <!-- Binary Web Applications: Test Application -->
+        <copy todir="${dir.build.release.root}/BinaryApplications">
+            <fileset dir="${dir.dist.testapp}"/>
+        </copy>
+
         <!-- Documentation -->
         <copy todir="${dir.build.release.root}/Documentation/api/public">
             <fileset dir="${dir.javadoc.public}"/>

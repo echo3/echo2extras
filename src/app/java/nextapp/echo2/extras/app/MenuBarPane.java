@@ -91,7 +91,6 @@ implements Pane {
      * <code>DefaultMenuStateModel</code> to provide state information.
      * 
      * @param model the model
-     * @param stateModel the selection model
      */
     public MenuBarPane(MenuModel model) {
         this(model, null);

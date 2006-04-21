@@ -151,7 +151,7 @@ public class ColorSelect extends Component {
      * Sets whether the hex-triplet value, e.g., '#123abc' is displayed at
      * the bottom of the ColorSelect.  Default value is true.  
      * 
-     * @param true if the hex-triplet value should be displayed
+     * @param newValue true if the hex-triplet value should be displayed
      */
     public void setDisplayValue(boolean newValue) {
         setProperty(PROPERTY_DISPLAY_VALUE, new Boolean(newValue));
