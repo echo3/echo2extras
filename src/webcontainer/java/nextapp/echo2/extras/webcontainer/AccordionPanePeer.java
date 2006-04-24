@@ -253,6 +253,9 @@ implements ComponentSynchronizePeer, ImageRenderSupport, LazyRenderContainer, Pr
      *      nextapp.echo2.app.Component, nextapp.echo2.app.Component)
      */
     public boolean isRendered(ContainerInstance ci, Component parent, Component child) {
+        if (!isLazyRenderEnabled((AccordionPane) parent)) {
+            return true;
+        }
         AccordionPaneRenderState renderState = (AccordionPaneRenderState) ci.getRenderState(parent);
         if (renderState == null ) {
             // Entire component has not been rendered, thus child has not been rendered.
