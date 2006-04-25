@@ -138,7 +138,7 @@ ExtrasMenu.prototype.openMenu = function(menuModel) {
             return;
         }
         if (openMenu.id != menuModel.parent.id) {
-            this.closeDescendantMenus(menuModel);
+            this.closeDescendantMenus(menuModel.parent);
         }
     }
     
