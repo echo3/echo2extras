@@ -29,9 +29,15 @@
 
 package nextapp.echo2.extras.webcontainer;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.w3c.dom.Element;
 
 import nextapp.echo2.app.Component;
+import nextapp.echo2.app.ResourceImageReference;
+import nextapp.echo2.app.StreamImageReference;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.extras.app.TransitionPane;
 import nextapp.echo2.webcontainer.ComponentSynchronizePeer;
@@ -40,6 +46,8 @@ import nextapp.echo2.webcontainer.PartialUpdateManager;
 import nextapp.echo2.webcontainer.PartialUpdateParticipant;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.SynchronizePeerFactory;
+import nextapp.echo2.webrender.Connection;
+import nextapp.echo2.webrender.ContentType;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.Service;
 import nextapp.echo2.webrender.WebRenderServlet;
@@ -81,8 +89,45 @@ implements ComponentSynchronizePeer {
     public static final Service TRANSITION_PANE_SERVICE = JavaScriptService.forResource("Echo2Extras.TransitionPane",
             "/nextapp/echo2/extras/webcontainer/resource/js/TransitionPane.js");
     
+    private static final Map IMAGE_ID_TO_RESOURCE = new HashMap();
+    static {
+        for (int i = 1; i <= 16; ++i) {
+            IMAGE_ID_TO_RESOURCE.put("blindblack-" + i, new ResourceImageReference(
+                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/blindblack/Frame" + i + ".gif"));
+        }
+    }
+    
+    public static final Service IMAGE_SERVICE = new Service() {
+    
+        /**
+         * @see nextapp.echo2.webrender.Service#getId()
+         */
+        public String getId() {
+            return "Echo2Extras.TransitionPane.Image";
+        }           
+    
+        /**
+         * @see nextapp.echo2.webrender.Service#getVersion()
+         */
+        public int getVersion() {
+            return 0;
+        }
+    
+        /**
+         * @see nextapp.echo2.webrender.Service#service(nextapp.echo2.webrender.Connection)
+         */
+        public void service(Connection conn) 
+        throws IOException {
+            String imageId = conn.getRequest().getParameter("imageId");
+            StreamImageReference imageReference = (StreamImageReference) IMAGE_ID_TO_RESOURCE.get(imageId);
+            conn.setContentType(new ContentType(imageReference.getContentType(), true));
+            imageReference.render(conn.getOutputStream());
+        }
+    };
+    
     static {
         WebRenderServlet.getServiceRegistry().add(TRANSITION_PANE_SERVICE);
+        WebRenderServlet.getServiceRegistry().add(IMAGE_SERVICE);
     }
     
     /**
@@ -165,6 +210,10 @@ implements ComponentSynchronizePeer {
                 return "camera-pan-left";
             case TransitionPane.TYPE_CAMERA_PAN_RIGHT:
                 return "camera-pan-right";
+            case TransitionPane.TYPE_BLIND_BLACK_IN:
+                return "blind-black-in";
+            case TransitionPane.TYPE_BLIND_BLACK_OUT:
+                return "blind-black-out";
             }
         }
         return null;

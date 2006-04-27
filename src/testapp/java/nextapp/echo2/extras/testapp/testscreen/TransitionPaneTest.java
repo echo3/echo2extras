@@ -81,6 +81,20 @@ public class TransitionPaneTest extends AbstractTest {
             }
         });
 
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Set Content ColorSelectTest", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                transitionPane.removeAll();
+                transitionPane.add(new ColorSelectTest());
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Set Content TabPaneTest", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                transitionPane.removeAll();
+                transitionPane.add(new TabPaneTest());
+            }
+        });
+
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Remove Content", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 transitionPane.removeAll();
@@ -98,14 +112,24 @@ public class TransitionPaneTest extends AbstractTest {
                 transitionPane.setType(TransitionPane.TYPE_IMMEDIATE_REPLACE);
             }
         });
-        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Trans = Camera Pan Left", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Trans = CameraPan/Left", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 transitionPane.setType(TransitionPane.TYPE_CAMERA_PAN_LEFT);
             }
         });
-        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Trans = Camera Pan Right", new ActionListener() {
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Trans = CameraPan/Right", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 transitionPane.setType(TransitionPane.TYPE_CAMERA_PAN_RIGHT);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Trans = Blind/Black/In", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                transitionPane.setType(TransitionPane.TYPE_BLIND_BLACK_IN);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Trans = Blind/Black/Out", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                transitionPane.setType(TransitionPane.TYPE_BLIND_BLACK_OUT);
             }
         });
     }

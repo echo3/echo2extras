@@ -67,6 +67,10 @@ implements Pane, PaneContainer {
      */
     public static final int TYPE_CAMERA_PAN_RIGHT = 2;
     
+    public static final int TYPE_BLIND_BLACK_IN = 3;
+    
+    public static final int TYPE_BLIND_BLACK_OUT = 4;
+    
     public static final String PROPERTY_TYPE = "type"; 
 
     /**

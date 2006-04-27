@@ -37,13 +37,19 @@
 ExtrasTransitionPane = function(elementId, containerElementId) {
     this.elementId = elementId;
     this.containerElementId = containerElementId;
-    this.transitionDuration = 350;
+    this.transitionDuration = -1;
     this.initialized = false;
     
     this.transition = null; 
 };
 
+/**
+ * Default transition duration: 350ms.
+ */
+ExtrasTransitionPane.DEFAULT_TRANSITION_DURATION = 350;
+
 ExtrasTransitionPane.prototype.addChild = function(childId) {
+    this.clearTransition();
     this.newChildDivElement = document.createElement("div");
     this.newChildDivElement.id = this.elementId + "_content_" + childId;
     this.newChildDivElement.style.position = "absolute";
@@ -80,6 +86,17 @@ ExtrasTransitionPane.prototype.create = function() {
     EchoDomPropertyStore.setPropertyValue(this.elementId, "component", this);
 };
 
+ExtrasTransitionPane.prototype.clearTransition = function() {
+    if (this.timeout) {
+        window.clearTimeout(this.timeout);
+        this.timeout = null;
+    }
+    if (this.transitionActive) {
+        this.transition.dispose();
+        this.transitionActive = false;
+    }
+};
+
 ExtrasTransitionPane.prototype.dispose = function() {
     EchoDomPropertyStore.dispose(this.transitionPaneDivElement);
     this.transitionPaneDivElement = null;
@@ -97,19 +114,25 @@ ExtrasTransitionPane.prototype.doImmediateTransition = function() {
         
         // Clear reference.
         this.newChildDivElement = null;
+
+        EchoVirtualPosition.redraw();
     }
 };
 
 ExtrasTransitionPane.prototype.doTransition = function() {
     this.transitionStartTime = new Date().getTime();
-    this.transitionEndTime = this.transitionStartTime + this.transitionDuration;
     this.transitionStep(true);
 };
 
 ExtrasTransitionPane.prototype.removeChild = function(childId) {
+    this.clearTransition();
     this.oldChildDivElement = document.getElementById(this.elementId + "_content_" + childId);
     this.stripIds(this.oldChildDivElement);
-//    this.transitionPaneDivElement.removeChild(childDivElement);
+};
+
+ExtrasTransitionPane.prototype.setTransition = function(transition) {
+    this.clearTransition();
+    this.transition = transition;
 };
 
 ExtrasTransitionPane.prototype.stripIds = function(element) {
@@ -126,22 +149,42 @@ ExtrasTransitionPane.prototype.stripIds = function(element) {
 };
 
 ExtrasTransitionPane.prototype.transitionStep = function(firstStep) {
+    // Method is invoked from timeout, which has now completed, thus it is removed.
+    this.timeout = null;
+    
     if (firstStep) {
         if (this.transition) {
+            this.transitionActive = true;
             this.transition.init();
-            window.setTimeout("ExtrasTransitionPane.processTimeout(\"" + this.elementId + "\", 1);");
+
+            // Configure duration setting.
+            if (this.transitionDuration < 0) {
+                if (this.transition.transitionDuration) {
+                    // Use transition duration specified by running transition.
+                    this.activeTransitionDuration = this.transition.transitionDuration;
+                } else {
+                    // Use global default duration.
+                    this.activeTransitionDuration = ExtrasTransitionPane.DEFAULT_TRANSITION_DURATION;
+                }
+            } else {
+                // A specific duration has been configured, override default.
+                this.activeTransitionDuration = this.transitionDuration;
+            }
+            
+            this.timeout = window.setTimeout("ExtrasTransitionPane.processTimeout(\"" + this.elementId + "\", 10);");
         } else {
             this.doImmediateTransition();
         }
     } else {
         var time = new Date().getTime();
-        var progress = (time - this.transitionStartTime) / this.transitionDuration;
+        var progress = (time - this.transitionStartTime) / this.activeTransitionDuration;
     
         if (progress < 1) {
             this.transition.step(progress);
-            window.setTimeout("ExtrasTransitionPane.processTimeout(\"" + this.elementId + "\", 1);");
+            this.timeout = window.setTimeout("ExtrasTransitionPane.processTimeout(\"" + this.elementId + "\", 10);");
         } else {
             this.transition.dispose();
+            this.transitionActive = false;
         }
     }
 };
@@ -161,16 +204,22 @@ ExtrasTransitionPane.processTimeout = function(transitionPaneId) {
  */
 ExtrasTransitionPane.MessageProcessor = function() { };
 
-ExtrasTransitionPane.MessageProcessor.assignTransition = function(transitionPane, typeString) {
-    switch (typeString) {
+ExtrasTransitionPane.MessageProcessor.installTransition = function(transitionPane, type) {
+    switch (type) {
     case "camera-pan-left":
-        transitionPane.transition = new ExtrasTransitionPane.CameraPanLeft(transitionPane);
+        transitionPane.setTransition(new ExtrasTransitionPane.CameraPan(transitionPane, false));
         break;
     case "camera-pan-right":
-        transitionPane.transition = new ExtrasTransitionPane.CameraPanRight(transitionPane);
+        transitionPane.setTransition(new ExtrasTransitionPane.CameraPan(transitionPane, true));
+        break;
+    case "blind-black-in":
+        transitionPane.setTransition(new ExtrasTransitionPane.Blind(transitionPane, false));
+        break;
+    case "blind-black-out":
+        transitionPane.setTransition(new ExtrasTransitionPane.Blind(transitionPane, true));
         break;
     default:
-        transitionPane.transition = null;
+        transitionPane.setTransition(null);
     }
 };
 
@@ -248,7 +297,7 @@ ExtrasTransitionPane.MessageProcessor.processInit = function(initMessageElement)
     var transitionPane = new ExtrasTransitionPane(elementId, containerElementId);
 
     var type = initMessageElement.getAttribute("type");
-    ExtrasTransitionPane.MessageProcessor.assignTransition(transitionPane, type);
+    ExtrasTransitionPane.MessageProcessor.installTransition(transitionPane, type);
 
     transitionPane.create();
 };
@@ -282,7 +331,7 @@ ExtrasTransitionPane.MessageProcessor.processSetType = function(setTypeMessageEl
     }
     
     var type = setTypeMessageElement.getAttribute("type");
-    ExtrasTransitionPane.MessageProcessor.assignTransition(transitionPane, type);
+    ExtrasTransitionPane.MessageProcessor.installTransition(transitionPane, type);
 };
 
 /**
@@ -300,13 +349,99 @@ ExtrasTransitionPane.MessageProcessor.processTransition = function(transitionMes
 };
 
 /**
- * Camera-Pan-Left transition. 
+ * Blind transition. 
  */
-ExtrasTransitionPane.CameraPanLeft = function(transitionPane) {
+ExtrasTransitionPane.Blind = function(transitionPane, animateOut) {
+    this.transitionDuration = 700;
     this.transitionPane = transitionPane;
+    this.animateOut = animateOut;
+    this.renderedAnimationStep = 0;
+    this.totalAnimationSteps = 14;
+    this.contentSwapAnimationStep = Math.floor(this.totalAnimationSteps) / 2 + 1;
+    this.imagePrefix = "blindblack-";
+    
+    // Precache images.
+    for (var i = 1; i <= this.totalAnimationSteps; ++i) {
+        var image = new Image();
+        image.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
+                + this.imagePrefix + i;
+    }
 };
 
-ExtrasTransitionPane.CameraPanLeft.prototype.dispose = function() {
+ExtrasTransitionPane.Blind.prototype.dispose = function() {
+    this.transitionPane.transitionPaneDivElement.removeChild(this.blindElement);
+    this.blindElement = null;
+    this.transitionPane.doImmediateTransition();
+};
+
+ExtrasTransitionPane.Blind.prototype.init = function() {
+    this.blindElement = document.createElement("div");
+    this.blindElement.style.position = "absolute";
+    this.blindElement.style.zIndex = 2;
+    this.blindElement.style.left = "0px";
+    this.blindElement.style.top = "0px";
+    this.blindElement.style.width = "100%";
+    this.blindElement.style.height = "100%";
+    if (this.transitionPane.oldChildDivElement) {
+        this.transitionPane.oldChildDivElement.style.zIndex = 1;
+    }
+    if (this.transitionPane.newChildDivElement) {
+        this.transitionPane.newChildDivElement.style.zIndex = 1;
+    }
+    this.transitionPane.transitionPaneDivElement.appendChild(this.blindElement);
+};
+
+ExtrasTransitionPane.Blind.prototype.step = function(progress) {
+    var currentAnimationStep = Math.ceil(progress * this.totalAnimationSteps);
+    if (currentAnimationStep == 0) {
+        currentAnimationStep = 1;
+    }
+    if (currentAnimationStep == this.renderedAnimationStep) {
+        // No need for update, already current.
+        return;
+    }
+    
+    var imgUrl = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
+            + this.imagePrefix + currentAnimationStep;
+    
+    if (EchoClientProperties.get("proprietaryIEPngAlphaFilterRequired")) {
+    }
+
+    this.blindElement.style.backgroundImage = "url(" + imgUrl + ")";
+    
+    if (currentAnimationStep < this.contentSwapAnimationStep) {
+        if (this.transitionPane.oldChildDivElement) {
+            this.transitionPane.oldChildDivElement.style.top = (0 - currentAnimationStep) + "px";
+        }
+    } else {
+        if (this.renderedAnimationStep < this.contentSwapAnimationStep) {
+            // blind is crossing horizontal, swap content.
+            if (this.transitionPane.oldChildDivElement) {
+                this.transitionPane.oldChildDivElement.style.display = "none";
+            }
+            if (this.transitionPane.newChildDivElement) {
+                this.transitionPane.newChildDivElement.style.display = "block";
+                EchoVirtualPosition.redraw();
+            }
+        }
+        if (this.transitionPane.newChildDivElement) {
+            this.transitionPane.newChildDivElement.style.top 
+                    = (this.totalAnimationSteps - currentAnimationStep) + "px";
+        }
+    }
+    
+    this.renderedAnimationStep = currentAnimationStep;
+};
+
+/**
+ * Camera-Pantransition. 
+ */
+ExtrasTransitionPane.CameraPan = function(transitionPane, right) {
+    this.transitionPane = transitionPane;
+    this.right = right;
+};
+
+ExtrasTransitionPane.CameraPan.prototype.dispose = function() {
     this.widthTravel = null;
     if (this.transitionPane.newChildDivElement) {
         this.transitionPane.newChildDivElement.style.zIndex = 0;
@@ -315,7 +450,7 @@ ExtrasTransitionPane.CameraPanLeft.prototype.dispose = function() {
     this.transitionPane.doImmediateTransition();
 };
 
-ExtrasTransitionPane.CameraPanLeft.prototype.init = function() {
+ExtrasTransitionPane.CameraPan.prototype.init = function() {
     var bounds = new EchoCssUtil.Bounds(this.transitionPane.transitionPaneDivElement);
     this.widthTravel = bounds.width;
     if (this.transitionPane.oldChildDivElement) {
@@ -328,49 +463,20 @@ ExtrasTransitionPane.CameraPanLeft.prototype.init = function() {
     }
 };
 
-ExtrasTransitionPane.CameraPanLeft.prototype.step = function(progress) {
-    if (this.transitionPane.newChildDivElement) {
-        this.transitionPane.newChildDivElement.style.left = (0 - ((1 - progress) * this.widthTravel)) + "px";
-    }
-    if (this.transitionPane.oldChildDivElement) {
-        this.transitionPane.oldChildDivElement.style.left = (progress * this.widthTravel) + "px";
-    }
-};
-
-/**
- * Camera-Pan-Right transition. 
- */
-ExtrasTransitionPane.CameraPanRight = function(transitionPane) {
-    this.transitionPane = transitionPane;
-};
-
-ExtrasTransitionPane.CameraPanRight.prototype.dispose = function() {
-    this.widthTravel = null;
-    if (this.transitionPane.newChildDivElement) {
-        this.transitionPane.newChildDivElement.style.zIndex = 0;
-        this.transitionPane.newChildDivElement.style.left = "0px";
-    }
-    this.transitionPane.doImmediateTransition();
-};
-
-ExtrasTransitionPane.CameraPanRight.prototype.init = function() {
-    var bounds = new EchoCssUtil.Bounds(this.transitionPane.transitionPaneDivElement);
-    this.widthTravel = bounds.width;
-    if (this.transitionPane.oldChildDivElement) {
-        this.transitionPane.oldChildDivElement.style.zIndex = 1;
-    }
-    if (this.transitionPane.newChildDivElement) {
-        this.transitionPane.newChildDivElement.style.zIndex = 2;
-        this.transitionPane.newChildDivElement.style.left = this.widthTravel + "px";
-        this.transitionPane.newChildDivElement.style.display = "block";
-    }
-};
-
-ExtrasTransitionPane.CameraPanRight.prototype.step = function(progress) {
-    if (this.transitionPane.newChildDivElement) {
-        this.transitionPane.newChildDivElement.style.left = ((1 - progress) * this.widthTravel) + "px";
-    }
-    if (this.transitionPane.oldChildDivElement) {
-        this.transitionPane.oldChildDivElement.style.left = (0 - (progress * this.widthTravel)) + "px";
+ExtrasTransitionPane.CameraPan.prototype.step = function(progress) {
+    if (this.right) {
+        if (this.transitionPane.newChildDivElement) {
+            this.transitionPane.newChildDivElement.style.left = ((1 - progress) * this.widthTravel) + "px";
+        }
+        if (this.transitionPane.oldChildDivElement) {
+            this.transitionPane.oldChildDivElement.style.left = (0 - (progress * this.widthTravel)) + "px";
+        }
+    } else {
+        if (this.transitionPane.newChildDivElement) {
+            this.transitionPane.newChildDivElement.style.left = (0 - ((1 - progress) * this.widthTravel)) + "px";
+        }
+        if (this.transitionPane.oldChildDivElement) {
+            this.transitionPane.oldChildDivElement.style.left = (progress * this.widthTravel) + "px";
+        }
     }
 };
