@@ -36,6 +36,7 @@ import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.TransitionPane;
 import nextapp.echo2.extras.testapp.AbstractTest;
 import nextapp.echo2.extras.testapp.StyleUtil;
+import nextapp.echo2.extras.testapp.Styles;
 import nextapp.echo2.extras.testapp.TestControlPane;
 
 public class TransitionPaneTest extends AbstractTest {
@@ -44,7 +45,7 @@ public class TransitionPaneTest extends AbstractTest {
 
     public TransitionPaneTest() {
         
-        super("TransitionPane", null);
+        super("TransitionPane", Styles.ICON_16_TRANSITION_PANE);        
         
         final TransitionPane transitionPane = new TransitionPane();
         add(transitionPane);

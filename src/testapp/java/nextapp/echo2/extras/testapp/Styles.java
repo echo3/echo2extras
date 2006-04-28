@@ -56,6 +56,8 @@ public class Styles {
             = new ResourceImageReference(IMAGE_PATH + "MenuBarPaneIcon16.gif"); 
     public static final ImageReference ICON_16_TAB_PANE 
             = new ResourceImageReference(IMAGE_PATH + "TabPaneIcon16.gif"); 
+    public static final ImageReference ICON_16_TRANSITION_PANE 
+            = new ResourceImageReference(IMAGE_PATH + "TransitionPaneIcon16.gif"); 
 
     public static final FillImage FILL_IMAGE_SHADOW_BACKGROUND_DARK_BLUE = new FillImage(
             new ResourceImageReference(IMAGE_PATH + "ShadowBackgroundDarkBlue.png"));

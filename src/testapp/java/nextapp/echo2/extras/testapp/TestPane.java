@@ -120,7 +120,7 @@ public class TestPane extends ContentPane {
         testsMenu.addItem(new DefaultOptionModel(
                 "Launch_TabPaneTest", "Tab Pane", Styles.ICON_16_TAB_PANE));
         testsMenu.addItem(new DefaultOptionModel(
-                "Launch_TransitionPaneTest", "Transition Pane", null));
+                "Launch_TransitionPaneTest", "Transition Pane", Styles.ICON_16_TRANSITION_PANE));
         testsMenu.addItem(new SeparatorModel());
         testsMenu.addItem(new DefaultOptionModel("Reset", "Reset", null));
         testsMenu.addItem(new DefaultOptionModel("Exit", "Exit", null));
