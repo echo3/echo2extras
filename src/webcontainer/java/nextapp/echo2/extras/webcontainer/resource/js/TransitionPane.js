@@ -139,7 +139,6 @@ ExtrasTransitionPane.prototype.stripIds = function(element) {
     var length = element.childNodes.length;
     for (var i = 0; i < length; ++i) {
         if (element.childNodes[i].nodeType == 1) {
-            EchoDebugManager.consoleWrite("stripping: " + element.childNodes[i].id);
             element.childNodes[i].id = null;
             if (element.childNodes[i].childNodes.length > 0) {
                 this.stripIds(element.childNodes[i]);
@@ -171,7 +170,7 @@ ExtrasTransitionPane.prototype.transitionStep = function(firstStep) {
                 this.activeTransitionDuration = this.transitionDuration;
             }
             
-            this.timeout = window.setTimeout("ExtrasTransitionPane.processTimeout(\"" + this.elementId + "\", 10);");
+            this.timeout = window.setTimeout("ExtrasTransitionPane.processTimeout(\"" + this.elementId + "\");", 1);
         } else {
             this.doImmediateTransition();
         }
@@ -181,7 +180,7 @@ ExtrasTransitionPane.prototype.transitionStep = function(firstStep) {
     
         if (progress < 1) {
             this.transition.step(progress);
-            this.timeout = window.setTimeout("ExtrasTransitionPane.processTimeout(\"" + this.elementId + "\", 10);");
+            this.timeout = window.setTimeout("ExtrasTransitionPane.processTimeout(\"" + this.elementId + "\");", 1);
         } else {
             this.transition.dispose();
             this.transitionActive = false;
@@ -351,10 +350,10 @@ ExtrasTransitionPane.MessageProcessor.processTransition = function(transitionMes
 /**
  * Blind transition. 
  */
-ExtrasTransitionPane.Blind = function(transitionPane, animateOut) {
+ExtrasTransitionPane.Blind = function(transitionPane, reverseAnimation) {
     this.transitionDuration = 700;
     this.transitionPane = transitionPane;
-    this.animateOut = animateOut;
+    this.reverseAnimation = reverseAnimation;
     this.renderedAnimationStep = 0;
     this.totalAnimationSteps = 14;
     this.contentSwapAnimationStep = Math.floor(this.totalAnimationSteps) / 2 + 1;
@@ -401,6 +400,9 @@ ExtrasTransitionPane.Blind.prototype.step = function(progress) {
         return;
     }
     
+    var frameNumber = this.reverseAnimation ? this.totalAnimationAnimationSteps - currentAnimationStep + 1 
+            : currentAnimationStep;
+    
     var imgUrl = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
             + this.imagePrefix + currentAnimationStep;
     
@@ -411,7 +413,12 @@ ExtrasTransitionPane.Blind.prototype.step = function(progress) {
     
     if (currentAnimationStep < this.contentSwapAnimationStep) {
         if (this.transitionPane.oldChildDivElement) {
-            this.transitionPane.oldChildDivElement.style.top = (0 - currentAnimationStep) + "px";
+            if (this.reverseAnimation) {
+                this.transitionPane.oldChildDivElement.style.top = 
+                        (this.contentSwapAnimationStep - currentAnimationStep) + "px";
+            } else {
+                this.transitionPane.oldChildDivElement.style.top = (0 - currentAnimationStep) + "px";
+            }
         }
     } else {
         if (this.renderedAnimationStep < this.contentSwapAnimationStep) {
@@ -425,8 +432,13 @@ ExtrasTransitionPane.Blind.prototype.step = function(progress) {
             }
         }
         if (this.transitionPane.newChildDivElement) {
-            this.transitionPane.newChildDivElement.style.top 
-                    = (this.totalAnimationSteps - currentAnimationStep) + "px";
+            if (this.reverseAnimation) {
+                this.transitionPane.newChildDivElement.style.top 
+                        = (currentAnimationStep - this.totalAnimationSteps) + "px";
+            } else {
+                this.transitionPane.newChildDivElement.style.top 
+                        = (this.totalAnimationSteps - currentAnimationStep) + "px";
+            }
         }
     }
     
