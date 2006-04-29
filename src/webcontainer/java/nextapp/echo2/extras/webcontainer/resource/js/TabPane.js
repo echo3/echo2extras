@@ -440,7 +440,7 @@ ExtrasTabPane.prototype.updateTabState = function(tabId, selected) {
 
     switch (this.tabPosition) {
     case ExtrasTabPane.TAB_POSITION_BOTTOM:
-        headerDivElement.style.marginTop = this.tabActiveBorderSize + "px";
+        headerDivElement.style.marginTop = (selected ? 0 : this.tabActiveBorderSize) + "px";
         headerDivElement.style.borderBottom = border;
         break;
     default: 
