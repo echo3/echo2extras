@@ -369,6 +369,10 @@ ExtrasTransitionPane.Blind = function(transitionPane, reverseAnimation) {
 
 ExtrasTransitionPane.Blind.prototype.dispose = function() {
     this.transitionPane.transitionPaneDivElement.removeChild(this.blindElement);
+    if (this.transitionPane.newChildDivElement) {
+        this.transitionPane.newChildDivElement.style.zIndex = 0;
+        this.transitionPane.newChildDivElement.style.top = "0px";
+    }
     this.blindElement = null;
     this.transitionPane.doImmediateTransition();
 };

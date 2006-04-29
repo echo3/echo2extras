@@ -103,6 +103,14 @@ public class TabPaneTest extends AbstractTest {
             }
         });
 
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add Big Label", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Label label = createTestTab();
+                label.setText(StyleUtil.QUASI_LATIN_TEXT_1);
+                tabPane.add(label);
+            }
+        });
+
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add-Remove-Add Label", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 Label label = createTestTab();

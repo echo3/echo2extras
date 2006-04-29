@@ -136,6 +136,7 @@ ExtrasTabPane.prototype.addTab = function(tab, tabIndex) {
     headerDivElement = document.createElement("div");
     headerDivElement.id = this.elementId + "_header_div_" + tab.tabId;
     headerDivElement.style.overflow = "hidden";
+    headerDivElement.style.whiteSpace = "nowrap";
     switch (this.tabPosition) {
     case ExtrasTabPane.TAB_POSITION_BOTTOM:
         headerDivElement.style.marginTop = this.tabActiveBorderSize + "px";
@@ -163,6 +164,7 @@ ExtrasTabPane.prototype.addTab = function(tab, tabIndex) {
     headerDivElement.style.paddingLeft = this.headerPaddingLeft + "px";
     headerDivElement.style.paddingRight = this.headerPaddingRight + "px";
     headerDivElement.style.cursor = "pointer";
+    
     if (this.tabInactiveBackgroundImage) {
         EchoCssUtil.applyStyle(headerDivElement, this.tabInactiveBackgroundImage);
     }
@@ -177,8 +179,9 @@ ExtrasTabPane.prototype.addTab = function(tab, tabIndex) {
     tab.contentDivElement.style.display = "none";
     tab.contentDivElement.style.position = "absolute";
     tab.contentDivElement.style.left = "0px";
-    tab.contentDivElement.style.right = "0px";
-    tab.contentDivElement.style.bottom = "0px";
+    //BUGBUG. Set to 1px to avoid IE scrollbar issue, but *still* appears fine in firefox...what's wrong here?
+    tab.contentDivElement.style.right = "1px";
+    tab.contentDivElement.style.bottom = "1px";
     tab.contentDivElement.style.top = "0px";
     tab.contentDivElement.style.padding = contentInsets.toString();
     this.contentContainerDivElement.appendChild(tab.contentDivElement);
@@ -280,6 +283,7 @@ ExtrasTabPane.prototype.create = function() {
     this.tabPaneDivElement.appendChild(this.contentContainerDivElement);
 
     this.contentContainerDivElement.style.position = "absolute";
+    this.contentContainerDivElement.style.overflow = "auto";
     this.contentContainerDivElement.style.backgroundColor = this.defaultBackground;
     this.contentContainerDivElement.style.color = this.defaultForeground;
     if (this.tabPosition == ExtrasTabPane.TAB_POSITION_BOTTOM) {
