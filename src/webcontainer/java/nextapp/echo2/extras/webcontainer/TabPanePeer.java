@@ -519,7 +519,7 @@ implements ComponentSynchronizePeer, ImageRenderSupport, LazyRenderContainer, Pr
             }
             initElement.setAttribute("tab-active-border-style", BorderRender.getStyleValue(tabActiveBorder.getStyle())); 
         }
-        Font tabActiveFont= (Font) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_ACTIVE_FONT);
+        Font tabActiveFont = (Font) tabPane.getRenderProperty(TabPane.PROPERTY_TAB_ACTIVE_FONT);
         if (tabActiveFont != null) {
             CssStyle fontStyle = new CssStyle();
             FontRender.renderToStyle(fontStyle, tabActiveFont);

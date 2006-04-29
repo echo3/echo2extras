@@ -35,7 +35,10 @@ ExtrasMenu = function(elementId, containerElementId) {
     
     this.maskDeployed = false;
     
-    this.border = "1px outset #cfcfcf";
+    this.borderSize = 1;
+    this.borderStyle = "outset";
+    this.borderColor = "#cfcfcf";
+    
     this.foreground = "#000000";
     this.background = "#cfcfcf";
     this.backgroundImage = null;
@@ -107,6 +110,10 @@ ExtrasMenu.prototype.dispose = function() {
     this.renderMenuBarDispose();
 };
 
+ExtrasMenu.prototype.getBorder = function() {
+    return this.borderSize + "px " + this.borderStyle + " " + this.borderColor;
+};
+
 ExtrasMenu.prototype.getItemElement = function(itemModel) {
     var itemElement = document.getElementById(this.elementId + "_bar_td_item_" + itemModel.id);
     if (!itemElement) {
@@ -118,6 +125,12 @@ ExtrasMenu.prototype.getItemElement = function(itemModel) {
 ExtrasMenu.prototype.getMenuBarHeight = function() {
     var menuBarDivElement = document.getElementById(this.elementId);
     return menuBarDivElement.offsetHeight;
+};
+
+ExtrasMenu.prototype.getMenuBorder = function() {
+    return (this.menuBorderSize == undefined ? this.borderSize : this.menuBorderSize) + "px "
+            + (this.menuBorderStyle == undefined ? this.borderStyle : this.menuBorderStyle) + " "
+            + (this.menuBorderColor == undefined ? this.borderColor : this.menuBorderColor);
 };
 
 ExtrasMenu.prototype.isMenuBarItemElement = function(itemElement) {
@@ -153,7 +166,7 @@ ExtrasMenu.prototype.openMenu = function(menuModel) {
 
         var bottomDistance = menuDivElement.parentNode.offsetHeight - (menuDivElement.offsetTop + menuDivElement.offsetHeight);
         if (bottomDistance < 0) {
-            // Menu descends being bottom of window.
+            // Menu descends beneath bottom of window.
             var newTop = bounds.top - menuDivElement.offsetHeight;
             if (newTop > 0) {
                 menuDivElement.style.top = newTop + "px";
@@ -161,7 +174,8 @@ ExtrasMenu.prototype.openMenu = function(menuModel) {
         }
     } else {
         var menuDivElement = itemElement.parentNode.parentNode.parentNode;
-        var offsetLeft = bounds.left + menuDivElement.clientWidth;
+        var borderSize = parseInt(this.menuBorderSize ? this.menuBorderSize : this.borderSize);
+        var offsetLeft = bounds.left + menuDivElement.clientWidth + borderSize * 2 - 2;
         menuDivElement = this.renderMenuAdd(menuModel, offsetLeft, bounds.top);
     }
 };
@@ -194,7 +208,7 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
     menuDivElement.id = this.elementId + "_menu_" + menuModel.id;
     menuDivElement.style.padding = this.menuInsetsTop + "px " + this.menuInsetsTop + "px " 
             + this.menuInsetsTop + "px " + this.menuInsetsTop + "px";
-    menuDivElement.style.border = this.menuBorder == null ? this.border : this.menuBorder;
+    menuDivElement.style.border = this.getMenuBorder();
     menuDivElement.style.backgroundColor = this.menuBackground == null ? this.background : this.menuBackground;
     menuDivElement.style.color = this.menuForeground == null ? this.foreground : this.menuForeground;
     if (this.menuBackgroundImage != null || (this.menuBackground == null && this.backgroundImage != null)) {
@@ -332,8 +346,8 @@ ExtrasMenu.prototype.renderMenuBarAdd = function() {
     
     menuBarDivElement.style.backgroundColor = this.background;
     menuBarDivElement.style.color = this.foreground;
-    menuBarDivElement.style.borderTop = this.border;
-    menuBarDivElement.style.borderBottom = this.border;
+    menuBarDivElement.style.borderTop = this.getBorder();
+    menuBarDivElement.style.borderBottom = this.getBorder();
     if (this.backgroundImage != null) {
         EchoCssUtil.applyStyle(menuBarDivElement, this.backgroundImage);
     }
@@ -772,8 +786,14 @@ ExtrasMenu.MessageProcessor.processInit = function(initMessageElement) {
     if (initMessageElement.getAttribute("background-image")) {
         menu.backgroundImage = initMessageElement.getAttribute("background-image");
     }
-    if (initMessageElement.getAttribute("border")) {
-        menu.border = initMessageElement.getAttribute("border");
+    if (initMessageElement.getAttribute("border-style")) {
+        menu.borderStyle = initMessageElement.getAttribute("border-style");
+    }
+    if (initMessageElement.getAttribute("border-color")) {
+        menu.borderColor = initMessageElement.getAttribute("border-color");
+    }
+    if (initMessageElement.getAttribute("border-size")) {
+        menu.borderSize = parseInt(initMessageElement.getAttribute("border-size"));
     }
     if (initMessageElement.getAttribute("disabled-background")) {
         menu.disabledBackground = initMessageElement.getAttribute("disabled-background");
@@ -793,8 +813,14 @@ ExtrasMenu.MessageProcessor.processInit = function(initMessageElement) {
     if (initMessageElement.getAttribute("menu-background-image")) {
         menu.menuBackgroundImage = initMessageElement.getAttribute("menu-background-image");
     }
-    if (initMessageElement.getAttribute("menu-border")) {
-        menu.menuBorder = initMessageElement.getAttribute("menu-border");
+    if (initMessageElement.getAttribute("menu-border-style")) {
+        menu.menuBorderStyle = initMessageElement.getAttribute("menu-border-style");
+    }
+    if (initMessageElement.getAttribute("menu-border-color")) {
+        menu.menuBorderColor = initMessageElement.getAttribute("menu-border-color");
+    }
+    if (initMessageElement.getAttribute("menu-border-size")) {
+        menu.menuBorderSize = parseInt(initMessageElement.getAttribute("menu-border-size"));
     }
     if (initMessageElement.getAttribute("menu-foreground")) {
         menu.menuForeground = initMessageElement.getAttribute("menu-foreground");
