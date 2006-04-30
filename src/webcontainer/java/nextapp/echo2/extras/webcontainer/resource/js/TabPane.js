@@ -178,10 +178,10 @@ ExtrasTabPane.prototype.addTab = function(tab, tabIndex) {
     tab.contentDivElement.id = this.elementId + "_content_" + tab.tabId;
     tab.contentDivElement.style.display = "none";
     tab.contentDivElement.style.position = "absolute";
+    tab.contentDivElement.style.overflow = "auto";
     tab.contentDivElement.style.left = "0px";
-    //BUGBUG. Set to 1px to avoid IE scrollbar issue, but *still* appears fine in firefox...what's wrong here?
-    tab.contentDivElement.style.right = "1px";
-    tab.contentDivElement.style.bottom = "1px";
+    tab.contentDivElement.style.right = "0px";
+    tab.contentDivElement.style.bottom = "0px";
     tab.contentDivElement.style.top = "0px";
     tab.contentDivElement.style.padding = contentInsets.toString();
     this.contentContainerDivElement.appendChild(tab.contentDivElement);
@@ -280,10 +280,9 @@ ExtrasTabPane.prototype.create = function() {
     
     this.contentContainerDivElement = document.createElement("div");
     this.contentContainerDivElement.id = this.elementId + "_content";
-    this.tabPaneDivElement.appendChild(this.contentContainerDivElement);
 
     this.contentContainerDivElement.style.position = "absolute";
-    this.contentContainerDivElement.style.overflow = "auto";
+    this.contentContainerDivElement.style.overflow = "hidden";
     this.contentContainerDivElement.style.backgroundColor = this.defaultBackground;
     this.contentContainerDivElement.style.color = this.defaultForeground;
     if (this.tabPosition == ExtrasTabPane.TAB_POSITION_BOTTOM) {
@@ -295,6 +294,8 @@ ExtrasTabPane.prototype.create = function() {
     }
     this.contentContainerDivElement.style.left = "0px";
     this.contentContainerDivElement.style.right = "0px";
+
+    this.tabPaneDivElement.appendChild(this.contentContainerDivElement);
     EchoVirtualPosition.register(this.contentContainerDivElement.id);
 
     var activeBorder = this.getActiveBorder();
