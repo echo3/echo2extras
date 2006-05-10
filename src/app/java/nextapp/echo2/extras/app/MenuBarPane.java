@@ -36,6 +36,7 @@ import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Pane;
+import nextapp.echo2.app.PaneContainer;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
 import nextapp.echo2.extras.app.menu.DefaultMenuModel;
@@ -330,6 +331,17 @@ implements Pane {
      */
     public MenuStateModel getStateModel() {
         return stateModel;
+    }
+
+    /**
+     * @see nextapp.echo2.app.Component#isValidParent(nextapp.echo2.app.Component)
+     */
+    public boolean isValidParent(Component c) {
+        if (!super.isValidParent(c)) {
+            return false;
+        }
+        // Ensure parent is a PaneContainer.
+        return c instanceof PaneContainer;
     }
     
     /**
