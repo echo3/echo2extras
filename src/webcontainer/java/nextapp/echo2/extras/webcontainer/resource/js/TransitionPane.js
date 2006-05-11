@@ -218,7 +218,10 @@ ExtrasTransitionPane.MessageProcessor.installTransition = function(transitionPan
         transitionPane.setTransition(new ExtrasTransitionPane.Blind(transitionPane, true));
         break;
     case "fade-to-black":
-        transitionPane.setTransition(new ExtrasTransitionPane.Fade(transitionPane, "black"));
+        transitionPane.setTransition(new ExtrasTransitionPane.Fade(transitionPane, "000000"));
+        break;
+    case "fade-to-white":
+        transitionPane.setTransition(new ExtrasTransitionPane.Fade(transitionPane, "ffffff"));
         break;
     default:
         transitionPane.setTransition(null);
@@ -416,14 +419,10 @@ ExtrasTransitionPane.Fade.prototype.step = function(progress) {
         return;
     }
 
-    
-    EchoDebugManager.consoleWrite("CAS=" + currentAnimationStep);
     if (currentAnimationStep == this.contentSwapAnimationStep) {
-        if (this.translucentElements[0].style != this.color) {
-            this.translucentElements[0].style.backgroundColor = this.color;
-        }
+        this.translucentElements[0].style.backgroundColor = "#" + this.color;
     } else {
-        if (this.translucentElements[0].style == this.color) {
+        if (this.translucentElements[0].style.backgroundColor) {
             this.translucentElements[0].style.backgroundColor = "";
         }
     }
