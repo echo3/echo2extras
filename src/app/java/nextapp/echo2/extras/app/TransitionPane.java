@@ -71,8 +71,26 @@ implements Pane, PaneContainer {
     
     public static final int TYPE_BLIND_BLACK_OUT = 4;
     
-    public static final String PROPERTY_TYPE = "type"; 
+    public static final int TYPE_FADE_TO_BLACK = 5;
+    
+    public static final String PROPERTY_TYPE = "type";
+    public static final String PROPERTY_DURATION = "duration";
 
+    /**
+     * Default duration time, 350ms.
+     */
+    public static final int DEFAULT_DURATION = 350;
+    
+    /**
+     * Returns the transition duration, in milleseconds.
+     * 
+     * @return the transition duration
+     */
+    public int getDuration() {
+        Integer duration = (Integer) getProperty(PROPERTY_DURATION);
+        return duration == null ? DEFAULT_DURATION : duration.intValue();
+    }
+    
     /**
      * Sets the transition type.
      * 
@@ -91,6 +109,15 @@ implements Pane, PaneContainer {
             return false;
         }
         return super.isValidChild(c);
+    }
+    
+    /**
+     * Sets the transition duration, in milleseconds.
+     * 
+     * @param newValue the new transition duration
+     */
+    public void setDuration(int newValue) {
+        setProperty(PROPERTY_DURATION, new Integer(newValue));
     }
     
     /**

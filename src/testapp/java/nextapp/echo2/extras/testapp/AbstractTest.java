@@ -165,6 +165,17 @@ public class AbstractTest extends SplitPane {
         });
     }
     
+    protected void addIntegerPropertyTests(String category, final String propertyName, final int[] values) {
+        for (int i = 0; i < values.length; ++i) {
+            final int value = values[i];
+            testControlsPane.addButton(category, propertyName + ": " + values[i], new ActionListener(){
+                public void actionPerformed(ActionEvent e) {
+                    setTestComponentProperty(propertyName, int.class, new Integer(value));
+                }
+            });
+        }
+    }
+    
     protected void addInsetsPropertyTests(String category, final String propertyName) {
         
         testControlsPane.addButton(category, propertyName + ": 0px", new ActionListener(){

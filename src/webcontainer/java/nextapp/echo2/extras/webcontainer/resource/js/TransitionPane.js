@@ -217,6 +217,9 @@ ExtrasTransitionPane.MessageProcessor.installTransition = function(transitionPan
     case "blind-black-out":
         transitionPane.setTransition(new ExtrasTransitionPane.Blind(transitionPane, true));
         break;
+    case "fade-to-black":
+        transitionPane.setTransition(new ExtrasTransitionPane.Fade(transitionPane, "black"));
+        break;
     default:
         transitionPane.setTransition(null);
     }
@@ -244,8 +247,8 @@ ExtrasTransitionPane.MessageProcessor.process = function(messagePartElement) {
             case "remove-child":
                 ExtrasTransitionPane.MessageProcessor.processRemoveChild(messagePartElement.childNodes[i]);
                 break;
-            case "set-type":
-                ExtrasTransitionPane.MessageProcessor.processSetType(messagePartElement.childNodes[i]);
+            case "update":
+                ExtrasTransitionPane.MessageProcessor.processUpdate(messagePartElement.childNodes[i]);
                 break;
             case "transition":
                 ExtrasTransitionPane.MessageProcessor.processTransition(messagePartElement.childNodes[i]);
@@ -318,19 +321,25 @@ ExtrasTransitionPane.MessageProcessor.processRemoveChild = function(removeChildM
 };
 
 /**
- * Processes a <code>set-type</code> message to change the transition type..
+ * Processes a <code>update</code> message to change the transition type..
  *
- * @param setTypeMessageElement the <code>set-type</code> element to process
+ * @param updateMessageElement the <code>update</code> element to process
  */
-ExtrasTransitionPane.MessageProcessor.processSetType = function(setTypeMessageElement) {
-    var elementId = setTypeMessageElement.getAttribute("eid");
+ExtrasTransitionPane.MessageProcessor.processUpdate = function(updateMessageElement) {
+    var elementId = updateMessageElement.getAttribute("eid");
     var transitionPane = ExtrasTransitionPane.getComponent(elementId);
     if (!transitionPane) {
         throw "TransitionPane not found with id: " + elementId;
     }
     
-    var type = setTypeMessageElement.getAttribute("type");
-    ExtrasTransitionPane.MessageProcessor.installTransition(transitionPane, type);
+    var type = updateMessageElement.getAttribute("type");
+    if (type) {
+        ExtrasTransitionPane.MessageProcessor.installTransition(transitionPane, type);
+    }
+    var duration = updateMessageElement.getAttribute("duration");
+    if (duration) {
+        transitionPane.transitionDuration = parseInt(duration);
+    }
 };
 
 /**
@@ -345,6 +354,125 @@ ExtrasTransitionPane.MessageProcessor.processTransition = function(transitionMes
         throw "TransitionPane not found with id: " + elementId;
     }
     transitionPane.doTransition();
+};
+
+ExtrasTransitionPane.Fade = function(transitionPane, color) {
+    this.transitionDuration = 1000;
+    this.transitionPane = transitionPane;
+    this.color = color;
+    this.renderedAnimationStep = 0;
+    this.totalAnimationSteps = 15;
+    this.contentSwapAnimationStep = 8;
+    
+    var image513 = new Image();
+    image513.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
+            + "fade-" + this.color + "-513";
+    var image865 = new Image();
+    image865.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
+            + "fade-" + this.color + "-865";
+};
+
+ExtrasTransitionPane.fadeSteps = new Array();
+ExtrasTransitionPane.fadeSteps[0] = new Array(865, null, null);
+ExtrasTransitionPane.fadeSteps[1] = new Array(865, 865, null);
+ExtrasTransitionPane.fadeSteps[2] = new Array(865, 865, 865);
+ExtrasTransitionPane.fadeSteps[3] = new Array(513, null, null);
+ExtrasTransitionPane.fadeSteps[4] = new Array(513, 865, 865);
+ExtrasTransitionPane.fadeSteps[5] = new Array(513, 513, null);
+ExtrasTransitionPane.fadeSteps[6] = new Array(513, 513, 513);
+ExtrasTransitionPane.fadeSteps[7] = new Array(null, null, null);
+ExtrasTransitionPane.fadeSteps[8] = new Array(513, 513, 513);
+ExtrasTransitionPane.fadeSteps[9] = new Array(513, 513, null);
+ExtrasTransitionPane.fadeSteps[10] = new Array(513, 865, 865);
+ExtrasTransitionPane.fadeSteps[11] = new Array(513, null, null);
+ExtrasTransitionPane.fadeSteps[12] = new Array(865, 865, 865);
+ExtrasTransitionPane.fadeSteps[13] = new Array(865, 865, null);
+ExtrasTransitionPane.fadeSteps[14] = new Array(865, null, null);
+
+ExtrasTransitionPane.Fade.prototype.init = function() {
+    this.translucentElements = new Array();
+    if (EchoClientProperties.get("proprietaryIEPngAlphaFilterRequired")) {
+        this.dxRender = true;
+    }
+    for (var i = 0; i < 3; ++i) {
+        this.translucentElements[i] = document.createElement("div");
+        this.translucentElements[i].style.position = "absolute";
+        this.translucentElements[i].style.zIndex = i + 2;
+        this.translucentElements[i].style.left = "0px";
+        this.translucentElements[i].style.top = "0px";
+        this.translucentElements[i].style.width = "100%";
+        this.translucentElements[i].style.height = "100%";
+        this.transitionPane.transitionPaneDivElement.appendChild(this.translucentElements[i]);
+    }
+};
+
+ExtrasTransitionPane.Fade.prototype.step = function(progress) {
+    var currentAnimationStep = Math.ceil(progress * this.totalAnimationSteps);
+    if (currentAnimationStep == 0) {
+        currentAnimationStep = 1;
+    }
+    if (currentAnimationStep == this.renderedAnimationStep) {
+        // No need for update, already current.
+        return;
+    }
+
+    
+    EchoDebugManager.consoleWrite("CAS=" + currentAnimationStep);
+    if (currentAnimationStep == this.contentSwapAnimationStep) {
+        this.translucentElements[0].style.backgroundColor = "black";
+    } else {
+        this.translucentElements[0].style.backgroundColor = "";
+    }
+    
+    for (var i = 0; i < 3; ++i) {
+        var imgId = ExtrasTransitionPane.fadeSteps[currentAnimationStep - 1][i];
+        var previousImgId = this.renderedAnimationStep == 0 
+                ? null : ExtrasTransitionPane.fadeSteps[this.renderedAnimationStep - 1][i];
+        if (imgId == previousImgId) {
+            continue;
+        }
+        if (imgId) {
+            var imgUrl = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
+                    + "fade-" + this.color + "-" + imgId;
+            if (this.dxRender) {
+                this.translucentElements[i].style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader("
+                        + "src='" + imgUrl + "', sizingMethod='scale');";
+            } else {
+                this.translucentElements[i].style.backgroundImage = "url(" + imgUrl + ")";
+            }
+        } else {
+            if (this.dxRender) {
+                this.translucentElements[i].style.filter = "";
+            } else {
+                this.translucentElements[i].style.backgroundImage = "";
+            }
+        }
+    }
+
+    if (currentAnimationStep >= this.contentSwapAnimationStep
+            && this.renderedAnimationStep < this.contentSwapAnimationStep) {
+        // fade is crossing horizontal, swap content.
+        if (this.transitionPane.oldChildDivElement) {
+            this.transitionPane.oldChildDivElement.style.display = "none";
+        }
+        if (this.transitionPane.newChildDivElement) {
+            this.transitionPane.newChildDivElement.style.display = "block";
+            EchoVirtualPosition.redraw();
+        }
+    }
+    
+    this.renderedAnimationStep = currentAnimationStep;
+};
+
+ExtrasTransitionPane.Fade.prototype.dispose = function() {
+    for (var i = 0; i < 3; ++i) {
+        this.transitionPane.transitionPaneDivElement.removeChild(this.translucentElements[i]);
+        this.translucentElements[i] = null;
+    }
+    if (this.transitionPane.newChildDivElement) {
+        this.transitionPane.newChildDivElement.style.zIndex = 0;
+    }
+    this.transitionPane.doImmediateTransition();
 };
 
 /**
@@ -404,15 +532,9 @@ ExtrasTransitionPane.Blind.prototype.step = function(progress) {
         return;
     }
     
-    var frameNumber = this.reverseAnimation ? this.totalAnimationAnimationSteps - currentAnimationStep + 1 
-            : currentAnimationStep;
-    
     var imgUrl = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
             + this.imagePrefix + currentAnimationStep;
     
-    if (EchoClientProperties.get("proprietaryIEPngAlphaFilterRequired")) {
-    }
-
     this.blindElement.style.backgroundImage = "url(" + imgUrl + ")";
     
     if (currentAnimationStep < this.contentSwapAnimationStep) {

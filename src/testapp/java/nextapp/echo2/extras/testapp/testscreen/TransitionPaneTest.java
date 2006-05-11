@@ -133,5 +133,19 @@ public class TransitionPaneTest extends AbstractTest {
                 transitionPane.setType(TransitionPane.TYPE_BLIND_BLACK_OUT);
             }
         });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Trans = Fade/Black", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                transitionPane.setType(TransitionPane.TYPE_FADE_TO_BLACK);
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES,
+                TransitionPane.PROPERTY_DURATION + ": null", new ActionListener(){
+            public void actionPerformed(ActionEvent arg0) {
+                transitionPane.setProperty(TransitionPane.PROPERTY_DURATION, null);
+            }
+        });
+        addIntegerPropertyTests(TestControlPane.CATEGORY_PROPERTIES, TransitionPane.PROPERTY_DURATION,
+                new int[]{0, 50, 100, 350, 700, 1000, 2000, 5000});
     }
 }

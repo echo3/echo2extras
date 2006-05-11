@@ -61,17 +61,14 @@ import nextapp.echo2.webrender.service.JavaScriptService;
 public class TransitionPanePeer
 implements ComponentSynchronizePeer {
 
-    /**
-     * <code>PartialUpdateParticipant</code> to update transition type.
-     */
-    private PartialUpdateParticipant typeUpdateParticipant = new PartialUpdateParticipant() {
+    private PartialUpdateParticipant placeholderUpdateParticipant = new PartialUpdateParticipant() {
     
         /**
          * @see nextapp.echo2.webcontainer.PartialUpdateParticipant#renderProperty(nextapp.echo2.webcontainer.RenderContext,
          *       nextapp.echo2.app.update.ServerComponentUpdate)
          */
-        public void renderProperty(RenderContext rc, ServerComponentUpdate update) {
-            renderSetTypeDirective(rc, update, (TransitionPane) update.getParent()); 
+        public void renderProperty(RenderContext rc, ServerComponentUpdate update) { 
+             // Do nothing.
         }
     
         /**
@@ -95,6 +92,10 @@ implements ComponentSynchronizePeer {
             IMAGE_ID_TO_RESOURCE.put("blindblack-" + i, new ResourceImageReference(
                     "/nextapp/echo2/extras/webcontainer/resource/image/transition/blindblack/Frame" + i + ".gif"));
         }
+        IMAGE_ID_TO_RESOURCE.put("fade-black-865", new ResourceImageReference(
+                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fadeblack/BlackAlpha865.png"));
+        IMAGE_ID_TO_RESOURCE.put("fade-black-513", new ResourceImageReference(
+                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fadeblack/BlackAlpha513.png"));
     }
     
     public static final Service IMAGE_SERVICE = new Service() {
@@ -140,7 +141,8 @@ implements ComponentSynchronizePeer {
      */
     public TransitionPanePeer() {
         partialUpdateManager = new PartialUpdateManager();
-        partialUpdateManager.add(TransitionPane.PROPERTY_TYPE, typeUpdateParticipant);
+        partialUpdateManager.add(TransitionPane.PROPERTY_TYPE, placeholderUpdateParticipant);
+        partialUpdateManager.add(TransitionPane.PROPERTY_DURATION, placeholderUpdateParticipant);
     }
     
     /**
@@ -214,6 +216,8 @@ implements ComponentSynchronizePeer {
                 return "blind-black-in";
             case TransitionPane.TYPE_BLIND_BLACK_OUT:
                 return "blind-black-out";
+            case TransitionPane.TYPE_FADE_TO_BLACK:
+                return "fade-to-black";
             }
         }
         return null;
@@ -248,14 +252,18 @@ implements ComponentSynchronizePeer {
         removeChildElement.setAttribute("child-id", child.getRenderId());
     }
 
-    private void renderSetTypeDirective(RenderContext rc, ServerComponentUpdate update, TransitionPane transitionPane) {
+    private void renderUpdateDirective(RenderContext rc, ServerComponentUpdate update, TransitionPane transitionPane) {
         String elementId = ContainerInstance.getElementId(transitionPane);
-        Element setTypeElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
-                "ExtrasTransitionPane.MessageProcessor", "set-type");
-        setTypeElement.setAttribute("eid", elementId);
+        Element updateElement = rc.getServerMessage().appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
+                "ExtrasTransitionPane.MessageProcessor", "update");
+        updateElement.setAttribute("eid", elementId);
         String type = getTransitionTypeString(transitionPane);
         if (type != null) {
-            setTypeElement.setAttribute("type", type);
+            updateElement.setAttribute("type", type);
+        }
+        Integer duration = (Integer) transitionPane.getRenderProperty(TransitionPane.PROPERTY_DURATION);
+        if (duration != null) {
+            updateElement.setAttribute("duration", duration.toString());
         }
     }
     
@@ -290,8 +298,16 @@ implements ComponentSynchronizePeer {
         } else {
             if (update.hasUpdatedProperties()) {
                 partialUpdateManager.process(rc, update);
+                String[] propertyNames = update.getUpdatedPropertyNames();
+                for (int i = 0; i < propertyNames.length; ++i) {
+                    if (TransitionPane.PROPERTY_DURATION.equals(propertyNames[i]) ||
+                            TransitionPane.PROPERTY_TYPE.equals(propertyNames[i])) {
+                        renderUpdateDirective(rc, update, transitionPane);
+                        break;
+                    }
+                }
             }
-
+            
             // Perform incremental updates.
             if (update.hasRemovedChildren() || update.hasAddedChildren()) {
                 if (update.hasRemovedChildren()) {
