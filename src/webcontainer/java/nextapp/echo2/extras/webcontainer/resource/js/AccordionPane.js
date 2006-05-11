@@ -126,7 +126,6 @@ ExtrasAccordionPane.prototype.addTab = function(tab, tabIndex) {
     } else {
         EchoDomUtil.addEventListener(tab.tabDivElement, "mousedown", ExtrasAccordionPane.absorbMouseSelection, false);
     }
-
 };
 
 ExtrasAccordionPane.prototype.calculateTabHeight = function() {
@@ -398,6 +397,12 @@ ExtrasAccordionPane.getTabId = function(tabDivElementId) {
     return tabDivElementId.substring(lastUnderscoreIndex + 1);
 };
 
+/**
+ * Prevents a mousedown (DOM) or selectstart (IE) event from performing
+ * its default action (which may cause a selection).
+ * 
+ * @param e the event
+ */
 ExtrasAccordionPane.absorbMouseSelection = function(e) {
     EchoDomUtil.preventEventDefault(e);
 };

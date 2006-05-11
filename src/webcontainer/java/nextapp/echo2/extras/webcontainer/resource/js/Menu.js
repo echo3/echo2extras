@@ -315,9 +315,14 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
     bodyElement = document.getElementsByTagName("body")[0];    
     bodyElement.appendChild(menuDivElement);
 
-    EchoEventProcessor.addHandler(menuDivElement.id, "click", "ExtrasMenu.processMenuItemClick");
-    EchoEventProcessor.addHandler(menuDivElement.id, "mouseover", "ExtrasMenu.processMenuItemMouseOver");
-    EchoEventProcessor.addHandler(menuDivElement.id, "mouseout", "ExtrasMenu.processMenuItemMouseOut");
+    EchoEventProcessor.addHandler(menuDivElement, "click", "ExtrasMenu.processMenuItemClick");
+    EchoEventProcessor.addHandler(menuDivElement, "mouseover", "ExtrasMenu.processMenuItemMouseOver");
+    EchoEventProcessor.addHandler(menuDivElement, "mouseout", "ExtrasMenu.processMenuItemMouseOut");
+    if (EchoClientProperties.get("browserInternetExplorer")) {
+        EchoDomUtil.addEventListener(menuDivElement, "selectstart", ExtrasMenu.absorbMouseSelection, false);
+    } else {
+        EchoDomUtil.addEventListener(menuDivElement, "mousedown", ExtrasMenu.absorbMouseSelection, false);
+    }
     
     return menuDivElement;
 };
@@ -325,9 +330,14 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
 ExtrasMenu.prototype.renderMenuDispose = function(menuModel) {
     var menuDivElement = document.getElementById(this.elementId + "_menu_" + menuModel.id);
 
-    EchoEventProcessor.removeHandler(menuDivElement.id, "click");
-    EchoEventProcessor.removeHandler(menuDivElement.id, "mouseover");
-    EchoEventProcessor.removeHandler(menuDivElement.id, "mouseout");
+    EchoEventProcessor.removeHandler(menuDivElement, "click");
+    EchoEventProcessor.removeHandler(menuDivElement, "mouseover");
+    EchoEventProcessor.removeHandler(menuDivElement, "mouseout");
+    if (EchoClientProperties.get("browserInternetExplorer")) {
+        EchoDomUtil.removeEventListener(menuDivElement, "selectstart", ExtrasMenu.absorbMouseSelection, false);
+    } else {
+        EchoDomUtil.removeEventListener(menuDivElement, "mousedown", ExtrasMenu.absorbMouseSelection, false);
+    }
     
     if (menuDivElement) {
         menuDivElement.parentNode.removeChild(menuDivElement);
@@ -385,15 +395,26 @@ ExtrasMenu.prototype.renderMenuBarAdd = function() {
     containerElement.appendChild(menuBarDivElement);
 
     EchoVirtualPosition.register(menuBarDivElement.id);
-    EchoEventProcessor.addHandler(this.elementId, "click", "ExtrasMenu.processMenuBarClick");
-    EchoEventProcessor.addHandler(this.elementId, "mouseover", "ExtrasMenu.processMenuItemMouseOver");
-    EchoEventProcessor.addHandler(this.elementId, "mouseout", "ExtrasMenu.processMenuItemMouseOut");
+    EchoEventProcessor.addHandler(menuBarDivElement, "click", "ExtrasMenu.processMenuBarClick");
+    EchoEventProcessor.addHandler(menuBarDivElement, "mouseover", "ExtrasMenu.processMenuItemMouseOver");
+    EchoEventProcessor.addHandler(menuBarDivElement, "mouseout", "ExtrasMenu.processMenuItemMouseOut");
+    if (EchoClientProperties.get("browserInternetExplorer")) {
+        EchoDomUtil.addEventListener(menuBarDivElement, "selectstart", ExtrasMenu.absorbMouseSelection, false);
+    } else {
+        EchoDomUtil.addEventListener(menuBarDivElement, "mousedown", ExtrasMenu.absorbMouseSelection, false);
+    }
 };
 
 ExtrasMenu.prototype.renderMenuBarDispose = function() {
-    EchoEventProcessor.removeHandler(this.elementId, "click");
-    EchoEventProcessor.removeHandler(this.elementId, "mouseover");
-    EchoEventProcessor.removeHandler(this.elementId, "mouseout");
+    var menuBarDivElement = document.getElementById(this.elementId);
+    EchoEventProcessor.removeHandler(menuBarDivElement, "click");
+    EchoEventProcessor.removeHandler(menuBarDivElement, "mouseover");
+    EchoEventProcessor.removeHandler(menuBarDivElement, "mouseout");
+    if (EchoClientProperties.get("browserInternetExplorer")) {
+        EchoDomUtil.removeEventListener(menuBarDivElement, "selectstart", ExtrasMenu.absorbMouseSelection, false);
+    } else {
+        EchoDomUtil.removeEventListener(menuBarDivElement, "mousedown", ExtrasMenu.absorbMouseSelection, false);
+    }
 };
 
 ExtrasMenu.prototype.renderMenuBarMaskAdd = function() {
@@ -514,6 +535,16 @@ ExtrasMenu.prototype.setHighlight = function(itemModel, state) {
 
 ExtrasMenu.prototype.setModel = function(menuModel) {
     this.menuModel = menuModel;
+};
+
+/**
+ * Prevents a mousedown (DOM) or selectstart (IE) event from performing
+ * its default action (which may cause a selection).
+ * 
+ * @param e the event
+ */
+ExtrasMenu.absorbMouseSelection = function(e) {
+    EchoDomUtil.preventEventDefault(e);
 };
 
 /**
