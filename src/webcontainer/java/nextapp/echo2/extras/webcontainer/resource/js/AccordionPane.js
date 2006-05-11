@@ -121,6 +121,12 @@ ExtrasAccordionPane.prototype.addTab = function(tab, tabIndex) {
     EchoEventProcessor.addHandler(tab.tabDivElement, "click", "ExtrasAccordionPane.processTabClick");
     EchoEventProcessor.addHandler(tab.tabDivElement, "mouseover", "ExtrasAccordionPane.processTabRolloverEnter");
     EchoEventProcessor.addHandler(tab.tabDivElement, "mouseout", "ExtrasAccordionPane.processTabRolloverExit");
+    if (EchoClientProperties.get("browserInternetExplorer")) {
+        EchoDomUtil.addEventListener(tab.tabDivElement, "selectstart", ExtrasAccordionPane.absorbMouseSelection, false);
+    } else {
+        EchoDomUtil.addEventListener(tab.tabDivElement, "mousedown", ExtrasAccordionPane.absorbMouseSelection, false);
+    }
+
 };
 
 ExtrasAccordionPane.prototype.calculateTabHeight = function() {
@@ -176,6 +182,11 @@ ExtrasAccordionPane.prototype.disposeTab = function(tab) {
     EchoEventProcessor.removeHandler(tab.tabDivElement, "click");
     EchoEventProcessor.removeHandler(tab.tabDivElement, "mouseover");
     EchoEventProcessor.removeHandler(tab.tabDivElement, "mouseout");
+    if (EchoClientProperties.get("browserInternetExplorer")) {
+        EchoDomUtil.removeEventListener(tab.tabDivElement, "selectstart", ExtrasAccordionPane.absorbMouseSelection, false);
+    } else {
+        EchoDomUtil.removeEventListener(tab.tabDivElement, "mousedown", ExtrasAccordionPane.absorbMouseSelection, false);
+    }
     tab.dispose();
 };
 
@@ -385,6 +396,10 @@ ExtrasAccordionPane.getComponent = function(componentId) {
 ExtrasAccordionPane.getTabId = function(tabDivElementId) {
     var lastUnderscoreIndex = tabDivElementId.lastIndexOf("_");
     return tabDivElementId.substring(lastUnderscoreIndex + 1);
+};
+
+ExtrasAccordionPane.absorbMouseSelection = function(e) {
+    EchoDomUtil.preventEventDefault(e);
 };
 
 /**
