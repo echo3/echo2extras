@@ -72,6 +72,8 @@ implements Pane, PaneContainer {
     public static final int TYPE_BLIND_BLACK_OUT = 4;
     
     public static final int TYPE_FADE_TO_BLACK = 5;
+
+    public static final int TYPE_FADE_TO_WHITE = 6;
     
     public static final String PROPERTY_TYPE = "type";
     public static final String PROPERTY_DURATION = "duration";

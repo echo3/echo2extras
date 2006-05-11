@@ -89,13 +89,17 @@ implements ComponentSynchronizePeer {
     private static final Map IMAGE_ID_TO_RESOURCE = new HashMap();
     static {
         for (int i = 1; i <= 16; ++i) {
-            IMAGE_ID_TO_RESOURCE.put("blindblack-" + i, new ResourceImageReference(
+            IMAGE_ID_TO_RESOURCE.put("blind-black-" + i, new ResourceImageReference(
                     "/nextapp/echo2/extras/webcontainer/resource/image/transition/blindblack/Frame" + i + ".gif"));
         }
-        IMAGE_ID_TO_RESOURCE.put("fade-black-865", new ResourceImageReference(
-                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fadeblack/BlackAlpha865.png"));
-        IMAGE_ID_TO_RESOURCE.put("fade-black-513", new ResourceImageReference(
-                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fadeblack/BlackAlpha513.png"));
+        IMAGE_ID_TO_RESOURCE.put("fade-000000-865", new ResourceImageReference(
+                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_000000/Alpha865.png"));
+        IMAGE_ID_TO_RESOURCE.put("fade-000000-513", new ResourceImageReference(
+                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_000000/Alpha513.png"));
+        IMAGE_ID_TO_RESOURCE.put("fade-ffffff-865", new ResourceImageReference(
+                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_ffffff/Alpha865.png"));
+        IMAGE_ID_TO_RESOURCE.put("fade-ffffff-513", new ResourceImageReference(
+                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_ffffff/Alpha513.png"));
     }
     
     public static final Service IMAGE_SERVICE = new Service() {
@@ -218,6 +222,8 @@ implements ComponentSynchronizePeer {
                 return "blind-black-out";
             case TransitionPane.TYPE_FADE_TO_BLACK:
                 return "fade-to-black";
+            case TransitionPane.TYPE_FADE_TO_WHITE:
+                return "fade-to-white";
             }
         }
         return null;

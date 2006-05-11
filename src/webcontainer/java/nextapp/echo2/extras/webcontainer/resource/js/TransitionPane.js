@@ -419,9 +419,13 @@ ExtrasTransitionPane.Fade.prototype.step = function(progress) {
     
     EchoDebugManager.consoleWrite("CAS=" + currentAnimationStep);
     if (currentAnimationStep == this.contentSwapAnimationStep) {
-        this.translucentElements[0].style.backgroundColor = "black";
+        if (this.translucentElements[0].style != this.color) {
+            this.translucentElements[0].style.backgroundColor = this.color;
+        }
     } else {
-        this.translucentElements[0].style.backgroundColor = "";
+        if (this.translucentElements[0].style == this.color) {
+            this.translucentElements[0].style.backgroundColor = "";
+        }
     }
     
     for (var i = 0; i < 3; ++i) {
@@ -485,7 +489,7 @@ ExtrasTransitionPane.Blind = function(transitionPane, reverseAnimation) {
     this.renderedAnimationStep = 0;
     this.totalAnimationSteps = 14;
     this.contentSwapAnimationStep = Math.floor(this.totalAnimationSteps) / 2 + 1;
-    this.imagePrefix = "blindblack-";
+    this.imagePrefix = "blind-black-";
     
     // Precache images.
     for (var i = 1; i <= this.totalAnimationSteps; ++i) {
