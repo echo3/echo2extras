@@ -65,6 +65,7 @@ ExtrasMenu = function(elementId, containerElementId) {
     this.selectionForeground = "#ffffff";
     
     this.transparentImage = null;
+    this.submenuImage = null;
     this.toggleOffIcon = "ToggleOff.gif";
     this.toggleOnIcon = "ToggleOn.gif";
     this.radioOffIcon = "RadioOff.gif";
@@ -288,7 +289,14 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
             if (menuModel.items[i] instanceof ExtrasMenu.MenuModel) {
                 // Submenus have adjacent column containing 'expand' icons.
                 var menuItemArrowTdElement = document.createElement("td");
-                menuItemArrowTdElement.appendChild(document.createTextNode(">"));
+                if (this.submenuImage) {
+                    var imgElement = document.createElement("img");
+                    imgElement.setAttribute("src", this.submenuImage);
+                    imgElement.setAttribute("alt", "");
+                    menuItemArrowTdElement.appendChild(imgElement);
+                } else {
+                    menuItemArrowTdElement.appendChild(document.createTextNode(">"));
+                }
                 menuItemTrElement.appendChild(menuItemArrowTdElement);
             } else {
                 // Menu items fill both columns.
@@ -876,6 +884,9 @@ ExtrasMenu.MessageProcessor.processInit = function(initMessageElement) {
     }
     if (initMessageElement.getAttribute("icon-radio-on")) {
         menu.radioOnIcon = initMessageElement.getAttribute("icon-radio-on");
+    }
+    if (initMessageElement.getAttribute("submenu-image")) {
+        menu.submenuImage = initMessageElement.getAttribute("submenu-image");
     }
 
     var menuBarModel;

@@ -89,12 +89,17 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
     private static final ImageReference DEFAULT_ICON_TOGGLE_ON = new ResourceImageReference(IMAGE_PREFIX + "ToggleOn.gif");
     private static final ImageReference DEFAULT_ICON_RADIO_OFF = new ResourceImageReference(IMAGE_PREFIX + "RadioOff.gif");
     private static final ImageReference DEFAULT_ICON_RADIO_ON = new ResourceImageReference(IMAGE_PREFIX + "RadioOn.gif");
+    private static final ImageReference DEFAULT_ICON_SUBMENU_LEFT = new ResourceImageReference(IMAGE_PREFIX + "SubmenuLeft.gif");
+    private static final ImageReference DEFAULT_ICON_SUBMENU_RIGHT = new ResourceImageReference(IMAGE_PREFIX + "SubmenuRight.gif");
     
     private static final String IMAGE_ID_BACKGROUND = "background";
     private static final String IMAGE_ID_DISABLED_BACKGROUND = "disabledBackground";
     private static final String IMAGE_ID_MENU_BACKGROUND = "menuBackground";
     private static final String IMAGE_ID_MENU_ITEM_PREFIX = "menuItem.";
     private static final String IMAGE_ID_SELECTION_BACKGROUND = "selectionBackground";
+    
+    private static final String IMAGE_ID_SUBMENU_LEFT = "submenuLeft";
+    private static final String IMAGE_ID_SUBMENU_RIGHT = "submenuRight";
     
     private static final String IMAGE_ID_TOGGLE_OFF = "toggleOff";
     private static final String IMAGE_ID_TOGGLE_ON = "toggleOn";
@@ -126,7 +131,11 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
      */
     public ImageReference getImage(Component component, String imageId) {
         FillImage fillImage = null;
-        if (IMAGE_ID_BACKGROUND.equals(imageId)) {
+        if (IMAGE_ID_SUBMENU_RIGHT.equals(imageId)) {
+            return DEFAULT_ICON_SUBMENU_RIGHT;
+        } else if (IMAGE_ID_SUBMENU_LEFT.equals(imageId)) {
+            return DEFAULT_ICON_SUBMENU_LEFT;
+        } else if (IMAGE_ID_BACKGROUND.equals(imageId)) {
             fillImage = (FillImage) component.getRenderProperty(MenuBarPane.PROPERTY_BACKGROUND_IMAGE);
             return fillImage == null ? null : fillImage.getImage();
         } else if (IMAGE_ID_MENU_BACKGROUND.equals(imageId)) {
@@ -343,6 +352,8 @@ implements ActionProcessor, ComponentSynchronizePeer, ImageRenderSupport {
             initElement.setAttribute("disabled-foreground", ColorRender.renderCssAttributeValue(disabledForeground));
         }
         
+        initElement.setAttribute("submenu-image", ImageTools.getUri(rc, this, menu, IMAGE_ID_SUBMENU_RIGHT));
+
         initElement.setAttribute("icon-toggle-off", ImageTools.getUri(rc, this, menu, IMAGE_ID_TOGGLE_OFF));
         initElement.setAttribute("icon-toggle-on", ImageTools.getUri(rc, this, menu, IMAGE_ID_TOGGLE_ON));
         initElement.setAttribute("icon-radio-off", ImageTools.getUri(rc, this, menu, IMAGE_ID_RADIO_OFF));
