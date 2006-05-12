@@ -123,6 +123,16 @@ public class TransitionPaneTest extends AbstractTest {
                 transitionPane.setType(TransitionPane.TYPE_CAMERA_PAN_RIGHT);
             }
         });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Trans = CameraPan/Up", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                transitionPane.setType(TransitionPane.TYPE_CAMERA_PAN_UP);
+            }
+        });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Trans = CameraPan/Down", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                transitionPane.setType(TransitionPane.TYPE_CAMERA_PAN_DOWN);
+            }
+        });
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Trans = Blind/Black/In", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 transitionPane.setType(TransitionPane.TYPE_BLIND_BLACK_IN);

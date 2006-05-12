@@ -206,10 +206,16 @@ ExtrasTransitionPane.MessageProcessor = function() { };
 ExtrasTransitionPane.MessageProcessor.installTransition = function(transitionPane, type) {
     switch (type) {
     case "camera-pan-left":
-        transitionPane.setTransition(new ExtrasTransitionPane.CameraPan(transitionPane, false));
+        transitionPane.setTransition(new ExtrasTransitionPane.CameraPan(transitionPane, ExtrasTransitionPane.CameraPan.LEFT));
         break;
     case "camera-pan-right":
-        transitionPane.setTransition(new ExtrasTransitionPane.CameraPan(transitionPane, true));
+        transitionPane.setTransition(new ExtrasTransitionPane.CameraPan(transitionPane, ExtrasTransitionPane.CameraPan.RIGHT));
+        break;
+    case "camera-pan-up":
+        transitionPane.setTransition(new ExtrasTransitionPane.CameraPan(transitionPane, ExtrasTransitionPane.CameraPan.UP));
+        break;
+    case "camera-pan-down":
+        transitionPane.setTransition(new ExtrasTransitionPane.CameraPan(transitionPane, ExtrasTransitionPane.CameraPan.DOWN));
         break;
     case "blind-black-in":
         transitionPane.setTransition(new ExtrasTransitionPane.Blind(transitionPane, false));
@@ -577,15 +583,21 @@ ExtrasTransitionPane.Blind.prototype.step = function(progress) {
 /**
  * Camera-Pantransition. 
  */
-ExtrasTransitionPane.CameraPan = function(transitionPane, right) {
+ExtrasTransitionPane.CameraPan = function(transitionPane, direction) {
     this.transitionPane = transitionPane;
-    this.right = right;
+    this.direction = direction;
 };
 
+ExtrasTransitionPane.CameraPan.LEFT = 0;
+ExtrasTransitionPane.CameraPan.RIGHT = 1;
+ExtrasTransitionPane.CameraPan.UP = 2;
+ExtrasTransitionPane.CameraPan.DOWN = 3;
+
 ExtrasTransitionPane.CameraPan.prototype.dispose = function() {
-    this.widthTravel = null;
+    this.travel = null;
     if (this.transitionPane.newChildDivElement) {
         this.transitionPane.newChildDivElement.style.zIndex = 0;
+        this.transitionPane.newChildDivElement.style.top = "0px";
         this.transitionPane.newChildDivElement.style.left = "0px";
     }
     this.transitionPane.doImmediateTransition();
@@ -593,31 +605,53 @@ ExtrasTransitionPane.CameraPan.prototype.dispose = function() {
 
 ExtrasTransitionPane.CameraPan.prototype.init = function() {
     var bounds = new EchoCssUtil.Bounds(this.transitionPane.transitionPaneDivElement);
-    this.widthTravel = bounds.width;
+    this.travel = (this.direction == ExtrasTransitionPane.CameraPan.DOWN 
+            || this.direction == ExtrasTransitionPane.CameraPan.UP)
+            ? bounds.height : bounds.width;
     if (this.transitionPane.oldChildDivElement) {
         this.transitionPane.oldChildDivElement.style.zIndex = 1;
     }
-    if (this.transitionPane.newChildDivElement) {
-        this.transitionPane.newChildDivElement.style.zIndex = 2;
-        this.transitionPane.newChildDivElement.style.left = (0 - this.widthTravel) + "px";
-        this.transitionPane.newChildDivElement.style.display = "block";
-    }
+    this.newChildOnScreen = false;
 };
 
 ExtrasTransitionPane.CameraPan.prototype.step = function(progress) {
-    if (this.right) {
+    switch (this.direction) {
+    case ExtrasTransitionPane.CameraPan.DOWN:
         if (this.transitionPane.newChildDivElement) {
-            this.transitionPane.newChildDivElement.style.left = ((1 - progress) * this.widthTravel) + "px";
+            this.transitionPane.newChildDivElement.style.top = ((1 - progress) * this.travel) + "px";
         }
         if (this.transitionPane.oldChildDivElement) {
-            this.transitionPane.oldChildDivElement.style.left = (0 - (progress * this.widthTravel)) + "px";
+            this.transitionPane.oldChildDivElement.style.top = (0 - (progress * this.travel)) + "px";
         }
-    } else {
+        break;
+    case ExtrasTransitionPane.CameraPan.UP:
         if (this.transitionPane.newChildDivElement) {
-            this.transitionPane.newChildDivElement.style.left = (0 - ((1 - progress) * this.widthTravel)) + "px";
+            this.transitionPane.newChildDivElement.style.top = (0 - ((1 - progress) * this.travel)) + "px";
         }
         if (this.transitionPane.oldChildDivElement) {
-            this.transitionPane.oldChildDivElement.style.left = (progress * this.widthTravel) + "px";
+            this.transitionPane.oldChildDivElement.style.top = (progress * this.travel) + "px";
         }
+        break;
+    case ExtrasTransitionPane.CameraPan.RIGHT:
+        if (this.transitionPane.newChildDivElement) {
+            this.transitionPane.newChildDivElement.style.left = ((1 - progress) * this.travel) + "px";
+        }
+        if (this.transitionPane.oldChildDivElement) {
+            this.transitionPane.oldChildDivElement.style.left = (0 - (progress * this.travel)) + "px";
+        }
+        break;
+    default:
+        if (this.transitionPane.newChildDivElement) {
+            this.transitionPane.newChildDivElement.style.left = (0 - ((1 - progress) * this.travel)) + "px";
+        }
+        if (this.transitionPane.oldChildDivElement) {
+            this.transitionPane.oldChildDivElement.style.left = (progress * this.travel) + "px";
+        }
+        break;
+    }
+    if (!this.newChildOnScreen && this.transitionPane.newChildDivElement) {
+        this.transitionPane.newChildDivElement.style.display = "block";
+        this.transitionPane.newChildDivElement.style.zIndex = 2;
+        this.newChildOnScreen = true;
     }
 };

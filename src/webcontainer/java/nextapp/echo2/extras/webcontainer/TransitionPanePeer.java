@@ -216,6 +216,10 @@ implements ComponentSynchronizePeer {
                 return "camera-pan-left";
             case TransitionPane.TYPE_CAMERA_PAN_RIGHT:
                 return "camera-pan-right";
+            case TransitionPane.TYPE_CAMERA_PAN_UP:
+                return "camera-pan-up";
+            case TransitionPane.TYPE_CAMERA_PAN_DOWN:
+                return "camera-pan-down";
             case TransitionPane.TYPE_BLIND_BLACK_IN:
                 return "blind-black-in";
             case TransitionPane.TYPE_BLIND_BLACK_OUT:

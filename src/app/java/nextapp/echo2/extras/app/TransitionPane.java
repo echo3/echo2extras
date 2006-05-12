@@ -66,14 +66,44 @@ implements Pane, PaneContainer {
      * New content enters from the right side of the screen. 
      */
     public static final int TYPE_CAMERA_PAN_RIGHT = 2;
-    
-    public static final int TYPE_BLIND_BLACK_IN = 3;
-    
-    public static final int TYPE_BLIND_BLACK_OUT = 4;
-    
-    public static final int TYPE_FADE_TO_BLACK = 5;
 
-    public static final int TYPE_FADE_TO_WHITE = 6;
+    /**
+     * Transition setting describing a visual effect where the
+     * viewing area pans up to realize the new content.
+     * Old content exits to the bottom of the screen.
+     * New content enters from the top of the screen. 
+     */
+    public static final int TYPE_CAMERA_PAN_UP = 3;
+
+    /**
+     * Transition setting describing a visual effect where the
+     * viewing area pans to up to realize the new content.
+     * Old content exits to the top of the screen.
+     * New content enters from the bottom of the screen. 
+     */
+    public static final int TYPE_CAMERA_PAN_DOWN = 4;
+    
+    /**
+     * A horizontal blind effect with a black background.
+     * Top of blinds rotate inward.
+     */
+    public static final int TYPE_BLIND_BLACK_IN = 5;
+    
+    /**
+     * A horizontal blind effect with a black background.
+     * Top of blinds rotate outward.
+     */
+    public static final int TYPE_BLIND_BLACK_OUT = 6;
+    
+    /**
+     * Fades to black, fades in new content.
+     */
+    public static final int TYPE_FADE_TO_BLACK = 7;
+
+    /**
+     * Fades to white, fades in new content.
+     */
+    public static final int TYPE_FADE_TO_WHITE = 8;
     
     public static final String PROPERTY_TYPE = "type";
     public static final String PROPERTY_DURATION = "duration";
