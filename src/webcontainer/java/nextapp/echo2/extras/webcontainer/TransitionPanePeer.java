@@ -92,18 +92,26 @@ implements ComponentSynchronizePeer {
             IMAGE_ID_TO_RESOURCE.put("blind-black-" + i, new ResourceImageReference(
                     "/nextapp/echo2/extras/webcontainer/resource/image/transition/blindblack/Frame" + i + ".gif"));
         }
-        IMAGE_ID_TO_RESOURCE.put("fade-000000-948", new ResourceImageReference(
-                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_000000/Alpha948.png"));
-        IMAGE_ID_TO_RESOURCE.put("fade-000000-820", new ResourceImageReference(
-                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_000000/Alpha820.png"));
-        IMAGE_ID_TO_RESOURCE.put("fade-000000-470", new ResourceImageReference(
-                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_000000/Alpha470.png"));
-        IMAGE_ID_TO_RESOURCE.put("fade-ffffff-948", new ResourceImageReference(
-                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_ffffff/Alpha948.png"));
-        IMAGE_ID_TO_RESOURCE.put("fade-ffffff-820", new ResourceImageReference(
-                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_ffffff/Alpha820.png"));
-        IMAGE_ID_TO_RESOURCE.put("fade-ffffff-470", new ResourceImageReference(
-                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_ffffff/Alpha470.png"));
+        IMAGE_ID_TO_RESOURCE.put("fade-000000-927", new ResourceImageReference(
+                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_000000/Alpha927.png"));
+        IMAGE_ID_TO_RESOURCE.put("fade-000000-787", new ResourceImageReference(
+                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_000000/Alpha787.png"));
+        IMAGE_ID_TO_RESOURCE.put("fade-000000-700", new ResourceImageReference(
+                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_000000/Alpha700.png"));
+        IMAGE_ID_TO_RESOURCE.put("fade-000000-420", new ResourceImageReference(
+                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_000000/Alpha420.png"));
+        IMAGE_ID_TO_RESOURCE.put("fade-000000-230", new ResourceImageReference(
+                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_000000/Alpha230.png"));
+        IMAGE_ID_TO_RESOURCE.put("fade-ffffff-927", new ResourceImageReference(
+                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_ffffff/Alpha927.png"));
+        IMAGE_ID_TO_RESOURCE.put("fade-ffffff-787", new ResourceImageReference(
+                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_ffffff/Alpha787.png"));
+        IMAGE_ID_TO_RESOURCE.put("fade-ffffff-700", new ResourceImageReference(
+                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_ffffff/Alpha700.png"));
+        IMAGE_ID_TO_RESOURCE.put("fade-ffffff-420", new ResourceImageReference(
+                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_ffffff/Alpha420.png"));
+        IMAGE_ID_TO_RESOURCE.put("fade-ffffff-230", new ResourceImageReference(
+                    "/nextapp/echo2/extras/webcontainer/resource/image/transition/fade_ffffff/Alpha230.png"));
     }
     
     public static final Service IMAGE_SERVICE = new Service() {

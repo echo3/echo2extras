@@ -371,53 +371,49 @@ ExtrasTransitionPane.Fade = function(transitionPane, color) {
     this.color = color;
     this.renderedProgress = 0;
     this.renderedFadeStepIndex = -1;
-
-    var image948 = new Image();
-    image948.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
-            + "fade-" + this.color + "-948";
+    
+    var image927 = new Image();
+    image927.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
+            + "fade-" + this.color + "-927";
+    var image787 = new Image();
+    image787.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
+            + "fade-" + this.color + "-787";
+    var image700 = new Image();
+    image700.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
+            + "fade-" + this.color + "-700";
+    var image420 = new Image();
+    image420.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
+            + "fade-" + this.color + "-420";
+    var image230 = new Image();
+    image230.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
+            + "fade-" + this.color + "-230";
     var image820 = new Image();
-    image820.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
-            + "fade-" + this.color + "-820";
-    var image470 = new Image();
-    image470.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
-            + "fade-" + this.color + "-470";
 };
 
 ExtrasTransitionPane.Fade.createFadeSteps = function() {
     // Index 0 indicates total translucency of layerstack, 1 = transparent, 0 = opaque.
-    // Index 1-4 are image alpha values to stack on top of one another to create desired translucency.
-    // Three images are used on four layers, images have transparency values of 94.8%, 82%, and 47%.
+    // Index 1-2 are image alpha values to stack on top of one another to create desired translucency.
+    // Five images are used on two layers, images have transparency values of 92.7%, 78.7%, 70.0% 42.0%, and 23.0%
     var fadeSteps = new Array();
-    fadeSteps.push(new Array(0.948, 948, null, null, null));
-    fadeSteps.push(new Array(0.899, 948, 948, null, null));
-    fadeSteps.push(new Array(0.852, 948, 948, 948, null));
-    fadeSteps.push(new Array(0.820, 820, null, null, null));
-    fadeSteps.push(new Array(0.808, 948, 948, 948, 948));
-    fadeSteps.push(new Array(0.777, 820, 948, null, null));
-    fadeSteps.push(new Array(0.737, 820, 948, 948, null));
-    fadeSteps.push(new Array(0.699, 820, 948, 948, 948));
-    fadeSteps.push(new Array(0.672, 820, 820, null, null));
-    fadeSteps.push(new Array(0.637, 820, 820, 948, null));
-    fadeSteps.push(new Array(0.604, 820, 820, 948, 948));
-    fadeSteps.push(new Array(0.551, 820, 820, 820, null));
-    fadeSteps.push(new Array(0.523, 820, 820, 820, 948));
-    fadeSteps.push(new Array(0.470, 470, null, null, null));
-    fadeSteps.push(new Array(0.446, 470, 948, null, null));
-    fadeSteps.push(new Array(0.422, 470, 948, 948, null));
-    fadeSteps.push(new Array(0.400, 470, 948, 948, 948));
-    fadeSteps.push(new Array(0.385, 470, 820, null, null));
-    fadeSteps.push(new Array(0.365, 470, 820, 948, null));
-    fadeSteps.push(new Array(0.346, 470, 820, 948, 948));
-    fadeSteps.push(new Array(0.316, 470, 820, 820, null));
-    fadeSteps.push(new Array(0.300, 470, 820, 820, 948));
-    fadeSteps.push(new Array(0.259, 470, 820, 820, 820));
-    fadeSteps.push(new Array(0.221, 470, 470, null, null));
-    fadeSteps.push(new Array(0.199, 470, 470, 948, 948));
-    fadeSteps.push(new Array(0.172, 470, 470, 948, 820));
-    fadeSteps.push(new Array(0.149, 470, 470, 820, 820));
-    fadeSteps.push(new Array(0.098, 470, 470, 470, 948));
-    fadeSteps.push(new Array(0.085, 470, 470, 470, 820));
-    fadeSteps.push(new Array(0.488, 470, 470, 470, 470));
+    fadeSteps.push(new Array(927,  927, null));
+    fadeSteps.push(new Array(859,  927,  927));
+    fadeSteps.push(new Array(787,  787, null));
+    fadeSteps.push(new Array(730,  787,  927));
+    fadeSteps.push(new Array(700,  700, null));
+    fadeSteps.push(new Array(649,  700,  927));
+    fadeSteps.push(new Array(619,  787,  787));
+    fadeSteps.push(new Array(551,  700,  787));
+    fadeSteps.push(new Array(490,  700,  700));
+    fadeSteps.push(new Array(420,  420, null));
+    fadeSteps.push(new Array(389,  420,  927));
+    fadeSteps.push(new Array(331,  420,  787));
+    fadeSteps.push(new Array(294,  420,  700));
+    fadeSteps.push(new Array(230,  230, null));
+    fadeSteps.push(new Array(213,  230,  927));
+    fadeSteps.push(new Array(176,  420,  420));
+    fadeSteps.push(new Array(161,  230,  700));
+    fadeSteps.push(new Array( 97,  230,  420));
+    fadeSteps.push(new Array( 53,  230,  230));
     
     return fadeSteps;
 }
@@ -429,7 +425,7 @@ ExtrasTransitionPane.Fade.prototype.init = function() {
     if (EchoClientProperties.get("proprietaryIEPngAlphaFilterRequired")) {
         this.dxRender = true;
     }
-    for (var i = 0; i < 4; ++i) {
+    for (var i = 0; i < 2; ++i) {
         this.translucentElements[i] = document.createElement("div");
         this.translucentElements[i].style.position = "absolute";
         this.translucentElements[i].style.zIndex = i + 2;
@@ -447,20 +443,23 @@ ExtrasTransitionPane.Fade.prototype.step = function(progress) {
         currentAnimationStep = 1;
     }
     
-    var targetTranslucency = Math.abs((progress - 0.5) * 2);
+    var targetTranslucency = Math.abs((progress - 0.5) * 2) * 1000;
     
     var bestIndex = 0;
-    var bestDelta = 1;
+    var bestDelta = 1000;
     for (var i = 0; i < ExtrasTransitionPane.Fade.fadeSteps.length; ++i) {
-        var delta = Math.abs(ExtrasTransitionPane.Fade.fadeSteps[i][0] - targetTranslucency);
+        var delta = Math.round(Math.abs(ExtrasTransitionPane.Fade.fadeSteps[i][0] - targetTranslucency));
         if (delta < bestDelta) {
             bestDelta = delta;
             bestIndex = i;
         }
     }
 
+    EchoDebugManager.consoleWrite("tt= " + targetTranslucency + ", bi=" + bestIndex + ", bd=" + bestDelta 
+            + ", len=" + ExtrasTransitionPane.Fade.fadeSteps.length);
+    
     if (this.renderedFadeStepIndex != bestIndex) {  
-        for (var i = 0; i < 4; ++i) {
+        for (var i = 0; i < 2; ++i) {
             var imgId = ExtrasTransitionPane.Fade.fadeSteps[bestIndex][i + 1];
             var previousImgId = this.renderedFadeStepIndex == -1 
                     ? null : ExtrasTransitionPane.Fade.fadeSteps[this.renderedFadeStepIndex][i + 1];
@@ -502,7 +501,7 @@ ExtrasTransitionPane.Fade.prototype.step = function(progress) {
 };
 
 ExtrasTransitionPane.Fade.prototype.dispose = function() {
-    for (var i = 0; i < 4; ++i) {
+    for (var i = 0; i < this.translucentElements.length; ++i) {
         this.transitionPane.transitionPaneDivElement.removeChild(this.translucentElements[i]);
         this.translucentElements[i] = null;
     }
