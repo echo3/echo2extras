@@ -98,6 +98,7 @@ ExtrasTransitionPane.prototype.clearTransition = function() {
 };
 
 ExtrasTransitionPane.prototype.dispose = function() {
+    this.clearTransition();
     EchoDomPropertyStore.dispose(this.transitionPaneDivElement);
     this.transitionPaneDivElement = null;
 };
