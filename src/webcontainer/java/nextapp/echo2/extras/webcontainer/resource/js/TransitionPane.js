@@ -170,7 +170,7 @@ ExtrasTransitionPane.prototype.transitionStep = function(firstStep) {
                 this.activeTransitionDuration = this.transitionDuration;
             }
             
-            this.timeout = window.setTimeout("ExtrasTransitionPane.processTimeout(\"" + this.elementId + "\");", 1);
+            this.timeout = window.setTimeout("ExtrasTransitionPane.processTimeout(\"" + this.elementId + "\");", 5);
         } else {
             this.doImmediateTransition();
         }
@@ -180,7 +180,7 @@ ExtrasTransitionPane.prototype.transitionStep = function(firstStep) {
     
         if (progress < 1) {
             this.transition.step(progress);
-            this.timeout = window.setTimeout("ExtrasTransitionPane.processTimeout(\"" + this.elementId + "\");", 1);
+            this.timeout = window.setTimeout("ExtrasTransitionPane.processTimeout(\"" + this.elementId + "\");", 5);
         } else {
             this.transition.dispose();
             this.transitionActive = false;
@@ -370,30 +370,57 @@ ExtrasTransitionPane.Fade = function(transitionPane, color) {
     this.transitionPane = transitionPane;
     this.color = color;
     this.renderedProgress = 0;
-    this.renderedFadeStepIndex = 0;
-    
-    var image513 = new Image();
-    image513.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
-            + "fade-" + this.color + "-513";
-    var image865 = new Image();
-    image865.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
-            + "fade-" + this.color + "-865";
+    this.renderedFadeStepIndex = -1;
+
+    var image948 = new Image();
+    image948.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
+            + "fade-" + this.color + "-948";
+    var image820 = new Image();
+    image820.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
+            + "fade-" + this.color + "-820";
+    var image470 = new Image();
+    image470.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
+            + "fade-" + this.color + "-470";
 };
 
 ExtrasTransitionPane.Fade.createFadeSteps = function() {
+    // Index 0 indicates total translucency of layerstack, 1 = transparent, 0 = opaque.
+    // Index 1-4 are image alpha values to stack on top of one another to create desired translucency.
+    // Three images are used on four layers, images have transparency values of 94.8%, 82%, and 47%.
     var fadeSteps = new Array();
-    fadeSteps.push(new Array(0.865, 865, null, null));
-    fadeSteps.push(new Array(0.748, 865, 865, null));
-    fadeSteps.push(new Array(0.647, 865, 865, 865));
-    fadeSteps.push(new Array(0.513, 513, null, null));
-    fadeSteps.push(new Array(0.444, 513, null, 865));
-    fadeSteps.push(new Array(0.383, 513, 865, 865));
-    fadeSteps.push(new Array(0.263, 513, 513, null));
-    fadeSteps.push(new Array(0.228, 513, 513, 865));
-    fadeSteps.push(new Array(0.135, 513, 513, 513));
-    fadeSteps.push(new Array(0, null, null, null));
+    fadeSteps.push(new Array(0.948, 948, null, null, null));
+    fadeSteps.push(new Array(0.899, 948, 948, null, null));
+    fadeSteps.push(new Array(0.852, 948, 948, 948, null));
+    fadeSteps.push(new Array(0.820, 820, null, null, null));
+    fadeSteps.push(new Array(0.808, 948, 948, 948, 948));
+    fadeSteps.push(new Array(0.777, 820, 948, null, null));
+    fadeSteps.push(new Array(0.737, 820, 948, 948, null));
+    fadeSteps.push(new Array(0.699, 820, 948, 948, 948));
+    fadeSteps.push(new Array(0.672, 820, 820, null, null));
+    fadeSteps.push(new Array(0.637, 820, 820, 948, null));
+    fadeSteps.push(new Array(0.604, 820, 820, 948, 948));
+    fadeSteps.push(new Array(0.551, 820, 820, 820, null));
+    fadeSteps.push(new Array(0.523, 820, 820, 820, 948));
+    fadeSteps.push(new Array(0.470, 470, null, null, null));
+    fadeSteps.push(new Array(0.446, 470, 948, null, null));
+    fadeSteps.push(new Array(0.422, 470, 948, 948, null));
+    fadeSteps.push(new Array(0.400, 470, 948, 948, 948));
+    fadeSteps.push(new Array(0.385, 470, 820, null, null));
+    fadeSteps.push(new Array(0.365, 470, 820, 948, null));
+    fadeSteps.push(new Array(0.346, 470, 820, 948, 948));
+    fadeSteps.push(new Array(0.316, 470, 820, 820, null));
+    fadeSteps.push(new Array(0.300, 470, 820, 820, 948));
+    fadeSteps.push(new Array(0.259, 470, 820, 820, 820));
+    fadeSteps.push(new Array(0.221, 470, 470, null, null));
+    fadeSteps.push(new Array(0.199, 470, 470, 948, 948));
+    fadeSteps.push(new Array(0.172, 470, 470, 948, 820));
+    fadeSteps.push(new Array(0.149, 470, 470, 820, 820));
+    fadeSteps.push(new Array(0.098, 470, 470, 470, 948));
+    fadeSteps.push(new Array(0.085, 470, 470, 470, 820));
+    fadeSteps.push(new Array(0.488, 470, 470, 470, 470));
+    
     return fadeSteps;
-};
+}
 
 ExtrasTransitionPane.Fade.fadeSteps = ExtrasTransitionPane.Fade.createFadeSteps();
 
@@ -402,7 +429,7 @@ ExtrasTransitionPane.Fade.prototype.init = function() {
     if (EchoClientProperties.get("proprietaryIEPngAlphaFilterRequired")) {
         this.dxRender = true;
     }
-    for (var i = 0; i < 3; ++i) {
+    for (var i = 0; i < 4; ++i) {
         this.translucentElements[i] = document.createElement("div");
         this.translucentElements[i].style.position = "absolute";
         this.translucentElements[i].style.zIndex = i + 2;
@@ -432,22 +459,14 @@ ExtrasTransitionPane.Fade.prototype.step = function(progress) {
         }
     }
 
-    if (bestIndex == ExtrasTransitionPane.Fade.fadeSteps.length - 1) {
-        this.translucentElements[0].style.backgroundColor = "#" + this.color;
-    } else {
-        if (this.translucentElements[0].style.backgroundColor) {
-            this.translucentElements[0].style.backgroundColor = "";
-        }
-    }
-    
     if (this.renderedFadeStepIndex != bestIndex) {  
-        for (var i = 0; i < 3; ++i) {
+        for (var i = 0; i < 4; ++i) {
             var imgId = ExtrasTransitionPane.Fade.fadeSteps[bestIndex][i + 1];
-    //        var previousImgId = this.renderedAnimationStep == 0 
-    //                ? null : ExtrasTransitionPane.Fade.fadeSteps[bestIndex][i + 1];
-    //        if (imgId == previousImgId) {
-    //            continue;
-    //        }
+            var previousImgId = this.renderedFadeStepIndex == -1 
+                    ? null : ExtrasTransitionPane.Fade.fadeSteps[this.renderedFadeStepIndex][i + 1];
+            if (imgId == previousImgId) {
+                continue;
+            }
             if (imgId) {
                 var imgUrl = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
                         + "fade-" + this.color + "-" + imgId;
@@ -483,7 +502,7 @@ ExtrasTransitionPane.Fade.prototype.step = function(progress) {
 };
 
 ExtrasTransitionPane.Fade.prototype.dispose = function() {
-    for (var i = 0; i < 3; ++i) {
+    for (var i = 0; i < 4; ++i) {
         this.transitionPane.transitionPaneDivElement.removeChild(this.translucentElements[i]);
         this.translucentElements[i] = null;
     }
