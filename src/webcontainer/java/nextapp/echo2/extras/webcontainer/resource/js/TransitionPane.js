@@ -369,9 +369,8 @@ ExtrasTransitionPane.Fade = function(transitionPane, color) {
     this.transitionDuration = 1000;
     this.transitionPane = transitionPane;
     this.color = color;
-    this.renderedAnimationStep = 0;
-    this.totalAnimationSteps = 15;
-    this.contentSwapAnimationStep = 8;
+    this.renderedProgress = 0;
+    this.renderedFadeStepIndex = 0;
     
     var image513 = new Image();
     image513.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
@@ -381,22 +380,22 @@ ExtrasTransitionPane.Fade = function(transitionPane, color) {
             + "fade-" + this.color + "-865";
 };
 
-ExtrasTransitionPane.fadeSteps = new Array();
-ExtrasTransitionPane.fadeSteps[0] = new Array(865, null, null);
-ExtrasTransitionPane.fadeSteps[1] = new Array(865, 865, null);
-ExtrasTransitionPane.fadeSteps[2] = new Array(865, 865, 865);
-ExtrasTransitionPane.fadeSteps[3] = new Array(513, null, null);
-ExtrasTransitionPane.fadeSteps[4] = new Array(513, 865, 865);
-ExtrasTransitionPane.fadeSteps[5] = new Array(513, 513, null);
-ExtrasTransitionPane.fadeSteps[6] = new Array(513, 513, 513);
-ExtrasTransitionPane.fadeSteps[7] = new Array(null, null, null);
-ExtrasTransitionPane.fadeSteps[8] = new Array(513, 513, 513);
-ExtrasTransitionPane.fadeSteps[9] = new Array(513, 513, null);
-ExtrasTransitionPane.fadeSteps[10] = new Array(513, 865, 865);
-ExtrasTransitionPane.fadeSteps[11] = new Array(513, null, null);
-ExtrasTransitionPane.fadeSteps[12] = new Array(865, 865, 865);
-ExtrasTransitionPane.fadeSteps[13] = new Array(865, 865, null);
-ExtrasTransitionPane.fadeSteps[14] = new Array(865, null, null);
+ExtrasTransitionPane.Fade.createFadeSteps = function() {
+    var fadeSteps = new Array();
+    fadeSteps.push(new Array(0.865, 865, null, null));
+    fadeSteps.push(new Array(0.748, 865, 865, null));
+    fadeSteps.push(new Array(0.647, 865, 865, 865));
+    fadeSteps.push(new Array(0.513, 513, null, null));
+    fadeSteps.push(new Array(0.444, 513, null, 865));
+    fadeSteps.push(new Array(0.383, 513, 865, 865));
+    fadeSteps.push(new Array(0.263, 513, 513, null));
+    fadeSteps.push(new Array(0.228, 513, 513, 865));
+    fadeSteps.push(new Array(0.135, 513, 513, 513));
+    fadeSteps.push(new Array(0, null, null, null));
+    return fadeSteps;
+};
+
+ExtrasTransitionPane.Fade.fadeSteps = ExtrasTransitionPane.Fade.createFadeSteps();
 
 ExtrasTransitionPane.Fade.prototype.init = function() {
     this.translucentElements = new Array();
@@ -420,12 +419,20 @@ ExtrasTransitionPane.Fade.prototype.step = function(progress) {
     if (currentAnimationStep == 0) {
         currentAnimationStep = 1;
     }
-    if (currentAnimationStep == this.renderedAnimationStep) {
-        // No need for update, already current.
-        return;
+    
+    var targetTranslucency = Math.abs((progress - 0.5) * 2);
+    
+    var bestIndex = 0;
+    var bestDelta = 1;
+    for (var i = 0; i < ExtrasTransitionPane.Fade.fadeSteps.length; ++i) {
+        var delta = Math.abs(ExtrasTransitionPane.Fade.fadeSteps[i][0] - targetTranslucency);
+        if (delta < bestDelta) {
+            bestDelta = delta;
+            bestIndex = i;
+        }
     }
 
-    if (currentAnimationStep == this.contentSwapAnimationStep) {
+    if (bestIndex == ExtrasTransitionPane.Fade.fadeSteps.length - 1) {
         this.translucentElements[0].style.backgroundColor = "#" + this.color;
     } else {
         if (this.translucentElements[0].style.backgroundColor) {
@@ -433,34 +440,35 @@ ExtrasTransitionPane.Fade.prototype.step = function(progress) {
         }
     }
     
-    for (var i = 0; i < 3; ++i) {
-        var imgId = ExtrasTransitionPane.fadeSteps[currentAnimationStep - 1][i];
-        var previousImgId = this.renderedAnimationStep == 0 
-                ? null : ExtrasTransitionPane.fadeSteps[this.renderedAnimationStep - 1][i];
-        if (imgId == previousImgId) {
-            continue;
-        }
-        if (imgId) {
-            var imgUrl = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
-                    + "fade-" + this.color + "-" + imgId;
-            if (this.dxRender) {
-                this.translucentElements[i].style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader("
-                        + "src='" + imgUrl + "', sizingMethod='scale');";
+    if (this.renderedFadeStepIndex != bestIndex) {  
+        for (var i = 0; i < 3; ++i) {
+            var imgId = ExtrasTransitionPane.Fade.fadeSteps[bestIndex][i + 1];
+    //        var previousImgId = this.renderedAnimationStep == 0 
+    //                ? null : ExtrasTransitionPane.Fade.fadeSteps[bestIndex][i + 1];
+    //        if (imgId == previousImgId) {
+    //            continue;
+    //        }
+            if (imgId) {
+                var imgUrl = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
+                        + "fade-" + this.color + "-" + imgId;
+                if (this.dxRender) {
+                    this.translucentElements[i].style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader("
+                            + "src='" + imgUrl + "', sizingMethod='scale');";
+                } else {
+                    this.translucentElements[i].style.backgroundImage = "url(" + imgUrl + ")";
+                }
             } else {
-                this.translucentElements[i].style.backgroundImage = "url(" + imgUrl + ")";
-            }
-        } else {
-            if (this.dxRender) {
-                this.translucentElements[i].style.filter = "";
-            } else {
-                this.translucentElements[i].style.backgroundImage = "";
+                if (this.dxRender) {
+                    this.translucentElements[i].style.filter = "";
+                } else {
+                    this.translucentElements[i].style.backgroundImage = "";
+                }
             }
         }
     }
 
-    if (currentAnimationStep >= this.contentSwapAnimationStep
-            && this.renderedAnimationStep < this.contentSwapAnimationStep) {
-        // fade is crossing horizontal, swap content.
+    if (progress >= 0.5 && this.renderedProgress < 0.5) {
+        // fade is crossing midpoint, swap content.
         if (this.transitionPane.oldChildDivElement) {
             this.transitionPane.oldChildDivElement.style.display = "none";
         }
@@ -470,7 +478,8 @@ ExtrasTransitionPane.Fade.prototype.step = function(progress) {
         }
     }
     
-    this.renderedAnimationStep = currentAnimationStep;
+    this.renderedProgress = progress;
+    this.renderedFadeStepIndex = bestIndex;
 };
 
 ExtrasTransitionPane.Fade.prototype.dispose = function() {
