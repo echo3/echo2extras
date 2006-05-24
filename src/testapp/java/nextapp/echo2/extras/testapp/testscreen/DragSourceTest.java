@@ -35,8 +35,8 @@ import nextapp.echo2.app.Column;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Row;
 import nextapp.echo2.extras.app.DragSource;
-import nextapp.echo2.extras.app.dnd.DropListener;
 import nextapp.echo2.extras.app.event.DropEvent;
+import nextapp.echo2.extras.app.event.DropListener;
 import nextapp.echo2.extras.testapp.AbstractTest;
 import nextapp.echo2.extras.testapp.Styles;
 

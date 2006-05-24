@@ -26,11 +26,10 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
-package nextapp.echo2.extras.app.dnd;
+package nextapp.echo2.extras.app.event;
 
 import java.util.EventListener;
 
-import nextapp.echo2.extras.app.event.DropEvent;
 
 /**
  * Listener for Drop Events

@@ -33,8 +33,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import nextapp.echo2.app.Component;
-import nextapp.echo2.extras.app.dnd.DropListener;
 import nextapp.echo2.extras.app.event.DropEvent;
+import nextapp.echo2.extras.app.event.DropListener;
 
 /**
  * A container Component that enables its child to be draggable by the client 
