@@ -30,9 +30,8 @@ package nextapp.echo2.extras.app.event;
 
 import java.util.EventListener;
 
-
 /**
- * Listener for Drop Events
+ * Listener interface for receiving <code>DropEvent</code>s.
  */
 public interface DropListener extends EventListener {
 
@@ -43,5 +42,4 @@ public interface DropListener extends EventListener {
      * @param event The event
      */
     void dropPerformed(DropEvent event);
-    
 }

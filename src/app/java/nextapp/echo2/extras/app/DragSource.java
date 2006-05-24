@@ -26,6 +26,7 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
+
 package nextapp.echo2.extras.app;
 
 import java.util.EventListener;
@@ -37,19 +38,20 @@ import nextapp.echo2.extras.app.event.DropEvent;
 import nextapp.echo2.extras.app.event.DropListener;
 
 /**
- * A container Component that enables its child to be draggable by the client 
- * and droppable onto any number of registered drop target Components.  
- * When a draggable Component is successfully dropped onto a valid drop target, 
- * a DropEvent is fired and all registered DropTargetListeners are notified. 
- * 
- * <strong>WARNING: This component is EXPERIMENTAL.  
- * The API is VERY LIKELY to change.</strong>
+ * A container <code>Component</code> that enables its child to be dragged and
+ * dropeed by the user onto any <code>Component</code> registered as a drop
+ * target. When a <code>Component</code> is successfully dropped onto a valid
+ * drop target, a <code>DropEvent</code> is fired and all registered
+ * <code>DropTargetListener</code>s are notified.
+ * <p>
+ * <strong>WARNING: This component is EXPERIMENTAL. The API is VERY LIKELY to
+ * change.</strong>
  * 
  */
 public class DragSource extends Component {
 
-    public static final String INPUT_DROP = "ACTION_INPUT_DROP";
     public static final String DROP_TARGET_LISTENERS_CHANGED_PROPERTY = "dropTargetListeners";
+    public static final String INPUT_DROP = "ACTION_INPUT_DROP";
     
     public static final String PROPERTY_TOOL_TIP_TEXT = "toolTipText";
     
@@ -70,16 +72,6 @@ public class DragSource extends Component {
 	}
    
     /**
-     * Gets the tool tip text (displayed when the draggable 
-     * component is over a valid drop target).
-     * 
-     * @return the tool tip text
-     */
-    public String getToolTipText(String newValue) {
-        return (String) getProperty(PROPERTY_TOOL_TIP_TEXT);
-    }
-    
-    /**
      * Adds a target component to the drop target list.
      * @param dropTarget the drop target.
      */
@@ -90,13 +82,15 @@ public class DragSource extends Component {
 	}
     
     /**
-     * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
+     * Adds a <code>DropListener</code> to the listener list
+     * 
+     * @param listener the listener.
      */
-    public void processInput(String name, Object value) {
-        super.processInput(name, value);
-        if (INPUT_DROP.equals(name)) {
-            fireDropEvent(new DropEvent(this, value));
-        }
+    public void addDropTargetListener(DropListener listener) {
+        getEventListenerList().addListener(DropListener.class, listener);
+        // Notification of action listener changes is provided due to 
+        // existence of hasActionListeners() method. 
+        firePropertyChange(DROP_TARGET_LISTENERS_CHANGED_PROPERTY, null, listener);
     }
     
     /**
@@ -116,45 +110,6 @@ public class DragSource extends Component {
     }
     
     /**
-     * Adds a <code>DropListener</code> to the listener list
-     * 
-     * @param listener the listener.
-     */
-    public void addDropTargetListener(DropListener listener) {
-        getEventListenerList().addListener(DropListener.class, listener);
-        // Notification of action listener changes is provided due to 
-        // existence of hasActionListeners() method. 
-        firePropertyChange(DROP_TARGET_LISTENERS_CHANGED_PROPERTY, null, listener);
-    }
-    
-    /**
-     * Removes a <code>DropListener</code> from the listener list
-     * 
-     * @param listener the listener.
-     */
-    public void removeDropTargetListener(DropListener listener) {
-        if (!hasEventListenerList()) {
-            return;
-        }
-        getEventListenerList().removeListener(DropListener.class, listener);
-    }
-	
-    /**
-     * Removes a <code>Component</code> from the drop target list
-     * @param dropTarget the component.
-     */
-	public void removeDropTarget(Component dropTarget) {
-		getDropTargetList().remove(dropTarget);
-	}
-	
-    /**
-     * Removes all <code>Components</code> from the drop target list
-     */
-	public void removeAllDropTargets(){
-		getDropTargetList().clear();
-	}
-	
-    /**
      * Returns the drop target <code>Component</code> at the specified index
      * @param n the index.
      * @return the drop target.
@@ -173,25 +128,6 @@ public class DragSource extends Component {
     }
     
     /**
-     * Returns all drop target <code>Components</code>
-     * 
-     * @return the drop targets.
-     */
-    public Component[] getDropTargets() {
-        return (Component[]) getDropTargetList().toArray(new Component[]{});
-    }
-    
-    /**
-     * Sets the tool tip text (displayed when the draggable 
-     * component is over a valid drop target).
-     * 
-     * @param newValue the new tool tip text
-     */
-    public void setToolTipText(String newValue) {
-        setProperty(PROPERTY_TOOL_TIP_TEXT, newValue);
-    }
-	
-    /**
      * Returns the local list of Drop Target Components.
      * 
      * @return the drop target list
@@ -202,5 +138,70 @@ public class DragSource extends Component {
 		}       
 		return this.dropTargets;
 	}
+	
+    /**
+     * Returns all drop target <code>Components</code>
+     * 
+     * @return the drop targets.
+     */
+    public Component[] getDropTargets() {
+        return (Component[]) getDropTargetList().toArray(new Component[]{});
+    }
+	
+    /**
+     * Gets the tool tip text (displayed when the draggable 
+     * component is over a valid drop target).
+     * 
+     * @return the tool tip text
+     */
+    public String getToolTipText(String newValue) {
+        return (String) getProperty(PROPERTY_TOOL_TIP_TEXT);
+    }
+	
+    /**
+     * @see nextapp.echo2.app.Component#processInput(java.lang.String, java.lang.Object)
+     */
+    public void processInput(String name, Object value) {
+        super.processInput(name, value);
+        if (INPUT_DROP.equals(name)) {
+            fireDropEvent(new DropEvent(this, value));
+        }
+    }
     
+    /**
+     * Removes all <code>Components</code> from the drop target list
+     */
+	public void removeAllDropTargets(){
+		getDropTargetList().clear();
+	}
+    
+    /**
+     * Removes a <code>Component</code> from the drop target list
+     * @param dropTarget the component.
+     */
+	public void removeDropTarget(Component dropTarget) {
+		getDropTargetList().remove(dropTarget);
+	}
+    
+    /**
+     * Removes a <code>DropListener</code> from the listener list
+     * 
+     * @param listener the listener.
+     */
+    public void removeDropTargetListener(DropListener listener) {
+        if (!hasEventListenerList()) {
+            return;
+        }
+        getEventListenerList().removeListener(DropListener.class, listener);
+    }
+	
+    /**
+     * Sets the tool tip text (displayed when the draggable 
+     * component is over a valid drop target).
+     * 
+     * @param newValue the new tool tip text
+     */
+    public void setToolTipText(String newValue) {
+        setProperty(PROPERTY_TOOL_TIP_TEXT, newValue);
+    }
 }
