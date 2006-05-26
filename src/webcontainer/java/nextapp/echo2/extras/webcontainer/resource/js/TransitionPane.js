@@ -128,7 +128,10 @@ ExtrasTransitionPane.prototype.doTransition = function() {
 ExtrasTransitionPane.prototype.removeChild = function(childId) {
     this.clearTransition();
     this.oldChildDivElement = document.getElementById(this.elementId + "_content_" + childId);
-    this.stripIds(this.oldChildDivElement);
+    if (this.oldChildDivElement) {
+        // Verify element exists, in case attempting to remove non-existant child.
+        this.stripIds(this.oldChildDivElement);
+    }
 };
 
 ExtrasTransitionPane.prototype.setTransition = function(transition) {

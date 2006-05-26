@@ -102,6 +102,35 @@ public class TransitionPaneTest extends AbstractTest {
             }
         });
 
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add-Remove-Add Label", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                transitionPane.removeAll();
+
+                Label label = new Label("Accordion Pane Child " + childNumber);
+                label.setBackground(StyleUtil.randomBrightColor());
+                transitionPane.add(label);
+                transitionPane.remove(label);
+                transitionPane.add(label);
+                ++childNumber;
+            }
+        });
+
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "Add-Remove Label1, Add Label2", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                transitionPane.removeAll();
+                
+                Label label = new Label("Accordion Pane Child " + childNumber);
+                label.setBackground(StyleUtil.randomBrightColor());
+                transitionPane.add(label);
+                transitionPane.remove(label);
+                
+                label = new Label("Accordion Pane Child " + childNumber);
+                label.setBackground(StyleUtil.randomBrightColor());
+                transitionPane.add(label);
+                ++childNumber;
+            }
+        });
+        
         // Properties
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Trans = Null", new ActionListener() {
             public void actionPerformed(ActionEvent e) {

@@ -334,11 +334,9 @@ implements ComponentSynchronizePeer {
             if (update.hasRemovedChildren() || update.hasAddedChildren()) {
                 if (update.hasRemovedChildren()) {
                     Component[] removedChildren = update.getRemovedChildren();
-                    if (removedChildren.length > 1) {
-                        // Should not occur, sanity check.
-                        throw new IllegalStateException("Multiple removed children.:");
+                    for (int i = 0; i < removedChildren.length; ++i) {
+                        renderRemoveChild(rc, update, transitionPane, removedChildren[i]);
                     }
-                    renderRemoveChild(rc, update, transitionPane, removedChildren[0]);
                 }
                 if (update.hasAddedChildren()) {
                     Component[] addedChildren = update.getAddedChildren();
