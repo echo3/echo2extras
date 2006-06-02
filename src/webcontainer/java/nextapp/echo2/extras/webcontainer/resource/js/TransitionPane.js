@@ -127,10 +127,17 @@ ExtrasTransitionPane.prototype.doTransition = function() {
 
 ExtrasTransitionPane.prototype.removeChild = function(childId) {
     this.clearTransition();
-    this.oldChildDivElement = document.getElementById(this.elementId + "_content_" + childId);
-    if (this.oldChildDivElement) {
+    var oldChildDivElement = document.getElementById(this.elementId + "_content_" + childId);
+    if (oldChildDivElement) {
         // Verify element exists, in case attempting to remove non-existant child.
-        this.stripIds(this.oldChildDivElement);
+        this.stripIds(oldChildDivElement);
+        
+        // If another child was attached, remove it.
+        if (this.oldChildDivElement && this.oldChildDivElement.parentNode) {
+            this.oldChildDivElement.parentNode.removeChild(this.oldChildDivElement);
+        }
+        
+        this.oldChildDivElement = oldChildDivElement;
     }
 };
 
@@ -228,10 +235,18 @@ ExtrasTransitionPane.MessageProcessor.installTransition = function(transitionPan
         transitionPane.setTransition(new ExtrasTransitionPane.Blind(transitionPane, true));
         break;
     case "fade-to-black":
-        transitionPane.setTransition(new ExtrasTransitionPane.Fade(transitionPane, "000000"));
+        transitionPane.setTransition(new ExtrasTransitionPane.FadeImage(transitionPane, "000000"));
         break;
     case "fade-to-white":
-        transitionPane.setTransition(new ExtrasTransitionPane.Fade(transitionPane, "ffffff"));
+        transitionPane.setTransition(new ExtrasTransitionPane.FadeImage(transitionPane, "ffffff"));
+        break;
+    case "fade":
+        if (EchoClientProperties.get("notSupportedCssOpacity") && 
+                !EchoClientProperties.get("proprietaryIEOpacityFilterRequired")) {
+            transitionPane.setTransition(null);
+        } else {
+            transitionPane.setTransition(new ExtrasTransitionPane.FadeOpacity(transitionPane));
+        }
         break;
     default:
         transitionPane.setTransition(null);
@@ -369,7 +384,7 @@ ExtrasTransitionPane.MessageProcessor.processTransition = function(transitionMes
     transitionPane.doTransition();
 };
 
-ExtrasTransitionPane.Fade = function(transitionPane, color) {
+ExtrasTransitionPane.FadeImage = function(transitionPane, color) {
     this.transitionDuration = 1000;
     this.transitionPane = transitionPane;
     this.color = color;
@@ -394,7 +409,7 @@ ExtrasTransitionPane.Fade = function(transitionPane, color) {
     var image820 = new Image();
 };
 
-ExtrasTransitionPane.Fade.createFadeSteps = function() {
+ExtrasTransitionPane.FadeImage.createFadeSteps = function() {
     // Index 0 indicates total translucency of layerstack, 1 = transparent, 0 = opaque.
     // Index 1-2 are image alpha values to stack on top of one another to create desired translucency.
     // Five images are used on two layers, images have transparency values of 92.7%, 78.7%, 70.0% 42.0%, and 23.0%
@@ -422,9 +437,9 @@ ExtrasTransitionPane.Fade.createFadeSteps = function() {
     return fadeSteps;
 }
 
-ExtrasTransitionPane.Fade.fadeSteps = ExtrasTransitionPane.Fade.createFadeSteps();
+ExtrasTransitionPane.FadeImage.fadeSteps = ExtrasTransitionPane.FadeImage.createFadeSteps();
 
-ExtrasTransitionPane.Fade.prototype.init = function() {
+ExtrasTransitionPane.FadeImage.prototype.init = function() {
     this.translucentElements = new Array();
     if (EchoClientProperties.get("proprietaryIEPngAlphaFilterRequired")) {
         this.dxRender = true;
@@ -441,7 +456,7 @@ ExtrasTransitionPane.Fade.prototype.init = function() {
     }
 };
 
-ExtrasTransitionPane.Fade.prototype.step = function(progress) {
+ExtrasTransitionPane.FadeImage.prototype.step = function(progress) {
     var currentAnimationStep = Math.ceil(progress * this.totalAnimationSteps);
     if (currentAnimationStep == 0) {
         currentAnimationStep = 1;
@@ -451,22 +466,19 @@ ExtrasTransitionPane.Fade.prototype.step = function(progress) {
     
     var bestIndex = 0;
     var bestDelta = 1000;
-    for (var i = 0; i < ExtrasTransitionPane.Fade.fadeSteps.length; ++i) {
-        var delta = Math.round(Math.abs(ExtrasTransitionPane.Fade.fadeSteps[i][0] - targetTranslucency));
+    for (var i = 0; i < ExtrasTransitionPane.FadeImage.fadeSteps.length; ++i) {
+        var delta = Math.round(Math.abs(ExtrasTransitionPane.FadeImage.fadeSteps[i][0] - targetTranslucency));
         if (delta < bestDelta) {
             bestDelta = delta;
             bestIndex = i;
         }
     }
 
-    EchoDebugManager.consoleWrite("tt= " + targetTranslucency + ", bi=" + bestIndex + ", bd=" + bestDelta 
-            + ", len=" + ExtrasTransitionPane.Fade.fadeSteps.length);
-    
     if (this.renderedFadeStepIndex != bestIndex) {  
         for (var i = 0; i < 2; ++i) {
-            var imgId = ExtrasTransitionPane.Fade.fadeSteps[bestIndex][i + 1];
+            var imgId = ExtrasTransitionPane.FadeImage.fadeSteps[bestIndex][i + 1];
             var previousImgId = this.renderedFadeStepIndex == -1 
-                    ? null : ExtrasTransitionPane.Fade.fadeSteps[this.renderedFadeStepIndex][i + 1];
+                    ? null : ExtrasTransitionPane.FadeImage.fadeSteps[this.renderedFadeStepIndex][i + 1];
             if (imgId == previousImgId) {
                 continue;
             }
@@ -504,7 +516,7 @@ ExtrasTransitionPane.Fade.prototype.step = function(progress) {
     this.renderedFadeStepIndex = bestIndex;
 };
 
-ExtrasTransitionPane.Fade.prototype.dispose = function() {
+ExtrasTransitionPane.FadeImage.prototype.dispose = function() {
     for (var i = 0; i < this.translucentElements.length; ++i) {
         this.transitionPane.transitionPaneDivElement.removeChild(this.translucentElements[i]);
         this.translucentElements[i] = null;
@@ -513,6 +525,55 @@ ExtrasTransitionPane.Fade.prototype.dispose = function() {
         this.transitionPane.newChildDivElement.style.zIndex = 0;
     }
     this.transitionPane.doImmediateTransition();
+};
+
+ExtrasTransitionPane.FadeOpacity = function(transitionPane) {
+    this.transitionDuration = 1000;
+    this.transitionPane = transitionPane;
+    this.renderedProgress = 0;
+    this.renderedFadeStepIndex = -1;
+};
+
+ExtrasTransitionPane.FadeOpacity.prototype.dispose = function() {
+    if (this.transitionPane.newChildDivElement) {
+        this.transitionPane.newChildDivElement.style.zIndex = 0;
+        if (EchoClientProperties.get("proprietaryIEOpacityFilterRequired")) {
+            this.transitionPane.newChildDivElement.style.filter = "";
+        } else {
+            this.transitionPane.newChildDivElement.style.opacity = 1;
+        }
+    }
+    this.transitionPane.doImmediateTransition();
+};
+
+ExtrasTransitionPane.FadeOpacity.prototype.init = function() {
+    if (this.transitionPane.newChildDivElement) {
+        if (EchoClientProperties.get("proprietaryIEOpacityFilterRequired")) {
+            this.transitionPane.newChildDivElement.style.filter = "alpha(opacity=0)";
+        } else {
+            this.transitionPane.newChildDivElement.style.opacity = 0;
+        }
+        this.transitionPane.newChildDivElement.style.display = "block";
+        EchoVirtualPosition.redraw();
+    }
+};
+
+ExtrasTransitionPane.FadeOpacity.prototype.step = function(progress) {
+    if (this.transitionPane.newChildDivElement) {
+        if (EchoClientProperties.get("proprietaryIEOpacityFilterRequired")) {
+            var percent = parseInt(progress * 100);
+            this.transitionPane.newChildDivElement.style.filter = "alpha(opacity=" + percent + ")";
+        } else {
+            this.transitionPane.newChildDivElement.style.opacity = progress;
+        }
+    } else if (this.transitionPane.oldChildDivElement) {
+        if (EchoClientProperties.get("proprietaryIEOpacityFilterRequired")) {
+            var percent = parseInt((1 - progress) * 100);
+            this.transitionPane.oldChildDivElement.style.filter = "alpha(opacity=" + percent + ")";
+        } else {
+            this.transitionPane.oldChildDivElement.style.opacity = 1 - progress;
+        }
+    }
 };
 
 /**

@@ -240,6 +240,8 @@ implements ComponentSynchronizePeer {
                 return "fade-to-black";
             case TransitionPane.TYPE_FADE_TO_WHITE:
                 return "fade-to-white";
+            case TransitionPane.TYPE_FADE:
+                return "fade";
             }
         }
         return null;

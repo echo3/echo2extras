@@ -105,6 +105,11 @@ implements Pane, PaneContainer {
      */
     public static final int TYPE_FADE_TO_WHITE = 8;
     
+    /**
+     * Fades to new content over old content.
+     */
+    public static final int TYPE_FADE = 9;
+    
     public static final String PROPERTY_TYPE = "type";
     public static final String PROPERTY_DURATION = "duration";
 

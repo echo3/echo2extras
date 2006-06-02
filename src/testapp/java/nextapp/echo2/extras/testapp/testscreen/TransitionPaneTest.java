@@ -182,6 +182,11 @@ public class TransitionPaneTest extends AbstractTest {
                 transitionPane.setType(TransitionPane.TYPE_FADE_TO_WHITE);
             }
         });
+        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Trans = Fade", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                transitionPane.setType(TransitionPane.TYPE_FADE);
+            }
+        });
         
         testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES,
                 TransitionPane.PROPERTY_DURATION + ": null", new ActionListener(){
