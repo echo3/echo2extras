@@ -52,6 +52,8 @@ public class Styles {
             = new ResourceImageReference(IMAGE_PATH + "CalendarSelectIcon16.gif"); 
     public static final ImageReference ICON_16_COLOR_SELECT
             = new ResourceImageReference(IMAGE_PATH + "ColorSelectIcon16.gif"); 
+    public static final ImageReference ICON_16_DRAG_SOURCE
+            = new ResourceImageReference(IMAGE_PATH + "DragSourceIcon16.gif"); 
     public static final ImageReference ICON_16_MENU_BAR_PANE 
             = new ResourceImageReference(IMAGE_PATH + "MenuBarPaneIcon16.gif"); 
     public static final ImageReference ICON_16_TAB_PANE 

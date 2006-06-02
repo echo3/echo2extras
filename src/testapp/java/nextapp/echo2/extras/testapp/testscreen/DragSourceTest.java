@@ -46,7 +46,7 @@ import nextapp.echo2.extras.testapp.Styles;
 public class DragSourceTest extends AbstractTest {
     
     public DragSourceTest() {
-        super("DragSource", Styles.ICON_16_COLOR_SELECT);
+        super("DragSource", Styles.ICON_16_DRAG_SOURCE);
         
         Row row = new Row();
         add(row);

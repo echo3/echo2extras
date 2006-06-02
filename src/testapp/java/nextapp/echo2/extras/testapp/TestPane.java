@@ -116,7 +116,7 @@ public class TestPane extends ContentPane {
         testsMenu.addItem(new DefaultOptionModel(
                 "Launch_ColorSelectTest", "Color Select", Styles.ICON_16_COLOR_SELECT));
         testsMenu.addItem(new DefaultOptionModel(
-                "Launch_DragSourceTest", "Drag and Drop", Styles.ICON_16_ACCORDION_PANE));
+                "Launch_DragSourceTest", "Drag and Drop", Styles.ICON_16_DRAG_SOURCE));
         testsMenu.addItem(new DefaultOptionModel(
                 "Launch_MenuBarPaneTest", "Menu Bar Pane", Styles.ICON_16_MENU_BAR_PANE));
         testsMenu.addItem(new DefaultOptionModel(
