@@ -59,6 +59,7 @@ import nextapp.echo2.webrender.ClientProperties;
 import nextapp.echo2.webrender.ServerMessage;
 import nextapp.echo2.webrender.output.CssStyle;
 import nextapp.echo2.webrender.servermessage.DomUpdate;
+import nextapp.echo2.webrender.servermessage.VirtualPosition;
 
 /**
  * <code>ComponentSynchronizePeer</code> implementation for the 
@@ -154,171 +155,171 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         Insets borderInsets = border.getBorderInsets() == null ? new Insets(0) : border.getBorderInsets();
         Document document = rc.getServerMessage().getDocument();
         String elementId = ContainerInstance.getElementId(borderPane);
+        ServerMessage serverMessage = rc.getServerMessage();
 
-        boolean renderPositioningBothSides = !rc.getContainerInstance().getClientProperties().getBoolean(
-                ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY);
-        boolean renderSizeExpression = !renderPositioningBothSides
-                && rc.getContainerInstance().getClientProperties().getBoolean(
-                        ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED);
+        if (rc.getContainerInstance().getClientProperties().getBoolean(
+                ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY)) {
+            VirtualPosition.renderRegister(serverMessage, elementId + "_border_t");
+            VirtualPosition.renderRegister(serverMessage, elementId + "_border_l");
+            VirtualPosition.renderRegister(serverMessage, elementId + "_border_r");
+            VirtualPosition.renderRegister(serverMessage, elementId + "_border_b");
+        }
+        
         int borderTopPixels = ExtentRender.toPixels(borderInsets.getTop(), 0);
         int borderLeftPixels = ExtentRender.toPixels(borderInsets.getLeft(), 0);
         int borderRightPixels = ExtentRender.toPixels(borderInsets.getRight(), 0);
         int borderBottomPixels = ExtentRender.toPixels(borderInsets.getBottom(), 0);
-        int borderVerticalPixels = borderTopPixels + borderBottomPixels;
-        int borderHorizontalPixels = borderLeftPixels + borderRightPixels;
         
         int fillImageRenderFlags = 0;
 
-        // Top Left Corner
-        Element borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_tl");
-        CssStyle borderCssStyle = new CssStyle();
-        borderCssStyle.setAttribute("font-size", "1px");
-        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-        borderCssStyle.setAttribute("position", "absolute");
-        borderCssStyle.setAttribute("top", "0px");
-        borderCssStyle.setAttribute("left", "0px");
-        borderCssStyle.setAttribute("height", borderTopPixels + "px");
-        borderCssStyle.setAttribute("width", borderLeftPixels + "px");
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, borderPane, IMAGE_ID_BORDER_TOP_LEFT, border
-                .getFillImage(FillImageBorder.TOP_LEFT), fillImageRenderFlags);
-        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-        windowDivElement.appendChild(borderDivElement);
-
-        // Top Side
-        borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_t");
-        borderCssStyle = new CssStyle();
-        borderCssStyle.setAttribute("font-size", "1px");
-        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-        borderCssStyle.setAttribute("position", "absolute");
-        borderCssStyle.setAttribute("top", "0px");
-        borderCssStyle.setAttribute("left", borderLeftPixels + "px");
-        borderCssStyle.setAttribute("height", borderTopPixels + "px");
-        if (renderPositioningBothSides) {
+        Element borderDivElement;
+        CssStyle borderCssStyle;
+        
+        // Top
+        if (borderTopPixels > 0) {
+            // Top Left Corner
+            if (borderLeftPixels > 0) {
+                borderDivElement = document.createElement("div");
+                borderDivElement.setAttribute("id", elementId + "_border_tl");
+                borderCssStyle = new CssStyle();
+                borderCssStyle.setAttribute("font-size", "1px");
+                ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+                borderCssStyle.setAttribute("position", "absolute");
+                borderCssStyle.setAttribute("top", "0px");
+                borderCssStyle.setAttribute("left", "0px");
+                borderCssStyle.setAttribute("height", borderTopPixels + "px");
+                borderCssStyle.setAttribute("width", borderLeftPixels + "px");
+                FillImageRender.renderToStyle(borderCssStyle, rc, this, borderPane, IMAGE_ID_BORDER_TOP_LEFT, border
+                        .getFillImage(FillImageBorder.TOP_LEFT), fillImageRenderFlags);
+                borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+                windowDivElement.appendChild(borderDivElement);
+            }
+    
+            // Top Side
+            borderDivElement = document.createElement("div");
+            borderDivElement.setAttribute("id", elementId + "_border_t");
+            borderCssStyle = new CssStyle();
+            borderCssStyle.setAttribute("font-size", "1px");
+            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+            borderCssStyle.setAttribute("position", "absolute");
+            borderCssStyle.setAttribute("top", "0px");
+            borderCssStyle.setAttribute("left", borderLeftPixels + "px");
+            borderCssStyle.setAttribute("height", borderTopPixels + "px");
             borderCssStyle.setAttribute("right", borderRightPixels + "px");
-        } else if (renderSizeExpression) {
-            borderCssStyle.setAttribute("width", "expression((document.getElementById('" + elementId + "').clientWidth-"
-                    + (borderHorizontalPixels) + ")+'px')");
+            FillImageRender.renderToStyle(borderCssStyle, rc, this, borderPane, IMAGE_ID_BORDER_TOP, border
+                    .getFillImage(FillImageBorder.TOP), fillImageRenderFlags);
+            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+            windowDivElement.appendChild(borderDivElement);
+    
+            // Top Right Corner
+            if (borderRightPixels > 0) {
+                borderDivElement = document.createElement("div");
+                borderDivElement.setAttribute("id", elementId + "_border_tr");
+                borderCssStyle = new CssStyle();
+                borderCssStyle.setAttribute("font-size", "1px");
+                ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+                borderCssStyle.setAttribute("position", "absolute");
+                borderCssStyle.setAttribute("top", "0px");
+                borderCssStyle.setAttribute("right", "0px");
+                borderCssStyle.setAttribute("height", borderTopPixels + "px");
+                borderCssStyle.setAttribute("width", borderRightPixels + "px");
+                FillImageRender.renderToStyle(borderCssStyle, rc, this, borderPane, IMAGE_ID_BORDER_TOP_RIGHT, border
+                        .getFillImage(FillImageBorder.TOP_RIGHT), fillImageRenderFlags);
+                borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+                windowDivElement.appendChild(borderDivElement);
+            }
         }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, borderPane, IMAGE_ID_BORDER_TOP, border
-                .getFillImage(FillImageBorder.TOP), fillImageRenderFlags);
-        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-        windowDivElement.appendChild(borderDivElement);
-
-        // Top Right Corner
-        borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_tr");
-        borderCssStyle = new CssStyle();
-        borderCssStyle.setAttribute("font-size", "1px");
-        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-        borderCssStyle.setAttribute("position", "absolute");
-        borderCssStyle.setAttribute("top", "0px");
-        borderCssStyle.setAttribute("right", "0px");
-        borderCssStyle.setAttribute("height", borderTopPixels + "px");
-        borderCssStyle.setAttribute("width", borderRightPixels + "px");
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, borderPane, IMAGE_ID_BORDER_TOP_RIGHT, border
-                .getFillImage(FillImageBorder.TOP_RIGHT), fillImageRenderFlags);
-        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-        windowDivElement.appendChild(borderDivElement);
 
         // Left Side
-        borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_l");
-        borderCssStyle = new CssStyle();
-        borderCssStyle.setAttribute("font-size", "1px");
-        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-        borderCssStyle.setAttribute("position", "absolute");
-        borderCssStyle.setAttribute("top", borderTopPixels + "px");
-        borderCssStyle.setAttribute("left", "0px");
-        borderCssStyle.setAttribute("width", borderLeftPixels + "px");
-        if (renderPositioningBothSides) {
+        if (borderLeftPixels > 0) {
+            borderDivElement = document.createElement("div");
+            borderDivElement.setAttribute("id", elementId + "_border_l");
+            borderCssStyle = new CssStyle();
+            borderCssStyle.setAttribute("font-size", "1px");
+            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+            borderCssStyle.setAttribute("position", "absolute");
+            borderCssStyle.setAttribute("top", borderTopPixels + "px");
+            borderCssStyle.setAttribute("left", "0px");
+            borderCssStyle.setAttribute("width", borderLeftPixels + "px");
             borderCssStyle.setAttribute("bottom", borderRightPixels + "px");
-        } else if (renderSizeExpression) {
-            borderCssStyle.setAttribute("height", "expression((document.getElementById('" + elementId + "').clientHeight-"
-                    + (borderVerticalPixels) + ")+'px')");
-
+            FillImageRender.renderToStyle(borderCssStyle, rc, this, borderPane, IMAGE_ID_BORDER_LEFT, border
+                    .getFillImage(FillImageBorder.LEFT), fillImageRenderFlags);
+            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+            windowDivElement.appendChild(borderDivElement);
         }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, borderPane, IMAGE_ID_BORDER_LEFT, border
-                .getFillImage(FillImageBorder.LEFT), fillImageRenderFlags);
-        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-        windowDivElement.appendChild(borderDivElement);
 
         // Right Side
-        borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_r");
-        borderCssStyle = new CssStyle();
-        borderCssStyle.setAttribute("font-size", "1px");
-        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-        borderCssStyle.setAttribute("position", "absolute");
-        borderCssStyle.setAttribute("top", borderTopPixels + "px");
-        borderCssStyle.setAttribute("right", "0px");
-        borderCssStyle.setAttribute("width", borderRightPixels + "px");
-        if (renderPositioningBothSides) {
+        if (borderRightPixels > 0) {
+            borderDivElement = document.createElement("div");
+            borderDivElement.setAttribute("id", elementId + "_border_r");
+            borderCssStyle = new CssStyle();
+            borderCssStyle.setAttribute("font-size", "1px");
+            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+            borderCssStyle.setAttribute("position", "absolute");
+            borderCssStyle.setAttribute("top", borderTopPixels + "px");
+            borderCssStyle.setAttribute("right", "0px");
+            borderCssStyle.setAttribute("width", borderRightPixels + "px");
             borderCssStyle.setAttribute("bottom", borderRightPixels + "px");
-        } else if (renderSizeExpression) {
-            borderCssStyle.setAttribute("height", "expression((document.getElementById('" + elementId + "').clientHeight-"
-                    + (borderVerticalPixels) + ")+'px')");
-
+            FillImageRender.renderToStyle(borderCssStyle, rc, this, borderPane, IMAGE_ID_BORDER_RIGHT, border
+                    .getFillImage(FillImageBorder.RIGHT), fillImageRenderFlags);
+            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+            windowDivElement.appendChild(borderDivElement);
         }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, borderPane, IMAGE_ID_BORDER_RIGHT, border
-                .getFillImage(FillImageBorder.RIGHT), fillImageRenderFlags);
-        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-        windowDivElement.appendChild(borderDivElement);
 
-        // Bottom Left Corner
-        borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_bl");
-        borderCssStyle = new CssStyle();
-        borderCssStyle.setAttribute("font-size", "1px");
-        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-        borderCssStyle.setAttribute("position", "absolute");
-        borderCssStyle.setAttribute("bottom", "0px");
-        borderCssStyle.setAttribute("left", "0px");
-        borderCssStyle.setAttribute("height", borderBottomPixels + "px");
-        borderCssStyle.setAttribute("width", borderLeftPixels + "px");
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, borderPane, IMAGE_ID_BORDER_BOTTOM_LEFT, border
-                .getFillImage(FillImageBorder.BOTTOM_LEFT), fillImageRenderFlags);
-        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-        windowDivElement.appendChild(borderDivElement);
-
-        // Bottom Side
-        borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_b");
-        borderCssStyle = new CssStyle();
-        borderCssStyle.setAttribute("font-size", "1px");
-        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-        borderCssStyle.setAttribute("position", "absolute");
-        borderCssStyle.setAttribute("bottom", "0px");
-        borderCssStyle.setAttribute("left", borderLeftPixels + "px");
-        borderCssStyle.setAttribute("height", borderBottomPixels + "px");
-        if (renderPositioningBothSides) {
+        // Bottom
+        if (borderBottomPixels > 0) {
+            // Bottom Left Corner
+            if (borderLeftPixels > 0) {
+                borderDivElement = document.createElement("div");
+                borderDivElement.setAttribute("id", elementId + "_border_bl");
+                borderCssStyle = new CssStyle();
+                borderCssStyle.setAttribute("font-size", "1px");
+                ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+                borderCssStyle.setAttribute("position", "absolute");
+                borderCssStyle.setAttribute("bottom", "0px");
+                borderCssStyle.setAttribute("left", "0px");
+                borderCssStyle.setAttribute("height", borderBottomPixels + "px");
+                borderCssStyle.setAttribute("width", borderLeftPixels + "px");
+                FillImageRender.renderToStyle(borderCssStyle, rc, this, borderPane, IMAGE_ID_BORDER_BOTTOM_LEFT, border
+                        .getFillImage(FillImageBorder.BOTTOM_LEFT), fillImageRenderFlags);
+                borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+                windowDivElement.appendChild(borderDivElement);
+            }
+    
+            // Bottom Side
+            borderDivElement = document.createElement("div");
+            borderDivElement.setAttribute("id", elementId + "_border_b");
+            borderCssStyle = new CssStyle();
+            borderCssStyle.setAttribute("font-size", "1px");
+            ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+            borderCssStyle.setAttribute("position", "absolute");
+            borderCssStyle.setAttribute("bottom", "0px");
+            borderCssStyle.setAttribute("left", borderLeftPixels + "px");
+            borderCssStyle.setAttribute("height", borderBottomPixels + "px");
             borderCssStyle.setAttribute("right", borderRightPixels + "px");
-        } else if (renderSizeExpression) {
-            borderCssStyle.setAttribute("width", "expression((document.getElementById('" + elementId + "').clientWidth-"
-                    + (borderHorizontalPixels) + ")+'px')");
-
+            FillImageRender.renderToStyle(borderCssStyle, rc, this, borderPane, IMAGE_ID_BORDER_BOTTOM, border
+                    .getFillImage(FillImageBorder.BOTTOM), fillImageRenderFlags);
+            borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+            windowDivElement.appendChild(borderDivElement);
+    
+            // Bottom Right Side
+            if (borderRightPixels > 0) {
+                borderDivElement = document.createElement("div");
+                borderDivElement.setAttribute("id", elementId + "_border_br");
+                borderCssStyle = new CssStyle();
+                borderCssStyle.setAttribute("font-size", "1px");
+                ColorRender.renderToStyle(borderCssStyle, null, borderColor);
+                borderCssStyle.setAttribute("position", "absolute");
+                borderCssStyle.setAttribute("bottom", "0px");
+                borderCssStyle.setAttribute("right", "0px");
+                borderCssStyle.setAttribute("height", borderBottomPixels + "px");
+                borderCssStyle.setAttribute("width", borderRightPixels + "px");
+                FillImageRender.renderToStyle(borderCssStyle, rc, this, borderPane, IMAGE_ID_BORDER_BOTTOM_RIGHT, border
+                        .getFillImage(FillImageBorder.BOTTOM_RIGHT), fillImageRenderFlags);
+                borderDivElement.setAttribute("style", borderCssStyle.renderInline());
+                windowDivElement.appendChild(borderDivElement);
+            }
         }
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, borderPane, IMAGE_ID_BORDER_BOTTOM, border
-                .getFillImage(FillImageBorder.BOTTOM), fillImageRenderFlags);
-        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-        windowDivElement.appendChild(borderDivElement);
-
-        // Bottom Right Side
-        borderDivElement = document.createElement("div");
-        borderDivElement.setAttribute("id", elementId + "_border_br");
-        borderCssStyle = new CssStyle();
-        borderCssStyle.setAttribute("font-size", "1px");
-        ColorRender.renderToStyle(borderCssStyle, null, borderColor);
-        borderCssStyle.setAttribute("position", "absolute");
-        borderCssStyle.setAttribute("bottom", "0px");
-        borderCssStyle.setAttribute("right", "0px");
-        borderCssStyle.setAttribute("height", borderBottomPixels + "px");
-        borderCssStyle.setAttribute("width", borderRightPixels + "px");
-        FillImageRender.renderToStyle(borderCssStyle, rc, this, borderPane, IMAGE_ID_BORDER_BOTTOM_RIGHT, border
-                .getFillImage(FillImageBorder.BOTTOM_RIGHT), fillImageRenderFlags);
-        borderDivElement.setAttribute("style", borderCssStyle.renderInline());
-        windowDivElement.appendChild(borderDivElement);
     }
     
     /**
@@ -338,11 +339,6 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         BorderPane borderPane = (BorderPane) component;
         String elementId = ContainerInstance.getElementId(borderPane);
         String bodyElementId = elementId + "_body";
-        boolean renderPositioningBothSides = !rc.getContainerInstance().getClientProperties().getBoolean(
-                ClientProperties.QUIRK_CSS_POSITIONING_ONE_SIDE_ONLY);
-        boolean renderSizeExpression = !renderPositioningBothSides
-                && rc.getContainerInstance().getClientProperties().getBoolean(
-                        ClientProperties.PROPRIETARY_IE_CSS_EXPRESSIONS_SUPPORTED);
         Component child = null;
         if (borderPane.getComponentCount() != 0) {
             child = borderPane.getComponent(0);
@@ -356,6 +352,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         // Create main window DIV element.
         CssStyle borderPaneDivCssStyle = new CssStyle();
         borderPaneDivCssStyle.setAttribute("padding", "0px");
+        borderPaneDivCssStyle.setAttribute("overflow", "hidden");
         borderPaneDivCssStyle.setAttribute("position", "absolute");
         borderPaneDivCssStyle.setAttribute("top", "0px");
         borderPaneDivCssStyle.setAttribute("left", "0px");
@@ -379,6 +376,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
             windowBodyDivCssStyle.setAttribute("background-color", "white");
         }
         windowBodyDivCssStyle.setAttribute("position", "absolute");
+        windowBodyDivCssStyle.setAttribute("overflow", "auto");
         windowBodyDivCssStyle.setAttribute("z-index", "2");
         FillImageBorder border = (FillImageBorder) borderPane.getRenderProperty(BorderPane.PROPERTY_BORDER, DEFAULT_BORDER);
         Insets contentInsets = border.getContentInsets() == null ? new Insets(0) : border.getContentInsets();
@@ -388,15 +386,10 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         int bottom = ExtentRender.toPixels(contentInsets.getBottom(), 0);
         windowBodyDivCssStyle.setAttribute("top", top + "px");
         windowBodyDivCssStyle.setAttribute("left", left + "px");
-        if (renderPositioningBothSides) {
-            windowBodyDivCssStyle.setAttribute("bottom", bottom + "px");
-            windowBodyDivCssStyle.setAttribute("right", right + "px");
-        } else if (renderSizeExpression) {
-            windowBodyDivCssStyle.setAttribute("height", "expression((document.getElementById('" + elementId + "').clientHeight-"
-                    + (top + bottom) + ")+'px')");
-            windowBodyDivCssStyle.setAttribute("width", "expression((document.getElementById('" + elementId + "').clientWidth-"
-                    + (left + right) + ")+'px')");
-        }
+        windowBodyDivCssStyle.setAttribute("bottom", bottom + "px");
+        windowBodyDivCssStyle.setAttribute("right", right + "px");
+        VirtualPosition.renderRegister(serverMessage, bodyElementId);
+        
         borderPaneBodyDivElement.setAttribute("style", windowBodyDivCssStyle.renderInline());
         borderPaneDivElement.appendChild(borderPaneBodyDivElement);
 
