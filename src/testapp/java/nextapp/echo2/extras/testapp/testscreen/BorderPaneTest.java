@@ -33,8 +33,10 @@ import nextapp.echo2.app.Color;
 import nextapp.echo2.app.FillImageBorder;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
+import nextapp.echo2.app.SplitPane;
 import nextapp.echo2.app.event.ActionEvent;
 import nextapp.echo2.app.event.ActionListener;
+import nextapp.echo2.app.layout.SplitPaneLayoutData;
 import nextapp.echo2.extras.app.BorderPane;
 import nextapp.echo2.extras.testapp.AbstractTest;
 import nextapp.echo2.extras.testapp.StyleUtil;
@@ -67,6 +69,31 @@ public class BorderPaneTest extends AbstractTest {
             }
         });
         
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "SplitPane", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                borderPane.removeAll();
+                SplitPane splitPane = new SplitPane();
+                splitPane.setResizable(true);
+                
+                Label label;
+                SplitPaneLayoutData layoutData;
+
+                layoutData = new SplitPaneLayoutData();
+                layoutData.setBackground(new Color(0xafafff));
+                label = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
+                label.setLayoutData(layoutData);
+                splitPane.add(label);
+
+                layoutData = new SplitPaneLayoutData();
+                layoutData.setBackground(new Color(0xafffaf));
+                label = new Label(StyleUtil.QUASI_LATIN_TEXT_1);
+                label.setLayoutData(layoutData);
+                splitPane.add(label);
+
+                borderPane.add(splitPane);
+            }
+        });
+
         testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "BorderPaneTest", new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 borderPane.removeAll();
