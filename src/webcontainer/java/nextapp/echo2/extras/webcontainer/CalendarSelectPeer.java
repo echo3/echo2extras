@@ -51,6 +51,7 @@ import nextapp.echo2.webcontainer.PartialUpdateParticipant;
 import nextapp.echo2.webcontainer.PropertyUpdateProcessor;
 import nextapp.echo2.webcontainer.RenderContext;
 import nextapp.echo2.webcontainer.image.ImageRenderSupport;
+import nextapp.echo2.webcontainer.image.ImageTools;
 import nextapp.echo2.webcontainer.propertyrender.BorderRender;
 import nextapp.echo2.webcontainer.propertyrender.ColorRender;
 import nextapp.echo2.webcontainer.propertyrender.ExtentRender;
@@ -263,6 +264,9 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
                     ColorRender.renderCssAttributeValue(adjacentMonthDateForeground));
         }
         
+        initElement.setAttribute("arrow-left-image", ImageTools.getUri(rc, this, calendarSelect, IMAGE_ID_ARROW_LEFT));
+        initElement.setAttribute("arrow-right-image", ImageTools.getUri(rc, this, calendarSelect, IMAGE_ID_ARROW_RIGHT));
+
         Border border = (Border) calendarSelect.getRenderProperty(CalendarSelect.PROPERTY_BORDER);
         if (border != null) {
             initElement.setAttribute("border", BorderRender.renderCssAttributeValue(border));
