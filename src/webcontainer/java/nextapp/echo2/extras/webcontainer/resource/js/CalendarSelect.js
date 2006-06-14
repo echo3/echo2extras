@@ -122,7 +122,14 @@ ExtrasCalendarSelect.prototype.create = function() {
     var yearDecrementSpanElement = document.createElement("span");
     yearDecrementSpanElement.id = this.elementId + "_yeardecrement";
     yearDecrementSpanElement.style.cursor = "pointer";
-    yearDecrementSpanElement.appendChild(document.createTextNode("<"));
+    if (this.arrowLeftImage) {
+        var imgElement = document.createElement("img");
+        imgElement.setAttribute("src", this.arrowLeftImage);
+        imgElement.setAttribute("alt", "");
+        yearDecrementSpanElement.appendChild(imgElement);
+    } else {
+        yearDecrementSpanElement.appendChild(document.createTextNode("<"));
+    }
     calendarDivElement.appendChild(yearDecrementSpanElement);
     
     var yearField = document.createElement("input");
@@ -136,7 +143,14 @@ ExtrasCalendarSelect.prototype.create = function() {
     var yearIncrementSpanElement = document.createElement("span");
     yearIncrementSpanElement.id = this.elementId + "_yearincrement";
     yearIncrementSpanElement.style.cursor = "pointer";
-    yearIncrementSpanElement.appendChild(document.createTextNode(">"));
+    if (this.arrowRightImage) {
+        var imgElement = document.createElement("img");
+        imgElement.setAttribute("src", this.arrowRightImage);
+        imgElement.setAttribute("alt", "");
+        yearIncrementSpanElement.appendChild(imgElement);
+    } else {
+        yearIncrementSpanElement.appendChild(document.createTextNode(">"));
+    }
     calendarDivElement.appendChild(yearIncrementSpanElement);
 
     var tableElement = document.createElement("table");
@@ -544,6 +558,12 @@ ExtrasCalendarSelect.MessageProcessor.processInit = function(initMessageElement)
     }
     if (initMessageElement.getAttribute("adjacent-month-date-foreground")) {
         calendar.adjacentMonthDateForeground = initMessageElement.getAttribute("adjacent-month-date-foreground");
+    }
+    if (initMessageElement.getAttribute("arrow-left-image")) {
+        calendar.arrowLeftImage = initMessageElement.getAttribute("arrow-left-image");
+    }
+    if (initMessageElement.getAttribute("arrow-right-image")) {
+        calendar.arrowRightImage = initMessageElement.getAttribute("arrow-right-image");
     }
 
     calendar.create();

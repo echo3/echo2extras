@@ -40,6 +40,7 @@ import nextapp.echo2.app.Component;
 import nextapp.echo2.app.FillImage;
 import nextapp.echo2.app.Font;
 import nextapp.echo2.app.ImageReference;
+import nextapp.echo2.app.ResourceImageReference;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.app.util.DomUtil;
 import nextapp.echo2.extras.app.CalendarSelect;
@@ -71,6 +72,12 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
     
     private static final String IMAGE_ID_BACKGROUND = "background";
     private static final String IMAGE_ID_SELECTED_DATE_BACKGROUND = "selectedDateBackground";
+    private static final String IMAGE_ID_ARROW_LEFT = "arrowLeft";
+    private static final String IMAGE_ID_ARROW_RIGHT = "arrowRight";
+
+    private static final String IMAGE_PREFIX = "/nextapp/echo2/extras/webcontainer/resource/image/";
+    private static final ImageReference DEFAULT_ICON_ARROW_LEFT = new ResourceImageReference(IMAGE_PREFIX + "ArrowLeft.gif");
+    private static final ImageReference DEFAULT_ICON_ARROW_RIGHT = new ResourceImageReference(IMAGE_PREFIX + "ArrowRight.gif");
     
     /**
      * Service to provide supporting JavaScript library.
@@ -128,7 +135,11 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
      * @see nextapp.echo2.webcontainer.image.ImageRenderSupport#getImage(nextapp.echo2.app.Component, java.lang.String)
      */
     public ImageReference getImage(Component component, String imageId) {
-        if (IMAGE_ID_BACKGROUND.equals(imageId)) {
+        if (IMAGE_ID_ARROW_RIGHT.equals(imageId)) {
+            return DEFAULT_ICON_ARROW_RIGHT;
+        } else if (IMAGE_ID_ARROW_LEFT.equals(imageId)) {
+            return DEFAULT_ICON_ARROW_LEFT;
+        } else if (IMAGE_ID_BACKGROUND.equals(imageId)) {
             FillImage backgroundImage = (FillImage) component.getRenderProperty(CalendarSelect.PROPERTY_BACKGROUND_IMAGE);
             return backgroundImage == null ? null : backgroundImage.getImage();
         } else if (IMAGE_ID_SELECTED_DATE_BACKGROUND.equals(imageId)) {
