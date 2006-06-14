@@ -66,17 +66,17 @@ implements ComponentSynchronizePeer, PropertyUpdateProcessor {
             "/nextapp/echo2/extras/webcontainer/resource/js/ColorSelect.js");
     
     private static final Service ARROW_DOWN_IMAGE_SERVICE = StaticBinaryService.forResource(
-            "Echo2Extras.ColorSelect.ArrowDown", "image/gif", ExtrasUtil.IMAGE_RESOURCE_PATH + "ArrowDown.gif");
+            "Echo2Extras.ColorSelect.ArrowDown", "image/gif", ExtrasUtil.IMAGE_RESOURCE_PATH + "ColorSelectArrowDown.gif");
     private static final Service ARROW_LEFT_IMAGE_SERVICE = StaticBinaryService.forResource(
-            "Echo2Extras.ColorSelect.ArrowLeft", "image/gif", ExtrasUtil.IMAGE_RESOURCE_PATH + "ArrowLeft.gif");
+            "Echo2Extras.ColorSelect.ArrowLeft", "image/gif", ExtrasUtil.IMAGE_RESOURCE_PATH + "ColorSelectArrowLeft.gif");
     private static final Service ARROW_RIGHT_IMAGE_SERVICE = StaticBinaryService.forResource(
-            "Echo2Extras.ColorSelect.ArrowRight", "image/gif", ExtrasUtil.IMAGE_RESOURCE_PATH + "ArrowRight.gif");
+            "Echo2Extras.ColorSelect.ArrowRight", "image/gif", ExtrasUtil.IMAGE_RESOURCE_PATH + "ColorSelectArrowRight.gif");
     private static final Service ARROW_UP_IMAGE_SERVICE = StaticBinaryService.forResource(
-            "Echo2Extras.ColorSelect.ArrowUp", "image/gif", ExtrasUtil.IMAGE_RESOURCE_PATH + "ArrowUp.gif");
+            "Echo2Extras.ColorSelect.ArrowUp", "image/gif", ExtrasUtil.IMAGE_RESOURCE_PATH + "ColorSelectArrowUp.gif");
     private static final Service H_GRADIENT_IMAGE_SERVICE = StaticBinaryService.forResource(
-            "Echo2Extras.ColorSelect.HGradient", "image/png", ExtrasUtil.IMAGE_RESOURCE_PATH + "HGradient.png");
+            "Echo2Extras.ColorSelect.HGradient", "image/png", ExtrasUtil.IMAGE_RESOURCE_PATH + "ColorSelectHGradient.png");
     private static final Service SV_GRADIENT_IMAGE_SERVICE = StaticBinaryService.forResource(
-            "Echo2Extras.ColorSelect.SVGradient", "image/png", ExtrasUtil.IMAGE_RESOURCE_PATH + "SVGradient.png");
+            "Echo2Extras.ColorSelect.SVGradient", "image/png", ExtrasUtil.IMAGE_RESOURCE_PATH + "ColorSelectSVGradient.png");
     
     static {
         ServiceRegistry services = WebRenderServlet.getServiceRegistry();
