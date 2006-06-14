@@ -68,6 +68,15 @@ import nextapp.echo2.webrender.servermessage.VirtualPosition;
 public class BorderPanePeer 
 implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
 
+    /**
+     * A boolean property which may be assigned to <code>BorderPane</code>s
+     * in order to enable the proprietary Internet Explorer transparent PNG
+     * alpha renderer for rendering the <code>border</code> property of the
+     * border pane.
+     */
+    public static final String PROPERTY_IE_ALPHA_RENDER_BORDER
+            = "nextapp.echo2.extras.webcontainer.BorderPanePeer.ieAlphaRenderBorder";
+    
     private static final String IMAGE_ID_BORDER_TOP_LEFT = "borderTopLeft";
     private static final String IMAGE_ID_BORDER_TOP = "borderTop";
     private static final String IMAGE_ID_BORDER_TOP_RIGHT = "borderTopRight";
@@ -170,7 +179,8 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         int borderRightPixels = ExtentRender.toPixels(borderInsets.getRight(), 0);
         int borderBottomPixels = ExtentRender.toPixels(borderInsets.getBottom(), 0);
         
-        int fillImageRenderFlags = 0;
+        int fillImageRenderFlags = ((Boolean) borderPane.getRenderProperty(PROPERTY_IE_ALPHA_RENDER_BORDER, 
+                Boolean.FALSE)).booleanValue() ? FillImageRender.FLAG_ENABLE_IE_PNG_ALPHA_FILTER : 0;
 
         Element borderDivElement;
         CssStyle borderCssStyle;

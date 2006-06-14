@@ -371,6 +371,7 @@
  </style>
  <style name="Shadow" type="nextapp.echo2.extras.app.BorderPane">
   <properties>
+   <property type="java.lang.Boolean" name="nextapp.echo2.extras.webcontainer.BorderPanePeer.ieAlphaRenderBorder" value="true"/>
    <property name="border">
     <fill-image-border content-insets="8px 8px 14px 14px" border-insets="17px 17px 23px 23px">
      <border-part position="top-left">
