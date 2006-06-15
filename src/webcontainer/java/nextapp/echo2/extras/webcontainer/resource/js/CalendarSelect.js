@@ -568,6 +568,12 @@ ExtrasCalendarSelect.MessageProcessor.processInit = function(initMessageElement)
     if (initMessageElement.getAttribute("arrow-right-image")) {
         calendar.arrowRightImage = initMessageElement.getAttribute("arrow-right-image");
     }
+    if (initMessageElement.getAttribute("day-abbreviation-length")) {
+        calendar.dayOfWeekNameAbbreviationLength = parseInt(initMessageElement.getAttribute("day-abbreviation-length"));
+    }
+    if (initMessageElement.getAttribute("first-day")) {
+        calendar.firstDayOfWeek = parseInt(initMessageElement.getAttribute("first-day"));
+    }
     
     for (var i = 0; i < initMessageElement.childNodes.length; ++i) {
         if (initMessageElement.childNodes[i].nodeName == "month-names") {

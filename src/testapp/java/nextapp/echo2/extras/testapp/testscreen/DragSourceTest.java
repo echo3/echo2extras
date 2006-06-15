@@ -38,6 +38,7 @@ import nextapp.echo2.extras.app.DragSource;
 import nextapp.echo2.extras.app.event.DropEvent;
 import nextapp.echo2.extras.app.event.DropListener;
 import nextapp.echo2.extras.testapp.AbstractTest;
+import nextapp.echo2.extras.testapp.StyleUtil;
 import nextapp.echo2.extras.testapp.Styles;
 
 /**
@@ -54,16 +55,17 @@ public class DragSourceTest extends AbstractTest {
         
         final Column column1 = new Column();
         column1.setBorder(new Border(2, Color.BLUE, Border.STYLE_INSET));
+        column1.add(new Label("Drag Source"));
         final Column column2 = new Column();
         column2.setBorder(new Border(2, Color.RED, Border.STYLE_OUTSET));
+        column2.add(new Label("Drop Target"));
         
         row.add(column1);
         row.add(column2);
         
-        column2.add(new Label("Drag Components Here"));
-        
         for (int i=0; i<6; i++) {
         	Label label = new Label("Draggable Label " + i);
+            label.setBackground(StyleUtil.randomBrightColor());
         	DragSource ds = new DragSource(label);
         	ds.addDropTarget(column2);
         	ds.addDropTargetListener(new DropListener(){
