@@ -31,7 +31,11 @@ package nextapp.echo2.extras.webcontainer;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import nextapp.echo2.app.Border;
@@ -79,6 +83,8 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
     private static final String IMAGE_PREFIX = "/nextapp/echo2/extras/webcontainer/resource/image/";
     private static final ImageReference DEFAULT_ICON_ARROW_LEFT = new ResourceImageReference(IMAGE_PREFIX + "ArrowLeft.gif");
     private static final ImageReference DEFAULT_ICON_ARROW_RIGHT = new ResourceImageReference(IMAGE_PREFIX + "ArrowRight.gif");
+
+    private static final String MESSAGE_RESOURCE = "META-INF/nextapp/echo2extras/Calendar";
     
     /**
      * Service to provide supporting JavaScript library.
@@ -196,6 +202,7 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
     private void renderInitDirective(RenderContext rc, String containerId, CalendarSelect calendarSelect) {
         String elementId = ContainerInstance.getElementId(calendarSelect);
         ServerMessage serverMessage = rc.getServerMessage();
+        Document document = serverMessage.getDocument();
         Element initElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_UPDATE, 
                 "ExtrasCalendarSelect.MessageProcessor", "init");
         initElement.setAttribute("eid", elementId);
@@ -270,6 +277,43 @@ implements ComponentSynchronizePeer, ImageRenderSupport, PropertyUpdateProcessor
         Border border = (Border) calendarSelect.getRenderProperty(CalendarSelect.PROPERTY_BORDER);
         if (border != null) {
             initElement.setAttribute("border", BorderRender.renderCssAttributeValue(border));
+        }
+        
+        Locale locale = calendarSelect.getRenderLocale();
+        if (!Locale.ENGLISH.getLanguage().equals(locale.getLanguage())) {
+            try {
+                ResourceBundle bundle = ResourceBundle.getBundle(MESSAGE_RESOURCE, locale);
+                if (bundle != null) {
+                    if (bundle.getString("DayOfWeek0") != null) {
+                        Element dayNamesElement = document.createElement("day-names");
+                        for (int i = 0; i < 7; ++i) {
+                            String dayName = bundle.getString("DayOfWeek" + i);
+                            if (dayName == null) {
+                                throw new IllegalStateException("No day name for day #" + i);
+                            }
+                            Element dayNameElement = document.createElement("day-name");
+                            dayNameElement.setAttribute("value", dayName);
+                            dayNamesElement.appendChild(dayNameElement);
+                        }
+                        initElement.appendChild(dayNamesElement);
+                    }
+                    if (bundle.getString("Month0") != null) {
+                        Element monthNamesElement = document.createElement("month-names");
+                        for (int i = 0; i < 12; ++i) {
+                            String monthName = bundle.getString("Month" + i);
+                            if (monthName == null) {
+                                throw new IllegalStateException("No month name for month #" + i);
+                            }
+                            Element monthNameElement = document.createElement("month-name");
+                            monthNameElement.setAttribute("value", monthName);
+                            monthNamesElement.appendChild(monthNameElement);
+                        }
+                        initElement.appendChild(monthNamesElement);
+                    }
+                }
+            } catch (MissingResourceException ex) {
+                // Do nothing.
+            }
         }
     }
 

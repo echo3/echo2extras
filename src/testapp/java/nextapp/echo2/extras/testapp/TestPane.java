@@ -29,6 +29,8 @@
 
 package nextapp.echo2.extras.testapp;
 
+import java.util.Locale;
+
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.Extent;
@@ -82,6 +84,13 @@ public class TestPane extends ContentPane {
                     InteractiveApp.getApp().getDefaultWindow().getContent().add(modalWindow);
                 } else if (e.getActionCommand().equals("OpenConsole")) {
                     InteractiveApp.getApp().consoleWrite(null);
+                } else if (e.getActionCommand().startsWith("Locale_")) {
+                    String language = e.getActionCommand().substring("Locale_".length());
+                    if ("Default".equals(language)) {
+                        InteractiveApp.getApp().setLocale(Locale.getDefault());
+                    } else {
+                        InteractiveApp.getApp().setLocale(new Locale(language));
+                    }
                 } else if (e.getActionCommand().equals("Reset")) {
                     InteractiveApp.getApp().displayTestPane();
                 } else if (e.getActionCommand().equals("Exit")) {
@@ -133,10 +142,18 @@ public class TestPane extends ContentPane {
         backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundPewter", "Backgrounds", "Pewter")); 
         backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundSilver", "Backgrounds", "Silver")); 
         backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundBlue", "Backgrounds", "Blue")); 
+
+        DefaultMenuModel localesMenu = new DefaultMenuModel("Locales", "Locales");
+        localesMenu.addItem(new DefaultRadioOptionModel("Locale_en", "Locales", "English")); 
+        localesMenu.addItem(new DefaultRadioOptionModel("Locale_fr", "Locales", "French")); 
+        localesMenu.addItem(new DefaultRadioOptionModel("Locale_de", "Locales", "German")); 
+        localesMenu.addItem(new DefaultRadioOptionModel("Locale_1337", "Locales", "1337 (Test)")); 
         
         DefaultMenuModel optionsMenu = new DefaultMenuModel(null, "Options");
         optionsMenu.addItem(new DefaultOptionModel("OpenConsole", "Open Console", null));
         optionsMenu.addItem(new DefaultOptionModel("OpenModalDialog", "Open Model Dialog", null));
+        optionsMenu.addItem(new SeparatorModel());
+        optionsMenu.addItem(localesMenu);
         optionsMenu.addItem(new SeparatorModel());
         optionsMenu.addItem(new DefaultToggleOptionModel("ShowBackground", "Show Background"));
         optionsMenu.addItem(backgroundsMenu);

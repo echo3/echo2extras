@@ -120,6 +120,8 @@ ExtrasCalendarSelect.prototype.create = function() {
     }
     calendarDivElement.appendChild(monthSelect);
     
+    calendarDivElement.appendChild(document.createTextNode(" "));
+    
     var yearDecrementSpanElement = document.createElement("span");
     yearDecrementSpanElement.id = this.elementId + "_yeardecrement";
     yearDecrementSpanElement.style.cursor = "pointer";
@@ -565,6 +567,29 @@ ExtrasCalendarSelect.MessageProcessor.processInit = function(initMessageElement)
     }
     if (initMessageElement.getAttribute("arrow-right-image")) {
         calendar.arrowRightImage = initMessageElement.getAttribute("arrow-right-image");
+    }
+    
+    for (var i = 0; i < initMessageElement.childNodes.length; ++i) {
+        if (initMessageElement.childNodes[i].nodeName == "month-names") {
+            // Process localized settings for month names.
+            var monthNamesElement = initMessageElement.childNodes[i];
+            calendar.monthNames = new Array();
+            for (var j = 0; j < monthNamesElement.childNodes.length; ++j) {
+                if (monthNamesElement.childNodes[j].nodeName == "month-name") {
+                    calendar.monthNames.push(monthNamesElement.childNodes[j].getAttribute("value"));
+                }
+            }
+        }
+        if (initMessageElement.childNodes[i].nodeName == "day-names") {
+            // Process localized settings for day of week names.
+            var dayOfWeekNamesElement = initMessageElement.childNodes[i];
+            calendar.dayOfWeekNames = new Array();
+            for (var j = 0; j < dayOfWeekNamesElement.childNodes.length; ++j) {
+                if (dayOfWeekNamesElement.childNodes[j].nodeName == "day-name") {
+                    calendar.dayOfWeekNames.push(dayOfWeekNamesElement.childNodes[j].getAttribute("value"));
+                }
+            }
+        }
     }
 
     calendar.create();
