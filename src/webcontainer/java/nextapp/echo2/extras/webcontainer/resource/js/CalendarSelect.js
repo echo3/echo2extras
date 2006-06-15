@@ -108,6 +108,7 @@ ExtrasCalendarSelect.prototype.create = function() {
     var i, j;
     var calendarDivElement = document.createElement("div");
     calendarDivElement.id = this.elementId;
+    calendarDivElement.style.whiteSpace = "nowrap";
     
     var monthSelect = document.createElement("select");
     monthSelect.id = this.elementId + "_month";
