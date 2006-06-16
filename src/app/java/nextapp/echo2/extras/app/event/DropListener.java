@@ -28,12 +28,13 @@
  */
 package nextapp.echo2.extras.app.event;
 
+import java.io.Serializable;
 import java.util.EventListener;
 
 /**
  * Listener interface for receiving <code>DropEvent</code>s.
  */
-public interface DropListener extends EventListener {
+public interface DropListener extends EventListener, Serializable {
 
     /**
      * Invoked when a draggable component is dropped 

@@ -29,11 +29,13 @@
 
 package nextapp.echo2.extras.app.menu;
 
+import java.io.Serializable;
+
 /**
  * Representation of an item contained in a menu.
  * All menu item interfaces are derived from this interface. 
  */
-public interface ItemModel {
+public interface ItemModel extends Serializable {
     
     /**
      * Returns the id of the <code>OptionModel</code>.

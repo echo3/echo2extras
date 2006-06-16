@@ -29,13 +29,15 @@
 
 package nextapp.echo2.extras.app.menu;
 
+import java.io.Serializable;
+
 import nextapp.echo2.app.event.ChangeListener;
 
 /**
  * Representation of the state of a <code>MenuModel</code>s, describing the
  * selected and enabled states of all options.
  */
-public interface MenuStateModel {
+public interface MenuStateModel extends Serializable {
 
     /**
      * Registers a <code>ChangeListener</code> to be notified when the selection
