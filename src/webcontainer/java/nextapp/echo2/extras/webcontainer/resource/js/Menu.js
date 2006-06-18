@@ -77,6 +77,8 @@ ExtrasMenu = function(elementId, containerElementId) {
     this.openMenuPath = new Array();
 };
 
+ExtrasMenu.MAX_Z_INDEX = 65535;
+
 ExtrasMenu.nextId = 0;
 
 /**
@@ -212,6 +214,7 @@ ExtrasMenu.prototype.renderMenuAdd = function(menuModel, xPosition, yPosition) {
     menuDivElement.style.border = this.getMenuBorder();
     menuDivElement.style.backgroundColor = this.menuBackground == null ? this.background : this.menuBackground;
     menuDivElement.style.color = this.menuForeground == null ? this.foreground : this.menuForeground;
+    menuDivElement.style.zIndex = ExtrasMenu.MAX_Z_INDEX;
     if (this.menuBackgroundImage != null || (this.menuBackground == null && this.backgroundImage != null)) {
         // Apply menu background image if it is set, or apply default background 
         // image if it is set and the menu background is NOT set.
@@ -591,6 +594,7 @@ ExtrasMenu.processMenuBarClick = function(echoEvent) {
 
     var menuItemElement = echoEvent.target;
     var modelId = ExtrasMenu.getElementModelId(menuItemElement);
+    
     var menuId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
     if (menuId == null) {
         return;
@@ -598,6 +602,11 @@ ExtrasMenu.processMenuBarClick = function(echoEvent) {
     var menu = ExtrasMenu.getComponent(menuId);
 
     if (!menu.enabled || !EchoClientEngine.verifyInput(menuId, false)) {
+        return;
+    }
+
+    if (!modelId) {
+        menu.processCancel();
         return;
     }
     
