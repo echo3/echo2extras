@@ -71,11 +71,7 @@ public class MenuBarPaneTest extends AbstractTest {
         add(splitPane);
         
         final MenuBarPane menu = new MenuBarPane(createMenuModel());
-        MenuStateModel stateModel = new DefaultMenuStateModel();
-        stateModel.setSelected("abc", true);
-        stateModel.setEnabled("disabled1", false);
-        stateModel.setEnabled("disabled2", false);
-        menu.setStateModel(stateModel);
+        menu.setStateModel(createMenuStateModel());
         menu.addActionListener(new ActionListener(){
         
             public void actionPerformed(ActionEvent e) {
@@ -101,7 +97,7 @@ public class MenuBarPaneTest extends AbstractTest {
         addColorPropertyTests(TestControlPane.CATEGORY_PROPERTIES, "selectionBackground");
         addFillImagePropertyTests(TestControlPane.CATEGORY_PROPERTIES, "selectionBackgroundImage", TEST_FILL_IMAGES);
         
-        testControlsPane.addButton(TestControlPane.CATEGORY_PROPERTIES, "Add Test WindowPane", new ActionListener(){
+        testControlsPane.addButton(TestControlPane.CATEGORY_INTEGRATION, "Add Test WindowPane", new ActionListener(){
         
             public void actionPerformed(ActionEvent e) {
                 ContentPane rootContent = getApplicationInstance().getDefaultWindow().getContent();
@@ -111,6 +107,7 @@ public class MenuBarPaneTest extends AbstractTest {
                 SplitPane splitPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM, DEFAULT_MENU_HEIGHT);
                 windowPane.add(splitPane);
                 MenuBarPane menu = new MenuBarPane(createMenuModel());
+                menu.setStateModel(createMenuStateModel());
                 menu.addActionListener(new ActionListener() {
                 
                     public void actionPerformed(ActionEvent e) {
@@ -188,5 +185,13 @@ public class MenuBarPaneTest extends AbstractTest {
         optionsMenuModel.addItem(new DefaultRadioOptionModel("bar2", "barmode", "Bar Mode 2"));
         menuModel.addItem(optionsMenuModel);
         return menuModel;
+    }
+
+    private MenuStateModel createMenuStateModel() {
+        MenuStateModel stateModel = new DefaultMenuStateModel();
+        stateModel.setSelected("abc", true);
+        stateModel.setEnabled("disabled1", false);
+        stateModel.setEnabled("disabled2", false);
+        return stateModel;
     }
 }
