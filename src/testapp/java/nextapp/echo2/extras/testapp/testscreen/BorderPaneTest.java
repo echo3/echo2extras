@@ -30,6 +30,7 @@
 package nextapp.echo2.extras.testapp.testscreen;
 
 import nextapp.echo2.app.Color;
+import nextapp.echo2.app.ContentPane;
 import nextapp.echo2.app.FillImageBorder;
 import nextapp.echo2.app.Insets;
 import nextapp.echo2.app.Label;
@@ -98,6 +99,16 @@ public class BorderPaneTest extends AbstractTest {
             public void actionPerformed(ActionEvent e) {
                 borderPane.removeAll();
                 borderPane.add(new BorderPaneTest());
+            }
+        });
+        
+        testControlsPane.addButton(TestControlPane.CATEGORY_CONTENT, "ContentPane", new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                borderPane.removeAll();
+                ContentPane content = new ContentPane();
+                content.add(new Label("ContentPane"));
+                content.setBackground(StyleUtil.randomBrightColor());
+                borderPane.add(content);
             }
         });
         
