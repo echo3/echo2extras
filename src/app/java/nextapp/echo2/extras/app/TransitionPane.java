@@ -149,6 +149,17 @@ implements Pane, PaneContainer {
     }
     
     /**
+     * @see nextapp.echo2.app.Component#isValidParent(nextapp.echo2.app.Component)
+     */
+    public boolean isValidParent(Component c) {
+        if (!super.isValidParent(c)) {
+            return false;
+        }
+        // Ensure parent is a PaneContainer.
+        return c instanceof PaneContainer;
+    }
+
+    /**
      * Sets the transition duration, in milleseconds.
      * 
      * @param newValue the new transition duration
