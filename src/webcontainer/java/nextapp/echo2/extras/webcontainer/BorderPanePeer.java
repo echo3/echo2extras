@@ -398,16 +398,20 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
         windowBodyDivCssStyle.setAttribute("left", left + "px");
         windowBodyDivCssStyle.setAttribute("bottom", bottom + "px");
         windowBodyDivCssStyle.setAttribute("right", right + "px");
-        VirtualPosition.renderRegister(serverMessage, bodyElementId);
         
         borderPaneBodyDivElement.setAttribute("style", windowBodyDivCssStyle.renderInline());
         borderPaneDivElement.appendChild(borderPaneBodyDivElement);
+        VirtualPosition.renderRegister(serverMessage, bodyElementId);
 
         // Create inset content DIV Element.
         Element contentDivElement = document.createElement("div");
         contentDivElement.setAttribute("id", elementId + "_content");
         CssStyle contentDivCssStyle = new CssStyle();
-        if (!(child instanceof Pane)) {
+        if (child instanceof Pane) {
+            contentDivCssStyle.setAttribute("position", "absolute");
+            contentDivCssStyle.setAttribute("width", "100%");
+            contentDivCssStyle.setAttribute("height", "100%");
+        } else {
             // Render inset padding only if pane content is not itself a Pane.
             InsetsRender.renderToStyle(contentDivCssStyle, "padding", 
                     (Insets) borderPane.getRenderProperty(BorderPane.PROPERTY_INSETS));
