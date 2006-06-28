@@ -106,6 +106,10 @@ EchoDragSource.prototype.processMouseDown = function(echoEvent) {
     
     EchoDragSource.activeInstance = this;
     
+    for (var i=0; i<this.dropTargetPositions.length; i++) {
+	    this.dropTargetPositions[i] = EchoDragSource.getElementPosition(this.dropTargetArray[i]);
+	}
+    
     this.clone = this.element.cloneNode(true);
     this.clone.style.position = "absolute";
     document.getElementsByTagName("body")[0].appendChild(this.clone);   
