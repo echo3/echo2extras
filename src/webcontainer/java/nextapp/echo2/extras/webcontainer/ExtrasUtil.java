@@ -39,7 +39,7 @@ public class ExtrasUtil {
 
     public static final String IMAGE_RESOURCE_PATH = "/nextapp/echo2/extras/webcontainer/resource/image/";
     
-    public static final Service TRANSPARENT_IMAGE_SERVICE= StaticBinaryService.forResource(
+    public static final Service TRANSPARENT_IMAGE_SERVICE = StaticBinaryService.forResource(
             "Echo2Extras.ExtrasUtil.Transparent", "image/gif", IMAGE_RESOURCE_PATH + "Transparent.gif");
     
     /**
