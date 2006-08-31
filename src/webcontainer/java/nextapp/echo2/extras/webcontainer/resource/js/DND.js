@@ -31,7 +31,7 @@
  * <p>
  * Creates a new DragSource data object.
  */
-EchoDragSource = function(elementId) { 
+ExtrasDragSource = function(elementId) { 
     this.initialOffsetX = null;
     this.initialOffsetY = null;
     this.originX = null;
@@ -41,23 +41,23 @@ EchoDragSource = function(elementId) {
     this.element = null;
     
     this.cloneElement = null;
-    this.tooltip = EchoDragSource.DEFAULT_TOOLTIP;
+    this.tooltip = ExtrasDragSource.DEFAULT_TOOLTIP;
     
     this.dropTargetArray = new Array();    
     this.dropTargetPositions = new Array();
 };
 
-EchoDragSource.DEFAULT_TOOLTIP = "";
+ExtrasDragSource.DEFAULT_TOOLTIP = "";
 
 /**
- * Active <code>EchoDragSource</code> instance.
+ * Active <code>ExtrasDragSource</code> instance.
  */
-EchoDragSource.activeInstance = null;
+ExtrasDragSource.activeInstance = null;
 
 /**
  * Initializes a server-rendered drag source element.
  */
-EchoDragSource.prototype.init = function() {
+ExtrasDragSource.prototype.init = function() {
 
     // TODO 
     // Setting capture to true when registering event handler results in any content being draggable (but no longer clickable).
@@ -67,14 +67,14 @@ EchoDragSource.prototype.init = function() {
     this.element = document.getElementById(this.elementId);
 	this.element.style.cursor = "move";
 	
-    EchoEventProcessor.addHandler(this.element, "mousedown", "EchoDragSource.processMouseDown", false);
+    EchoEventProcessor.addHandler(this.element, "mousedown", "ExtrasDragSource.processMouseDown", false);
 	EchoDomPropertyStore.setPropertyValue(this.element, "component", this);
 };
 
-EchoDragSource.prototype.addDropTarget = function(dropTargetId) {
+ExtrasDragSource.prototype.addDropTarget = function(dropTargetId) {
 	var dropTarget = document.getElementById(dropTargetId);
 	this.dropTargetArray[this.dropTargetArray.length] = dropTarget;
-	this.dropTargetPositions[this.dropTargetPositions.length] = EchoDragSource.getElementPosition(dropTarget);
+	this.dropTargetPositions[this.dropTargetPositions.length] = ExtrasDragSource.getElementPosition(dropTarget);
 };
 
 /**
@@ -82,42 +82,42 @@ EchoDragSource.prototype.addDropTarget = function(dropTargetId) {
  * 
  * @param echoEvent the event
  */
-EchoDragSource.prototype.processMouseDown = function(echoEvent) {
+ExtrasDragSource.prototype.processMouseDown = function(echoEvent) {
     // Prevent default event (avoid selection start in browsers).
     EchoDomUtil.preventEventDefault(echoEvent);
     
     // Mark active instance.
-    EchoDragSource.activeInstance = this;
+    ExtrasDragSource.activeInstance = this;
     
     // Find positions of all drop targets.
     for (var i = 0; i < this.dropTargetPositions.length; i++) {
-	    this.dropTargetPositions[i] = EchoDragSource.getElementPosition(this.dropTargetArray[i]);
+	    this.dropTargetPositions[i] = ExtrasDragSource.getElementPosition(this.dropTargetArray[i]);
 	}
     
     // Create semi-transparent clone of element to use for dragging.
     this.cloneElement = this.element.cloneNode(true);
     this.cloneElement.style.position = "absolute";
     document.getElementsByTagName("body")[0].appendChild(this.cloneElement);
-    EchoDragSource.setOpacity(this.cloneElement, 6);
+    ExtrasDragSource.setOpacity(this.cloneElement, 6);
     
     // Adjust opacity of original container.
-    EchoDragSource.setOpacity(this.element, 2);
+    ExtrasDragSource.setOpacity(this.element, 2);
     
     // Store origin coordinate of element.
-    var position = EchoDragSource.getElementPosition(this.element);
+    var position = ExtrasDragSource.getElementPosition(this.element);
     this.originX = position.left;
 	this.originY = position.top;
 
     // Store initial cursor position.
-	var cursorPosition = EchoDragSource.getCursorPosition(echoEvent);
+	var cursorPosition = ExtrasDragSource.getCursorPosition(echoEvent);
 	this.initialOffsetX = cursorPosition.x - this.originX;
 	this.initialOffsetY = cursorPosition.y - this.originY;	
 		
     // Register temporary mouse/selection handlers.
-    EchoDomUtil.addEventListener(document, "mousemove", EchoDragSource.processMouseMove, false);
-    EchoDomUtil.addEventListener(document, "mouseup", EchoDragSource.processMouseUp, false);
+    EchoDomUtil.addEventListener(document, "mousemove", ExtrasDragSource.processMouseMove, false);
+    EchoDomUtil.addEventListener(document, "mouseup", ExtrasDragSource.processMouseUp, false);
     if (EchoClientProperties.get("browserInternetExplorer")) {
-        EchoDomUtil.addEventListener(document, "selectstart", EchoDragSource.selectStart, false);
+        EchoDomUtil.addEventListener(document, "selectstart", ExtrasDragSource.selectStart, false);
     }
     this.processMouseMove(echoEvent);
 };
@@ -125,16 +125,16 @@ EchoDragSource.prototype.processMouseDown = function(echoEvent) {
 /**
  * Process mouse release event.
  */
-EchoDragSource.prototype.processMouseUp = function(e) {
+ExtrasDragSource.prototype.processMouseUp = function(e) {
     // Remove temporary mouse/selection handlers.
-    EchoDomUtil.removeEventListener(document, "mousemove", EchoDragSource.processMouseMove, false);
-    EchoDomUtil.removeEventListener(document, "mouseup", EchoDragSource.processMouseUp, false);
+    EchoDomUtil.removeEventListener(document, "mousemove", ExtrasDragSource.processMouseMove, false);
+    EchoDomUtil.removeEventListener(document, "mouseup", ExtrasDragSource.processMouseUp, false);
     if (EchoClientProperties.get("browserInternetExplorer")) {
-        EchoDomUtil.removeEventListener(document, "selectstart", EchoDragSource.selectStart, false);
+        EchoDomUtil.removeEventListener(document, "selectstart", ExtrasDragSource.selectStart, false);
     }
     
     // Clear active instance.
-    EchoDragSource.activeInstance = null;    
+    ExtrasDragSource.activeInstance = null;    
     
     // Remove semi-transparent clone.
     this.cloneElement.parentNode.removeChild(this.cloneElement);
@@ -144,7 +144,7 @@ EchoDragSource.prototype.processMouseUp = function(e) {
     
     var dropTarget = this.getActiveDropTarget(e);
     
-    EchoDragSource.setOpacity(this.element, 10);
+    ExtrasDragSource.setOpacity(this.element, 10);
     if (dropTarget) {
 	    EchoClientMessage.setActionValue(this.element.id, "drop", dropTarget.id);
     	EchoServerTransaction.connect();
@@ -158,29 +158,29 @@ EchoDragSource.prototype.processMouseUp = function(e) {
 	this.initialOffsetY = null;
 };
 
-EchoDragSource.prototype.processMouseMove = function(e) {
+ExtrasDragSource.prototype.processMouseMove = function(e) {
     e = e ? e : window.event;	 
-    var cursorPosition = EchoDragSource.getCursorPosition(e);
+    var cursorPosition = ExtrasDragSource.getCursorPosition(e);
 	this.cloneElement.style.left = cursorPosition.x - this.initialOffsetX + "px"; 
 	this.cloneElement.style.top = cursorPosition.y - this.initialOffsetY + "px";
 	
 	var onTarget = this.getActiveDropTarget(e);
 	if (onTarget) {
 		this.cloneElement.title = this.tooltip;
-		EchoDragSource.setOpacity(this.cloneElement, 10);
+		ExtrasDragSource.setOpacity(this.cloneElement, 10);
 	} else {
 		this.cloneElement.title = "";
-		EchoDragSource.setOpacity(this.cloneElement, 6);
+		ExtrasDragSource.setOpacity(this.cloneElement, 6);
 	}
 };
 
-EchoDragSource.prototype.getActiveDropTarget = function(e) {
+ExtrasDragSource.prototype.getActiveDropTarget = function(e) {
 
 	for (var i=0; i<this.dropTargetArray.length; i++) {
 		var dropTarget = this.dropTargetArray[i];
 		var elementPosition = this.dropTargetPositions[i];
 		
-		var cursorPosition = EchoDragSource.getCursorPosition(e);
+		var cursorPosition = ExtrasDragSource.getCursorPosition(e);
 		var cursorX = cursorPosition.x;
 		var cursorY = cursorPosition.y;
 		
@@ -200,7 +200,7 @@ EchoDragSource.prototype.getActiveDropTarget = function(e) {
 	}
 };
 
-EchoDragSource.prototype.dispose = function() {
+ExtrasDragSource.prototype.dispose = function() {
 
 	EchoEventProcessor.removeHandler(this.element, "mousedown");
 	EchoDomPropertyStore.dispose(this.element);
@@ -227,11 +227,11 @@ EchoDragSource.prototype.dispose = function() {
  * @param element the root element or element id of the DragSource
  * @return the relevant DragSource instance
  */
-EchoDragSource.getComponent = function(element) {
+ExtrasDragSource.getComponent = function(element) {
     return EchoDomPropertyStore.getPropertyValue(element, "component");
 };
 
-EchoDragSource.getCursorPosition = function(e) {
+ExtrasDragSource.getCursorPosition = function(e) {
     var pageX;
     var pageY;
     
@@ -246,7 +246,7 @@ EchoDragSource.getCursorPosition = function(e) {
     return {x:pageX,y:pageY};
 };
 
-EchoDragSource.getElementPosition = function(element) {
+ExtrasDragSource.getElementPosition = function(element) {
     var offsetLeft = 0;
     var offsetTop = 0;
     
@@ -258,23 +258,23 @@ EchoDragSource.getElementPosition = function(element) {
     return {left:offsetLeft,top:offsetTop};
 };
 
-EchoDragSource.processMouseDown = function(echoEvent) {
+ExtrasDragSource.processMouseDown = function(echoEvent) {
     var componentId = EchoDomUtil.getComponentId(echoEvent.registeredTarget.id);
-    var dragSource = EchoDragSource.getComponent(componentId);
+    var dragSource = ExtrasDragSource.getComponent(componentId);
     dragSource.processMouseDown(echoEvent);
 };
 
-EchoDragSource.processMouseMove = function(e) {
+ExtrasDragSource.processMouseMove = function(e) {
     e = e ? e : window.event;
-    if (EchoDragSource.activeInstance) {
-        EchoDragSource.activeInstance.processMouseMove(e);
+    if (ExtrasDragSource.activeInstance) {
+        ExtrasDragSource.activeInstance.processMouseMove(e);
     }
 };
 
-EchoDragSource.processMouseUp = function(e) {
+ExtrasDragSource.processMouseUp = function(e) {
     e = e ? e : window.event;
-    if (EchoDragSource.activeInstance) {
-        EchoDragSource.activeInstance.processMouseUp(e);
+    if (ExtrasDragSource.activeInstance) {
+        ExtrasDragSource.activeInstance.processMouseUp(e);
     }
 };
 
@@ -282,11 +282,11 @@ EchoDragSource.processMouseUp = function(e) {
  * Event handler for "SelectStart" events to disable selection while dragging
  * the Component. (Internet Explorer specific)
  */
-EchoDragSource.selectStart = function() {
+ExtrasDragSource.selectStart = function() {
     EchoDomUtil.preventEventDefault(window.event);
 };
 
-EchoDragSource.setOpacity = function(element, value) {
+ExtrasDragSource.setOpacity = function(element, value) {
 	if (EchoClientProperties.get("browserInternetExplorer")) {
 		element.style.zoom = 1;
 		element.style.filter = "alpha(opacity=" + value*10 + ")";
@@ -299,7 +299,7 @@ EchoDragSource.setOpacity = function(element, value) {
 /**
  * Static object/namespace for DragSource MessageProcessor implementation.
  */
-EchoDragSource.MessageProcessor = function() { };
+ExtrasDragSource.MessageProcessor = function() { };
 
 /**
  * MessageProcessor process() implementation (invoked by ServerMessage
@@ -307,15 +307,15 @@ EchoDragSource.MessageProcessor = function() { };
  * 
  * @param messagePartElement the <code>message-part</code> element to process
  */
-EchoDragSource.MessageProcessor.process = function(messagePartElement) {
+ExtrasDragSource.MessageProcessor.process = function(messagePartElement) {
     for (var i = 0; i < messagePartElement.childNodes.length; ++i) {
         if (messagePartElement.childNodes[i].nodeType == 1) {
             switch (messagePartElement.childNodes[i].tagName) {
             case "init":
-                EchoDragSource.MessageProcessor.processInit(messagePartElement.childNodes[i]);
+                ExtrasDragSource.MessageProcessor.processInit(messagePartElement.childNodes[i]);
                 break;
             case "dispose":
-                EchoDragSource.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
+                ExtrasDragSource.MessageProcessor.processDispose(messagePartElement.childNodes[i]);
                 break;
             }
         }
@@ -328,10 +328,10 @@ EchoDragSource.MessageProcessor.process = function(messagePartElement) {
  * 
  * @param disposeMessageElement the <code>dispose</code> element to process
  */
-EchoDragSource.MessageProcessor.processDispose = function(disposeElement) {
+ExtrasDragSource.MessageProcessor.processDispose = function(disposeElement) {
     var elementId = disposeElement.getAttribute("eid");
     var element = document.getElementById(elementId);
-    var component = EchoDragSource.getComponent(element);
+    var component = ExtrasDragSource.getComponent(element);
     
     if (component) {
     	component.dispose();
@@ -344,10 +344,10 @@ EchoDragSource.MessageProcessor.processDispose = function(disposeElement) {
  * 
  * @param initMessageElement the <code>init</code> element to process
  */
-EchoDragSource.MessageProcessor.processInit = function(initElement) {
+ExtrasDragSource.MessageProcessor.processInit = function(initElement) {
     var elementId = initElement.getAttribute("eid");    
     
-    var dragSource = new EchoDragSource(elementId);
+    var dragSource = new ExtrasDragSource(elementId);
     dragSource.init();
     
     var tooltip = initElement.getAttribute("tooltip");

@@ -58,8 +58,8 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport {
 	/**
      * Service to provide supporting JavaScript library.
      */
-    public static final Service DRAG_SOURCE_SERVICE = JavaScriptService.forResource("Echo.DragSource",
-            "/nextapp/echo2/extras/webcontainer/resource/js/DragSource.js");
+    public static final Service DRAG_SOURCE_SERVICE = JavaScriptService.forResource("Echo2Extras.DND",
+            "/nextapp/echo2/extras/webcontainer/resource/js/DND.js");
 
     static {
         WebRenderServlet.getServiceRegistry().add(DRAG_SOURCE_SERVICE);
@@ -109,7 +109,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport {
     private void renderInitDirective(RenderContext rc, DragSource dragSource) {
         String elementId = ContainerInstance.getElementId(dragSource);
         ServerMessage serverMessage = rc.getServerMessage();
-        Element partElement = serverMessage.addPart(ServerMessage.GROUP_ID_POSTUPDATE, "EchoDragSource.MessageProcessor");
+        Element partElement = serverMessage.addPart(ServerMessage.GROUP_ID_POSTUPDATE, "ExtrasDragSource.MessageProcessor");
         Element initElement = serverMessage.getDocument().createElement("init");
         
         initElement.setAttribute("eid", elementId);
@@ -167,7 +167,7 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport {
         String elementId = ContainerInstance.getElementId(dragSource);
         ServerMessage serverMessage = rc.getServerMessage();
         Element initElement = serverMessage.appendPartDirective(ServerMessage.GROUP_ID_PREREMOVE, 
-                "EchoDragSource.MessageProcessor", "dispose");
+                "ExtrasDragSource.MessageProcessor", "dispose");
         initElement.setAttribute("eid", elementId);
     }
 
