@@ -251,7 +251,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
             borderCssStyle.setAttribute("top", borderTopPixels + "px");
             borderCssStyle.setAttribute("left", "0px");
             borderCssStyle.setAttribute("width", borderLeftPixels + "px");
-            borderCssStyle.setAttribute("bottom", borderRightPixels + "px");
+            borderCssStyle.setAttribute("bottom", borderBottomPixels + "px");
             FillImageRender.renderToStyle(borderCssStyle, rc, this, borderPane, IMAGE_ID_BORDER_LEFT, border
                     .getFillImage(FillImageBorder.LEFT), fillImageRenderFlags);
             borderDivElement.setAttribute("style", borderCssStyle.renderInline());
@@ -269,7 +269,7 @@ implements ComponentSynchronizePeer, DomUpdateSupport, ImageRenderSupport {
             borderCssStyle.setAttribute("top", borderTopPixels + "px");
             borderCssStyle.setAttribute("right", "0px");
             borderCssStyle.setAttribute("width", borderRightPixels + "px");
-            borderCssStyle.setAttribute("bottom", borderRightPixels + "px");
+            borderCssStyle.setAttribute("bottom", borderBottomPixels + "px");
             FillImageRender.renderToStyle(borderCssStyle, rc, this, borderPane, IMAGE_ID_BORDER_RIGHT, border
                     .getFillImage(FillImageBorder.RIGHT), fillImageRenderFlags);
             borderDivElement.setAttribute("style", borderCssStyle.renderInline());
