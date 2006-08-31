@@ -29,9 +29,12 @@
 
 package nextapp.echo2.extras.testapp.testscreen;
 
+import nextapp.echo2.app.Alignment;
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
 import nextapp.echo2.app.Column;
+import nextapp.echo2.app.Component;
+import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.Label;
 import nextapp.echo2.app.Row;
 import nextapp.echo2.extras.app.DragSource;
@@ -46,39 +49,87 @@ import nextapp.echo2.extras.testapp.Styles;
  */
 public class DragSourceTest extends AbstractTest {
     
+    // TODO: Experimental support buttons (functionality/tests currently disabled)
+
     public DragSourceTest() {
         super("DragSource", Styles.ICON_16_DRAG_SOURCE);
-        
+
         Row row = new Row();
+        row.setAlignment(new Alignment(Alignment.LEFT, Alignment.TOP));
+        row.setCellSpacing(new Extent(10, Extent.PX));
         add(row);
         setTestComponent(this, row);
+
+        final Column labelColumn = new Column();
+        labelColumn.setBorder(new Border(2, Color.BLUE, Border.STYLE_INSET));
+        labelColumn.add(new Label("Drag Sources: Labels"));
+
+        /*
+        final Column buttonColumn = new Column();
+        buttonColumn.setBorder(new Border(2, Color.BLUE, Border.STYLE_INSET));
+        buttonColumn.add(new Label("Drag Sources: Buttons"));
+        */
         
-        final Column column1 = new Column();
-        column1.setBorder(new Border(2, Color.BLUE, Border.STYLE_INSET));
-        column1.add(new Label("Drag Source"));
-        final Column column2 = new Column();
-        column2.setBorder(new Border(2, Color.RED, Border.STYLE_OUTSET));
-        column2.add(new Label("Drop Target"));
-        
-        row.add(column1);
-        row.add(column2);
-        
-        for (int i=0; i<6; i++) {
-        	Label label = new Label("Draggable Label " + i);
+        final Column dropTarget1 = new Column();
+        dropTarget1.setBorder(new Border(2, Color.RED, Border.STYLE_OUTSET));
+        dropTarget1.add(new Label("Drop Target 1"));
+
+        final Column dropTarget2 = new Column();
+        dropTarget2.setBorder(new Border(2, Color.RED, Border.STYLE_OUTSET));
+        dropTarget2.add(new Label("Drop Target 2"));
+
+        row.add(labelColumn);
+        // row.add(buttonColumn);
+        row.add(dropTarget1);
+        row.add(dropTarget2);
+
+        for (int i = 0; i < 6; i++) {
+            Label label = new Label("Draggable Label " + i);
             label.setBackground(StyleUtil.randomBrightColor());
-        	DragSource ds = new DragSource(label);
-        	ds.addDropTarget(column2);
-        	ds.addDropTargetListener(new DropListener(){
-    			public void dropPerformed(DropEvent event) {
-    				DragSource dragged = (DragSource)event.getSource();
-    				column1.remove(dragged);
-    				column2.add(dragged.getComponent(0));
-    			}
-    		});
-        	column1.add(ds);
+            DragSource ds = new DragSource(label);
+            ds.addDropTarget(dropTarget1);
+            ds.addDropTarget(dropTarget2);
+            ds.addDropTargetListener(new DropListener() {
+                public void dropPerformed(DropEvent event) {
+                    DragSource dragged = (DragSource) event.getSource();
+                    labelColumn.remove(dragged);
+                    Component dropTarget = (Component) event.getTarget();
+                    dropTarget.add(dragged.getComponent(0));
+                }
+            });
+            labelColumn.add(ds);
         }
-                 
+
+        /*
+        for (int i = 0; i < 6; i++) {
+            Button button = new Button("Draggable Button " + i);
+            button.setBackground(StyleUtil.randomBrightColor());
+            button.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent arg0) {
+                    WindowPane alertWindow = new WindowPane();
+                    alertWindow.setModal(true);
+                    alertWindow.setTitle("Button Clicked");
+                    alertWindow.setInsets(new Insets(10));
+                    alertWindow.add(new Label("A draggable button was clicked."));
+                    InteractiveApp.getApp().getDefaultWindow().getContent().add(alertWindow);
+                }
+            });
+            DragSource ds = new DragSource(button);
+            ds.addDropTarget(dropTarget1);
+            ds.addDropTarget(dropTarget2);
+            ds.addDropTargetListener(new DropListener() {
+                public void dropPerformed(DropEvent event) {
+                    DragSource dragged = (DragSource) event.getSource();
+                    buttonColumn.remove(dragged);
+                    Component dropTarget = (Component) event.getTarget();
+                    dropTarget.add(dragged.getComponent(0));
+                }
+            });
+            buttonColumn.add(ds);
+        }
+        */
+
         addStandardIntegrationTests();
     }
-    
+
 }

@@ -29,7 +29,6 @@
 
 package nextapp.echo2.extras.webcontainer;
 
-
 import nextapp.echo2.app.Component;
 import nextapp.echo2.app.update.ServerComponentUpdate;
 import nextapp.echo2.extras.app.DragSource;
@@ -52,7 +51,6 @@ import org.w3c.dom.Node;
 
 /**
  * Synchronization peer for <code>nextapp.echo2.contrib.dnd.DragSource</code> components.
- * <p>
  */
 public class DragSourcePeer 
 implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport {

@@ -406,6 +406,7 @@ ExtrasColorSelect.prototype.updateClientMessage = function(color) {
     colorElement.setAttribute("r", color.r);
     colorElement.setAttribute("g", color.g);
     colorElement.setAttribute("b", color.b);
+    EchoDebugManager.updateClientMessage();
 };
 
 ExtrasColorSelect.prototype.updateColor = function() {
