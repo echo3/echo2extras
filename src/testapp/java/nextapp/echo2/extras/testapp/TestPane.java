@@ -144,6 +144,7 @@ public class TestPane extends ContentPane {
         backgroundsMenu.addItem(new DefaultRadioOptionModel("BackgroundBlue", "Backgrounds", "Blue")); 
 
         DefaultMenuModel localesMenu = new DefaultMenuModel("Locales", "Locales");
+        localesMenu.addItem(new DefaultRadioOptionModel("Locale_da", "Locales", "Danish")); 
         localesMenu.addItem(new DefaultRadioOptionModel("Locale_en", "Locales", "English")); 
         localesMenu.addItem(new DefaultRadioOptionModel("Locale_fr", "Locales", "French")); 
         localesMenu.addItem(new DefaultRadioOptionModel("Locale_de", "Locales", "German")); 
