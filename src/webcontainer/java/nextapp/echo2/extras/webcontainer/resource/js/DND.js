@@ -247,15 +247,8 @@ ExtrasDragSource.getCursorPosition = function(e) {
 };
 
 ExtrasDragSource.getElementPosition = function(element) {
-    var offsetLeft = 0;
-    var offsetTop = 0;
-    
-    while (element){
-        offsetLeft += element.offsetLeft;
-        offsetTop += element.offsetTop;
-        element = element.offsetParent;
-    }   
-    return {left:offsetLeft,top:offsetTop};
+    var bounds = new EchoCssUtil.Bounds(element);
+    return {left:bounds.left,top:bounds.top};
 };
 
 ExtrasDragSource.processMouseDown = function(echoEvent) {
