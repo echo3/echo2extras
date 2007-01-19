@@ -1,58 +1,30 @@
-/* 
- * This file is part of the Echo2 Extras Project.
- * Copyright (C) 2005-2006 NextApp, Inc.
- *
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- */
-
 package nextapp.echo2.extras.app;
 
 import nextapp.echo2.app.Border;
 import nextapp.echo2.app.Color;
-import nextapp.echo2.app.Component;
+import nextapp.echo2.app.Extent;
 import nextapp.echo2.app.FillImage;
-import nextapp.echo2.app.Pane;
-import nextapp.echo2.app.PaneContainer;
+import nextapp.echo2.app.ImageReference;
+import nextapp.echo2.app.event.ChangeEvent;
+import nextapp.echo2.app.event.ChangeListener;
 import nextapp.echo2.extras.app.menu.AbstractMenuComponent;
 import nextapp.echo2.extras.app.menu.MenuModel;
+import nextapp.echo2.extras.app.menu.MenuSelectionModel;
 import nextapp.echo2.extras.app.menu.MenuStateModel;
 
 /**
- * A pull-down menu pane.  This component should generally be used as a child 
- * of a vertically-oriented <code>SplitPane</code> component.  For a 
- * "traditional looking" pulldown menu bar with normal-sized fonts, set the 
- * height of the containing region to between 26 and 32 pixels.
+ * EXPERIMENTAL: Under Development, API may change.
  */
-public class MenuBarPane extends AbstractMenuComponent 
-implements Pane {
+public class DropDownMenu extends AbstractMenuComponent {
     
     public static final String PROPERTY_BACKGROUND_IMAGE = "backgroundImage";
     public static final String PROPERTY_BORDER = "border";
     public static final String PROPERTY_DISABLED_BACKGROUND = "disabledBackground";
     public static final String PROPERTY_DISABLED_BACKGROUND_IMAGE = "disabledBackgroundImage";
     public static final String PROPERTY_DISABLED_FOREGROUND = "disabledForeground";
+    public static final String PROPERTY_DISABLED_EXPAND_ICON = "disabledExpandIcon";
+    public static final String PROPERTY_EXPAND_ICON = "expandIcon";
+    public static final String PROPERTY_HEIGHT = "height";
     public static final String PROPERTY_MENU_BACKGROUND = "menuBackground";
     public static final String PROPERTY_MENU_BACKGROUND_IMAGE = "menuBackgroundImage";
     public static final String PROPERTY_MENU_BORDER = "menuBorder";
@@ -60,42 +32,64 @@ implements Pane {
     public static final String PROPERTY_SELECTION_BACKGROUND = "selectionBackground";
     public static final String PROPERTY_SELECTION_BACKGROUND_IMAGE = "selectionBackgroundImage";
     public static final String PROPERTY_SELECTION_FOREGROUND = "selectionForeground";
+    public static final String PROPERTY_WIDTH = "width";
+    
+    public static final String SELECTION_CHANGED_PROPERTY = "selection";
+    public static final String SELECTION_MODEL_CHANGED_PROPERTY = "selectionModel";
+    
+    private MenuSelectionModel selectionModel;
+    
+    private ChangeListener changeListener = new ChangeListener(){
+    
+        public void stateChanged(ChangeEvent e) {
+            firePropertyChange(SELECTION_CHANGED_PROPERTY, null, null);
+        }
+    };
     
     /**
-     * Creates a new <code>MenuBarPane</code> with an empty
+     * Creates a new <code>DropDownMenu</code> with an empty
      * <code>DefaultMenuModel</code> as its model and a.
      * <code>DefaultMenuStateModel</code> to provide state information.
      */
-    public MenuBarPane() {
-        this(null, null);
+    public DropDownMenu() {
+        this(null);
     }
     
     /**
-     * Creates a new <code>MenuBarPane</code> displaying the specified 
+     * Creates a new <code>DropDownMenu</code> displaying the specified 
      * <code>MenuModel</code> and using a 
      * <code>DefaultMenuStateModel</code> to provide state information.
      * 
      * @param model the model
      */
-    public MenuBarPane(MenuModel model) {
-        this(model, null);
+    public DropDownMenu(MenuModel model) {
+        this(model, (MenuStateModel)null);
     }
     
     /**
-     * Creates a new <code>MenuBarPane</code> displaying the specified 
+     * Creates a new <code>DropDownMenu</code> displaying the specified 
      * <code>MenuModel</code> and using the specified 
      * <code>MenuStateModel</code> to provide state information.
      * 
      * @param model the model
      * @param stateModel the selection model
      */
-    public MenuBarPane(MenuModel model, MenuStateModel stateModel) {
+    public DropDownMenu(MenuModel model, MenuStateModel stateModel) {
         super(model, stateModel);
+    }
+    
+    public DropDownMenu(MenuModel model, MenuSelectionModel selectionModel) {
+        super(model, null);
+        setSelectionModel(selectionModel);
+    }
+    
+    public MenuSelectionModel getSelectionModel() {
+        return selectionModel;
     }
     
     /**
      * Returns the background image that will be displayed in the 
-     * <code>MenuBarPane</code>.  This background image will also be 
+     * <code>DropDownMenu</code>.  This background image will also be 
      * used around pull-down menus in the event that a menu 
      * background image is not specified.
      * 
@@ -107,7 +101,7 @@ implements Pane {
     
     /**
      * Returns the border that will be displayed around the 
-     * <code>MenuBarPane</code>.  This border will also be used around
+     * <code>DropDownMenu</code>.  This border will also be used around
      * pull-down menus in the event that a menu border is not specified.
      * 
      * @return the default border
@@ -135,12 +129,39 @@ implements Pane {
     }
     
     /**
+     * Returns the disabled expand icon.
+     * 
+     * @return the disabled expand icon
+     */
+    public ImageReference getDisabledExpandIcon() {
+        return (ImageReference) getProperty(PROPERTY_DISABLED_EXPAND_ICON);
+    }
+    
+    /**
      * Returns the foreground color used to render disabled menu items.
      * 
      * @return the disabled foreground
      */
     public Color getDisabledForeground() {
         return (Color) getProperty(PROPERTY_DISABLED_FOREGROUND);
+    }
+    
+    /**
+     * Returns the icon used to expand the drop down menu.
+     * 
+     * @return the expand icon
+     */
+    public ImageReference getExpandIcon() {
+        return (ImageReference) getProperty(PROPERTY_EXPAND_ICON);
+    }
+    
+    /**
+     * Returns the height of the drop down menu.
+     * 
+     * @return the height
+     */
+    public Extent getHeight() {
+        return (Extent) getProperty(PROPERTY_HEIGHT);
     }
     
     /**
@@ -220,21 +241,19 @@ implements Pane {
     public Color getSelectionForeground() {
         return (Color) getProperty(PROPERTY_SELECTION_FOREGROUND);
     }
-
+    
     /**
-     * @see nextapp.echo2.app.Component#isValidParent(nextapp.echo2.app.Component)
+     * Returns the width of the drop down menu.
+     * 
+     * @return the width
      */
-    public boolean isValidParent(Component c) {
-        if (!super.isValidParent(c)) {
-            return false;
-        }
-        // Ensure parent is a PaneContainer.
-        return c instanceof PaneContainer;
+    public Extent getWidth() {
+        return (Extent) getProperty(PROPERTY_WIDTH);
     }
     
     /**
      * Sets the background image that will be displayed in the 
-     * <code>MenuBarPane</code>.  This background image will also be 
+     * <code>DropDownMenu</code>.  This background image will also be 
      * used around pull-down menus in the event that a menu 
      * background image is not specified.
      * 
@@ -243,10 +262,9 @@ implements Pane {
     public void setBackgroundImage(FillImage newValue) {
         setProperty(PROPERTY_BACKGROUND_IMAGE, newValue);
     }
-    
     /**
      * Sets the border that will be displayed around the 
-     * <code>MenuBarPane</code>.  This border will also be used around
+     * <code>DropDownMenu</code>.  This border will also be used around
      * pull-down menus in the event that a menu border is not specified.
      * 
      * @param newValue the new default border
@@ -274,12 +292,39 @@ implements Pane {
     }
     
     /**
+     * Sets the disabled expand icon.
+     * 
+     * @param newValue the new disabled expand icon
+     */
+    public void setDisabledExpandIcon(ImageReference newValue) {
+        setProperty(PROPERTY_DISABLED_EXPAND_ICON, newValue);
+    }
+    
+    /**
      * Sets the foreground color used to render disabled menu items.
      * 
      * @param newValue the new disabled foreground
      */
     public void setDisabledForeground(Color newValue) {
         setProperty(PROPERTY_DISABLED_FOREGROUND, newValue);
+    }
+    
+    /**
+     * Sets the icon used to expand the drop down menu.
+     * 
+     * @param newValue the new expand icon
+     */
+    public void setExpandIcon(ImageReference newValue) {
+        setProperty(PROPERTY_EXPAND_ICON, newValue);
+    }
+    
+    /**
+     * Sets the height of the drop down menu.
+     * 
+     * @param newValue the new height
+     */
+    public void setHeight(Extent newValue) {
+        setProperty(PROPERTY_HEIGHT, newValue);
     }
     
     /**
@@ -358,5 +403,31 @@ implements Pane {
      */
     public void setSelectionForeground(Color newValue) {
         setProperty(PROPERTY_SELECTION_FOREGROUND, newValue);
+    }
+    
+    /**
+     * Sets the selection model to use.
+     * 
+     * @param selectionModel the new selection model
+     */
+    public void setSelectionModel(MenuSelectionModel newValue) {
+        MenuSelectionModel oldValue = selectionModel;
+        if (oldValue != null) {
+            oldValue.removeChangeListener(changeListener);
+        }
+        selectionModel = newValue;
+        if (newValue != null) {
+            newValue.addChangeListener(changeListener);
+        }
+        firePropertyChange(SELECTION_MODEL_CHANGED_PROPERTY, oldValue, newValue);
+    }
+    
+    /**
+     * Sets the width of the drop down menu.
+     * 
+     * @param newValue the new width
+     */
+    public void setWidth(Extent newValue) {
+        setProperty(PROPERTY_WIDTH, newValue);
     }
 }
