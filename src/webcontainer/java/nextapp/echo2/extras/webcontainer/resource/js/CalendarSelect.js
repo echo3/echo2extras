@@ -223,10 +223,6 @@ ExtrasCalendarSelect.prototype.dispose = function() {
     EchoEventProcessor.removeHandler(this.elementId + "_year", "change");
     EchoEventProcessor.removeHandler(this.elementId + "_yearincrement", "click");
     EchoEventProcessor.removeHandler(this.elementId + "_yeardecrement", "click");
-    
-    // Remove calendar.
-    var calendarElement = document.getElementById(this.elementId);
-    calendarElement.parentNode.removeChild(calendarElement);
 };
 
 ExtrasCalendarSelect.prototype.processDaySelect = function(elementId) {
