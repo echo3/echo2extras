@@ -152,6 +152,7 @@ public class TestPane extends ContentPane {
         localesMenu.addItem(new DefaultRadioOptionModel("Locale_de", "Locales", "German")); 
         localesMenu.addItem(new DefaultRadioOptionModel("Locale_el", "Locales", "Greek")); 
         localesMenu.addItem(new DefaultRadioOptionModel("Locale_it", "Locales", "Italian")); 
+        localesMenu.addItem(new DefaultRadioOptionModel("Locale_ja", "Locales", "Japanese")); 
         localesMenu.addItem(new DefaultRadioOptionModel("Locale_es", "Locales", "Spanish")); 
         localesMenu.addItem(new DefaultRadioOptionModel("Locale_1337", "Locales", "1337 (Test)")); 
         
