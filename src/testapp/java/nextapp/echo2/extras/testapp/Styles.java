@@ -41,8 +41,8 @@ import nextapp.echo2.app.componentxml.StyleSheetLoader;
  */
 public class Styles {
     
-    public static final String IMAGE_PATH = "/nextapp/echo2/extras/testapp/resource/image/";
-    public static final String STYLE_PATH = "/nextapp/echo2/extras/testapp/resource/style/";
+    public static final String IMAGE_PATH = "nextapp/echo2/extras/testapp/resource/image/";
+    public static final String STYLE_PATH = "nextapp/echo2/extras/testapp/resource/style/";
  
     public static final ImageReference ICON_16_ACCORDION_PANE 
             = new ResourceImageReference(IMAGE_PATH + "AccordionPaneIcon16.gif"); 
