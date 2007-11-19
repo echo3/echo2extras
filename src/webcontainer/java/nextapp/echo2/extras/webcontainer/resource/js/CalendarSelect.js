@@ -271,7 +271,7 @@ ExtrasCalendarSelect.prototype.processYearEntry = function() {
     }
     
     var yearField = document.getElementById(this.elementId + "_year");
-    if (isNaN(yearField.value)) {
+    if (isNaN(parseInt(yearField.value))) {
         return;
     }
     this.setDate(yearField.value, this.month, this.selectedDay, true);
