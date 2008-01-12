@@ -378,7 +378,7 @@ implements Pane, PaneContainer {
      * property).
      * Values for this property must be in pixel units.
      * 
-     * @return newValue the new inset
+     * @param newValue the new inset margin
      */
     public void setInsets(Insets newValue) {
     	setProperty(PROPERTY_INSETS, newValue);
