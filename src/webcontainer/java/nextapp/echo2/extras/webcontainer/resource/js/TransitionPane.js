@@ -212,7 +212,7 @@ ExtrasTransitionPane.processTimeout = function(transitionPaneId) {
  * Static object/namespace for TransitionPane MessageProcessor 
  * implementation.
  */
-ExtrasTransitionPane.MessageProcessor = function() { };
+ExtrasTransitionPane.MessageProcessor = { };
 
 ExtrasTransitionPane.MessageProcessor.installTransition = function(transitionPane, type) {
     switch (type) {
@@ -409,38 +409,33 @@ ExtrasTransitionPane.FadeImage = function(transitionPane, color) {
     var image820 = new Image();
 };
 
-ExtrasTransitionPane.FadeImage.createFadeSteps = function() {
-    // Index 0 indicates total translucency of layerstack, 1 = transparent, 0 = opaque.
-    // Index 1-2 are image alpha values to stack on top of one another to create desired translucency.
-    // Five images are used on two layers, images have transparency values of 92.7%, 78.7%, 70.0% 42.0%, and 23.0%
-    var fadeSteps = new Array();
-    fadeSteps.push(new Array(927,  927, null));
-    fadeSteps.push(new Array(859,  927,  927));
-    fadeSteps.push(new Array(787,  787, null));
-    fadeSteps.push(new Array(730,  787,  927));
-    fadeSteps.push(new Array(700,  700, null));
-    fadeSteps.push(new Array(649,  700,  927));
-    fadeSteps.push(new Array(619,  787,  787));
-    fadeSteps.push(new Array(551,  700,  787));
-    fadeSteps.push(new Array(490,  700,  700));
-    fadeSteps.push(new Array(420,  420, null));
-    fadeSteps.push(new Array(389,  420,  927));
-    fadeSteps.push(new Array(331,  420,  787));
-    fadeSteps.push(new Array(294,  420,  700));
-    fadeSteps.push(new Array(230,  230, null));
-    fadeSteps.push(new Array(213,  230,  927));
-    fadeSteps.push(new Array(176,  420,  420));
-    fadeSteps.push(new Array(161,  230,  700));
-    fadeSteps.push(new Array( 97,  230,  420));
-    fadeSteps.push(new Array( 53,  230,  230));
-    
-    return fadeSteps;
-}
-
-ExtrasTransitionPane.FadeImage.fadeSteps = ExtrasTransitionPane.FadeImage.createFadeSteps();
+// Index 0 indicates total translucency of layerstack, 1 = transparent, 0 = opaque.
+// Index 1-2 are image alpha values to stack on top of one another to create desired translucency.
+// Five images are used on two layers, images have transparency values of 92.7%, 78.7%, 70.0% 42.0%, and 23.0%
+ExtrasTransitionPane.FadeImage.fadeSteps = [
+    [927,  927, null],
+    [859,  927,  927],
+    [787,  787, null],
+    [730,  787,  927],
+    [700,  700, null],
+    [649,  700,  927],
+    [619,  787,  787],
+    [551,  700,  787],
+    [490,  700,  700],
+    [420,  420, null],
+    [389,  420,  927],
+    [331,  420,  787],
+    [294,  420,  700],
+    [230,  230, null],
+    [213,  230,  927],
+    [176,  420,  420],
+    [161,  230,  700],
+    [ 97,  230,  420],
+    [ 53,  230,  230]
+];
 
 ExtrasTransitionPane.FadeImage.prototype.init = function() {
-    this.translucentElements = new Array();
+    this.translucentElements = [];
     if (EchoClientProperties.get("proprietaryIEPngAlphaFilterRequired")) {
         this.dxRender = true;
     }

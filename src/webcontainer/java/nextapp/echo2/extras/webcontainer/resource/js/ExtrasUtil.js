@@ -27,9 +27,9 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-ExtrasUtil = function() { };
+ExtrasUtil = { };
 
-ExtrasUtil.Arrays = function() { };
+ExtrasUtil.Arrays = { };
 
 ExtrasUtil.Arrays.indexOf = function(array, element) {
     for (var i = 0; i < array.length; ++i) {
@@ -70,7 +70,7 @@ ExtrasUtil.Arrays.removeIndex = function(array, index) {
     array.length = array.length - 1;
 };
 
-ExtrasUtil.Color = function() { };
+ExtrasUtil.Color = { };
 
 ExtrasUtil.Color.adjustIntensity = function(colorString, factor) {
     if (colorString.length != 7 || colorString.charAt(0) != "#") {

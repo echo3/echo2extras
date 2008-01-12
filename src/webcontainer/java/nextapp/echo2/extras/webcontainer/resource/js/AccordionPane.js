@@ -66,7 +66,7 @@ ExtrasAccordionPane = function(elementId, containerElementId, activeTabId) {
      * Array of ExtrasAccordionPane.Tab objects, representing displayed tabs, \
      * in top-to-bottom sequence.
      */
-    this.tabs = new Array();
+    this.tabs = [];
     
     /**
      * Root DIV element of rendered AccordionPane.
@@ -497,7 +497,7 @@ ExtrasAccordionPane.Rotation = function(accordionPane, oldTabId, newTabId) {
     this.accordionPane.rotation = this;
     this.tabHeight = this.accordionPane.calculateTabHeight();
     
-    this.rotatingTabs = new Array();
+    this.rotatingTabs = [];
     
     this.animationStepIndex = 0;
     
@@ -735,7 +735,7 @@ ExtrasAccordionPane.Tab.prototype.dispose = function() {
  * Static object/namespace for AccordionPane MessageProcessor 
  * implementation.
  */
-ExtrasAccordionPane.MessageProcessor = function() { };
+ExtrasAccordionPane.MessageProcessor = { };
 
 /**
  * MessageProcessor process() implementation 

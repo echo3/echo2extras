@@ -43,8 +43,8 @@ ExtrasDragSource = function(elementId) {
     this.cloneElement = null;
     this.tooltip = ExtrasDragSource.DEFAULT_TOOLTIP;
     
-    this.dropTargetArray = new Array();    
-    this.dropTargetPositions = new Array();
+    this.dropTargetArray = [];
+    this.dropTargetPositions = [];
 };
 
 ExtrasDragSource.DEFAULT_TOOLTIP = "";
@@ -292,7 +292,7 @@ ExtrasDragSource.setOpacity = function(element, value) {
 /**
  * Static object/namespace for DragSource MessageProcessor implementation.
  */
-ExtrasDragSource.MessageProcessor = function() { };
+ExtrasDragSource.MessageProcessor = { };
 
 /**
  * MessageProcessor process() implementation (invoked by ServerMessage

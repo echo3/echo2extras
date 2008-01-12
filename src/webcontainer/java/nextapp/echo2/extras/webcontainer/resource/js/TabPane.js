@@ -81,7 +81,7 @@ ExtrasTabPane = function(elementId, containerElementId, activeTabId) {
     
     this.enabled = true;
     
-    this.tabs = new Array();
+    this.tabs = [];
 
     this.tabPaneDivElement = null;
     this.headerContainerDivElement = null;
@@ -514,7 +514,7 @@ ExtrasTabPane.Tab.prototype.dispose = function() {
  * Static object/namespace for TabPane MessageProcessor 
  * implementation.
  */
-ExtrasTabPane.MessageProcessor = function() { };
+ExtrasTabPane.MessageProcessor = { };
 
 /**
  * MessageProcessor process() implementation 

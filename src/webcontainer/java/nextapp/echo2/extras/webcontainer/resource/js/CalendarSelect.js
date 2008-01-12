@@ -65,10 +65,9 @@ ExtrasCalendarSelect.DEFAULT_BACKGROUND = "#ffffff";
 ExtrasCalendarSelect.DEFAULT_BORDER = "#5f5faf 2px groove";
 
 ExtrasCalendarSelect.DEFAULT_DAY_OF_WEEK_NAMES = 
-        new Array("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday");
-ExtrasCalendarSelect.DEFAULT_MONTH_NAMES = new Array(
-        "January", "February", "March", "April", "May", "June", 
-        "July", "August", "September", "October", "November", "December");
+        ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+ExtrasCalendarSelect.DEFAULT_MONTH_NAMES = ["January", "February", "March", "April", "May", "June", 
+        "July", "August", "September", "October", "November", "December"];
 ExtrasCalendarSelect.DEFAULT_FIRST_DAY_OF_WEEK = 0;
 
 ExtrasCalendarSelect.MINIMUM_YEAR = 1582;
@@ -477,7 +476,7 @@ ExtrasCalendarSelect.processYearIncrement = function(echoEvent) {
  * Static object/namespace for CalendarSelect MessageProcessor 
  * implementation.
  */
-ExtrasCalendarSelect.MessageProcessor = function() { };
+ExtrasCalendarSelect.MessageProcessor = { };
 
 /**
  * MessageProcessor process() implementation 
@@ -575,7 +574,7 @@ ExtrasCalendarSelect.MessageProcessor.processInit = function(initMessageElement)
         if (initMessageElement.childNodes[i].nodeName == "month-names") {
             // Process localized settings for month names.
             var monthNamesElement = initMessageElement.childNodes[i];
-            calendar.monthNames = new Array();
+            calendar.monthNames = [];
             for (var j = 0; j < monthNamesElement.childNodes.length; ++j) {
                 if (monthNamesElement.childNodes[j].nodeName == "month-name") {
                     calendar.monthNames.push(monthNamesElement.childNodes[j].getAttribute("value"));
@@ -585,7 +584,7 @@ ExtrasCalendarSelect.MessageProcessor.processInit = function(initMessageElement)
         if (initMessageElement.childNodes[i].nodeName == "day-names") {
             // Process localized settings for day of week names.
             var dayOfWeekNamesElement = initMessageElement.childNodes[i];
-            calendar.dayOfWeekNames = new Array();
+            calendar.dayOfWeekNames = [];
             for (var j = 0; j < dayOfWeekNamesElement.childNodes.length; ++j) {
                 if (dayOfWeekNamesElement.childNodes[j].nodeName == "day-name") {
                     calendar.dayOfWeekNames.push(dayOfWeekNamesElement.childNodes[j].getAttribute("value"));

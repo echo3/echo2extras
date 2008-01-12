@@ -586,7 +586,7 @@ ExtrasColorSelect.RGB.prototype.toString = function() {
 /**
  * MessageProcessor implementation.
  */
-ExtrasColorSelect.MessageProcessor = function() { };
+ExtrasColorSelect.MessageProcessor = { };
 
 /**
  * MessageProcessor process() implementation 

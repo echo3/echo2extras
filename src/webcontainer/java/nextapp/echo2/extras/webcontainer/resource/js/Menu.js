@@ -73,7 +73,7 @@ ExtrasMenu = function(elementId, containerElementId) {
     /**
      * Array containing ids of open menus.
      */
-    this.openMenuPath = new Array();
+    this.openMenuPath = [];
 };
 
 ExtrasMenu.MAX_Z_INDEX = 65535;
@@ -391,7 +391,7 @@ ExtrasMenu.getItemModel = function(menuModel, path) {
 };
 
 ExtrasMenu.getItemPath = function(itemModel) {
-    var path = new Array();
+    var path = [];
     while (itemModel.parent != null) {
         path.unshift(itemModel.parent.indexOfItem(itemModel));
         itemModel = itemModel.parent;
@@ -474,7 +474,7 @@ ExtrasMenu.MenuModel = function(text, icon) {
     this.parent = null;
     this.text = text;
     this.icon = icon;
-    this.items = new Array();
+    this.items = [];
 };
 
 /**
@@ -559,7 +559,7 @@ ExtrasMenu.SeparatorModel = function() {
     this.parent = null;
 };
 
-ExtrasMenu.MessageParser = function() { };
+ExtrasMenu.MessageParser = { };
 
 /**
  * Parses a MenuModel represented as an XML 'menu' element into a 
@@ -828,7 +828,7 @@ ExtrasDropDownMenu.prototype.setSelection = function(menuModel) {
  * Static object/namespace for DropDownMenu MessageProcessor 
  * implementation.
  */
-ExtrasDropDownMenu.MessageProcessor = function() { };
+ExtrasDropDownMenu.MessageProcessor = { };
 
 /**
  * MessageProcessor process() implementation 
@@ -1230,7 +1230,7 @@ ExtrasMenuBarPane.processMenuBarClick = function(echoEvent) {
  * Static object/namespace for MenuBarPane MessageProcessor 
  * implementation.
  */
-ExtrasMenuBarPane.MessageProcessor = function() { };
+ExtrasMenuBarPane.MessageProcessor = { };
 
 /**
  * MessageProcessor process() implementation 
