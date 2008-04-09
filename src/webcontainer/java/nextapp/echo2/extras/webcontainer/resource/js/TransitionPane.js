@@ -390,7 +390,7 @@ ExtrasTransitionPane.MessageProcessor = {
             throw "TransitionPane not found with id: " + elementId;
         }
         transitionPane.doTransition();
-    },
+    }
 };    
 
 ExtrasTransitionPane.FadeImage = Core.extend({

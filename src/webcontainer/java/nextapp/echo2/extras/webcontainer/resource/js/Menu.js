@@ -644,7 +644,7 @@ ExtrasDropDownMenu = Core.extend(ExtrasMenu, {
             menu.renderMaskAdd();
             
             menu.processItemActivate(menu.menuModel);
-        },
+        }
     },
 
     $construct: function(elementId, containerElementId) {
