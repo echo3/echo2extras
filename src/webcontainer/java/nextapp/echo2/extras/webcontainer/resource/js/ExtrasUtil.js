@@ -29,74 +29,76 @@
 
 ExtrasUtil = { };
 
-ExtrasUtil.Arrays = { };
+ExtrasUtil.Arrays = {
 
-ExtrasUtil.Arrays.indexOf = function(array, element) {
-    for (var i = 0; i < array.length; ++i) {
-        if (array[i] == element) {
-            return i;
+    indexOf: function(array, element) {
+        for (var i = 0; i < array.length; ++i) {
+            if (array[i] == element) {
+                return i;
+            }
         }
-    }
-    return -1;
-}
-
-ExtrasUtil.Arrays.insertElement = function(array, element, index) {
-    if (index == 0) {
-        array.unshift(element);
-    } else if (index == -1 || index == array.length) {
-        array.push(element);
-    } else if (index > array.length) {
-        throw "Array index of bounds: " + index + " (size=" + array.length + ")";
-    } else {
-        for (var i = array.length - 1; i >= index; --i) {
-            array[i + 1] = array[i];
+        return -1;
+    },
+    
+    insertElement: function(array, element, index) {
+        if (index == 0) {
+            array.unshift(element);
+        } else if (index == -1 || index == array.length) {
+            array.push(element);
+        } else if (index > array.length) {
+            throw "Array index of bounds: " + index + " (size=" + array.length + ")";
+        } else {
+            for (var i = array.length - 1; i >= index; --i) {
+                array[i + 1] = array[i];
+            }
+            array[index] = element;
         }
-        array[index] = element;
+    },
+    
+    removeElement: function(array, element) {
+        var index = ExtrasUtil.Arrays.indexOf(array, element);
+        if (index == -1) {
+            return;
+        }
+        ExtrasUtil.Arrays.removeIndex(array, index);
+    },
+    
+    removeIndex: function(array, index) {
+        for (i = index; i < array.length - 1; ++i) {
+            array[i] = array[i + 1];
+        }
+        array.length = array.length - 1;
     }
 };
 
-ExtrasUtil.Arrays.removeElement = function(array, element) {
-    var index = ExtrasUtil.Arrays.indexOf(array, element);
-    if (index == -1) {
-        return;
+ExtrasUtil.Color = {
+ 
+    adjustIntensity: function(colorString, factor) {
+        if (colorString.length != 7 || colorString.charAt(0) != "#") {
+            throw "Invalid color: " + colorString;
+        }
+        var red = parseInt(colorString.substring(1, 3), 16);
+        var green = parseInt(colorString.substring(3, 5), 16);
+        var blue = parseInt(colorString.substring(5, 7), 16);
+        red = parseInt(red * factor);
+        green = parseInt(green * factor);
+        blue = parseInt(blue * factor);
+        red = red < 0x100 ? red : 0xff;
+        green = green < 0x100 ? green : 0xff;
+        blue = blue < 0x100 ? blue : 0xff;
+        var out = "#";
+        if (red < 0x10) {
+            out += "0";
+        }
+        out += red.toString(16);
+        if (green < 0x10) {
+            out += "0";
+        }
+        out += green.toString(16);
+        if (blue < 0x10) {
+            out += "0";
+        }
+        out += blue.toString(16);
+        return out;
     }
-    ExtrasUtil.Arrays.removeIndex(array, index);
-};
-
-ExtrasUtil.Arrays.removeIndex = function(array, index) {
-    for (i = index; i < array.length - 1; ++i) {
-        array[i] = array[i + 1];
-    }
-    array.length = array.length - 1;
-};
-
-ExtrasUtil.Color = { };
-
-ExtrasUtil.Color.adjustIntensity = function(colorString, factor) {
-    if (colorString.length != 7 || colorString.charAt(0) != "#") {
-        throw "Invalid color: " + colorString;
-    }
-    var red = parseInt(colorString.substring(1, 3), 16);
-    var green = parseInt(colorString.substring(3, 5), 16);
-    var blue = parseInt(colorString.substring(5, 7), 16);
-    red = parseInt(red * factor);
-    green = parseInt(green * factor);
-    blue = parseInt(blue * factor);
-    red = red < 0x100 ? red : 0xff;
-    green = green < 0x100 ? green : 0xff;
-    blue = blue < 0x100 ? blue : 0xff;
-    var out = "#";
-    if (red < 0x10) {
-        out += "0";
-    }
-    out += red.toString(16);
-    if (green < 0x10) {
-        out += "0";
-    }
-    out += green.toString(16);
-    if (blue < 0x10) {
-        out += "0";
-    }
-    out += blue.toString(16);
-    return out;
 };
