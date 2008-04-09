@@ -613,7 +613,7 @@ ExtrasTabPane.MessageProcessor = {
                 ExtrasTabPane.TAB_POSITION_BOTTOM : ExtrasTabPane.TAB_POSITION_TOP;
         
         if (initMessageElement.getAttribute("header-height")) {
-            tabPane.headerHeight = initMessageElement.getAttribute("header-height");
+            tabPane.headerHeight = parseInt(initMessageElement.getAttribute("header-height"));
         }
         if (initMessageElement.getAttribute("default-background")) {
             tabPane.defaultBackground = initMessageElement.getAttribute("default-background");
