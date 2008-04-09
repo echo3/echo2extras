@@ -53,12 +53,20 @@ public class DragSourceTest extends AbstractTest {
 
     public DragSourceTest() {
         super("DragSource", Styles.ICON_16_DRAG_SOURCE);
+        
+        Column containerColumn = new Column();
+        containerColumn.setCellSpacing(new Extent(20));
+        add(containerColumn);
+        
+        for (int i = 0; i < 10; ++i) {
+            containerColumn.add(new Label("This content present to enable scrollbar for testing."));
+        }
 
         Row row = new Row();
         row.setAlignment(new Alignment(Alignment.LEFT, Alignment.TOP));
         row.setCellSpacing(new Extent(10, Extent.PX));
-        add(row);
-        setTestComponent(this, row);
+        containerColumn.add(row);
+        setTestComponent(this, containerColumn);
 
         final Column labelColumn = new Column();
         labelColumn.setBorder(new Border(2, Color.BLUE, Border.STYLE_INSET));
@@ -128,6 +136,10 @@ public class DragSourceTest extends AbstractTest {
             buttonColumn.add(ds);
         }
         */
+        
+        for (int i = 0; i < 10; ++i) {
+            containerColumn.add(new Label("This content present to enable scrollbar for testing."));
+        }
 
         addStandardIntegrationTests();
     }

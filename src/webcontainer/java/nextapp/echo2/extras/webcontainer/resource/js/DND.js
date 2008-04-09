@@ -58,8 +58,7 @@ ExtrasDragSource = Core.extend({
             if(e.pageX) {
                 pageX = e.pageX;
                 pageY = e.pageY;
-            }
-            else {
+            } else {
                 pageX = e.clientX + document.body.scrollLeft - document.body.clientLeft;
                 pageY = e.clientY + document.body.scrollTop - document.body.clientTop;
             }
