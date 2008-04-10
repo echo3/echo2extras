@@ -50,7 +50,7 @@ ExtrasDragSource = Core.extend({
         getComponent: function(element) {
             return EchoDomPropertyStore.getPropertyValue(element, "component");
         },
-        
+
         getCursorPosition: function(e) {
             var pageX;
             var pageY;
@@ -59,8 +59,15 @@ ExtrasDragSource = Core.extend({
                 pageX = e.pageX;
                 pageY = e.pageY;
             } else {
-                pageX = e.clientX + document.body.scrollLeft - document.body.clientLeft;
-                pageY = e.clientY + document.body.scrollTop - document.body.clientTop;
+                // In standards compliance mode in IE6/7 the scroll properties
+                // belong to documentElement.
+                // In quirks mode (and in other browsers) they belong to body.
+                pageX = e.clientX
+                        + (document.body.scrollLeft || document.documentElement.scrollLeft)
+                        - (document.body.clientLeft || document.documentElement.clientLeft);
+                pageY = e.clientY
+                        + (document.body.scrollTop || document.documentElement.scrollTop)
+                        - (document.body.clientTop || document.documentElement.clientTop);
             }
             return {x:pageX,y:pageY};
         },
