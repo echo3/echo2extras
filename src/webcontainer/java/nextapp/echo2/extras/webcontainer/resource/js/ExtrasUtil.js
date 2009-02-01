@@ -41,7 +41,7 @@ ExtrasUtil.Arrays = {
     },
     
     insertElement: function(array, element, index) {
-        if (index == 0) {
+        if (index === 0) {
             array.unshift(element);
         } else if (index == -1 || index == array.length) {
             array.push(element);
@@ -64,7 +64,7 @@ ExtrasUtil.Arrays = {
     },
     
     removeIndex: function(array, index) {
-        for (i = index; i < array.length - 1; ++i) {
+        for (var i = index; i < array.length - 1; ++i) {
             array[i] = array[i + 1];
         }
         array.length = array.length - 1;
@@ -80,9 +80,9 @@ ExtrasUtil.Color = {
         var red = parseInt(colorString.substring(1, 3), 16);
         var green = parseInt(colorString.substring(3, 5), 16);
         var blue = parseInt(colorString.substring(5, 7), 16);
-        red = parseInt(red * factor);
-        green = parseInt(green * factor);
-        blue = parseInt(blue * factor);
+        red = parseInt(red * factor, 10);
+        green = parseInt(green * factor, 10);
+        blue = parseInt(blue * factor, 10);
         red = red < 0x100 ? red : 0xff;
         green = green < 0x100 ? green : 0xff;
         blue = blue < 0x100 ? blue : 0xff;
