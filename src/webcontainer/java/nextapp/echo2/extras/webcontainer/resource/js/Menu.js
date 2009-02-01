@@ -71,7 +71,7 @@ ExtrasMenu = Core.extend({
         getItemModel: function(menuModel, path) {
             var pathItems = path.split(".");
             for (var i = 0; i < pathItems.length; ++i) {
-                menuModel = menuModel.items[parseInt(pathItems[i])];
+                menuModel = menuModel.items[parseInt(pathItems[i], 10)];
             }
             return menuModel;
         },
@@ -221,7 +221,7 @@ ExtrasMenu = Core.extend({
                 return;
             }
             this.renderMenuDispose(this.openMenuPath[i]);
-            --this.openMenuPath.length
+            --this.openMenuPath.length;
         }
     },
     
@@ -230,9 +230,9 @@ ExtrasMenu = Core.extend({
     },
     
     getMenuBorder: function() {
-        return (this.menuBorderSize == undefined ? this.borderSize : this.menuBorderSize) + "px "
-                + (this.menuBorderStyle == undefined ? this.borderStyle : this.menuBorderStyle) + " "
-                + (this.menuBorderColor == undefined ? this.borderColor : this.menuBorderColor);
+        return (this.menuBorderSize == null ? this.borderSize : this.menuBorderSize) + "px " +
+                (this.menuBorderStyle == null ? this.borderStyle : this.menuBorderStyle) + " " +
+                (this.menuBorderColor == null ? this.borderColor : this.menuBorderColor);
     },
     
     notifyServer: function(menuModel) {
@@ -245,7 +245,7 @@ ExtrasMenu = Core.extend({
      * @return true if the menu should be opened, false it if is already opened
      */
     prepareOpenMenu: function(menuModel) {
-        if (this.openMenuPath.length != 0) {
+        if (this.openMenuPath.length !== 0) {
             var openMenu = this.openMenuPath[this.openMenuPath.length - 1];
             if (openMenu.id == menuModel.id) {
                 // Do nothing: menu is already open.
@@ -265,7 +265,7 @@ ExtrasMenu = Core.extend({
         var itemElement = this.getItemElement(menuModel);
         var bounds = new EchoCssUtil.Bounds(itemElement);
         var menuDivElement = itemElement.parentNode.parentNode.parentNode;
-        var borderSize = parseInt(this.menuBorderSize ? this.menuBorderSize : this.borderSize);
+        var borderSize = parseInt(this.menuBorderSize ? this.menuBorderSize : this.borderSize, 10);
         var offsetLeft = bounds.left + menuDivElement.clientWidth + borderSize * 2 - 2;
         this.renderMenuAdd(menuModel, offsetLeft, bounds.top);
     },
@@ -294,10 +294,13 @@ ExtrasMenu = Core.extend({
     },
     
     renderMenuAdd: function(menuModel, xPosition, yPosition) {
-        var menuDivElement = document.createElement("div");
+        var i, menuDivElement, menuTableElement, menuTbodyElement, menuItemTrElement, menuItemIconTdElement, imgElement,
+                menuItemArrowTdElement, menuItemContentTdElement, hrDivElement, bodyElement;
+    
+        menuDivElement = document.createElement("div");
         menuDivElement.id = this.elementId + "_menu_" + menuModel.id;
-        menuDivElement.style.padding = this.menuInsetsTop + "px " + this.menuInsetsTop + "px " 
-                + this.menuInsetsTop + "px " + this.menuInsetsTop + "px";
+        menuDivElement.style.padding = this.menuInsetsTop + "px " + this.menuInsetsTop + "px " +
+                this.menuInsetsTop + "px " + this.menuInsetsTop + "px";
         menuDivElement.style.border = this.getMenuBorder();
         menuDivElement.style.backgroundColor = this.menuBackground == null ? this.background : this.menuBackground;
         menuDivElement.style.color = this.menuForeground == null ? this.foreground : this.menuForeground;
@@ -312,16 +315,16 @@ ExtrasMenu = Core.extend({
         menuDivElement.style.top = yPosition + "px";
         menuDivElement.style.left = xPosition + "px";
         
-        var menuTableElement = document.createElement("table");
+        menuTableElement = document.createElement("table");
         menuTableElement.style.borderCollapse = "collapse";
         menuDivElement.appendChild(menuTableElement);
         
-        var menuTbodyElement = document.createElement("tbody");
+        menuTbodyElement = document.createElement("tbody");
         menuTableElement.appendChild(menuTbodyElement);
     
         // Determine if any icons are present.
         var hasIcons = false;
-        for (var i = 0; i < menuModel.items.length; ++i) {
+        for (i = 0; i < menuModel.items.length; ++i) {
             if (menuModel.items[i].icon || menuModel.items[i] instanceof ExtrasMenu.ToggleOptionModel) {
                 hasIcons = true;
                 break;
@@ -330,23 +333,23 @@ ExtrasMenu = Core.extend({
         var textPadding, iconPadding;
         if (hasIcons) {
             iconPadding = "0 0 0 " + this.menuItemInsetsLeft + "px";
-            textPadding = this.menuItemInsetsTop + "px " + this.menuItemInsetsRight + "px " 
-                    + this.menuItemInsetsBottom + "px " + this.menuItemIconTextMargin + "px";
+            textPadding = this.menuItemInsetsTop + "px " + this.menuItemInsetsRight + "px " +
+                    this.menuItemInsetsBottom + "px " + this.menuItemIconTextMargin + "px";
         } else {
-            textPadding = this.menuItemInsetsTop + "px " + this.menuItemInsetsRight + "px " 
-                    + this.menuItemInsetsBottom + "px " + this.menuItemInsetsLeft + "px";
+            textPadding = this.menuItemInsetsTop + "px " + this.menuItemInsetsRight + "px " +
+                    this.menuItemInsetsBottom + "px " + this.menuItemInsetsLeft + "px";
         }
         
-        for (var i = 0; i < menuModel.items.length; ++i) {
-            if (menuModel.items[i] instanceof ExtrasMenu.OptionModel
-                    || menuModel.items[i] instanceof ExtrasMenu.MenuModel) {
-                var menuItemTrElement = document.createElement("tr");
+        for (i = 0; i < menuModel.items.length; ++i) {
+            if (menuModel.items[i] instanceof ExtrasMenu.OptionModel ||
+                    menuModel.items[i] instanceof ExtrasMenu.MenuModel) {
+                menuItemTrElement = document.createElement("tr");
                 menuItemTrElement.id = this.elementId + "_tr_item_" + menuModel.items[i].id;
                 menuItemTrElement.style.cursor = "pointer";
                 menuTbodyElement.appendChild(menuItemTrElement);
     
                 if (hasIcons) {
-                    var menuItemIconTdElement = document.createElement("td");
+                    menuItemIconTdElement = document.createElement("td");
                     menuItemIconTdElement.style.padding = iconPadding;
                     if (menuModel.items[i] instanceof ExtrasMenu.ToggleOptionModel) {
                         var iconSrc;
@@ -355,12 +358,12 @@ ExtrasMenu = Core.extend({
                         } else {
                             iconSrc = menuModel.items[i].selected ? this.toggleOnIcon : this.toggleOffIcon;
                         }
-                        var imgElement = document.createElement("img");
+                        imgElement = document.createElement("img");
                         imgElement.setAttribute("src", iconSrc);
                         imgElement.setAttribute("alt", "");
                         menuItemIconTdElement.appendChild(imgElement);
                     } else if (menuModel.items[i].icon) {
-                        var imgElement = document.createElement("img");
+                        imgElement = document.createElement("img");
                         imgElement.setAttribute("src", menuModel.items[i].icon);
                         imgElement.setAttribute("alt", "");
                         menuItemIconTdElement.appendChild(imgElement);
@@ -368,7 +371,7 @@ ExtrasMenu = Core.extend({
                     menuItemTrElement.appendChild(menuItemIconTdElement);
                 }
                 
-                var menuItemContentTdElement = document.createElement("td");
+                menuItemContentTdElement = document.createElement("td");
                 menuItemContentTdElement.style.padding = textPadding;
                 if (!menuModel.items[i].enabled) {
                     menuItemContentTdElement.style.color = this.disabledForeground;
@@ -378,9 +381,9 @@ ExtrasMenu = Core.extend({
                 
                 if (menuModel.items[i] instanceof ExtrasMenu.MenuModel) {
                     // Submenus have adjacent column containing 'expand' icons.
-                    var menuItemArrowTdElement = document.createElement("td");
+                    menuItemArrowTdElement = document.createElement("td");
                     if (this.submenuImage) {
-                        var imgElement = document.createElement("img");
+                        imgElement = document.createElement("img");
                         imgElement.setAttribute("src", this.submenuImage);
                         imgElement.setAttribute("alt", "");
                         menuItemArrowTdElement.appendChild(imgElement);
@@ -393,12 +396,12 @@ ExtrasMenu = Core.extend({
                     menuItemContentTdElement.colSpan = 2;
                 }
             } else if (menuModel.items[i] instanceof ExtrasMenu.SeparatorModel) {
-                var menuItemTrElement = document.createElement("tr");
+                menuItemTrElement = document.createElement("tr");
                 menuTbodyElement.appendChild(menuItemTrElement);
-                var menuItemContentTdElement = document.createElement("td");
+                menuItemContentTdElement = document.createElement("td");
                 menuItemContentTdElement.colSpan = hasIcons ? 3 : 2;
                 menuItemContentTdElement.style.padding = "3px 0px";
-                var hrDivElement = document.createElement("div");
+                hrDivElement = document.createElement("div");
                 hrDivElement.style.borderTopWidth = "1px";
                 hrDivElement.style.borderTopStyle = "solid";
                 hrDivElement.style.borderTopColor = "#a7a7a7";
@@ -682,7 +685,7 @@ ExtrasDropDownMenu = Core.extend(ExtrasMenu, {
     },
     
     getItemElement: function(itemModel) {
-        itemElement = document.getElementById(this.elementId + "_tr_item_" + itemModel.id);
+        var itemElement = document.getElementById(this.elementId + "_tr_item_" + itemModel.id);
         if (itemElement == null) {
             itemElement = document.getElementById(this.elementId);
         }
@@ -808,21 +811,23 @@ ExtrasDropDownMenu = Core.extend(ExtrasMenu, {
     },
     
     setSelection: function(menuModel) {
+        var imgElement, tableElement, tbodyElement, trElement, tdElement, i, contentDivElement;
+        
         this.selectedItem = menuModel;
         
-        var contentDivElement = document.getElementById(this.elementId + "_content");
-        for (var i = contentDivElement.childNodes.length - 1; i >= 0; --i) {
+        contentDivElement = document.getElementById(this.elementId + "_content");
+        for (i = contentDivElement.childNodes.length - 1; i >= 0; --i) {
             contentDivElement.removeChild(contentDivElement.childNodes[i]);
         }
         
         if (menuModel.text) {
             if (menuModel.icon) {
                 // Render Text and Icon
-                var tableElement = document.createElement("table");
-                var tbodyElement = document.createElement("tbody");
-                var trElement = document.createElement("tr");
-                var tdElement = document.createElement("td");
-                var imgElement = document.createElement("img");
+                tableElement = document.createElement("table");
+                tbodyElement = document.createElement("tbody");
+                trElement = document.createElement("tr");
+                tdElement = document.createElement("td");
+                imgElement = document.createElement("img");
                 imgElement.src = menuModel.icon;
                 tdElement.appendChild(imgElement);
                 trElement.appendChild(tdElement);
@@ -841,7 +846,7 @@ ExtrasDropDownMenu = Core.extend(ExtrasMenu, {
             }
         } else if (menuModel.icon) {
             // Render Icon Only
-            var imgElement = document.createElement("img");
+            imgElement = document.createElement("img");
             imgElement.src = menuModel.icon;
             contentDivElement.appendChild(imgElement);
         }
@@ -933,7 +938,7 @@ ExtrasDropDownMenu.MessageProcessor = {
             menu.borderColor = initMessageElement.getAttribute("border-color");
         }
         if (initMessageElement.getAttribute("border-size")) {
-            menu.borderSize = parseInt(initMessageElement.getAttribute("border-size"));
+            menu.borderSize = parseInt(initMessageElement.getAttribute("border-size"), 10);
         }
         if (initMessageElement.getAttribute("disabled-background")) {
             menu.disabledBackground = initMessageElement.getAttribute("disabled-background");
@@ -1211,8 +1216,8 @@ ExtrasMenuBarPane = Core.extend(ExtrasMenu, {
         
         if (this.menuModel != null) {
             for (var i = 0; i < this.menuModel.items.length; ++i) {
-                if (this.menuModel.items[i] instanceof ExtrasMenu.OptionModel
-                        || this.menuModel.items[i] instanceof ExtrasMenu.MenuModel) {
+                if (this.menuModel.items[i] instanceof ExtrasMenu.OptionModel ||
+                        this.menuModel.items[i] instanceof ExtrasMenu.MenuModel) {
                     var menuBarItemTdElement = document.createElement("td");
                     menuBarItemTdElement.id = this.elementId + "_bar_td_item_" + this.menuModel.items[i].id;
                     menuBarItemTdElement.style.padding = "0px";
@@ -1322,7 +1327,7 @@ ExtrasMenuBarPane.MessageProcessor = {
             menu.borderColor = initMessageElement.getAttribute("border-color");
         }
         if (initMessageElement.getAttribute("border-size")) {
-            menu.borderSize = parseInt(initMessageElement.getAttribute("border-size"));
+            menu.borderSize = parseInt(initMessageElement.getAttribute("border-size"), 10);
         }
         if (initMessageElement.getAttribute("disabled-background")) {
             menu.disabledBackground = initMessageElement.getAttribute("disabled-background");
@@ -1349,7 +1354,7 @@ ExtrasMenuBarPane.MessageProcessor = {
             menu.menuBorderColor = initMessageElement.getAttribute("menu-border-color");
         }
         if (initMessageElement.getAttribute("menu-border-size")) {
-            menu.menuBorderSize = parseInt(initMessageElement.getAttribute("menu-border-size"));
+            menu.menuBorderSize = parseInt(initMessageElement.getAttribute("menu-border-size"), 10);
         }
         if (initMessageElement.getAttribute("menu-foreground")) {
             menu.menuForeground = initMessageElement.getAttribute("menu-foreground");
