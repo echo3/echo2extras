@@ -100,11 +100,10 @@ implements ActionProcessor, ComponentSynchronizePeer, DomUpdateSupport {
     
     /**
      * Renders a directive to the outgoing <code>ServerMessage</code> to 
-     * render and intialize the state of a <code>DragSource</code>.
+     * render and initialize the state of a <code>DragSource</code>.
      * 
      * @param rc the relevant <code>RenderContext</code>
      * @param dragSource the <code>DragSource</code>
-     * @param targetId the id of the container element
      */
     private void renderInitDirective(RenderContext rc, DragSource dragSource) {
         String elementId = ContainerInstance.getElementId(dragSource);

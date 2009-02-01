@@ -77,7 +77,7 @@ public class MenuBarPanePeer extends AbstractMenuPeer {
      * Renders a dispose directive.
      * 
      * @param rc the relevant <code>RenderContext</code>
-     * @param menu the <code>MenuBarPane</code> being rendered
+     * @param component the <code>MenuBarPane</code> being rendered
      */
     void renderDisposeDirective(RenderContext rc, Component component) {
         MenuBarPane menu = (MenuBarPane) component;
@@ -92,7 +92,7 @@ public class MenuBarPanePeer extends AbstractMenuPeer {
      * Renders an initialization directive.
      * 
      * @param rc the relevant <code>RenderContext</code>
-     * @param menu the <code>MenuBarPane</code> being rendered
+     * @param component the <code>MenuBarPane</code> being rendered
      */
     void renderInitDirective(RenderContext rc, Component component, String targetId) {
         MenuBarPane menu = (MenuBarPane) component;

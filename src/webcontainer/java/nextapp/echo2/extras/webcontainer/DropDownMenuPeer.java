@@ -60,7 +60,7 @@ public class DropDownMenuPeer extends AbstractMenuPeer {
      * Renders a dispose directive.
      * 
      * @param rc the relevant <code>RenderContext</code>
-     * @param menu the <code>MenuBarPane</code> being rendered
+     * @param component the <code>MenuBarPane</code> being rendered
      */
     void renderDisposeDirective(RenderContext rc, Component component) {
         DropDownMenu menu = (DropDownMenu) component;
@@ -75,7 +75,7 @@ public class DropDownMenuPeer extends AbstractMenuPeer {
      * Renders an initialization directive.
      * 
      * @param rc the relevant <code>RenderContext</code>
-     * @param menu the <code>MenuBarPane</code> being rendered
+     * @param component the <code>MenuBarPane</code> being rendered
      */
     void renderInitDirective(RenderContext rc, Component component, String targetId) {
         DropDownMenu menu = (DropDownMenu) component;
