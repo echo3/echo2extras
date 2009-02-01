@@ -62,12 +62,10 @@ ExtrasDragSource = Core.extend({
                 // In standards compliance mode in IE6/7 the scroll properties
                 // belong to documentElement.
                 // In quirks mode (and in other browsers) they belong to body.
-                pageX = e.clientX
-                        + (document.body.scrollLeft || document.documentElement.scrollLeft)
-                        - (document.body.clientLeft || document.documentElement.clientLeft);
-                pageY = e.clientY
-                        + (document.body.scrollTop || document.documentElement.scrollTop)
-                        - (document.body.clientTop || document.documentElement.clientTop);
+                pageX = e.clientX + (document.body.scrollLeft || document.documentElement.scrollLeft) - 
+                        (document.body.clientLeft || document.documentElement.clientLeft);
+                pageY = e.clientY + (document.body.scrollTop || document.documentElement.scrollTop) - 
+                        (document.body.clientTop || document.documentElement.clientTop);
             }
             return {x:pageX,y:pageY};
         },
