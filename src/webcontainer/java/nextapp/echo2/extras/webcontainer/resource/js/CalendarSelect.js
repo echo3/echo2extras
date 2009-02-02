@@ -48,8 +48,8 @@ ExtrasCalendarSelect = Core.extend({
         DEFAULT_CURRENT_MONTH_DAY_STYLE: "color: #000000;",
         
         DEFAULT_BASE_DAY_STYLE: "cursor: pointer; text-align: right; border-width: 0px; padding: 0px 5px;",
-        DEFAULT_SELECTED_DAY_STYLE: "cursor: default; text-align: right; border-width: 0px; "
-                + "border-collapse: collapse; padding: 0px 5px; color: #ffffaf; background-color: #3f3f4f",
+        DEFAULT_SELECTED_DAY_STYLE: "cursor: default; text-align: right; border-width: 0px; " +
+                "border-collapse: collapse; padding: 0px 5px; color: #ffffaf; background-color: #3f3f4f",
         DEFAULT_YEAR_FIELD_STYLE: "text-align:center; background-color: #ffffcf; border-width: 1px; border-style: inset;",
         DEFAULT_MONTH_SELECT_STYLE: "text-align:left; background-color: #ffffcf; border-width: 1px; border-style: inset;",
 
@@ -98,6 +98,7 @@ ExtrasCalendarSelect = Core.extend({
                 } else {
                     return 28;
                 }
+                break;
             default:
                 throw "Invalid Month: " + month;
             }
@@ -174,7 +175,7 @@ ExtrasCalendarSelect = Core.extend({
         this.firstDayOfMonth = firstDate.getDay();
         
         this.daysInMonth = ExtrasCalendarSelect.getDaysInMonth(this.year, this.month);
-        if (this.month == 0) {
+        if (this.month === 0) {
             this.daysInPreviousMonth = ExtrasCalendarSelect.getDaysInMonth(this.year - 1, 11);
         } else {
             this.daysInPreviousMonth = ExtrasCalendarSelect.getDaysInMonth(this.year, this.month - 1);
@@ -185,7 +186,7 @@ ExtrasCalendarSelect = Core.extend({
      * Renders the ExtrasCalendarSelect into the DOM.
      */
     create: function() {
-        var i, j;
+        var i, j, imgElement, tableElement, tbodyElement, trElement, tdElement, containerElement;
         var calendarDivElement = document.createElement("div");
         calendarDivElement.id = this.elementId;
         calendarDivElement.style.whiteSpace = "nowrap";
@@ -206,7 +207,7 @@ ExtrasCalendarSelect = Core.extend({
         yearDecrementSpanElement.id = this.elementId + "_yeardecrement";
         yearDecrementSpanElement.style.cursor = "pointer";
         if (this.arrowLeftImage) {
-            var imgElement = document.createElement("img");
+            imgElement = document.createElement("img");
             imgElement.setAttribute("src", this.arrowLeftImage);
             imgElement.setAttribute("alt", "");
             yearDecrementSpanElement.appendChild(imgElement);
@@ -227,7 +228,7 @@ ExtrasCalendarSelect = Core.extend({
         yearIncrementSpanElement.id = this.elementId + "_yearincrement";
         yearIncrementSpanElement.style.cursor = "pointer";
         if (this.arrowRightImage) {
-            var imgElement = document.createElement("img");
+            imgElement = document.createElement("img");
             imgElement.setAttribute("src", this.arrowRightImage);
             imgElement.setAttribute("alt", "");
             yearIncrementSpanElement.appendChild(imgElement);
@@ -236,7 +237,7 @@ ExtrasCalendarSelect = Core.extend({
         }
         calendarDivElement.appendChild(yearIncrementSpanElement);
     
-        var tableElement = document.createElement("table");
+        tableElement = document.createElement("table");
         tableElement.id = this.elementId + "_table";
         
         tableElement.style.borderCollapse = "collapse";
@@ -248,11 +249,11 @@ ExtrasCalendarSelect = Core.extend({
             EchoCssUtil.applyStyle(tableElement, this.backgroundImage);
         }
         
-        var tbodyElement = document.createElement("tbody");
+        tbodyElement = document.createElement("tbody");
         
-        var trElement = document.createElement("tr");
+        trElement = document.createElement("tr");
         for (j = 0; j < 7; ++j) {
-            var tdElement = document.createElement("td");
+            tdElement = document.createElement("td");
             tdElement.id = this.elementId + "_dayofweek_" + i;
             EchoDomUtil.setCssText(tdElement, this.baseDayStyle);
             var dayOfWeekName = this.dayOfWeekNames[(this.firstDayOfWeek + j) % 7];
@@ -278,7 +279,7 @@ ExtrasCalendarSelect = Core.extend({
         
         calendarDivElement.appendChild(tableElement);
         
-        var containerElement = document.getElementById(this.containerElementId);
+        containerElement = document.getElementById(this.containerElementId);
         containerElement.appendChild(calendarDivElement);
         
         EchoEventProcessor.addHandler(this.elementId + "_table", "click", "ExtrasCalendarSelect.processDaySelect");
@@ -351,7 +352,7 @@ ExtrasCalendarSelect = Core.extend({
         }
         
         var yearField = document.getElementById(this.elementId + "_year");
-        if (isNaN(parseInt(yearField.value))) {
+        if (isNaN(parseInt(yearField.value, 10))) {
             return;
         }
         this.setDate(yearField.value, this.month, this.selectedDay, true);
@@ -410,9 +411,9 @@ ExtrasCalendarSelect = Core.extend({
     
     selectDayByCoordinate: function(column, row) {
         var selectedDay, selectedMonth, selectedYear;
-        var dayCellNumber = parseInt(column) + (row * 7);
+        var dayCellNumber = parseInt(column, 10) + (row * 7);
         if (dayCellNumber < this.firstDayOfMonth) {
-            if (this.month == 0) {
+            if (this.month === 0) {
                 selectedMonth = 11;
                 selectedYear = this.year - 1;
             } else {
@@ -526,11 +527,11 @@ ExtrasCalendarSelect.MessageProcessor = {
     processInit: function(initMessageElement) {
         var elementId = initMessageElement.getAttribute("eid");
         var containerElementId = initMessageElement.getAttribute("container-eid");
-        var year = parseInt(initMessageElement.getAttribute("year"));
-        var month = parseInt(initMessageElement.getAttribute("month"));
-        var date = parseInt(initMessageElement.getAttribute("date"));
-    
+        var year = parseInt(initMessageElement.getAttribute("year"), 10);
+        var month = parseInt(initMessageElement.getAttribute("month"), 10);
+        var date = parseInt(initMessageElement.getAttribute("date"), 10);
         var calendar = new ExtrasCalendarSelect(elementId, containerElementId, year, month, date);
+        var i, j;
     
         calendar.enabled = initMessageElement.getAttribute("enabled") != "false";
     
@@ -565,18 +566,18 @@ ExtrasCalendarSelect.MessageProcessor = {
             calendar.arrowRightImage = initMessageElement.getAttribute("arrow-right-image");
         }
         if (initMessageElement.getAttribute("day-abbreviation-length")) {
-            calendar.dayOfWeekNameAbbreviationLength = parseInt(initMessageElement.getAttribute("day-abbreviation-length"));
+            calendar.dayOfWeekNameAbbreviationLength = parseInt(initMessageElement.getAttribute("day-abbreviation-length"), 10);
         }
         if (initMessageElement.getAttribute("first-day")) {
-            calendar.firstDayOfWeek = parseInt(initMessageElement.getAttribute("first-day"));
+            calendar.firstDayOfWeek = parseInt(initMessageElement.getAttribute("first-day"), 10);
         }
         
-        for (var i = 0; i < initMessageElement.childNodes.length; ++i) {
+        for (i = 0; i < initMessageElement.childNodes.length; ++i) {
             if (initMessageElement.childNodes[i].nodeName == "month-names") {
                 // Process localized settings for month names.
                 var monthNamesElement = initMessageElement.childNodes[i];
                 calendar.monthNames = [];
-                for (var j = 0; j < monthNamesElement.childNodes.length; ++j) {
+                for (j = 0; j < monthNamesElement.childNodes.length; ++j) {
                     if (monthNamesElement.childNodes[j].nodeName == "month-name") {
                         calendar.monthNames.push(monthNamesElement.childNodes[j].getAttribute("value"));
                     }
@@ -586,7 +587,7 @@ ExtrasCalendarSelect.MessageProcessor = {
                 // Process localized settings for day of week names.
                 var dayOfWeekNamesElement = initMessageElement.childNodes[i];
                 calendar.dayOfWeekNames = [];
-                for (var j = 0; j < dayOfWeekNamesElement.childNodes.length; ++j) {
+                for (j = 0; j < dayOfWeekNamesElement.childNodes.length; ++j) {
                     if (dayOfWeekNamesElement.childNodes[j].nodeName == "day-name") {
                         calendar.dayOfWeekNames.push(dayOfWeekNamesElement.childNodes[j].getAttribute("value"));
                     }
@@ -605,9 +606,9 @@ ExtrasCalendarSelect.MessageProcessor = {
      */
     processSetDate: function(setDateMessageElement) {
         var elementId = setDateMessageElement.getAttribute("eid");
-        var year = parseInt(setDateMessageElement.getAttribute("year"));
-        var month = parseInt(setDateMessageElement.getAttribute("month"));
-        var date = parseInt(setDateMessageElement.getAttribute("date"));
+        var year = parseInt(setDateMessageElement.getAttribute("year"), 10);
+        var month = parseInt(setDateMessageElement.getAttribute("month"), 10);
+        var date = parseInt(setDateMessageElement.getAttribute("date"), 10);
         var calendar = ExtrasCalendarSelect.getComponent(elementId);
         calendar.setDate(year, month, date, false);
     }
