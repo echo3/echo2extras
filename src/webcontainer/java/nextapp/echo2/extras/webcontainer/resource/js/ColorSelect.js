@@ -37,7 +37,7 @@ ExtrasColorSelect = Core.extend({
         
         hsvToRgb: function(h, s, v) {
             var r, g, b;
-            if (s == 0) {
+            if (s === 0) {
                 r = g = b = v;
             } else {
                 h /= 60;
@@ -133,7 +133,7 @@ ExtrasColorSelect = Core.extend({
         
         this.displayValue = true;
         
-        this.transparentImageSrc = "Transparent.gif"
+        this.transparentImageSrc = "Transparent.gif";
         this.h = 0;
         this.s = 1;
         this.v = 1;
@@ -169,8 +169,8 @@ ExtrasColorSelect = Core.extend({
         colorSelectDivElement.appendChild(svDivElement);
     
         if (this.enableInternetExplorerPngWorkaround) {
-            svDivElement.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader("
-                    + "src='" + this.svGradientImageSrc + "', sizingMethod='scale');";
+            svDivElement.style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(" +
+                    "src='" + this.svGradientImageSrc + "', sizingMethod='scale');";
         } else {
             var svGradientImgElement = document.createElement("img");
             svGradientImgElement.src = this.svGradientImageSrc;
@@ -464,7 +464,7 @@ ExtrasColorSelect = Core.extend({
         this.v = max;
         
         var delta = max - min;
-        if (max == 0 || delta == 0) {
+        if (max === 0 || delta === 0) {
             this.s = 0;
             this.h = 0;
         } else {
@@ -522,7 +522,7 @@ ExtrasColorSelect = Core.extend({
         }
        
         var sLineElement = document.getElementById(this.elementId + "_sline");
-        var sLineTop = parseInt((1 - this.s) * this.saturationHeight) + 2;
+        var sLineTop = parseInt((1 - this.s) * this.saturationHeight, 10) + 2;
         if (sLineTop < 2) {
              sLineTop = 2;
         } else if (sLineTop > this.saturationHeight + 2) {
@@ -531,7 +531,7 @@ ExtrasColorSelect = Core.extend({
         sLineElement.style.top = sLineTop + "px";
     
         var vLineElement = document.getElementById(this.elementId + "_vline");
-        var vLineLeft = parseInt(this.v * this.valueWidth) + 2;
+        var vLineLeft = parseInt(this.v * this.valueWidth, 10) + 2;
         if (vLineLeft < 2) {
             vLineLeft = 2;
         } else if (vLineLeft > this.valueWidth + 2) {
@@ -540,7 +540,7 @@ ExtrasColorSelect = Core.extend({
         vLineElement.style.left = vLineLeft + "px";
        
         var hLineElement = document.getElementById(this.elementId + "_hline");
-        var hLineTop = parseInt((360 - this.h) / 360 * this.saturationHeight) + 2;
+        var hLineTop = parseInt((360 - this.h) / 360 * this.saturationHeight, 10) + 2;
         if (hLineTop < 2) {
             hLineTop = 2;
         } else if (hLineTop > this.saturationHeight + 2) {
@@ -557,7 +557,7 @@ ExtrasColorSelect.RGB = Core.extend({
     $static: {
     
         cleanValue: function(value) {
-            value = value ? parseInt(value) : 0;
+            value = value ? parseInt(value, 10) : 0;
             if (value < 0) {
                 return 0;
             } else if (value > 255) {
@@ -651,13 +651,13 @@ ExtrasColorSelect.MessageProcessor = {
         colorSelect.enabled = initMessageElement.getAttribute("enabled") != "false";
         colorSelect.displayValue = initMessageElement.getAttribute("display-value") != "false";
         if (initMessageElement.getAttribute("hue-width")) {
-            colorSelect.hueWidth = parseInt(initMessageElement.getAttribute("hue-width"));
+            colorSelect.hueWidth = parseInt(initMessageElement.getAttribute("hue-width"), 10);
         }
         if (initMessageElement.getAttribute("value-width")) {
-            colorSelect.valueWidth = parseInt(initMessageElement.getAttribute("value-width"));
+            colorSelect.valueWidth = parseInt(initMessageElement.getAttribute("value-width"), 10);
         }
         if (initMessageElement.getAttribute("saturation-height")) {
-            colorSelect.saturationHeight = parseInt(initMessageElement.getAttribute("saturation-height"));
+            colorSelect.saturationHeight = parseInt(initMessageElement.getAttribute("saturation-height"), 10);
         }
         
         colorSelect.transparentImageSrc = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.ExtrasUtil.Transparent";
@@ -681,9 +681,9 @@ ExtrasColorSelect.MessageProcessor = {
     processSetColor: function(setColorMessageElement) {
         var elementId = setColorMessageElement.getAttribute("eid");
         var colorSelect = ExtrasColorSelect.getComponent(elementId);
-        var r = parseInt(setColorMessageElement.getAttribute("r"));
-        var g = parseInt(setColorMessageElement.getAttribute("g"));
-        var b = parseInt(setColorMessageElement.getAttribute("b"));
+        var r = parseInt(setColorMessageElement.getAttribute("r"), 10);
+        var g = parseInt(setColorMessageElement.getAttribute("g"), 10);
+        var b = parseInt(setColorMessageElement.getAttribute("b"), 10);
         colorSelect.setColor(new ExtrasColorSelect.RGB(r, g, b));
     }
 };

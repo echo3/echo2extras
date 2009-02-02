@@ -154,7 +154,7 @@ ExtrasTabPane = Core.extend({
     
         this.tabPaneDivElement = null;
         this.headerContainerDivElement = null;
-        this.headerTrElement = null
+        this.headerTrElement = null;
     },
 
     addTab: function(tab, tabIndex) {
@@ -167,19 +167,17 @@ ExtrasTabPane = Core.extend({
         tab.headerTdElement.id = this.elementId + "_header_td_" + tab.tabId;
         
         var inactiveBorder = this.getInactiveBorder();
-        headerDivElement = document.createElement("div");
+        var headerDivElement = document.createElement("div");
         headerDivElement.id = this.elementId + "_header_div_" + tab.tabId;
         headerDivElement.style.overflow = "hidden";
         headerDivElement.style.whiteSpace = "nowrap";
-        switch (this.tabPosition) {
-        case ExtrasTabPane.TAB_POSITION_BOTTOM:
+        if (this.tabPosition == ExtrasTabPane.TAB_POSITION_BOTTOM) {
             headerDivElement.style.marginTop = this.tabActiveBorderSize + "px";
             headerDivElement.style.borderTop = "0px none";
             headerDivElement.style.borderLeft = inactiveBorder;
             headerDivElement.style.borderRight = inactiveBorder;
             headerDivElement.style.borderBottom = inactiveBorder;
-            break;
-        default:
+        } else {
             headerDivElement.style.marginTop = this.activeHeaderHeightIncrease + "px";
             headerDivElement.style.borderTop = inactiveBorder;
             headerDivElement.style.borderLeft = inactiveBorder;
@@ -238,10 +236,10 @@ ExtrasTabPane = Core.extend({
             // Note: Border size is added and then removed for no effect.
             return this.headerHeight - this.headerPaddingTop - this.headerPaddingBottom;
         } else {
-            var largerBorderSize = this.tabInactiveBorder > this.tabActiveBorderSize 
-                    ? this.tabInactiveBorderSize : this.tabActiveBorderSize;
-            return this.headerHeight - this.headerPaddingTop - this.headerPaddingBottom - this.activeHeaderHeightIncrease
-                    - this.tabInactiveBorderSize;
+            var largerBorderSize = this.tabInactiveBorder > this.tabActiveBorderSize ?
+                    this.tabInactiveBorderSize : this.tabActiveBorderSize;
+            return this.headerHeight - this.headerPaddingTop - this.headerPaddingBottom - this.activeHeaderHeightIncrease -
+                    this.tabInactiveBorderSize;
         }
     },
     
@@ -287,11 +285,9 @@ ExtrasTabPane = Core.extend({
         this.headerContainerDivElement.style.overflow = "hidden";
         this.headerContainerDivElement.style.zIndex = 1;
         this.headerContainerDivElement.style.position = "absolute";
-        switch (this.tabPosition) {
-        case ExtrasTabPane.TAB_POSITION_BOTTOM:
+        if  (this.tabPosition == ExtrasTabPane.TAB_POSITION_BOTTOM) {
             this.headerContainerDivElement.style.bottom = "0px";
-            break;
-        default:
+        } else {
             this.headerContainerDivElement.style.top = "0px";
         }
         this.headerContainerDivElement.style.left = this.tabInset + "px";
@@ -345,11 +341,9 @@ ExtrasTabPane = Core.extend({
             this.contentContainerDivElement.style.borderBottom = activeBorder;
             break;
         default:
-            switch (this.tabPosition) {
-            case ExtrasTabPane.TAB_POSITION_BOTTOM:
+            if (this.tabPosition == ExtrasTabPane.TAB_POSITION_BOTTOM) {
                 this.contentContainerDivElement.style.borderBottom = this.getActiveBorder();
-                break;
-            default:
+            } else {
                 this.contentContainerDivElement.style.borderTop = this.getActiveBorder();
             }
             break;
@@ -371,7 +365,7 @@ ExtrasTabPane = Core.extend({
     
         this.tabPaneDivElement = null;
         this.headerContainerDivElement = null;
-        this.headerTrElement = null
+        this.headerTrElement = null;
     },
     
     /**
@@ -477,15 +471,12 @@ ExtrasTabPane = Core.extend({
             }
         }
     
-        switch (this.tabPosition) {
-        case ExtrasTabPane.TAB_POSITION_BOTTOM:
+        if (this.tabPosition == ExtrasTabPane.TAB_POSITION_BOTTOM) {
             headerDivElement.style.marginTop = (selected ? 0 : this.tabActiveBorderSize) + "px";
             headerDivElement.style.borderBottom = border;
-            break;
-        default: 
+        } else {
             headerDivElement.style.marginTop = (selected ? 0 : this.activeHeaderHeightIncrease) + "px";
             headerDivElement.style.borderTop = border;
-            break;
         }
     
         var newContentDivElement = document.getElementById(this.elementId + "_content_" + tabId);
@@ -613,7 +604,7 @@ ExtrasTabPane.MessageProcessor = {
                 ExtrasTabPane.TAB_POSITION_BOTTOM : ExtrasTabPane.TAB_POSITION_TOP;
         
         if (initMessageElement.getAttribute("header-height")) {
-            tabPane.headerHeight = parseInt(initMessageElement.getAttribute("header-height"));
+            tabPane.headerHeight = parseInt(initMessageElement.getAttribute("header-height"), 10);
         }
         if (initMessageElement.getAttribute("default-background")) {
             tabPane.defaultBackground = initMessageElement.getAttribute("default-background");
@@ -632,10 +623,10 @@ ExtrasTabPane.MessageProcessor = {
                     initMessageElement.getAttribute("default-content-insets"));
         }
         if (initMessageElement.getAttribute("tab-inset")) {
-            tabPane.tabInset = parseInt(initMessageElement.getAttribute("tab-inset"));
+            tabPane.tabInset = parseInt(initMessageElement.getAttribute("tab-inset"), 10);
         }
         if (initMessageElement.getAttribute("tab-spacing")) {
-            tabPane.tabSpacing = parseInt(initMessageElement.getAttribute("tab-spacing"));
+            tabPane.tabSpacing = parseInt(initMessageElement.getAttribute("tab-spacing"), 10);
         }
         
         switch (initMessageElement.getAttribute("border-type")) {
@@ -665,7 +656,7 @@ ExtrasTabPane.MessageProcessor = {
             tabPane.tabActiveBorderColor = initMessageElement.getAttribute("tab-active-border-color");
         }
         if (initMessageElement.getAttribute("tab-active-border-size")) {
-            tabPane.tabActiveBorderSize = parseInt(initMessageElement.getAttribute("tab-active-border-size"));
+            tabPane.tabActiveBorderSize = parseInt(initMessageElement.getAttribute("tab-active-border-size"), 10);
         }
         if (initMessageElement.getAttribute("tab-active-font")) {
             tabPane.tabActiveFont = initMessageElement.getAttribute("tab-active-font");
@@ -687,7 +678,7 @@ ExtrasTabPane.MessageProcessor = {
             tabPane.tabInactiveBorderColor = initMessageElement.getAttribute("tab-inactive-border-color");
         }
         if (initMessageElement.getAttribute("tab-inactive-border-size")) {
-            tabPane.tabInactiveBorderSize = parseInt(initMessageElement.getAttribute("tab-inactive-border-size"));
+            tabPane.tabInactiveBorderSize = parseInt(initMessageElement.getAttribute("tab-inactive-border-size"), 10);
         }
         if (initMessageElement.getAttribute("tab-inactive-font")) {
             tabPane.tabInactiveFont = initMessageElement.getAttribute("tab-inactive-font");
