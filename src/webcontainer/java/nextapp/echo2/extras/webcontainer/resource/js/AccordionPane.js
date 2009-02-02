@@ -402,7 +402,7 @@ ExtrasAccordionPane = Core.extend({
             this.redrawTabs();
         } else {
             // Start new rotation.
-            new ExtrasAccordionPane.Rotation(this, oldTabId, newTabId);
+            this.rotation = new ExtrasAccordionPane.Rotation(this, oldTabId, newTabId);
         }
     },
     
@@ -512,6 +512,8 @@ ExtrasAccordionPane.Rotation = Core.extend({
      * @param newTabId the new tab id to display
      */
     $construct: function(accordionPane, oldTabId, newTabId) {
+        var i;
+        
         this.accordionPane = accordionPane;
         this.oldTab = accordionPane.getTabById(oldTabId);
         this.newTab = accordionPane.getTabById(newTabId);
@@ -522,7 +524,6 @@ ExtrasAccordionPane.Rotation = Core.extend({
         this.animationStartTime = new Date().getTime();
         this.animationEndTime = this.animationStartTime + this.accordionPane.animationTime;
         
-        this.accordionPane.rotation = this;
         this.tabHeight = this.accordionPane.calculateTabHeight();
         
         this.rotatingTabs = [];
@@ -535,12 +536,12 @@ ExtrasAccordionPane.Rotation = Core.extend({
         
         if (this.directionDown) {
             // Tabs are sliding down (a tab on the top has been selected).
-            for (var i = this.oldTabIndex; i > this.newTabIndex; --i) {
+            for (i = this.oldTabIndex; i > this.newTabIndex; --i) {
                 this.rotatingTabs.push(this.accordionPane.tabs[i]);
             }
         } else {
             // Tabs are sliding up (a tab on the bottom has been selected).
-            for (var i = this.oldTabIndex + 1; i <= this.newTabIndex; ++i) {
+            for (i = this.oldTabIndex + 1; i <= this.newTabIndex; ++i) {
                 this.rotatingTabs.push(this.accordionPane.tabs[i]);
             }
         }
@@ -552,7 +553,7 @@ ExtrasAccordionPane.Rotation = Core.extend({
             this.numberOfTabsAbove = this.newTabIndex + 1;
             
             // Number of tabs below that will not be moving.
-            this.numberOfTabsBelow = this.accordionPane.tabs.length - 1 - this.newTabIndex
+            this.numberOfTabsBelow = this.accordionPane.tabs.length - 1 - this.newTabIndex;
             
             // Initial top position of topmost moving tab.
             this.startTopPosition = this.tabHeight * this.numberOfTabsAbove;
@@ -568,7 +569,7 @@ ExtrasAccordionPane.Rotation = Core.extend({
             this.numberOfTabsAbove = this.newTabIndex;
         
             // Numbers of tabs below that will not be moving.
-            this.numberOfTabsBelow = this.accordionPane.tabs.length - 1 - this.newTabIndex
+            this.numberOfTabsBelow = this.accordionPane.tabs.length - 1 - this.newTabIndex;
     
             // Initial bottom position of bottommost moving tab.
             this.startBottomPosition = this.tabHeight * this.numberOfTabsBelow;
@@ -589,56 +590,58 @@ ExtrasAccordionPane.Rotation = Core.extend({
      * Queues subsequent frame of animation via Window.setTimeout() call to self.
      */
     animationStep: function() {
-        var currentTime = new Date().getTime();
+        var currentTime = new Date().getTime(),
+            i, stepFactor, stepPosition, oldContentHeight, newContentHeight, oldTop, newPosition;
         
         if (currentTime < this.animationEndTime) {
             // Number of pixels (from 0) to step current current frame.
             
-            var stepFactor = (currentTime - this.animationStartTime) / this.accordionPane.animationTime;
-            var stepPosition = Math.round(stepFactor * this.animationDistance);
+            stepFactor = (currentTime - this.animationStartTime) / this.accordionPane.animationTime;
+            stepPosition = Math.round(stepFactor * this.animationDistance);
     
             if (this.directionDown) {
     
                 // Move each moving tab to next step position.
-                for (var i = 0; i < this.rotatingTabs.length; ++i) {
-                    var newPosition = stepPosition + this.startTopPosition + (this.tabHeight * (this.rotatingTabs.length - i - 1));
+                for (i = 0; i < this.rotatingTabs.length; ++i) {
+                    newPosition = stepPosition + this.startTopPosition + (this.tabHeight * (this.rotatingTabs.length - i - 1));
                     this.rotatingTabs[i].tabDivElement.style.top = newPosition + "px";
                 }
                 
                 // Adjust height of expanding new tab content to fill expanding space.
-                var newContentHeight = stepPosition - this.oldTabContentInsets.top - this.oldTabContentInsets.bottom;
+                newContentHeight = stepPosition - this.oldTabContentInsets.top - this.oldTabContentInsets.bottom;
                 if (newContentHeight < 0) {
                     newContentHeight = 0;
                 }
                 this.newTab.contentDivElement.style.height = newContentHeight + "px";
                 
                 // On first frame, display new tab content.
-                if (this.animationStepIndex == 0) {
+                if (this.animationStepIndex === 0) {
                     this.oldTab.contentDivElement.style.bottom = "";
                     this.newTab.contentDivElement.style.display = "block";
                     this.newTab.contentDivElement.style.top = (this.numberOfTabsAbove * this.tabHeight) + "px";
                 }
                 
                 // Move top of old content downward.
-                var oldTop = stepPosition + this.startTopPosition + (this.rotatingTabs.length * this.tabHeight);
+                oldTop = stepPosition + this.startTopPosition + (this.rotatingTabs.length * this.tabHeight);
                 this.oldTab.contentDivElement.style.top = oldTop + "px";
                 
                 // Reduce height of contracting old tab content to fit within contracting space.
-                var oldContentHeight = this.regionHeight - oldTop - ((this.numberOfTabsBelow - 1) * this.tabHeight) 
-                        - this.oldTabContentInsets.top - this.oldTabContentInsets.bottom;
+                oldContentHeight = this.regionHeight - oldTop - ((this.numberOfTabsBelow - 1) * this.tabHeight) -
+                        this.oldTabContentInsets.top - this.oldTabContentInsets.bottom;
                 if (oldContentHeight < 0) {
                     oldContentHeight = 0;
                 }
                 this.oldTab.contentDivElement.style.height = oldContentHeight + "px";
             } else {
                 // Move each moving tab to next step position.
-                for (var i = 0; i < this.rotatingTabs.length; ++i) {
-                    var newPosition = stepPosition + this.startBottomPosition + (this.tabHeight * (this.rotatingTabs.length - i - 1));
+                for (i = 0; i < this.rotatingTabs.length; ++i) {
+                    newPosition = stepPosition + this.startBottomPosition + 
+                            (this.tabHeight * (this.rotatingTabs.length - i - 1));
                     this.rotatingTabs[i].tabDivElement.style.bottom = newPosition + "px";
                 }
                 
                 // On first frame, display new tab content.
-                if (this.animationStepIndex == 0) {
+                if (this.animationStepIndex === 0) {
                     this.oldTab.contentDivElement.style.bottom = "";
                     this.newTab.contentDivElement.style.top = "";
                     this.newTab.contentDivElement.style.bottom = (this.numberOfTabsBelow * this.tabHeight) + "px";
@@ -647,19 +650,19 @@ ExtrasAccordionPane.Rotation = Core.extend({
                 }
                 
                 // Reduce height of contracting old tab content to fit within contracting space.
-                var oldContentHeight = this.regionHeight - stepPosition 
-                        - ((this.numberOfTabsAbove + this.numberOfTabsBelow + 1) * this.tabHeight)
-                        - this.oldTabContentInsets.top - this.oldTabContentInsets.bottom;
+                oldContentHeight = this.regionHeight - stepPosition -
+                        ((this.numberOfTabsAbove + this.numberOfTabsBelow + 1) * this.tabHeight) -
+                        this.oldTabContentInsets.top - this.oldTabContentInsets.bottom;
                 if (oldContentHeight < 0) {
                     oldContentHeight = 0;
                 }
                 this.oldTab.contentDivElement.style.height = oldContentHeight + "px";
                 
                 // Increase height of expanding tab content to fit within expanding space.
-                var newContentHeight = stepPosition - this.newTabContentInsets.top - this.newTabContentInsets.bottom;
+                newContentHeight = stepPosition - this.newTabContentInsets.top - this.newTabContentInsets.bottom;
                 if (newContentHeight < 0) {
                     newContentHeight = 0;
-                };
+                }
                 this.newTab.contentDivElement.style.height = newContentHeight + "px";
             }
             
@@ -853,7 +856,7 @@ ExtrasAccordionPane.MessageProcessor = {
             accordionPane.tabForeground = initMessageElement.getAttribute("tab-foreground");
         }
         if (initMessageElement.getAttribute("tab-border-size")) {
-            accordionPane.tabBorderSize = parseInt(initMessageElement.getAttribute("tab-border-size"));
+            accordionPane.tabBorderSize = parseInt(initMessageElement.getAttribute("tab-border-size"), 10);
         }
         if (initMessageElement.getAttribute("tab-border-style")) {
             accordionPane.tabBorderStyle = initMessageElement.getAttribute("tab-border-style");
@@ -880,8 +883,8 @@ ExtrasAccordionPane.MessageProcessor = {
             accordionPane.tabRolloverBorderColor = initMessageElement.getAttribute("tab-rollover-border-color");
         }
         if (initMessageElement.getAttribute("default-content-insets")) {
-            accordionPane.defaultContentInsets 
-                    = new EchoCoreProperties.Insets(initMessageElement.getAttribute("default-content-insets"));
+            accordionPane.defaultContentInsets =
+                    new EchoCoreProperties.Insets(initMessageElement.getAttribute("default-content-insets"));
         }
         if (initMessageElement.getAttribute("tab-insets")) {
             accordionPane.tabInsets = new EchoCoreProperties.Insets(initMessageElement.getAttribute("tab-insets"));
