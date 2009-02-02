@@ -374,7 +374,7 @@ ExtrasTransitionPane.MessageProcessor = {
         }
         var duration = updateMessageElement.getAttribute("duration");
         if (duration) {
-            transitionPane.transitionDuration = parseInt(duration);
+            transitionPane.transitionDuration = parseInt(duration, 10);
         }
     },
 
@@ -416,20 +416,20 @@ ExtrasTransitionPane.FadeImage = Core.extend({
         this.renderedFadeStepIndex = -1;
         
         var image927 = new Image();
-        image927.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
-                + "fade-" + this.color + "-927";
+        image927.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" +
+                "fade-" + this.color + "-927";
         var image787 = new Image();
-        image787.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
-                + "fade-" + this.color + "-787";
+        image787.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" +
+                "fade-" + this.color + "-787";
         var image700 = new Image();
-        image700.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
-                + "fade-" + this.color + "-700";
+        image700.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" +
+                "fade-" + this.color + "-700";
         var image420 = new Image();
-        image420.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
-                + "fade-" + this.color + "-420";
+        image420.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" +
+                "fade-" + this.color + "-420";
         var image230 = new Image();
-        image230.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
-                + "fade-" + this.color + "-230";
+        image230.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" +
+                "fade-" + this.color + "-230";
         var image820 = new Image();
     },
 
@@ -452,15 +452,17 @@ ExtrasTransitionPane.FadeImage = Core.extend({
     
     step: function(progress) {
         var currentAnimationStep = Math.ceil(progress * this.totalAnimationSteps);
-        if (currentAnimationStep == 0) {
+        if (currentAnimationStep === 0) {
             currentAnimationStep = 1;
         }
         
         var targetTranslucency = Math.abs((progress - 0.5) * 2) * 1000;
         
+        var i;
         var bestIndex = 0;
         var bestDelta = 1000;
-        for (var i = 0; i < ExtrasTransitionPane.FadeImage.fadeSteps.length; ++i) {
+        
+        for (i = 0; i < ExtrasTransitionPane.FadeImage.fadeSteps.length; ++i) {
             var delta = Math.round(Math.abs(ExtrasTransitionPane.FadeImage.fadeSteps[i][0] - targetTranslucency));
             if (delta < bestDelta) {
                 bestDelta = delta;
@@ -469,19 +471,19 @@ ExtrasTransitionPane.FadeImage = Core.extend({
         }
     
         if (this.renderedFadeStepIndex != bestIndex) {  
-            for (var i = 0; i < 2; ++i) {
+            for (i = 0; i < 2; ++i) {
                 var imgId = ExtrasTransitionPane.FadeImage.fadeSteps[bestIndex][i + 1];
-                var previousImgId = this.renderedFadeStepIndex == -1 
-                        ? null : ExtrasTransitionPane.FadeImage.fadeSteps[this.renderedFadeStepIndex][i + 1];
+                var previousImgId = this.renderedFadeStepIndex == -1 ?
+                        null : ExtrasTransitionPane.FadeImage.fadeSteps[this.renderedFadeStepIndex][i + 1];
                 if (imgId == previousImgId) {
                     continue;
                 }
                 if (imgId) {
-                    var imgUrl = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
-                            + "fade-" + this.color + "-" + imgId;
+                    var imgUrl = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" +
+                            "fade-" + this.color + "-" + imgId;
                     if (this.dxRender) {
-                        this.translucentElements[i].style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader("
-                                + "src='" + imgUrl + "', sizingMethod='scale');";
+                        this.translucentElements[i].style.filter = "progid:DXImageTransform.Microsoft.AlphaImageLoader(" +
+                                "src='" + imgUrl + "', sizingMethod='scale');";
                     } else {
                         this.translucentElements[i].style.backgroundImage = "url(" + imgUrl + ")";
                     }
@@ -556,16 +558,17 @@ ExtrasTransitionPane.FadeOpacity = Core.extend({
     },
     
     step: function(progress) {
+        var percent;
         if (this.transitionPane.newChildDivElement) {
             if (EchoClientProperties.get("proprietaryIEOpacityFilterRequired")) {
-                var percent = parseInt(progress * 100);
+                percent = parseInt(progress * 100, 10);
                 this.transitionPane.newChildDivElement.style.filter = "alpha(opacity=" + percent + ")";
             } else {
                 this.transitionPane.newChildDivElement.style.opacity = progress;
             }
         } else if (this.transitionPane.oldChildDivElement) {
             if (EchoClientProperties.get("proprietaryIEOpacityFilterRequired")) {
-                var percent = parseInt((1 - progress) * 100);
+                percent = parseInt((1 - progress) * 100, 10);
                 this.transitionPane.oldChildDivElement.style.filter = "alpha(opacity=" + percent + ")";
             } else {
                 this.transitionPane.oldChildDivElement.style.opacity = 1 - progress;
@@ -591,8 +594,8 @@ ExtrasTransitionPane.Blind = Core.extend({
         // Precache images.
         for (var i = 1; i <= this.totalAnimationSteps; ++i) {
             var image = new Image();
-            image.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
-                    + this.imagePrefix + i;
+            image.src = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" +
+                    this.imagePrefix + i;
         }
     },
     
@@ -625,7 +628,7 @@ ExtrasTransitionPane.Blind = Core.extend({
     
     step: function(progress) {
         var currentAnimationStep = Math.ceil(progress * this.totalAnimationSteps);
-        if (currentAnimationStep == 0) {
+        if (currentAnimationStep === 0) {
             currentAnimationStep = 1;
         }
         if (currentAnimationStep == this.renderedAnimationStep) {
@@ -633,8 +636,8 @@ ExtrasTransitionPane.Blind = Core.extend({
             return;
         }
         
-        var imgUrl = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" 
-                + this.imagePrefix + currentAnimationStep;
+        var imgUrl = EchoClientEngine.baseServerUri + "?serviceId=Echo2Extras.TransitionPane.Image&imageId=" +
+                this.imagePrefix + currentAnimationStep;
         
         this.blindElement.style.backgroundImage = "url(" + imgUrl + ")";
         
@@ -660,11 +663,11 @@ ExtrasTransitionPane.Blind = Core.extend({
             }
             if (this.transitionPane.newChildDivElement) {
                 if (this.reverseAnimation) {
-                    this.transitionPane.newChildDivElement.style.top 
-                            = (currentAnimationStep - this.totalAnimationSteps) + "px";
+                    this.transitionPane.newChildDivElement.style.top =
+                            (currentAnimationStep - this.totalAnimationSteps) + "px";
                 } else {
-                    this.transitionPane.newChildDivElement.style.top 
-                            = (this.totalAnimationSteps - currentAnimationStep) + "px";
+                    this.transitionPane.newChildDivElement.style.top =
+                            (this.totalAnimationSteps - currentAnimationStep) + "px";
                 }
             }
         }
@@ -702,9 +705,8 @@ ExtrasTransitionPane.CameraPan = Core.extend({
     
     init: function() {
         var bounds = new EchoCssUtil.Bounds(this.transitionPane.transitionPaneDivElement);
-        this.travel = (this.direction == ExtrasTransitionPane.CameraPan.DOWN 
-                || this.direction == ExtrasTransitionPane.CameraPan.UP)
-                ? bounds.height : bounds.width;
+        this.travel = (this.direction == ExtrasTransitionPane.CameraPan.DOWN  || 
+                this.direction == ExtrasTransitionPane.CameraPan.UP) ? bounds.height : bounds.width;
         if (this.transitionPane.oldChildDivElement) {
             this.transitionPane.oldChildDivElement.style.zIndex = 1;
         }
