@@ -5026,7 +5026,17 @@ readDir = /* string[] */ function ( /* string */ path, /* opt RegExp */ filterRx
             "EchoTextComponent",
             "EchoVirtualPosition",
             "EchoWindowPane",
-            "EchoWindowUpdate"
+            "EchoWindowUpdate",
+            "ExtrasAccordionPane",
+            "ExtrasCalendarSelect",
+            "ExtrasColorSelect",
+            "ExtrasDragSource",
+            "ExtrasDropDownMenu",
+            "ExtrasMenu",
+            "ExtrasMenuBarPane",
+            "ExtrasTabPane",
+            "ExtrasTransitionPane",
+            "ExtrasUtil"
         ];
         var result = JSLINT(input, {sub: true, ec_eqnull: true, evil: true, forin: true, browser: true, passfail: false,
                 predef: predef});
