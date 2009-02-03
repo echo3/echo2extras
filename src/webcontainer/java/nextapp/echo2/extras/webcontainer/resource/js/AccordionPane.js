@@ -403,6 +403,7 @@ ExtrasAccordionPane = Core.extend({
         } else {
             // Start new rotation.
             this.rotation = new ExtrasAccordionPane.Rotation(this, oldTabId, newTabId);
+            this.rotation.animationStep();
         }
     },
     
@@ -582,7 +583,6 @@ ExtrasAccordionPane.Rotation = Core.extend({
         }
         
         this.overflowUpdate();
-        this.animationStep();
     },
     
     /**
