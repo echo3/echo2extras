@@ -104,7 +104,7 @@ public class WelcomePane extends ContentPane {
         label = new Label("This application provides an interactive test for the Echo2 Extras Library.");
         infoColumn.add(label);
 
-        label = new Label("Please visit the Echo2 Home Page @ http://www.nextapp.com/products/echo2 for more information.");
+        label = new Label("Please visit the Echo2 Home Page @ http://echo.nextapp.com for more information.");
         infoColumn.add(label);
     }
 }
