@@ -2,7 +2,7 @@
 Echo2 Extras Component Library
 Copyright (C) 2002-2009 NextApp, Inc.
 
-http://www.nextapp.com/platform/echo2/extras
+http://echo.nextapp.com
 
 ----------------------------------------------------------------------
 Echo2Extras is licensed under the Mozilla Public License.
