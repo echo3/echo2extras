@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------
 Echo2 Extras Component Library
-Copyright (C) 2002-2006 NextApp, Inc.
+Copyright (C) 2002-2009 NextApp, Inc.
 
 http://www.nextapp.com/platform/echo2/extras
 
