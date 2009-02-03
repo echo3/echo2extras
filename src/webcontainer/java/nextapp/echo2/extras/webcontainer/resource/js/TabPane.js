@@ -1,6 +1,6 @@
 /* 
  * This file is part of the Echo2 Extras Project.
- * Copyright (C) 2005-2006 NextApp, Inc.
+ * Copyright (C) 2002-2009 NextApp, Inc.
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *

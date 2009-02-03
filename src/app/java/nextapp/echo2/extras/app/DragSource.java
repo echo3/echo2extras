@@ -1,6 +1,6 @@
 /* 
  * This file is part of the Echo2 DnD Project.
- * Copyright (C) 2005-2006 Jason Dalton
+ * Copyright (C) 2002-2009 Jason Dalton
  *
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
