@@ -151,8 +151,12 @@ ExtrasDragSource = Core.extend({
     
     addDropTarget: function(dropTargetId) {
         var dropTarget = document.getElementById(dropTargetId);
-        this.dropTargetArray[this.dropTargetArray.length] = dropTarget;
-        this.dropTargetPositions[this.dropTargetPositions.length] = ExtrasDragSource.getElementPosition(dropTarget);
+        // a drop target on a tree may disappear when the tree is collapsed,
+        // if the target is null ignore it.
+        if (dropTarget) {
+    	       this.dropTargetArray[this.dropTargetArray.length] = dropTarget;
+            this.dropTargetPositions[this.dropTargetPositions.length] = ExtrasDragSource.getElementPosition(dropTarget);
+        }
     },
     
     /**
